@@ -19,6 +19,9 @@ module.exports = {
         textLight: "#FFFFFF",
         textDark: "#0D1B32", //midnightblue
       },
+      fontFamily: {
+        montserrat: ["Montserrat", "sans-serif"],
+      },
       keyframes: {
         vibrate: {
           "0%, 100%": { transform: "translateX(0) rotateZ(0)" },
