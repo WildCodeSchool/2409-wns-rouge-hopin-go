@@ -42,7 +42,7 @@ export class RidesResolver {
     }
   }
 
-
+ // Need a Middleware to verify if the user is logged in
   @Mutation(() => Ride)
   async createRide(
     @Arg("data", () => RideCreateInput) data: RideCreateInput
@@ -53,8 +53,7 @@ export class RidesResolver {
     }
     const newRide = new Ride();
     try {
-      const hashedPassword = await argon2.hash(data.password);
-      Object.assign(newRide, data, { hashedPassword, password: undefined });
+      Object.assign(newRide, data);
       await newRide.save();
       return newRide;
     } catch (error) {
@@ -63,6 +62,7 @@ export class RidesResolver {
     }
   }
 
+ // Need a Middleware to verify if the user is logged in and is the user that created the ride
   @Mutation(() => Ride, { nullable: true })
   async updateRide(
       @Arg("id", () => ID) id: number,
@@ -78,6 +78,7 @@ export class RidesResolver {
       }
   }
 
+ // Need a Middleware to verify if the user is logged in and is the user that created the ride
   @Mutation(() => Ride, { nullable: true })
   async deleteRide(@Arg("id", () => ID) id: number): Promise<Ride | null> {
     const ride = await Ride.findOneBy({ id });

@@ -6,13 +6,14 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 import { UsersResolver } from "./resolvers/Users";
 import { authChecker, getUserFromContext } from "./auth";
 import { User } from "./entities/User";
+import { RidesResolver } from "./resolvers/Ride";
 
 async function initiliaze() {
   await datasource.initialize();
   console.info("Datasource is connected 🔌");
 
   const schema = await buildSchema({
-    resolvers: [UsersResolver],
+    resolvers: [UsersResolver, RidesResolver],
     validate: true,
     authChecker,
   });

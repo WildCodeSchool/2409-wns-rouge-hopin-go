@@ -1,19 +1,19 @@
-import { Matches, MaxLength, MinLength } from "class-validator";
+import { IsDate, IsString, Matches, Max, MaxLength, Min, MinLength } from "class-validator";
 import {
   Field,
   ID,
   InputType,
-  MiddlewareFn,
   ObjectType,
-  UseMiddleware,
 } from "type-graphql";
 import {
   BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { User } from "./User";
 
 @Entity()
 @ObjectType()
@@ -26,50 +26,92 @@ export class Ride extends BaseEntity {
   @Field()
   departure_city!: string;
 
-  @Column({ enum: ["ride", "admin"], default: "ride" })
+  @Column()
   @Field()
-  role!: string;
+  arrival_city!: string;
 
   @Column()
-  // @Field()
-  hashedPassword!: string;
+  @Field()
+  departure_at!: Date;
+
+  @Column()
+  @Field()
+  arrival_at!: Date;
+
+  @Column()
+  @Field()
+  max_passenger!: number;
+
+  @ManyToOne(() => User)
+  @Field(() => User)
+  driver_id!: User;
+
+  @Column({default: 0})
+  @Field()
+  nb_passenger!: number;
+
+  // It has to be declared automatically by the departure_city / arrival_city position
+  @Column({ type: "decimal", precision: 10, scale: 6 })
+  @Field()
+  departure_lat!: number;
+
+  @Column({ type: "decimal", precision: 10, scale: 6 })
+  @Field()
+  departure_lng!: number;
+
+  @Column({ type: "decimal", precision: 10, scale: 6 })
+  @Field()
+  arrival_lat!: number;
+
+  @Column({ type: "decimal", precision: 10, scale: 6 })
+  @Field()
+  arrival_lng!: number;
+
+  @Column({default: false})
+  @Field()
+  is_canceled!: boolean;
 
   @CreateDateColumn()
   @Field()
-  createdAt!: Date;
-
-  // may be needed if ride can create other rides
-  // @ManyToOne(() => Ride)
-  // @Field(() => Ride)
-  // createdBy!: Ride;
+  created_at!: Date;
 }
 
 @InputType()
 export class RideCreateInput {
+
   @Field()
+  @MaxLength(155)
   departure_city!: string;
 
   @Field()
-  @MinLength(8, { message: "Password must be at least 8 characters long" })
-  @MaxLength(32, { message: "Password cannot exceed 32 characters" })
-  @Matches(/[a-z]/, {
-    message: "Password must contain at least one lowercase letter",
-  })
-  @Matches(/[A-Z]/, {
-    message: "Password must contain at least one uppercase letter",
-  })
-  @Matches(/\d/, { message: "Password must contain at least one number" })
-  @Matches(/[@$!%*?&]/, {
-    message: "Password must contain at least one special character (@$!%*?&)",
-  })
-  password!: string;
+  @IsString()
+  arrival_city!: string;
+
+  @Field()
+  @IsDate()
+  departure_at!: Date;
+
+  @Field()
+  @IsDate()
+  arrival_at!: Date;
+
+  @Field()
+  @Min(1)
+  @Max(4)
+  max_passenger!: number;
 }
 
 @InputType()
 export class RideUpdateInput {
   @Field()
-  email!: string;
+  departure_at!: string;
 
   @Field()
-  password!: string;
+  arrival_at!: string;
+
+  @Field()
+  max_passenger!: number;
+
+  @Field()
+  is_canceled!: boolean;
 }
