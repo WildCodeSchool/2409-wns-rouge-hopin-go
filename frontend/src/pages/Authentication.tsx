@@ -1,7 +1,6 @@
-import SigninTest from "../components/SigninTest";
-import SignupTest from "../components/SignupTest";
-
 import SwitchTab from "../components/SwitchTabs";
+import Signin from "../components/Signin";
+import Signup from "../components/Signup";
 
 export type Tab = {
   label: string;
@@ -9,8 +8,8 @@ export type Tab = {
 };
 const AuthenticationPage = () => {
   const tabs: Tab[] = [
-    { label: "Inscription", content: <SignupTest /> },
-    { label: "Connexion", content: <SigninTest /> },
+    { label: "Inscription", content: <Signup /> },
+    { label: "Connexion", content: <Signin /> },
   ];
   return <SwitchTab tabs={tabs} />;
 };
