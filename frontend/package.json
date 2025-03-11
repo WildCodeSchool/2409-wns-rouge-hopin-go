@@ -9,12 +9,14 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "graphql-codegen": "graphql-codegen",
-     "dev-and-codegen": "concurrently \"npx vite --host\" \"npx graphql-codegen --watch\""
+    "dev-and-codegen": "concurrently \"npx vite --host\" \"npx graphql-codegen --watch\""
   },
   "dependencies": {
     "@apollo/client": "^3.11.10",
+    "@lucide/lab": "^0.1.2",
     "concurrently": "^9.1.2",
     "graphql": "^16.9.0",
+    "lucide-react": "^0.479.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-router-dom": "^6.26.2",
