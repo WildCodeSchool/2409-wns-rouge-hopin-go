@@ -1,11 +1,10 @@
-// non utilisé on se sert du composant
 import { useMutation } from "@apollo/client";
 import { useState } from "react";
 import { mutationSignin } from "../api/Signin";
 import { useNavigate } from "react-router-dom";
 import { queryWhoAmI } from "../api/WhoAmI";
 
-const Signin = () => {
+const SigninTest = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string>("");
@@ -101,4 +100,4 @@ const Signin = () => {
   );
 };
 
-export default Signin;
+export default SigninTest;
