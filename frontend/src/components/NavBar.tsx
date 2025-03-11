@@ -2,6 +2,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useMutation, useQuery } from "@apollo/client";
 import { queryWhoAmI } from "../api/WhoAmI";
 import { mutationSignout } from "../api/Signout";
+import Button from "./Button";
+import { Search } from "lucide-react";
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -24,13 +26,23 @@ const NavBar = () => {
     <>
       <nav
         className="flex w-fit
-       justify-between items-center p-4 gap-4 bg-blue-400"
+       justify-between items-center p-4 gap-4 bg-primary text-secondary "
       >
         <h1>
           <Link to="/" className="">
             <span className="">HopinGo</span>
           </Link>
         </h1>
+        <Button
+          variant="pending"
+          icon={Search}
+          iconSize={18}
+          label="Recherche"
+        />
+
+        <Button variant="error" icon={Search} />
+
+        <Button variant="validation" label="Valider" />
         <form className="">
           <input className="" type="search" />
           <button className="">
