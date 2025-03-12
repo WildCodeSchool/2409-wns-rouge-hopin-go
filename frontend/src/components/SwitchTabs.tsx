@@ -6,16 +6,18 @@ type SwitchTabs = {
 };
 
 const SwitchTabs = ({ tabs }: SwitchTabs) => {
-  const [activeTab, setActiveTab] = useState(0);
+  const [activeTab, setActiveTab] = useState(1);
 
   return (
-    <div className="w-full max-w-4xl mx-auto border border-textDark rounded-md overflow-hidden">
-      <div className="flex  ">
+    <div className="mx-4 w-full md:max-w-4xl md:mx-auto border border-textDark rounded-md overflow-hidden">
+      <div className="flex ">
         {tabs.map((tab, index) => (
           <button
             key={index}
-            className={`flex-1 ${
-              activeTab === index ? "bg-primary" : "bg-white"
+            className={`flex-1 py-4 font-semibold ${
+              activeTab === index
+                ? "bg-primary text-textLight"
+                : "bg-white text-primary"
             }`}
             onClick={() => setActiveTab(index)}
           >
@@ -23,7 +25,7 @@ const SwitchTabs = ({ tabs }: SwitchTabs) => {
           </button>
         ))}
       </div>
-      <div className="rounded-b-md p-10  bg-primary ">
+      <div className="w-full rounded-b-md p-10  bg-primary ">
         {tabs[activeTab].content}
       </div>
     </div>
