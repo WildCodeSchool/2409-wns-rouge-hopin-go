@@ -3,8 +3,8 @@
 @tailwind utilities;
 
 :root {
-  --color-primary: #ffa41b;
-  --color-primary-hover: #f3af4a;
+  --color-primary: #8E387C;
+  --color-primary-hover: #d955bc;
   --color-secondary: #03031b;
   --color-tertiary: #e3e3e2;
   --color-dark: #03031b;
@@ -22,6 +22,8 @@ body {
 h1 {
   @apply m-0;
 }
+
+
 
 .button-flex {
   @apply rounded-lg gap-2 flex items-center justify-center font-montserrat text-sm;

@@ -32,6 +32,14 @@ export class Ride extends BaseEntity {
 
   @Column()
   @Field()
+  departure_address!: string;
+
+  @Column()
+  @Field()
+  arrival_address!: string;
+
+  @Column()
+  @Field()
   departure_at!: Date;
 
   @Column()
@@ -81,12 +89,23 @@ export class RideCreateInput {
 
   @Field()
   @MaxLength(255)
+  @IsString()
   departure_city!: string;
 
   @Field()
   @MaxLength(255)
   @IsString()
   arrival_city!: string;
+
+  @Field()
+  @MaxLength(255)
+  @IsString()
+  departure_address!: string;
+
+  @Field()
+  @MaxLength(255)
+  @IsString()
+  arrival_address!: string;
 
   @Field()
   @IsDate()
