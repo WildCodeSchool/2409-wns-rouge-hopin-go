@@ -24,7 +24,7 @@ h1 {
 }
 
 .button-flex {
-  @apply rounded-full gap-2 flex items-center justify-center font-montserrat text-sm;
+  @apply rounded-lg gap-2 flex items-center justify-center font-montserrat text-sm;
 }
 .button-col {
   @apply rounded-lg px-4 py-2 gap-2 flex flex-col items-center justify-center;

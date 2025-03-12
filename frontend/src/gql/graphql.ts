@@ -117,12 +117,16 @@ export type User = {
   __typename?: 'User';
   createdAt: Scalars['DateTimeISO']['output'];
   email?: Maybe<Scalars['String']['output']>;
+  firstName: Scalars['String']['output'];
   id: Scalars['ID']['output'];
+  lastName: Scalars['String']['output'];
   role: Scalars['String']['output'];
 };
 
 export type UserCreateInput = {
   email: Scalars['String']['input'];
+  firstName: Scalars['String']['input'];
+  lastName: Scalars['String']['input'];
   password: Scalars['String']['input'];
 };
 
@@ -138,7 +142,7 @@ export type CreateUserMutationVariables = Exact<{
 }>;
 
 
-export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', id: string, email?: string | null } };
+export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email?: string | null } };
 
 export type SigninMutationVariables = Exact<{
   email: Scalars['String']['input'];
