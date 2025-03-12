@@ -9,7 +9,7 @@ const SwitchTabs = ({ tabs }: SwitchTabs) => {
   const [activeTab, setActiveTab] = useState(1);
 
   return (
-    <div className="mx-4 w-full md:max-w-4xl md:mx-auto border border-textDark rounded-md overflow-hidden">
+    <div className="mx-4 max-w-1xl md:max-w-4xl md:mx-auto border border-textDark rounded-md overflow-hidden">
       <div className="flex ">
         {tabs.map((tab, index) => (
           <button

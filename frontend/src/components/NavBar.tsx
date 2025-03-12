@@ -3,10 +3,22 @@ import { useMutation, useQuery } from "@apollo/client";
 import { queryWhoAmI } from "../api/WhoAmI";
 import { mutationSignout } from "../api/Signout";
 import Button from "./Button";
-import { Search } from "lucide-react";
+import {
+  CarFront,
+  CirclePlus,
+  CircleUserRound,
+  MessageCircle,
+  Search,
+} from "lucide-react";
+import { useState } from "react";
 
 const NavBar = () => {
   const navigate = useNavigate();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
 
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const me = whoAmIData?.whoami;
@@ -18,19 +30,104 @@ const NavBar = () => {
 
   const handleSignout = () => {
     doSignout();
-    navigate("/signin");
+    navigate("/authentication");
   };
   console.log("me => ", me);
 
   return (
     <>
+      {/* Version Mobile */}
+
       <nav
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex w-full h-18
+       bg-primary text-secondary "
+      >
+        <div className="flex items-center justify-around w-full">
+          <Link to="/" className="">
+            <Button
+              label="Trajets"
+              icon={CarFront}
+              iconSize={18}
+              isFlexCol
+              className="!p-2 text-sm font-semibold"
+            />
+          </Link>
+
+          <Link to="/" className="">
+            <Button
+              label="Messages"
+              icon={MessageCircle}
+              iconSize={18}
+              isFlexCol
+              className="!p-2 text-sm font-semibold"
+            />
+          </Link>
+          <Link to="/" className="">
+            <Button
+              label="Rechercher"
+              icon={Search}
+              iconSize={18}
+              isFlexCol
+              className="!p-2 text-sm font-semibold"
+            />
+          </Link>
+          <Link to="/" className="">
+            <Button
+              label="Proposer"
+              icon={CirclePlus}
+              iconSize={18}
+              isFlexCol
+              className="!p-2 text-sm font-semibold"
+            />
+          </Link>
+          <div>
+            <Button
+              onClick={toggleMenu}
+              label="Profil"
+              icon={CircleUserRound}
+              iconSize={18}
+              isFlexCol
+              className="!p-2 text-sm font-semibold"
+            />
+          </div>
+          {isOpen && (
+            <div
+              className={`fixed bottom-[62px] transform transition-transform duration-300 ease-in-out right-0 z-50 flex w-fit h-18 bg-primary p-2 rounded-tl-lg ${
+                isOpen ? "translate-x-0" : "translate-x-full"
+              }`}
+            >
+              <div className="flex flex-col items-start gap-2 p-4 w-full">
+                <Link to="/authentication" className="w-full">
+                  <h2 className="border-gray-300 bg-gray-50 shadow-sm border text-sm font-semibold rounded-md  block w-full px-4 py-1.5 text-primary">
+                    Inscription
+                  </h2>
+                </Link>
+                <Link to="/authentication" className="w-full">
+                  <h2 className="border-gray-300 bg-gray-50 shadow-sm border text-sm font-semibold rounded-md  block w-full px-4 py-1.5 text-primary">
+                    Connexion
+                  </h2>
+                </Link>
+                <div className="w-full">
+                  <h2
+                    className="border-gray-300 bg-gray-50 shadow-sm border text-sm font-semibold rounded-md  block w-full px-4 py-1.5 text-primary"
+                    onClick={handleSignout}
+                  >
+                    Déconnexion
+                  </h2>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </nav>
+
+      {/* <nav
         className="flex w-fit
        justify-between items-center p-4 gap-4 bg-primary text-secondary "
       >
         <h1>
           <Link to="/" className="">
-            <span className="">HopinGo</span>
+            <span className="">Trajets</span>
           </Link>
         </h1>
         <Button
@@ -96,7 +193,7 @@ const NavBar = () => {
           </>
         ) : null}
       </nav>
-      <nav className="">navigation</nav>
+      <nav className="">navigation</nav> */}
     </>
   );
 };

@@ -19,12 +19,14 @@ const App = () => {
         pauseOnHover
       />
 
-      <header className="header">
-        <NavBar />
-      </header>
-      <main className=" mt-32">
-        <Outlet />
-      </main>
+      <div className="flex flex-col h-screen w-full">
+        <header>
+          <NavBar />
+        </header>
+        <main className="mt-32">
+          <Outlet />
+        </main>
+      </div>
     </>
   );
 };

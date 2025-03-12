@@ -12,7 +12,7 @@ services:
       - backend.env
     healthcheck:
       test: 'curl --fail  --request POST --header ''Content-Type: application/json'' --url ''http://localhost:5000/'' --data ''{"query": "query { __typename }"}'''
-      interval: 60s
+      interval: 10s
       timeout: 260s
 
   front:
