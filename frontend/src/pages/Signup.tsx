@@ -151,7 +151,7 @@ const Signup = () => {
       <div className="mb-5">
         <label
           htmlFor="first-name"
-          className="block mb-2 text-sm font-medium text-white"
+          className="block mb-2 text-sm font-medium text-textLight"
         >
           Prénom
         </label>
@@ -160,7 +160,7 @@ const Signup = () => {
           id="first-name"
           className={`${
             error.firstName?.length
-              ? "border-red-400 bg-red-200 focus:ring-0"
+              ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
               : "border-gray-300 bg-gray-50"
           } shadow-sm border text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="Jean"
@@ -168,7 +168,7 @@ const Signup = () => {
           onChange={(e) => validateFirstName(e.target.value)}
         />
         {error.firstName && (
-          <p className="text-red-500 text-sm">
+          <p className="text-red-400 text-sm">
             {formatErrors(error.firstName)}
           </p>
         )}
@@ -187,7 +187,7 @@ const Signup = () => {
           id="last-name"
           className={`${
             error.lastName?.length
-              ? "border-red-400 bg-red-200 focus:ring-0"
+              ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
               : "border-gray-300 bg-gray-50"
           } shadow-sm border text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="Dupont"
@@ -195,7 +195,7 @@ const Signup = () => {
           onChange={(e) => validateLastName(e.target.value)}
         />
         {error.lastName && (
-          <p className="text-red-500 text-sm">{formatErrors(error.lastName)}</p>
+          <p className="text-red-400 text-sm">{formatErrors(error.lastName)}</p>
         )}
       </div>
       {/* Email */}
@@ -211,7 +211,7 @@ const Signup = () => {
           id="email"
           className={`${
             error.email?.length
-              ? "border-red-400 bg-red-200 focus:ring-0"
+              ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
               : "border-gray-300 bg-gray-50"
           } shadow-sm border text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="nom@mail.com"
@@ -220,7 +220,7 @@ const Signup = () => {
           autoComplete="none"
         />
         {error.email && (
-          <p className="text-red-500 text-sm">{formatErrors(error.email)}</p>
+          <p className="text-red-400 text-sm">{formatErrors(error.email)}</p>
         )}
       </div>
 
@@ -238,7 +238,7 @@ const Signup = () => {
             id="password"
             className={`${
               error.password?.length
-                ? "border-red-400 bg-red-200 focus:ring-0"
+                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
                 : "border-gray-300 bg-gray-50"
             } shadow-sm border text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5`}
             value={password}
@@ -258,12 +258,12 @@ const Signup = () => {
           </button>
         </div>
         {error.password && (
-          <p className="text-red-500 text-sm">{formatErrors(error.password)}</p>
+          <p className="text-red-400 text-sm">{formatErrors(error.password)}</p>
         )}
       </div>
 
       {/* Confirmation du mot de passe */}
-      <div className="mb-5">
+      <div className="mb-10">
         <label
           htmlFor="repeat-password"
           className="block mb-2 text-sm font-medium text-white"
@@ -276,7 +276,7 @@ const Signup = () => {
             id="repeat-password"
             className={`${
               error.confirmPassword?.length
-                ? "border-red-400 bg-red-200 focus:ring-0"
+                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
                 : "border-gray-300 bg-gray-50"
             } shadow-sm border text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5`}
             value={confirmPassword}
@@ -295,7 +295,7 @@ const Signup = () => {
           </button>
         </div>
         {error.confirmPassword && (
-          <p className="text-red-500 text-sm">
+          <p className="text-red-400 text-sm">
             {formatErrors(error.confirmPassword)}
           </p>
         )}
