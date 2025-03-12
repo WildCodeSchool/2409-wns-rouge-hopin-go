@@ -1,8 +1,11 @@
+// non utilisé on se sert du composant
 import { useMutation } from "@apollo/client";
 import { useState } from "react";
 import { mutationSignin } from "../api/Signin";
 import { useNavigate } from "react-router-dom";
 import { queryWhoAmI } from "../api/WhoAmI";
+import { Eye, EyeOff } from "lucide-react";
+import Button from "./Button";
 
 const Signin = () => {
   const [email, setEmail] = useState("");
@@ -27,7 +30,6 @@ const Signin = () => {
       setError("");
       if (data?.signin) {
         // connected
-        console.log(data.signin);
         navigate(`/`, { replace: true });
       } else {
         setError("Impossible de vous connecter");
@@ -41,7 +43,7 @@ const Signin = () => {
 
   return (
     <form
-      className="max-w-sm mx-auto bg-yellow-500 p-8 rounded-xl shadow-lg"
+      className="max-w-sm mx-auto"
       onSubmit={(e) => {
         e.preventDefault();
         doSubmit();
@@ -64,7 +66,6 @@ const Signin = () => {
           autoComplete="none"
         />
       </div>
-
       {/* Mot de passe */}
       <div className="mb-5">
         <label
@@ -87,15 +88,18 @@ const Signin = () => {
             className=" -ml-8"
             onClick={() => setRevealPassword(!revealPassword)}
           >
-            {revealPassword ? "🐵" : "🙈"}
+            {revealPassword ? (
+              <Eye size="16" className="text-primary" />
+            ) : (
+              <EyeOff size="16" className="text-primary" />
+            )}
           </button>
         </div>
       </div>
-
-      <button className="text-black bg-white hover:bg-gray-100 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center">
-        Connexion
-      </button>
       {error && <p className="text-red-500 mt-4 text-sm">{error}</p>}
+      <div className="flex w-full justify-end">
+        <Button variant="validation" type="submit" label="Connexion" />
+      </div>
     </form>
   );
 };
