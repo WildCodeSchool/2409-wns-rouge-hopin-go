@@ -16,27 +16,27 @@ const CardTemplate: React.FC<CardTemplateProps> = ({ variant = "primary" }) => {
       break;
     case "secondary":
       cardTextVariant = "text-secondary";
-      cardBackgroundVariant = "bg-secondary";
+      cardBackgroundVariant = "fill-secondary";
       break;
     case "validation":
       cardTextVariant = "text-validation";
-      cardBackgroundVariant = "bg-validation";
+      cardBackgroundVariant = "fill-validation";
       break;
     case "pending":
       cardTextVariant = "text-pending";
-      cardBackgroundVariant = "bg-pending";
+      cardBackgroundVariant = "fill-pending";
       break;
     case "error":
       cardTextVariant = "text-error";
-      cardBackgroundVariant = "bg-error";
+      cardBackgroundVariant = "fill-error";
       break;
     case "cancel":
       cardTextVariant = "text-cancel";
-      cardBackgroundVariant = "bg-cancel";
+      cardBackgroundVariant = "fill-cancel";
       break;
     default:
       cardTextVariant = "text-primary";
-      cardBackgroundVariant = "bg-primary";
+      cardBackgroundVariant = "fill-primary";
   }
   return (
     <div className="w-full max-w-lg p-4">
@@ -69,24 +69,38 @@ const CardTemplate: React.FC<CardTemplateProps> = ({ variant = "primary" }) => {
         </div>
       </div>
       {/* Row Bottom */}
-      <div className="relative z-10 flex justify-between items-center gap-4">
+
+      <div className="relative  flex justify-between items-start">
         <div
-          className={`flex ${cardBackgroundVariant} border-b border-x border-textDark rounded-b-lg justify-between w-[88%] self-start p-4 text-textLight shadow-lg`}
+          className={` absolute flex w-full left-0 pr-20 justify-between z-10 p-4 text-textLight `}
         >
           <p>2 places restantes</p>
           <p>30 septembre 2025</p>
         </div>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 750.9 127.8"
+          className="w-full h-14 -translate-y-[1px] text-textDark z-0"
+          preserveAspectRatio="none"
+        >
+          <g>
+            <path
+              className={`${cardBackgroundVariant}`}
+              d="M1,1.5l-.5,92.98c0,17.68,14.34,32.02,32.02,32.02h630.96c17.68,0,32.02-14.34,32.02-32.02v-38.58c0-30.59,24.8-55.4,55.4-55.4L1,1.5Z"
+              fill="" // Laisse vide car la class Tailwind gère le fill
+              stroke="currentColor"
+              strokeMiterlimit="10"
+              strokeWidth={1.5}
+            />
+          </g>
+        </svg>
 
-        {/* Fausse encoche */}
-        <div className="absolute right-0 bottom-0 z-0 w-[50px] h-[50px] -translate-x-[9px]  -translate-y-2  rounded-tl-2xl border-l border-t border-primary" />
-        <span className="absolute right-0 bottom-0 z-10 ">
-          <Button
-            icon={TicketPlus}
-            variant={variant}
-            iconSize={32}
-            className="!rounded-full shadow-lg"
-          />
-        </span>
+        <Button
+          icon={TicketPlus}
+          variant={variant}
+          iconSize={32}
+          className="!rounded-full shadow-lg -ml-6 my-2"
+        />
       </div>
     </div>
   );
