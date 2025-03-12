@@ -16,10 +16,6 @@ const NavBar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
-
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const me = whoAmIData?.whoami;
 
@@ -38,21 +34,58 @@ const NavBar = () => {
     <>
       {/* Version Mobile */}
 
+      {/* Toggle Menu */}
+      <div
+        className={`fixed bottom-[62px] transition-transform duration-300 ease-in-out transform right-0 z-40 flex w-fit h-18 bg-primary p-2 rounded-tl-lg ${
+          isOpen ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
+        <div className="flex flex-col items-start gap-2 p-4 w-full">
+          <Link to="/authentication" className="w-full">
+            <h2 className="border-gray-300 bg-gray-50 shadow-sm border text-sm font-semibold rounded-md  block w-full px-4 py-1.5 text-primary">
+              Inscription
+            </h2>
+          </Link>
+          <Link to="/authentication" className="w-full">
+            <h2 className="border-gray-300 bg-gray-50 shadow-sm border text-sm font-semibold rounded-md  block w-full px-4 py-1.5 text-primary">
+              Connexion
+            </h2>
+          </Link>
+          <div className="w-full">
+            <h2
+              className="border-gray-300 bg-gray-50 shadow-sm border text-sm font-semibold rounded-md  block w-full px-4 py-1.5 text-primary"
+              onClick={handleSignout}
+            >
+              Déconnexion
+            </h2>
+          </div>
+        </div>
+      </div>
+
+      {/* Navbar */}
       <nav
         className="md:hidden fixed bottom-0 left-0 right-0 z-50 flex w-full h-18
        bg-primary text-secondary "
       >
         <div className="flex items-center justify-around w-full">
-          <Link to="/" className="">
-            <Button
-              label="Trajets"
-              icon={CarFront}
-              iconSize={18}
-              isFlexCol
-              className="!p-2 text-sm font-semibold"
-            />
-          </Link>
-
+          {/* si l'utilisateur n'est pas connecté il ne peut pas voir ses trajets
+          et est redirigé vers la page d'accueil. Autre solution : afficher un
+          message sur la page des trajets : Vous devez être connecté pour voir
+          vos trajets = à voir ce qui est le plus pertinent, idem pour les
+          autres onglets : messages, et proposer. */}
+          {me ? (
+            <Link to="/" className="">
+              <Button
+                label="Trajets"
+                icon={CarFront}
+                iconSize={18}
+                isFlexCol
+                className="!p-2 text-sm font-semibold"
+              />
+            </Link>
+          ) : (
+            <Link to="/" className="" />
+          )}
           <Link to="/" className="">
             <Button
               label="Messages"
@@ -82,7 +115,7 @@ const NavBar = () => {
           </Link>
           <div>
             <Button
-              onClick={toggleMenu}
+              onClick={() => setIsOpen(!isOpen)}
               label="Profil"
               icon={CircleUserRound}
               iconSize={18}
@@ -90,37 +123,9 @@ const NavBar = () => {
               className="!p-2 text-sm font-semibold"
             />
           </div>
-          {isOpen && (
-            <div
-              className={`fixed bottom-[62px] transform transition-transform duration-300 ease-in-out right-0 z-50 flex w-fit h-18 bg-primary p-2 rounded-tl-lg ${
-                isOpen ? "translate-x-0" : "translate-x-full"
-              }`}
-            >
-              <div className="flex flex-col items-start gap-2 p-4 w-full">
-                <Link to="/authentication" className="w-full">
-                  <h2 className="border-gray-300 bg-gray-50 shadow-sm border text-sm font-semibold rounded-md  block w-full px-4 py-1.5 text-primary">
-                    Inscription
-                  </h2>
-                </Link>
-                <Link to="/authentication" className="w-full">
-                  <h2 className="border-gray-300 bg-gray-50 shadow-sm border text-sm font-semibold rounded-md  block w-full px-4 py-1.5 text-primary">
-                    Connexion
-                  </h2>
-                </Link>
-                <div className="w-full">
-                  <h2
-                    className="border-gray-300 bg-gray-50 shadow-sm border text-sm font-semibold rounded-md  block w-full px-4 py-1.5 text-primary"
-                    onClick={handleSignout}
-                  >
-                    Déconnexion
-                  </h2>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       </nav>
-
+      {/* Version Desktop */}
       {/* <nav
         className="flex w-fit
        justify-between items-center p-4 gap-4 bg-primary text-secondary "
