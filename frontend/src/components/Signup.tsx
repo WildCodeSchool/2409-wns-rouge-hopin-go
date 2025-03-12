@@ -6,11 +6,11 @@ import Button from "../components/Button";
 import { Eye, EyeOff } from "lucide-react";
 
 const Signup = () => {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [firstName, setFirstName] = useState("Adrien");
+  const [lastName, setLastName] = useState("Davy");
+  const [email, setEmail] = useState("adri@mail.com");
+  const [password, setPassword] = useState("Nuagebleu73!");
+  const [confirmPassword, setConfirmPassword] = useState("Nuagebleu73!");
   const [error, setError] = useState<Record<string, string[]>>({});
   const [revealPassword, setRevealPassword] = useState(false);
 
@@ -29,6 +29,13 @@ const Signup = () => {
     if (!value) {
       firstNameErrors.push("Le prénom est requis");
     }
+    if (value.length < 2) {
+      firstNameErrors.push("doit comporter au moins 2 caractères");
+    }
+    if (value.length > 50) {
+      firstNameErrors.push("Le prénom ne peut pas dépasser 50 caractères");
+    }
+
     setError((prev) => ({ ...prev, firstName: firstNameErrors }));
     setFirstName(value);
   };
@@ -37,6 +44,12 @@ const Signup = () => {
     const lastNameErrors: string[] = [];
     if (!value) {
       lastNameErrors.push("Le nom est requis");
+    }
+    if (value.length < 2) {
+      lastNameErrors.push("doit comporter au moins 2 caractères");
+    }
+    if (value.length > 100) {
+      lastNameErrors.push("Le nom ne peut pas dépasser 100 caractères");
     }
     setError((prev) => ({ ...prev, lastName: lastNameErrors }));
     setLastName(value);
@@ -117,19 +130,21 @@ const Signup = () => {
     if (!validateCreateForm()) {
       return;
     }
+    console.log("doSubmit");
 
     try {
       await doCreateUser({
         variables: {
           data: {
+            firstName,
+            lastName,
             email,
             password,
           },
         },
       });
       setError({});
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e);
       setError({
         form: ["Une erreur est survenue lors de l'inscription. Réessayez."],
@@ -147,7 +162,7 @@ const Signup = () => {
   }
 
   return (
-    <form className="max-w-sm mx-auto bg-primary p-8 rounded-xl shadow-lg">
+    <form className="max-w-sm mx-auto">
       {/* Prénom */}
       <div className="mb-5">
         <label
@@ -159,11 +174,14 @@ const Signup = () => {
         <input
           type="text"
           id="first-name"
+          minLength={2}
+          maxLength={50}
+          required
           className={`${
             error.firstName?.length
               ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
               : "border-gray-300 bg-gray-50"
-          } shadow-sm border text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="Jean"
           value={firstName}
           onChange={(e) => validateFirstName(e.target.value)}
@@ -186,11 +204,15 @@ const Signup = () => {
         <input
           type="text"
           id="last-name"
+          min="2"
+          max="100"
+          required
+          maxLength={100}
           className={`${
             error.lastName?.length
               ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
               : "border-gray-300 bg-gray-50"
-          } shadow-sm border text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="Dupont"
           value={lastName}
           onChange={(e) => validateLastName(e.target.value)}
@@ -214,7 +236,7 @@ const Signup = () => {
             error.email?.length
               ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
               : "border-gray-300 bg-gray-50"
-          } shadow-sm border text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="nom@mail.com"
           value={email}
           onChange={(e) => validateEmail(e.target.value)}
@@ -241,7 +263,7 @@ const Signup = () => {
               error.password?.length
                 ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
                 : "border-gray-300 bg-gray-50"
-            } shadow-sm border text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
             value={password}
             onChange={(e) => validatePassword(e.target.value)}
           />
@@ -279,7 +301,7 @@ const Signup = () => {
               error.confirmPassword?.length
                 ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
                 : "border-gray-300 bg-gray-50"
-            } shadow-sm border text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
             value={confirmPassword}
             onChange={(e) => validateConfirmPassword(e.target.value)}
           />
