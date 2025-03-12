@@ -1,8 +1,12 @@
 import { useMutation } from "@apollo/client";
 import { mutationCreateUser } from "../api/CreateUser";
 import { useState } from "react";
+import Button from "../components/Button";
+import { Eye, EyeOff } from "lucide-react";
 
 const Signup = () => {
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -17,6 +21,24 @@ const Signup = () => {
     if (errors.length === 1) return errors[0];
     const lastError = errors.pop();
     return `${errors.join(", ")} et ${lastError}.`;
+  };
+
+  const validateFirstName = (value: string) => {
+    const firstNameErrors: string[] = [];
+    if (!value) {
+      firstNameErrors.push("Le prénom est requis");
+    }
+    setError((prev) => ({ ...prev, firstName: firstNameErrors }));
+    setFirstName(value);
+  };
+
+  const validateLastName = (value: string) => {
+    const lastNameErrors: string[] = [];
+    if (!value) {
+      lastNameErrors.push("Le nom est requis");
+    }
+    setError((prev) => ({ ...prev, lastName: lastNameErrors }));
+    setLastName(value);
   };
 
   // Fonction pour valider l'email dynamiquement
@@ -76,6 +98,8 @@ const Signup = () => {
 
   // Validation complète avant la soumission
   const validateCreateForm = () => {
+    validateFirstName(firstName);
+    validateLastName(lastName);
     validateEmail(email);
     validatePassword(password);
     validateConfirmPassword(confirmPassword);
@@ -122,7 +146,58 @@ const Signup = () => {
   }
 
   return (
-    <form className="max-w-sm mx-auto bg-yellow-500 p-8 rounded-xl shadow-lg">
+    <form className="max-w-sm mx-auto bg-primary p-8 rounded-xl shadow-lg">
+      {/* Prénom */}
+      <div className="mb-5">
+        <label
+          htmlFor="first-name"
+          className="block mb-2 text-sm font-medium text-white"
+        >
+          Prénom
+        </label>
+        <input
+          type="text"
+          id="first-name"
+          className={`${
+            error.firstName?.length
+              ? "border-red-400 bg-red-200 focus:ring-0"
+              : "border-gray-300 bg-gray-50"
+          } shadow-sm border text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          placeholder="Jean"
+          value={firstName}
+          onChange={(e) => validateFirstName(e.target.value)}
+        />
+        {error.firstName && (
+          <p className="text-red-500 text-sm">
+            {formatErrors(error.firstName)}
+          </p>
+        )}
+      </div>
+
+      {/* Nom */}
+      <div className="mb-5">
+        <label
+          htmlFor="last-name"
+          className="block mb-2 text-sm font-medium text-white"
+        >
+          Nom
+        </label>
+        <input
+          type="text"
+          id="last-name"
+          className={`${
+            error.lastName?.length
+              ? "border-red-400 bg-red-200 focus:ring-0"
+              : "border-gray-300 bg-gray-50"
+          } shadow-sm border text-gray-900 text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          placeholder="Dupont"
+          value={lastName}
+          onChange={(e) => validateLastName(e.target.value)}
+        />
+        {error.lastName && (
+          <p className="text-red-500 text-sm">{formatErrors(error.lastName)}</p>
+        )}
+      </div>
       {/* Email */}
       <div className="mb-5">
         <label
@@ -175,7 +250,11 @@ const Signup = () => {
             className=" -ml-8"
             onClick={() => setRevealPassword(!revealPassword)}
           >
-            {revealPassword ? "🐵" : "🙈"}
+            {revealPassword ? (
+              <Eye size={16} className=" text-primary" />
+            ) : (
+              <EyeOff size={16} className=" text-primary" />
+            )}
           </button>
         </div>
         {error.password && (
@@ -208,7 +287,11 @@ const Signup = () => {
             className=" -ml-8"
             onClick={() => setRevealPassword(!revealPassword)}
           >
-            {revealPassword ? "🐵" : "🙈"}
+            {revealPassword ? (
+              <Eye size={16} className=" text-primary" />
+            ) : (
+              <EyeOff size={16} className=" text-primary" />
+            )}
           </button>
         </div>
         {error.confirmPassword && (
@@ -219,13 +302,14 @@ const Signup = () => {
       </div>
 
       {/* Bouton */}
-      <button
-        onClick={doSubmit}
-        type="button"
-        className="text-black bg-white hover:bg-gray-100 focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center"
-      >
-        M'inscrire
-      </button>
+      <div className="flex w-full justify-end">
+        <Button
+          onClick={doSubmit}
+          variant="validation"
+          type="button"
+          label="S'inscrire"
+        />
+      </div>
     </form>
   );
 };
