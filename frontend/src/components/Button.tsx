@@ -1,17 +1,10 @@
 import React from "react";
-
-type ButtonVariant =
-  | "primary"
-  | "secondary"
-  | "validation"
-  | "pending"
-  | "error"
-  | "cancel";
+import { VariantType } from "../types/variantTypes";
 
 type ButtonProps = {
   label?: string;
   type?: "button" | "submit" | "reset";
-  variant?: ButtonVariant;
+  variant?: VariantType;
   icon?: React.ElementType;
   iconSize?: number;
   iconColor?: string;
