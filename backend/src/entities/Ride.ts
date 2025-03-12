@@ -80,10 +80,11 @@ export class Ride extends BaseEntity {
 export class RideCreateInput {
 
   @Field()
-  @MaxLength(155)
+  @MaxLength(255)
   departure_city!: string;
 
   @Field()
+  @MaxLength(255)
   @IsString()
   arrival_city!: string;
 

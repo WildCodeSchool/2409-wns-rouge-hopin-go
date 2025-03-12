@@ -3,7 +3,10 @@ import { gql } from "../gql";
 export const mutationCreateRide = gql(`
 mutation CreateRide($data: RideCreateInput!) {
     createRide(data: $data) {
-      driver_id
+      driver_id {
+        id
+        email
+      }
       departure_city
       arrival_city
       departure_at

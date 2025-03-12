@@ -10,7 +10,6 @@ import {
 } from "type-graphql";
 import { Ride, RideCreateInput, RideUpdateInput } from "../entities/Ride";
 import { validate } from "class-validator";
-import argon2 from "argon2";
 import { decode, sign, verify } from "jsonwebtoken";
 import Cookies from "cookies";
 import { ContextType } from "../auth";
