@@ -37,6 +37,14 @@ export class User extends BaseEntity {
   @Field(() => ID)
   id!: number;
 
+  @Column()
+  @Field()
+  firstName!: string;
+
+  @Column()
+  @Field()
+  lastName!: string;
+
   @Column({ unique: true })
   @IsEmail({}, { message: "Invalid email" })
   @Field({ nullable: true }) // this should be nullable because only admins + self user may see this, null otherwise
@@ -66,6 +74,16 @@ export class UserCreateInput {
   @IsEmail({}, { message: "Invalid email" })
   @Field()
   email!: string;
+
+  @Field()
+  @MinLength(2, { message: "Firstname must be at least 2 characters long" })
+  @MaxLength(50, { message: "Firstname cannot exceed 50 characters" })
+  firstName!: string;
+
+  @Field()
+  @MinLength(2, { message: "Lastname must be at least 2 characters long" })
+  @MaxLength(100, { message: "Lastname cannot exceed 100 characters" })
+  lastName!: string;
 
   @Field()
   @MinLength(8, { message: "Password must be at least 8 characters long" })
