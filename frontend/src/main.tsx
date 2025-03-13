@@ -58,7 +58,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: `/authentication`,
+        path: `/authentication/:tab`,
         element: (
           <AuthComponent authStates={[AuthStates.unauthenticated]}>
             <AuthenticationPage />

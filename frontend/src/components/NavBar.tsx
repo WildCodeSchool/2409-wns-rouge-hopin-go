@@ -36,29 +36,31 @@ const NavBar = () => {
 
       {/* Toggle Menu */}
       <div
-        className={`fixed bottom-[62px] transition-transform duration-300 ease-in-out transform right-0 z-40 flex w-fit h-18 bg-primary p-2 rounded-tl-lg ${
+        className={`md:hidden fixed bottom-[62px] transition-transform duration-300 ease-in-out transform right-0 z-40 flex w-fit h-18 bg-primary p-2 rounded-tl-lg ${
           isOpen ? "translate-y-0" : "translate-y-full"
         }`}
       >
         <div className="flex flex-col items-start gap-2 p-4 w-full">
-          <Link to="/authentication" className="w-full">
+          <Link to="/authentication/inscription" className="w-full">
             <h2 className="border-gray-300 bg-gray-50 shadow-sm border text-sm font-semibold rounded-md  block w-full px-4 py-1.5 text-primary">
               Inscription
             </h2>
           </Link>
-          <Link to="/authentication" className="w-full">
+          <Link to="/authentication/connexion" className="w-full">
             <h2 className="border-gray-300 bg-gray-50 shadow-sm border text-sm font-semibold rounded-md  block w-full px-4 py-1.5 text-primary">
               Connexion
             </h2>
           </Link>
-          <div className="w-full">
-            <h2
-              className="border-gray-300 bg-gray-50 shadow-sm border text-sm font-semibold rounded-md  block w-full px-4 py-1.5 text-primary"
-              onClick={handleSignout}
-            >
-              Déconnexion
-            </h2>
-          </div>
+          {me ? (
+            <div className="w-full">
+              <h2
+                className="border-gray-300 bg-gray-50 shadow-sm border text-sm font-semibold rounded-md  block w-full px-4 py-1.5 text-primary"
+                onClick={handleSignout}
+              >
+                Déconnexion
+              </h2>
+            </div>
+          ) : null}
         </div>
       </div>
 
@@ -83,18 +85,18 @@ const NavBar = () => {
                 className="!p-2 text-sm font-semibold"
               />
             </Link>
-          ) : (
-            <Link to="/" className="" />
-          )}
-          <Link to="/" className="">
-            <Button
-              label="Messages"
-              icon={MessageCircle}
-              iconSize={18}
-              isFlexCol
-              className="!p-2 text-sm font-semibold"
-            />
-          </Link>
+          ) : null}
+          {me ? (
+            <Link to="/" className="">
+              <Button
+                label="Messages"
+                icon={MessageCircle}
+                iconSize={18}
+                isFlexCol
+                className="!p-2 text-sm font-semibold"
+              />
+            </Link>
+          ) : null}
           <Link to="/" className="">
             <Button
               label="Rechercher"
@@ -104,15 +106,17 @@ const NavBar = () => {
               className="!p-2 text-sm font-semibold"
             />
           </Link>
-          <Link to="/" className="">
-            <Button
-              label="Proposer"
-              icon={CirclePlus}
-              iconSize={18}
-              isFlexCol
-              className="!p-2 text-sm font-semibold"
-            />
-          </Link>
+          {me ? (
+            <Link to="/" className="">
+              <Button
+                label="Proposer"
+                icon={CirclePlus}
+                iconSize={18}
+                isFlexCol
+                className="!p-2 text-sm font-semibold"
+              />
+            </Link>
+          ) : null}
           <div>
             <Button
               onClick={() => setIsOpen(!isOpen)}

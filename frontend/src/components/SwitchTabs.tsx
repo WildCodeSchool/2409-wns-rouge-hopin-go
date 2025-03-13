@@ -1,12 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Tab } from "../pages/Authentication";
 
 type SwitchTabs = {
   tabs: Tab[];
+  tabParams?: string;
 };
 
-const SwitchTabs = ({ tabs }: SwitchTabs) => {
-  const [activeTab, setActiveTab] = useState(1);
+const SwitchTabs = ({ tabs, tabParams }: SwitchTabs) => {
+  const currentTab = tabs.find((tab) => tab.label.toLowerCase() === tabParams);
+  const initialIndex = currentTab ? tabs.indexOf(currentTab) : 1;
+  const [activeTab, setActiveTab] = useState(initialIndex);
+
+  useEffect(() => {
+    const newIndex = currentTab ? tabs.indexOf(currentTab) : 1;
+    setActiveTab(newIndex);
+  }, [currentTab, tabs]);
 
   return (
     <div className="mx-4 max-w-1xl md:max-w-4xl md:mx-auto border border-textDark rounded-md overflow-hidden">
