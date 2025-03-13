@@ -3,6 +3,7 @@ import { mutationCreateUser } from "../api/CreateUser";
 import { useState } from "react";
 import Button from "../components/Button";
 import { Eye, EyeOff } from "lucide-react";
+import { toast } from "react-toastify";
 import {
   validateFirstName as validateFirstNameUtils,
   validateLastName as validateLastNameUtils,
@@ -76,6 +77,7 @@ export default function Signup() {
           },
         },
       });
+      toast.success("Inscription réussie !");
       setError({});
     } catch (e: unknown) {
       console.error(e);
