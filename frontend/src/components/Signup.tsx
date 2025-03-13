@@ -1,11 +1,17 @@
-// non utilisé on se sert du composant
 import { useMutation } from "@apollo/client";
 import { mutationCreateUser } from "../api/CreateUser";
 import { useState } from "react";
 import Button from "../components/Button";
 import { Eye, EyeOff } from "lucide-react";
+import {
+  validateFirstName as validateFirstNameUtils,
+  validateLastName as validateLastNameUtils,
+  validateEmail as validateEmailUtils,
+  validatePassword as validatePasswordUtils,
+  validateConfirmPassword as validateConfirmPasswordUtils,
+} from "../utils/validators";
 
-const Signup = () => {
+export default function Signup() {
   const [firstName, setFirstName] = useState("Adrien");
   const [lastName, setLastName] = useState("Davy");
   const [email, setEmail] = useState("adri@mail.com");
@@ -24,107 +30,34 @@ const Signup = () => {
     return `${errors.join(", ")} et ${lastError}.`;
   };
 
-  const validateFirstName = (value: string) => {
-    const firstNameErrors: string[] = [];
-    if (!value) {
-      firstNameErrors.push("Le prénom est requis");
-    }
-    if (value.length < 2) {
-      firstNameErrors.push("doit comporter au moins 2 caractères");
-    }
-    if (value.length > 50) {
-      firstNameErrors.push("Le prénom ne peut pas dépasser 50 caractères");
-    }
-
-    setError((prev) => ({ ...prev, firstName: firstNameErrors }));
-    setFirstName(value);
-  };
-
-  const validateLastName = (value: string) => {
-    const lastNameErrors: string[] = [];
-    if (!value) {
-      lastNameErrors.push("Le nom est requis");
-    }
-    if (value.length < 2) {
-      lastNameErrors.push("doit comporter au moins 2 caractères");
-    }
-    if (value.length > 100) {
-      lastNameErrors.push("Le nom ne peut pas dépasser 100 caractères");
-    }
-    setError((prev) => ({ ...prev, lastName: lastNameErrors }));
-    setLastName(value);
-  };
-
-  // Fonction pour valider l'email dynamiquement
-  const validateEmail = (value: string) => {
-    const emailErrors: string[] = [];
-    if (!value) {
-      emailErrors.push("L'email est requis");
-    } else if (
-      !/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(value)
-    ) {
-      emailErrors.push(
-        "L'email doit être au format valide, par exemple nom@mail.com"
-      );
-    }
-    setError((prev) => ({ ...prev, email: emailErrors }));
-    setEmail(value);
-  };
-
-  const validatePassword = (value: string) => {
-    const conditions: string[] = [];
-
-    if (!value) {
-      setError((prev) => ({
-        ...prev,
-        password: ["Le mot de passe est requis"],
-      }));
-      setPassword(value);
-      return;
-    }
-
-    if (value.length < 8) conditions.push("8 caractères");
-    if (value.length > 32) conditions.push("moins de 32 caractères");
-    if (!/[a-z]/.test(value)) conditions.push("une lettre minuscule");
-    if (!/[A-Z]/.test(value)) conditions.push("une lettre majuscule");
-    if (!/\d/.test(value)) conditions.push("un chiffre");
-    if (!/[@$!%*?&]/.test(value))
-      conditions.push("un caractère spécial (@$!%*?&)");
-
-    const passwordErrors =
-      conditions.length > 0
-        ? [`Le mot de passe doit comporter au moins ${conditions.join(", ")}.`]
-        : [];
-
-    setError((prev) => ({ ...prev, password: passwordErrors }));
-    setPassword(value);
-  };
-
-  // Fonction pour valider la confirmation du mot de passe dynamiquement
-  const validateConfirmPassword = (value: string) => {
-    const confirmPasswordErrors: string[] = [];
-    if (value !== password) {
-      confirmPasswordErrors.push("Les mots de passe ne correspondent pas");
-    }
-    setError((prev) => ({ ...prev, confirmPassword: confirmPasswordErrors }));
-    setConfirmPassword(value);
-  };
-
-  // Validation complète avant la soumission
-  const validateCreateForm = () => {
-    validateFirstName(firstName);
-    validateLastName(lastName);
-    validateEmail(email);
-    validatePassword(password);
-    validateConfirmPassword(confirmPassword);
-    return (
-      Object.values(error).every((errArray) => errArray.length === 0) &&
-      email &&
-      password &&
+  const validateCreateForm = (): boolean => {
+    const firstNameErrors = validateFirstNameUtils(firstName);
+    const lastNameErrors = validateLastNameUtils(lastName);
+    const emailErrors = validateEmailUtils(email);
+    const passwordErrors = validatePasswordUtils(password);
+    const confirmPasswordErrors = validateConfirmPasswordUtils(
+      password,
       confirmPassword
     );
-  };
 
+    // Mise à jour de l'état des erreurs une seule fois (plus clean !)
+    setError({
+      firstName: firstNameErrors,
+      lastName: lastNameErrors,
+      email: emailErrors,
+      password: passwordErrors,
+      confirmPassword: confirmPasswordErrors,
+    });
+
+    // Retourne true si TOUT est valide
+    return [
+      firstNameErrors,
+      lastNameErrors,
+      emailErrors,
+      passwordErrors,
+      confirmPasswordErrors,
+    ].every((errors) => errors.length === 0);
+  };
   // Gestion de la soumission
   async function doSubmit() {
     if (!validateCreateForm()) {
@@ -184,7 +117,7 @@ const Signup = () => {
           } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="Jean"
           value={firstName}
-          onChange={(e) => validateFirstName(e.target.value)}
+          onChange={(e) => setFirstName(e.target.value)}
         />
         {error.firstName && (
           <p className="text-red-400 text-sm">
@@ -215,7 +148,7 @@ const Signup = () => {
           } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="Dupont"
           value={lastName}
-          onChange={(e) => validateLastName(e.target.value)}
+          onChange={(e) => setLastName(e.target.value)}
         />
         {error.lastName && (
           <p className="text-red-400 text-sm">{formatErrors(error.lastName)}</p>
@@ -239,7 +172,7 @@ const Signup = () => {
           } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="nom@mail.com"
           value={email}
-          onChange={(e) => validateEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           autoComplete="none"
         />
         {error.email && (
@@ -265,7 +198,7 @@ const Signup = () => {
                 : "border-gray-300 bg-gray-50"
             } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
             value={password}
-            onChange={(e) => validatePassword(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
           />
 
           <button
@@ -303,7 +236,7 @@ const Signup = () => {
                 : "border-gray-300 bg-gray-50"
             } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
             value={confirmPassword}
-            onChange={(e) => validateConfirmPassword(e.target.value)}
+            onChange={(e) => setConfirmPassword(e.target.value)}
           />
           <button
             type="button"
@@ -335,6 +268,4 @@ const Signup = () => {
       </div>
     </form>
   );
-};
-
-export default Signup;
+}
