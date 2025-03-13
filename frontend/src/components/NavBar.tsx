@@ -41,24 +41,28 @@ const NavBar = () => {
         }`}
       >
         <div className="flex flex-col items-start gap-2 p-4 w-full">
-          <Link to="/authentication/inscription" className="w-full">
-            <h2 className="border-gray-300 bg-gray-50 shadow-sm border text-sm font-semibold rounded-md  block w-full px-4 py-1.5 text-primary">
-              Inscription
-            </h2>
-          </Link>
-          <Link to="/authentication/connexion" className="w-full">
-            <h2 className="border-gray-300 bg-gray-50 shadow-sm border text-sm font-semibold rounded-md  block w-full px-4 py-1.5 text-primary">
-              Connexion
-            </h2>
-          </Link>
+          {!me ? (
+            <>
+              <Link to="/authentication/inscription" className="w-full">
+                <h2 className="border-gray-300 bg-gray-50 shadow-sm border text-sm font-semibold rounded-md  block w-full px-4 py-1.5 text-primary">
+                  Inscription
+                </h2>
+              </Link>
+              <Link to="/authentication/connexion" className="w-full">
+                <h2 className="border-gray-300 bg-gray-50 shadow-sm border text-sm font-semibold rounded-md  block w-full px-4 py-1.5 text-primary">
+                  Connexion
+                </h2>
+              </Link>
+            </>
+          ) : null}
           {me ? (
             <div className="w-full">
-              <h2
-                className="border-gray-300 bg-gray-50 shadow-sm border text-sm font-semibold rounded-md  block w-full px-4 py-1.5 text-primary"
+              <button
+                className="border-gray-300 bg-gray-50 shadow-sm border text-sm font-semibold rounded-md  block w-full px-4 py-1.5 text-primary cursor-pointer"
                 onClick={handleSignout}
               >
                 Déconnexion
-              </h2>
+              </button>
             </div>
           ) : null}
         </div>
