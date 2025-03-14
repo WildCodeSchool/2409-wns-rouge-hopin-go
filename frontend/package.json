@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "graphql-codegen": "graphql-codegen",
-    "dev-and-codegen": "concurrently \"npx vite --host\" \"npx graphql-codegen --watch\""
+    "dev-and-codegen": "concurrently \"npx vite --host\" \"npx graphql-codegen --watch\"",
+    "test": "vitest"
   },
   "dependencies": {
     "@apollo/client": "^3.11.10",
@@ -26,19 +27,26 @@
     "@eslint/js": "^9.9.0",
     "@graphql-codegen/cli": "^5.0.3",
     "@parcel/watcher": "^2.5.0",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.2.0",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^22.10.7",
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react": "^4.3.1",
+    "@vitest/browser": "^3.0.8",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.9.0",
     "eslint-plugin-react-hooks": "^5.1.0-rc.0",
     "eslint-plugin-react-refresh": "^0.4.9",
     "globals": "^15.9.0",
+    "jsdom": "^26.0.0",
     "postcss": "^8.4.47",
     "tailwindcss": "^3.4.13",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.0.1",
-    "vite": "^5.4.1"
+    "vite": "^5.4.1",
+    "vitest": "^3.0.8"
   }
 }
