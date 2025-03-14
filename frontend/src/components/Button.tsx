@@ -8,8 +8,11 @@ type ButtonProps = {
   icon?: React.ElementType;
   iconSize?: number;
   iconColor?: string;
-  isFlexCol?: boolean; // ✅ nouvelle prop
+  iconRotate?: boolean;
+  isFlexCol?: boolean;
   className?: string;
+  isDisabled?: boolean;
+  isHoverBgColor?: boolean;
   onClick?: () => void;
 };
 
@@ -20,19 +23,39 @@ const Button: React.FC<ButtonProps> = ({
   icon: Icon,
   iconSize = 18,
   iconColor = "text-current",
+  iconRotate = false,
   isFlexCol = false,
   className = "",
+  isDisabled = false,
+  isHoverBgColor = true,
   onClick,
 }) => {
-  const baseClass = isFlexCol ? "button-col" : "button-flex"; // ✅ ici
+  const baseClass = isFlexCol ? "button-col" : "button-flex";
   const variantClass = `button-${variant}`;
-  const finalButtonClass = `${baseClass} ${variantClass} ${
-    label ? "py-2 px-4" : "p-2"
-  } ${className}`.trim();
+  const hoverBgClass =
+    isHoverBgColor && (variant === "primary" || variant === "secondary")
+      ? `hover:bg-${variant}Hover`
+      : "";
+
+  const iconClass = `${
+    iconRotate ? "rotate-0 group-hover:-rotate-12 transition-200" : ""
+  } `;
+  const finalButtonClass =
+    `group ${baseClass} ${hoverBgClass} ${variantClass} ${
+      label ? "py-2 px-4" : "p-2"
+    } ${className}`.trim();
 
   return (
-    <button type={type} onClick={onClick} className={finalButtonClass}>
-      {Icon && <Icon size={iconSize} className={`${iconColor}`} />}
+    <button
+      aria-label={label || "icon button"}
+      disabled={isDisabled}
+      type={type}
+      onClick={onClick}
+      className={finalButtonClass}
+    >
+      <span className={iconClass}>
+        {Icon && <Icon size={iconSize} className={`${iconColor}`} />}
+      </span>
       {label}
     </button>
   );
