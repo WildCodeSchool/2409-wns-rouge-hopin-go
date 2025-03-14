@@ -1,20 +1,36 @@
 import { useEffect, useState } from "react";
-import { Tab } from "../pages/Authentication";
+import { useNavigate } from "react-router-dom";
 
-type SwitchTabs = {
+type SwitchTabsProps = {
   tabs: Tab[];
   tabParams?: string;
+  path?: string;
 };
 
-const SwitchTabs = ({ tabs, tabParams }: SwitchTabs) => {
-  const currentTab = tabs.find((tab) => tab.label.toLowerCase() === tabParams);
-  const initialIndex = currentTab ? tabs.indexOf(currentTab) : 1;
-  const [activeTab, setActiveTab] = useState(initialIndex);
+export type Tab = {
+  label: string;
+  content: JSX.Element;
+  path: string;
+};
 
+const SwitchTabs = ({ tabs, tabParams }: SwitchTabsProps) => {
+  const navigate = useNavigate();
+  const currentTab = tabs.find(
+    (tab) => tab.label.toLowerCase() === tabParams?.toLowerCase()
+  );
+  const currentTabIndex = currentTab ? tabs.indexOf(currentTab) : 1;
+  const [activeTab, setActiveTab] = useState(currentTabIndex);
+
+  // rerender the component if a user clicks on the menu
   useEffect(() => {
     const newIndex = currentTab ? tabs.indexOf(currentTab) : 1;
     setActiveTab(newIndex);
   }, [currentTab, tabs]);
+
+  const handleTabClick = (index: number) => {
+    setActiveTab(index);
+    navigate(tabs[index].path);
+  };
 
   return (
     <div className="mx-4 max-w-1xl md:max-w-4xl md:mx-auto border border-textDark rounded-md overflow-hidden">
@@ -27,7 +43,7 @@ const SwitchTabs = ({ tabs, tabParams }: SwitchTabs) => {
                 ? "bg-primary text-textLight"
                 : "bg-white text-primary"
             }`}
-            onClick={() => setActiveTab(index)}
+            onClick={() => handleTabClick(index)}
           >
             {tab.label}
           </button>
