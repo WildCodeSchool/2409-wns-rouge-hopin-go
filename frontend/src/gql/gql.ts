@@ -13,7 +13,13 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
-const documents = {
+type Documents = {
+    "\nmutation CreateUser($data: UserCreateInput!) {\n    createUser(data: $data) {\n      id\n      firstName\n      lastName\n      email\n    }\n  }": typeof types.CreateUserDocument,
+    "\nmutation Signin($email: String!, $password: String! ) {\n  signin(email: $email, password: $password) {\n    id\n    email\n  }\n}": typeof types.SigninDocument,
+    "\nmutation Mutation {\n  signout\n}\n  ": typeof types.MutationDocument,
+    "\nquery Whoami {\n  whoami {\n    id\n    email\n    role\n  }\n}\n": typeof types.WhoamiDocument,
+};
+const documents: Documents = {
     "\nmutation CreateUser($data: UserCreateInput!) {\n    createUser(data: $data) {\n      id\n      firstName\n      lastName\n      email\n    }\n  }": types.CreateUserDocument,
     "\nmutation Signin($email: String!, $password: String! ) {\n  signin(email: $email, password: $password) {\n    id\n    email\n  }\n}": types.SigninDocument,
     "\nmutation Mutation {\n  signout\n}\n  ": types.MutationDocument,

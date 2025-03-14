@@ -1,4 +1,3 @@
-// non utilisé on se sert du composant
 import { useMutation } from "@apollo/client";
 import { useState } from "react";
 import { mutationSignin } from "../api/Signin";
