@@ -59,11 +59,13 @@ const Button: React.FC<ButtonProps> = ({
     }
   }
 
+  const isDisabledClass = isDisabled ? "" : "cursor-pointer";
+
   const iconClass = `${
     iconRotate ? "rotate-0 group-hover:-rotate-12 transition-200" : ""
   } `;
   const finalButtonClass =
-    `group ${baseClass} ${hoverBgClass} ${variantClass} ${
+    `group ${baseClass} ${hoverBgClass} ${variantClass} ${isDisabledClass} ${
       label ? "py-2 px-4" : "p-2"
     } ${className}`.trim();
 

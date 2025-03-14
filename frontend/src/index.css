@@ -31,26 +31,26 @@ h1 {
 }
 
 .button-primary {
-  @apply bg-primary text-textLight cursor-pointer transition-200;
+  @apply bg-primary text-textLight transition-200;
 }
 
 .button-secondary {
-  @apply bg-secondary text-textDark cursor-pointer transition-200;
+  @apply bg-secondary text-textDark transition-200;
 }
 
 .button-validation {
-  @apply bg-validation text-textLight cursor-pointer transition-200;
+  @apply bg-validation text-textLight transition-200;
 }
 
 .button-pending {
-  @apply bg-pending text-textLight cursor-pointer transition-200;
+  @apply bg-pending text-textLight transition-200;
 }
 
 .button-error {
-  @apply bg-error text-textLight transition-200 cursor-pointer;
+  @apply bg-error text-textLight transition-200;
 }
 .button-cancel {
-  @apply bg-cancel text-textLight transition-200 cursor-pointer;
+  @apply bg-cancel text-textLight transition-200;
 }
 
 .text-field-with-button {
