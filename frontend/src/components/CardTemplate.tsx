@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import { VariantType } from "../types/variantTypes";
 import Button from "./Button";
-import { useEffect, useState } from "react";
+import useWindowSize from "../utils/useWindowSize";
 
 type CardTemplateProps = {
   variant: VariantType;
@@ -19,21 +19,6 @@ const CardTemplate: React.FC<CardTemplateProps> = ({ variant = "primary" }) => {
   let cardBackgroundVariant: string;
   let cardStatusVariant: string;
   let cardButtonIcon: React.ElementType;
-
-  const useWindowSize = () => {
-    const [windowWidth, setWindowWidth] = useState<number>(window.innerWidth);
-
-    useEffect(() => {
-      const handleResize = () => {
-        setWindowWidth(window.innerWidth);
-      };
-
-      window.addEventListener("resize", handleResize);
-      return () => window.removeEventListener("resize", handleResize);
-    }, []);
-
-    return windowWidth;
-  };
 
   const windowSize = useWindowSize();
 
