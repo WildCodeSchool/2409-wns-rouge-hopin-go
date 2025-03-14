@@ -154,6 +154,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({ variant = "primary" }) => {
         </svg>
 
         <Button
+          isDisabled={variant !== "primary" && variant !== "secondary"}
           icon={cardButtonIcon}
           iconRotate={variant === "primary" || variant === "secondary"}
           variant={variant}
