@@ -1,4 +1,5 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 import { VariantType } from "../types/variantTypes";
 
 type ButtonProps = {
@@ -14,6 +15,8 @@ type ButtonProps = {
   isDisabled?: boolean;
   isHoverBgColor?: boolean;
   onClick?: () => void;
+  isLink?: boolean;
+  to?: string;
 };
 
 const Button: React.FC<ButtonProps> = ({
@@ -29,6 +32,8 @@ const Button: React.FC<ButtonProps> = ({
   isDisabled = false,
   isHoverBgColor = false,
   onClick,
+  isLink = false,
+  to = "/",
 }) => {
   const baseClass = isFlexCol ? "button-col" : "button-flex";
   const variantClass = `button-${variant}`;
@@ -60,27 +65,49 @@ const Button: React.FC<ButtonProps> = ({
   }
 
   const isDisabledClass = isDisabled ? "" : "cursor-pointer";
+  const iconClass = iconRotate
+    ? "rotate-0 group-hover:-rotate-12 transition-200"
+    : "";
 
-  const iconClass = `${
-    iconRotate ? "rotate-0 group-hover:-rotate-12 transition-200" : ""
-  } `;
   const finalButtonClass =
     `group ${baseClass} ${hoverBgClass} ${variantClass} ${isDisabledClass} ${
       label ? "py-2 px-4" : "p-2"
     } ${className}`.trim();
 
-  return (
-    <button
-      aria-label={label || "icon button"}
-      disabled={isDisabled}
-      type={type}
-      onClick={onClick}
-      className={finalButtonClass}
-    >
+  const content = (
+    <>
       <span className={iconClass}>
-        {Icon && <Icon size={iconSize} className={`${iconColor}`} />}
+        {Icon && <Icon size={iconSize} className={iconColor} />}
       </span>
       {label}
+    </>
+  );
+
+  if (isLink) {
+    return (
+      <NavLink
+        to={to}
+        className={({ isActive, isPending }) =>
+          `${finalButtonClass} ${
+            isPending ? "opacity-50" : isActive ? "underline" : ""
+          }`.trim()
+        }
+        aria-label={label || "link button"}
+      >
+        {content}
+      </NavLink>
+    );
+  }
+
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={isDisabled}
+      className={finalButtonClass}
+      aria-label={label || "icon button"}
+    >
+      {content}
     </button>
   );
 };
