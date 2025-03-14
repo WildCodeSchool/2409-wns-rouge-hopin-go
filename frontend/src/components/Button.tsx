@@ -15,8 +15,9 @@ type ButtonProps = {
   icon?: React.ElementType;
   iconSize?: number;
   iconColor?: string;
-  isFlexCol?: boolean; // ✅ nouvelle prop
+  isFlexCol?: boolean;
   className?: string;
+  isDisabled?: boolean;
   onClick?: () => void;
 };
 
@@ -29,6 +30,7 @@ const Button: React.FC<ButtonProps> = ({
   iconColor = "text-current",
   isFlexCol = false,
   className = "",
+  isDisabled = false,
   onClick,
 }) => {
   const baseClass = isFlexCol ? "button-col" : "button-flex"; // ✅ ici
@@ -38,7 +40,12 @@ const Button: React.FC<ButtonProps> = ({
   } ${className}`.trim();
 
   return (
-    <button type={type} onClick={onClick} className={finalButtonClass}>
+    <button
+      disabled={isDisabled}
+      type={type}
+      onClick={onClick}
+      className={finalButtonClass}
+    >
       {Icon && <Icon size={iconSize} className={`${iconColor}`} />}
       {label}
     </button>
