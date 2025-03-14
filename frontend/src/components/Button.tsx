@@ -27,15 +27,37 @@ const Button: React.FC<ButtonProps> = ({
   isFlexCol = false,
   className = "",
   isDisabled = false,
-  isHoverBgColor = true,
+  isHoverBgColor = false,
   onClick,
 }) => {
   const baseClass = isFlexCol ? "button-col" : "button-flex";
   const variantClass = `button-${variant}`;
-  const hoverBgClass =
-    isHoverBgColor && (variant === "primary" || variant === "secondary")
-      ? `hover:bg-${variant}Hover`
-      : "";
+
+  let hoverBgClass = "";
+  if (isHoverBgColor) {
+    switch (variant) {
+      case "primary":
+        hoverBgClass = "hover:bg-primaryHover";
+        break;
+      case "secondary":
+        hoverBgClass = "hover:bg-secondaryHover";
+        break;
+      case "validation":
+        hoverBgClass = "hover:bg-validationHover";
+        break;
+      case "pending":
+        hoverBgClass = "hover:bg-pendingHover";
+        break;
+      case "error":
+        hoverBgClass = "hover:bg-errorHover";
+        break;
+      case "cancel":
+        hoverBgClass = "hover:bg-cancelHover";
+        break;
+      default:
+        hoverBgClass = "";
+    }
+  }
 
   const iconClass = `${
     iconRotate ? "rotate-0 group-hover:-rotate-12 transition-200" : ""
