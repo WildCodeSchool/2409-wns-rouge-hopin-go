@@ -116,6 +116,18 @@ export class RideCreateInput {
   arrival_at!: Date;
 
   @Field()
+  departure_lng!: number;
+
+  @Field()
+  departure_lat!: number;
+
+  @Field()
+  arrival_lng!: number;
+  
+  @Field()
+  arrival_lat!: number;
+
+  @Field()
   @Min(1)
   @Max(4)
   max_passenger!: number;

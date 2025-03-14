@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { mutationCreateRide } from "../api/CreateRide";
 import { useNavigate } from "react-router-dom";
 import Button from "./Button";
+import { verify } from "crypto";
 
 const CreateRide = () => {
 
@@ -16,15 +17,55 @@ const CreateRide = () => {
     const [error, setError] = useState<Record<string, string[]>>({});
     const navigate = useNavigate();
 
-    const [suggestions, setSuggestions] = useState<string[]>([]);
-    const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+    const [suggestions, setSuggestions] = useState({ departure: [], arrival: [] });
+    const [showDepartureSuggestions, setShowDepartureSuggestions] = useState<boolean>(false);
+    const [showArrivalSuggestions, setShowArrivalSuggestions] = useState<boolean>(false);
     const [departureCoords, setDepartureCoords] = useState({ lat: 0, long: 0 })
-    const [selected, setSelected] = useState<number>();
+    const [arrivalCoords, setArrivalCoords] = useState({ lat: 0, long: 0 })
+    const [selected, setSelected] = useState({ departure: "", arrival: "" });
+    const [lastModifiedCity, setLastModifiedCity] = useState<"departure" | "arrival" | null>(null);
+
 
     const [doCreateRide, { data }] = useMutation(mutationCreateRide);
 
 
+    useEffect(() => {
+        const fetchCityAddress = async () => {
+            if (lastModifiedCity === "departure") {
+                try {
+                    const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${departureCity}`);
+                    const data = await response.json();
+                    console.log("FetchAddress => ", data)
+                    setSuggestions({ ...suggestions, departure: data.features.map((feature: any) => feature.properties.label) });
+                    setDepartureCoords({ lat: data.features[0].geometry.coordinates[0], long: data.features[0].geometry.coordinates[1] })
 
+                } catch (error) {
+                    console.error("Erreur lors de la récupération des adresses :", error);
+                }
+            } else if (lastModifiedCity === "arrival") {
+                try {
+                    const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${arrivalCity}`);
+                    const data = await response.json();
+                    console.log("FetchAddress => ", data)
+                    setSuggestions({ ...suggestions, arrival: data.features.map((feature: any) => feature.properties.label) });
+                    setArrivalCoords({ lat: data.features[0].geometry.coordinates[0], long: data.features[0].geometry.coordinates[1] })
+
+                } catch (error) {
+                    console.error("Erreur lors de la récupération des adresses :", error);
+                }
+            }
+        };
+
+        const timer = setTimeout(fetchCityAddress, 300); // Débounce la requête
+        return () => clearTimeout(timer);
+    }, [departureCity, arrivalCity]);
+
+
+
+    useEffect(() => {
+        validateCity(departureCity, "departure");
+        validateCity(arrivalCity, "arrival");
+    }, [departureCity, arrivalCity, selected]);
 
     const formatErrors = (errors: string[]) => {
         if (errors.length === 0) return "";
@@ -33,26 +74,54 @@ const CreateRide = () => {
         return `${errors.join(", ")} et ${lastError}.`;
     };
 
-    const validateDepartureCity = (value: string) => {
-        const departureCityError: string[] = [];
+    const validateCity = (value: string, key: "departure" | "arrival") => {
+        console.log("value saisie :", `"${value}"`);
+        console.log("selected departure :", selected.departure);
+        console.log("selected arrival :", selected.arrival);
+        console.log("Égalité exacte sur departure ?", value === selected.departure);
+        console.log("Égalité exacte sur arrival ?", value === selected.arrival);
+
+        const cityError: string[] = [];
+
         if (!value) {
-            departureCityError.push("Une ville de départ est requise");
-        } else if (departureCity !== suggestions[0]) {
-            departureCityError.push(
-                "L'addresse n'est pas valide"
+            cityError.push(
+                key === "departure"
+                    ? "Une ville de départ est requise"
+                    : "Une ville d'arrivée est requise"
             );
+        } else if (
+            (key === "departure" && value !== selected.departure) ||
+            (key === "arrival" && value !== selected.arrival)
+        ) {
+            cityError.push("L'adresse n'est pas valide");
         } else if (suggestions.length > 1) {
-            departureCityError.push(
-                "L'addresse n'est pas assez précise"
-            );
-        } // la valeur de l'input doit correspondre à la dernière suggestion sélectionné
-        setError((prev) => ({ ...prev, departure_city: departureCityError }));
-        setDepartureCity(value);
+            cityError.push("L'adresse n'est pas assez précise");
+        }
+
+        // Mise à jour des erreurs dans le state
+        setError((prev) => ({
+            ...prev,
+            [key === "departure" ? "departure_city" : "arrival_city"]: cityError,
+        }));
+
+        // Mise à jour du bon state en fonction de la clé
+        if (key === "departure") {
+            console.log("departureCity before setter:", departureCity);
+            setDepartureCity(value);
+            console.log("departureCity after setter:", departureCity);
+        } else {
+            console.log("arrivalCity before setter:", arrivalCity);
+            setArrivalCity(value);
+            console.log("arrivalCity after setter:", arrivalCity);
+        }
     };
 
 
+
+
     const validateCreateForm = () => {
-        validateDepartureCity(departureCity);
+        validateCity(departureCity, "departure")
+        validateCity(arrivalCity, "arrival")
 
         return (
             Object.values(error).every((errArray) => errArray.length === 0) &&
@@ -78,6 +147,11 @@ const CreateRide = () => {
                         departure_at: departureAt,
                         arrival_at: arrivalAt,
                         max_passenger: maxPassenger,
+                        departure_lat: departureCoords.lat,
+                        departure_lng: departureCoords.long,
+                        arrival_lat: arrivalCoords.lat,
+                        arrival_lng: arrivalCoords.long,
+
                     },
                 },
 
@@ -96,48 +170,29 @@ const CreateRide = () => {
 
     }
 
-    useEffect(() => {
-        if (departureCity.length < 3) {
-            setSuggestions([]);
-            return;
+
+
+    const handleSelect = async (address: string) => {
+        console.log("handleSelect is triggered : ", address)
+        if (lastModifiedCity === "departure") {
+            setShowDepartureSuggestions(false)
+            setSelected({ ...selected, departure: address })
+            setDepartureCity(address)
+            validateCity(address, "departure")
+        } else {
+            setShowArrivalSuggestions(false)
+            setSelected({ ...selected, arrival: address })
+            setArrivalCity(address)
+            validateCity(address, "arrival")
         }
-
-        const fetchAddresses = async () => {
-            try {
-                const response = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${departureCity}`);
-                const data = await response.json();
-                console.log("FetchAddress => ", data)
-                setSuggestions(data.features.map((feature: any) => feature.properties.label));
-                setDepartureCoords({ lat: data.features[0].geometry.coordinates[0], long: data.features[0].geometry.coordinates[1] })
-
-            } catch (error) {
-                console.error("Erreur lors de la récupération des adresses :", error);
-            }
-        };
-
-        const timer = setTimeout(fetchAddresses, 300); // Débounce la requête
-        return () => clearTimeout(timer);
-    }, [departureCity]);
-
-    const handleSelect = (address: string) => {
-        setShowSuggestions(false)
-        setDepartureCity(address);
     };
 
 
 
 
-    // console.info(data)
-    console.info("Suggestion", suggestions)
-    console.info("DepartureCity", departureCity)
-    console.info("coordonées", departureCoords)
-    console.info("Max passengers", maxPassenger)
+
 
     return (
-
-
-
-
         <form className="" onSubmit={(e) => {
             e.preventDefault();
             doSubmit();
@@ -161,14 +216,18 @@ const CreateRide = () => {
                             } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
                         placeholder="ex. Marseille"
                         value={departureCity}
-                        onChange={(e) => validateDepartureCity(e.target.value)}
-                        onKeyDown={() => setShowSuggestions(true)}
+                        onChange={(e) => {
+                            setDepartureCity(e.target.value);
+                            setLastModifiedCity("departure")
+                        }
+                        }
+                        onKeyDown={() => setShowDepartureSuggestions(true)}
                         autoComplete="none"
                         maxLength={255}
                     />
-                    {suggestions.length > 0 && showSuggestions && (
+                    {suggestions.departure.length > 0 && showDepartureSuggestions && (
                         <ul className="absolute bg-white border mt-1 max-h-60 overflow-y-auto shadow-lg">
-                            {suggestions.map((address, index) => (
+                            {suggestions.departure.map((address, index) => (
                                 <li
                                     key={index}
                                     onClick={() => handleSelect(address)}
@@ -183,8 +242,9 @@ const CreateRide = () => {
                         <p className="text-red-500 text-sm">{formatErrors(error.departure_city)}</p>
                     )}
                 </div>
-                <div className="flex-col text-center">
 
+                {/* DepartureTime */}
+                <div className="flex-col text-center">
                     <label
                         htmlFor="departureAt"
                         className="block mb-2 text-sm font-medium text-textLight"
@@ -207,12 +267,10 @@ const CreateRide = () => {
                         <p className="text-red-500 text-sm">{formatErrors(error.departure_at)}</p>
                     )}
                 </div>
-
             </div>
 
-            {/* ArrivalCity */}
-
             <div className="flex flex-row justify-between">
+                {/* ArrivalCity */}
                 <div className="flex-col w-7/12">
                     <label
                         htmlFor="arrivalAddress"
@@ -229,15 +287,30 @@ const CreateRide = () => {
                             } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
                         placeholder="ex. Lyon"
                         value={arrivalCity}
-                        onChange={(e) => setArrivalCity(e.target.value)}
+                        onChange={(e) => {
+                            validateCity(e.target.value, "arrival"); setLastModifiedCity("arrival");
+                        }}
+                        onKeyDown={() => setShowArrivalSuggestions(true)}
                         autoComplete="none"
                         maxLength={255}
                     />
+                    {suggestions.arrival.length > 0 && showArrivalSuggestions && (
+                        <ul className="absolute bg-white border mt-1 max-h-60 overflow-y-auto shadow-lg">
+                            {suggestions.arrival.map((address, index) => (
+                                <li
+                                    key={index}
+                                    onClick={() => handleSelect(address)}
+                                    className="p-2 cursor-pointer hover:bg-gray-200"
+                                >
+                                    {address}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                     {error.arrival_city && (
                         <p className="text-red-500 text-sm">{formatErrors(error.departure_city)}</p>
                     )}
                 </div>
-
 
                 {/* ArrivalTime */}
                 <div className="flex-col text-center" >
@@ -274,8 +347,6 @@ const CreateRide = () => {
                 >
                     Nombre de passager maximum
                 </label>
-
-
                 <div className="flex justify-between">
                     <Button
                         onClick={() => setMaxPassenger(1)}
@@ -302,14 +373,11 @@ const CreateRide = () => {
                         label="4"
                     />
                 </div>
-
             </div>
-
 
             {/* Bouton */}
             <div className="flex w-full justify-end mt-6">
                 <Button
-                    onClick={doSubmit}
                     variant="validation"
                     type="button"
                     label="Créer mon trajet"
