@@ -76,9 +76,11 @@ const Button: React.FC<ButtonProps> = ({
 
   const content = (
     <>
-      <span className={iconClass}>
-        {Icon && <Icon size={iconSize} className={iconColor} />}
-      </span>
+      {Icon && (
+        <span className={iconClass}>
+          <Icon size={iconSize} className={iconColor} />
+        </span>
+      )}
       {label}
     </>
   );
