@@ -37,23 +37,27 @@ const NavBar = () => {
 
       {/* Toggle Menu */}
       <div
-        className={`flex md:hidden fixed bottom-[58px] transition-transform duration-300 ease-in-out transform right-0 z-40 w-fit h-18 bg-primary p-2 rounded-tl-lg ${
+        className={`flex md:hidden fixed bottom-[58px] md:bottom-0 transition-transform duration-300 ease-in-out transform right-0 z-40 w-fit h-18 bg-primary p-2 rounded-tl-lg ${
           isOpen ? "translate-y-0" : "translate-y-full"
         }`}
       >
-        <div className="flex flex-col items-start gap-4 p-4 w-full">
+        <div
+          className={`flex flex-col items-start gap-4 p-4 w-full transition-opacity duration-300 ease-in-out ${
+            isOpen ? "opacity-100" : "opacity-0"
+          }`}
+        >
           {!me ? (
             <>
               <Button
                 isLink
-                to="/authentication/inscription"
+                to="/auth/inscription"
                 label="Inscription"
                 className="font-semibold"
                 variant="secondary"
               />
               <Button
                 isLink
-                to="/authentication/connexion"
+                to="/auth/connexion"
                 label="Connexion"
                 className="font-semibold"
                 variant="secondary"
@@ -138,10 +142,8 @@ const NavBar = () => {
 
       {/* Toggle Menu */}
       <div
-        className={`hidden md:flex fixed md:top-[62px] md:bottom-auto transition-transform duration-300 ease-in-out transform right-0 z-40 w-fit h-18  p-2 rounded-tl-lg md:h-fit md:pt-10 md:rounded-bl-3xl
-        ${
-          isOpen ? "translate-y-0 bg-primary" : "!-translate-y-full bg-gray-100"
-        }
+        className={`hidden md:flex fixed md:top-[62px] md:bottom-auto transition-transform duration-300 ease-in-out transform right-0 z-40 w-fit h-18  p-2 rounded-tl-lg md:h-fit md:pt-10 md:rounded-bl-3xl bg-primary
+        ${isOpen ? "translate-y-0 " : "!-translate-y-full"}
         `}
       >
         <div className="flex flex-col gap-4 p-4 w-full">

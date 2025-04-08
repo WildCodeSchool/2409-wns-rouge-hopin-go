@@ -10,7 +10,13 @@ const AuthenticationPage = () => {
     { label: "Inscription", content: <Signup />, path: "/auth/inscription" },
     { label: "Connexion", content: <Signin />, path: "/auth/connexion" },
   ];
-  return <SwitchTab tabs={tabs} tabParams={tab} />;
+  return (
+    <div className="flex-grow flex items-center justify-center h-full mx-6 max-w-1xl md:max-w-4xl overflow-hidden z-50">
+      <div className="flex-1">
+        <SwitchTab tabs={tabs} tabParams={tab} />
+      </div>
+    </div>
+  );
 };
 
 export default AuthenticationPage;

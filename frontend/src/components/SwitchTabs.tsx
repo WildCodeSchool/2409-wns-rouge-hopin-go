@@ -33,7 +33,7 @@ const SwitchTabs = ({ tabs, tabParams }: SwitchTabsProps) => {
   };
 
   return (
-    <div className="mx-4 max-w-1xl md:max-w-4xl md:mx-auto border border-textDark rounded-md overflow-hidden">
+    <div className="border border-textDark rounded-md z-50">
       <div className="flex ">
         {tabs.map((tab, index) => (
           <button
@@ -42,6 +42,8 @@ const SwitchTabs = ({ tabs, tabParams }: SwitchTabsProps) => {
               activeTab === index
                 ? "bg-primary text-textLight"
                 : "bg-white text-primary"
+            } ${index === 0 ? "rounded-tl-md" : ""} ${
+              index === tabs.length - 1 ? "rounded-tr-md" : ""
             }`}
             onClick={() => handleTabClick(index)}
           >
@@ -49,7 +51,7 @@ const SwitchTabs = ({ tabs, tabParams }: SwitchTabsProps) => {
           </button>
         ))}
       </div>
-      <div className="w-full rounded-b-md p-10  bg-primary ">
+      <div className="w-full rounded-b-md p-5  bg-primary ">
         {tabs[activeTab].content}
       </div>
     </div>
