@@ -11,6 +11,7 @@ import AuthComponent from "./components/AuthComponent.tsx";
 import BadURLRedirect from "./components/BadURLRedirect.tsx";
 import { AuthStates } from "./services/AuthStates.ts";
 import AuthenticationPage from "./pages/Authentication";
+import RidePage from "./pages/Ride";
 
 const client = new ApolloClient({
   uri: "/api",
@@ -26,6 +27,14 @@ const router = createBrowserRouter([
       {
         path: "/",
         element: <Home />,
+      },
+      {
+        path: "/:tab",
+        element: <RidePage />,
+      },
+      {
+        path: "/:tab",
+        element: <RidePage />,
       },
       {
         path: "/admin",

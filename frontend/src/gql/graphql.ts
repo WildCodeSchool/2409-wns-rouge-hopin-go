@@ -44,14 +44,47 @@ export type MutationSigninArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  searchRide: Array<Ride>;
   user: User;
   users: Array<User>;
   whoami?: Maybe<User>;
 };
 
 
+export type QuerySearchRideArgs = {
+  data?: InputMaybe<SearchRidesInput>;
+};
+
+
 export type QueryUserArgs = {
   id: Scalars['ID']['input'];
+};
+
+export type Ride = {
+  __typename?: 'Ride';
+  arrival_address: Scalars['String']['output'];
+  arrival_at: Scalars['DateTimeISO']['output'];
+  arrival_city: Scalars['String']['output'];
+  arrival_lat: Scalars['Float']['output'];
+  arrival_lng: Scalars['Float']['output'];
+  created_at: Scalars['DateTimeISO']['output'];
+  departure_address: Scalars['String']['output'];
+  departure_at: Scalars['DateTimeISO']['output'];
+  departure_city: Scalars['String']['output'];
+  departure_lat: Scalars['Float']['output'];
+  departure_lng: Scalars['Float']['output'];
+  driver: User;
+  id: Scalars['ID']['output'];
+  is_canceled: Scalars['Boolean']['output'];
+  max_passenger: Scalars['Float']['output'];
+  nb_passenger: Scalars['Float']['output'];
+};
+
+export type SearchRidesInput = {
+  arrival_at?: InputMaybe<Scalars['String']['input']>;
+  arrival_city: Scalars['String']['input'];
+  departure_at: Scalars['String']['input'];
+  departure_city: Scalars['String']['input'];
 };
 
 export type User = {

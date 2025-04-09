@@ -119,19 +119,20 @@ const NavBar = () => {
         <div className=" flex justify-between gap-4 pl-6 pr-8 my-6 w-fit items-center bg-primary rounded-bl-3xl">
           <Button
             isLink
-            to="/"
+            to="/rechercher"
             variant="secondary"
             label="Rechercher"
             className="font-semibold"
           />
-
-          <Button
-            isLink
-            to="/"
-            variant="secondary"
-            label="Proposer"
-            className="font-semibold"
-          />
+          {me && (
+            <Button
+              isLink
+              to="/proposer"
+              variant="secondary"
+              label="Proposer"
+              className="font-semibold"
+            />
+          )}
         </div>
         <div className="rounded-full bg-gray-100 -ml-4 p-4 m-2 flex items-center justify-center">
           <button onClick={() => setIsOpen(!isOpen)}>
