@@ -43,7 +43,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
       - name: Goto server and run tests
-        run: cd backend && npm i && npm run test:postgres
+        run: cd backend && npm i && node ./scripts/test-postgres.js && npx jest
   docker-back:
     needs: test-back
     if: github.ref == 'refs/heads/${{ github.event.repository.default_branch }}'
