@@ -13,6 +13,7 @@ import AuthComponent from "./components/AuthComponent.tsx";
 import BadURLRedirect from "./components/BadURLRedirect.tsx";
 import { AuthStates } from "./services/AuthStates.ts";
 import AuthenticationPage from "./pages/Authentication";
+import RideResults from "./pages/RideResults.tsx";
 
 const client = new ApolloClient({
   uri: "/api",
@@ -40,6 +41,14 @@ const router = createBrowserRouter([
       {
         path: "/about",
         element: <About />,
+      },
+      {
+        path: `/ride-results`,
+        element: (
+          <AuthComponent authStates={[AuthStates.unauthenticated]}>
+            <RideResults />
+          </AuthComponent>
+        ),
       },
       {
         path: `/signin`,

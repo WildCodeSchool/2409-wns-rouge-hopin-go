@@ -23,7 +23,7 @@ const App = () => {
         <header>
           <NavBar />
         </header>
-        <main className="mt-32">
+        <main>
           <Outlet />
         </main>
       </div>
