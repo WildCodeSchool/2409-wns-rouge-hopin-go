@@ -3,9 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "test:watch": "jest --watch",
-    "test:postgres": "docker rm --force pgtest && docker run -d -p 5434:5432 --name pgtest -e POSTGRES_PASSWORD=supersecret -e POSTGRES_USER=hopingo -e POSTGRES_DB=hopingo postgres && dotenv -e .env.test -- npx jest --watch",
+    "test:postgres": "docker rm --force pgtest && docker run -d -p 5434:5432 --name pgtest -e POSTGRES_PASSWORD=password -e POSTGRES_USER=user -e POSTGRES_DB=user postgres && dotenv -e .env.test -- npx jest --watch",
     "start": "concurrently -n \"BACK\" -c \"cyan.bgBlack\" \"ts-node-dev src/index.ts\""
   },
   "keywords": [],
