@@ -22,11 +22,7 @@ const App = () => {
         <header>
           <NavBar />
         </header>
-<<<<<<< HEAD
-        <main>
-=======
-        <main className="md:pt-[58px] pb-[18px] md:pb-0 flex-grow flex items-center justify-center md:h-[calc(100vh_-_58px)] mb-4">
->>>>>>> dev
+        <main className="h-screen">
           <Outlet />
         </main>
       </div>

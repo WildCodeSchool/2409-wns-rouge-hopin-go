@@ -80,7 +80,7 @@ const NavBar = () => {
       {/* Navbar */}
       <nav
         className="flex md:hidden fixed bottom-0 left-0 right-0 z-50 w-full h-18
-       bg-primary text-secondary "
+      bg-primary text-secondary "
       >
         <div className="flex items-center justify-around w-full p-2">
           {me ? (
@@ -119,10 +119,11 @@ const NavBar = () => {
         <div className=" flex justify-between gap-4 pl-6 pr-8 my-6 w-fit items-center bg-primary rounded-bl-3xl">
           <Button
             isLink
-            to="/"
+            to="/ride-results"
             variant="secondary"
             label="Rechercher"
             className="font-semibold"
+            isHoverBgColor
           />
 
           <Button
@@ -131,6 +132,7 @@ const NavBar = () => {
             variant="secondary"
             label="Proposer"
             className="font-semibold"
+            isHoverBgColor
           />
         </div>
         <div className="rounded-full bg-gray-100 -ml-4 p-4 m-2 flex items-center justify-center">
@@ -155,6 +157,7 @@ const NavBar = () => {
                 label="Inscription"
                 className="font-semibold"
                 variant="secondary"
+                isHoverBgColor
               />
               <Button
                 isLink
@@ -162,6 +165,7 @@ const NavBar = () => {
                 label="Connexion"
                 className="font-semibold"
                 variant="secondary"
+                isHoverBgColor
               />
             </>
           ) : null}
