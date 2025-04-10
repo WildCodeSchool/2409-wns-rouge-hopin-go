@@ -1,7 +1,11 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import Home from "./pages/Home.tsx";
 import About from "./pages/About.tsx";
 import Page404 from "./pages/Page404.tsx";
@@ -11,7 +15,6 @@ import AuthComponent from "./components/AuthComponent.tsx";
 import BadURLRedirect from "./components/BadURLRedirect.tsx";
 import { AuthStates } from "./services/AuthStates.ts";
 import AuthenticationPage from "./pages/Authentication";
-import RidePage from "./pages/Ride";
 
 const client = new ApolloClient({
   uri: "/api",
@@ -25,16 +28,12 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "/",
+        index: true,
+        element: <Navigate to="/rechercher" replace />,
+      },
+      {
+        path: "/:tab",
         element: <Home />,
-      },
-      {
-        path: "/:tab",
-        element: <RidePage />,
-      },
-      {
-        path: "/:tab",
-        element: <RidePage />,
       },
       {
         path: "/admin",

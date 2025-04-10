@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Button from "./Button";
-import { DocumentNode, useLazyQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
 import { querySearchRide } from "../api/SearchRide";
 
 const SearchRide = () => {
@@ -8,17 +8,40 @@ const SearchRide = () => {
   const [arrivalCity, setArrivalCity] = useState("");
   const [departureAt, setDepartureAt] = useState("");
   const [arrivalAt, setArrivalAt] = useState("");
-  //   const [error, setError] = useState<Record<string, string[]>>({});
+  const [error, setError] = useState<Record<string, string[]>>({});
 
-  // Fonction pour regrouper les erreurs en une phrase
-  //   const formatErrors = (errors: string[]) => {
-  //     if (errors.length === 0) return "";
-  //     if (errors.length === 1) return errors[0];
-  //     const lastError = errors.pop();
-  //     return `${errors.join(", ")} et ${lastError}.`;
-  //   };
+  //Fonction pour regrouper les erreurs en une phrase
+  const formatErrors = (errors: string[]) => {
+    if (errors.length === 0) return "";
+    if (errors.length === 1) return errors[0];
+    const lastError = errors.pop();
+    return `${errors.join(", ")} et ${lastError}.`;
+  };
 
-  const [searchRide, { loading, error, data }] = useLazyQuery(querySearchRide);
+  const validateCreateForm = (): boolean => {
+    const departureCityErrors = validateDepartureCityUtils(departureCity);
+    const departureAtErrors = validateDepartureAtUtils(departureAt);
+    const arrivalAtErrors = validateArrivalAtUtils(arrivalAt);
+    const arrivalCityErrors = validateArrivalCityUtils(arrivalCity);
+
+    // Mise à jour de l'état des erreurs une seule fois (plus clean !)
+    setError({
+      departureCity: departureCityErrors,
+      arrivalCity: arrivalCityErrors,
+      departureAt: departureAtErrors,
+      arrivalAt: arrivalAtErrors,
+    });
+
+    // Retourne true si TOUT est valide
+    return [
+      departureCityErrors,
+      arrivalCityErrors,
+      departureAtErrors,
+      arrivalAtErrors,
+    ].every((errors) => errors.length === 0);
+  };
+
+  const [searchRide, { loading, data }] = useLazyQuery(querySearchRide);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -58,20 +81,20 @@ const SearchRide = () => {
           minLength={2}
           maxLength={50}
           required
-          //   className={`${
-          //     error.firstName?.length
-          //       ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-          //       : "border-gray-300 bg-gray-50"
-          //   } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          className={`${
+            error.firstName?.length
+              ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+              : "border-gray-300 bg-gray-50"
+          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="Paris"
           value={departureCity}
           onChange={(e) => setDepartureCity(e.target.value)}
         />
-        {/* {error.firstName && (
+        {error.departureCity && (
           <p className="text-red-400 text-sm">
-            {formatErrors(error.firstName)}
+            {formatErrors(error.departureCity)}
           </p>
-        )} */}
+        )}
       </div>
       {/* Date de départ */}
       <div className="mb-5">
@@ -84,18 +107,20 @@ const SearchRide = () => {
         <input
           type="date"
           id="departure-at"
-          //   className={`${
-          //     error.lastName?.length
-          //       ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-          //       : "border-gray-300 bg-gray-50"
-          //   } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          className={`${
+            error.departureCity?.length
+              ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+              : "border-gray-300 bg-gray-50"
+          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="Dupont"
           value={departureAt}
           onChange={(e) => setDepartureAt(e.target.value)}
         />
-        {/* {error.lastName && (
-          <p className="text-red-400 text-sm">{formatErrors(error.lastName)}</p>
-        )} */}
+        {error.departureCity && (
+          <p className="text-red-400 text-sm">
+            {formatErrors(error.departureCity)}
+          </p>
+        )}
       </div>
       {/* Ville d'arrivée */}
       <div className="mb-5">
@@ -108,18 +133,20 @@ const SearchRide = () => {
         <input
           type="text"
           id="arrival-city"
-          //   className={`${
-          //     error.firstName?.length
-          //       ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-          //       : "border-gray-300 bg-gray-50"
-          //   } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          className={`${
+            error.arrivalCity?.length
+              ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+              : "border-gray-300 bg-gray-50"
+          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="Lyon"
           value={arrivalCity}
           onChange={(e) => setArrivalCity(e.target.value)}
         />
-        {/* {error.email && (
-          <p className="text-red-400 text-sm">{formatErrors(error.email)}</p>
-        )} */}
+        {error.arrivalCity && (
+          <p className="text-red-400 text-sm">
+            {formatErrors(error.arrivalCity)}
+          </p>
+        )}
       </div>
       {/* Date d'arrivée' */}
       <div className="mb-5">
@@ -132,18 +159,20 @@ const SearchRide = () => {
         <input
           type="date"
           id="arrival-at"
-          //   className={`${
-          //     error.lastName?.length
-          //       ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-          //       : "border-gray-300 bg-gray-50"
-          //   } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          className={`${
+            error.arrivalAt?.length
+              ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+              : "border-gray-300 bg-gray-50"
+          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="Dupont"
           value={arrivalAt}
           onChange={(e) => setArrivalAt(e.target.value)}
         />
-        {/* {error.lastName && (
-          <p className="text-red-400 text-sm">{formatErrors(error.lastName)}</p>
-        )} */}
+        {error.arrivalAt && (
+          <p className="text-red-400 text-sm">
+            {formatErrors(error.arrivalAt)}
+          </p>
+        )}
       </div>
       {/* Bouton */}
       <div className="flex w-full justify-end">
