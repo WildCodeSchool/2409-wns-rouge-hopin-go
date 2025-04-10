@@ -18,7 +18,7 @@ const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const [, setSelectedIndex] = useState(0);
+  const [selectedIndex, setSelectedIndex] = useState(0);
   const [firstItem, setFirstItem] = useState<HTMLDivElement | null>(null);
 
   const [cardHeight, setCardHeight] = useState(0);
@@ -63,6 +63,7 @@ const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
             <CardTemplate
               variant={getVariant(data)}
               data={data}
+              isSelected={index === selectedIndex}
               onClick={() => {
                 setSelectedIndex(index);
                 onSelect(index);

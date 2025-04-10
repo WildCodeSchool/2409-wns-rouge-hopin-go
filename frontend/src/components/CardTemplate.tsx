@@ -14,18 +14,21 @@ export type CardData = {
   price: number;
   date: string;
   availableSeats: number;
+  is_canceled?: boolean;
 };
 
 type CardTemplateProps = {
   variant: VariantType;
   data: CardData;
   onClick?: () => void;
+  isSelected?: boolean;
 };
 
 const CardTemplate: React.FC<CardTemplateProps> = ({
   variant,
   data,
   onClick,
+  isSelected = false,
 }) => {
   const windowSize = useWindowSize();
   const {
@@ -37,9 +40,9 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
 
   return (
     <div
-      className={`w-full md:min-w-[32rem] max-w-lg p-4 transition-transform ${
-        onClick ? "cursor-pointer" : ""
-      }`}
+      className={`w-full select-none md:min-w-[32rem] max-w-lg p-4 ${
+        isSelected ? "scale-105" : " scale-100"
+      } transition-transform ${onClick ? "cursor-pointer" : ""}`}
       onClick={onClick}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
@@ -47,7 +50,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
       <div className="flex flex-col items-center justify-center bg-textLight border border-primary rounded-t-2xl rounded-br-2xl shadow-lg z-30">
         <div className="grid grid-cols-3 w-full p-4 h-40 z-30">
           <div
-            className={`flex flex-col justify-between ${textColor} text-base md:text-2xl font-semibold`}
+            className={`flex flex-col  justify-between ${textColor} text-base md:text-2xl font-semibold`}
           >
             <p>{data.departureTime}</p>
             <p>{data.arrivalTime}</p>

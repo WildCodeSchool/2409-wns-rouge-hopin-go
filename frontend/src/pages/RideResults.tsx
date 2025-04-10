@@ -3,6 +3,7 @@ import CardRideDetails from "../components/CardRideDetails";
 import { VariantType } from "../types/variantTypes";
 import ScrollableSnapList from "../components/ScrollableSnapList";
 import { CardData } from "../components/CardTemplate";
+import { formatDate, formatTime } from "../utils/formatDate";
 
 type FakeRide = {
   departure_city: string;
@@ -14,6 +15,7 @@ type FakeRide = {
   max_passenger: number;
   nb_passenger: number;
   driver_id: { name: string };
+  is_canceled?: boolean;
 };
 
 const generateFakeRides = (): FakeRide[] => {
@@ -73,6 +75,7 @@ const generateFakeRides = (): FakeRide[] => {
       max_passenger: maxPassenger,
       nb_passenger: nbPassenger,
       driver_id: { name: driverName },
+      is_canceled: Math.random() < 0.1, // 10% des trajets annulés
     });
   }
 
@@ -88,21 +91,10 @@ const RideResults = () => {
     const fakeRides = generateFakeRides();
 
     const dataset: CardData[] = fakeRides.map((ride) => {
-      const options = {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      } as const;
-      const dateStr = ride.departure_at.toLocaleDateString("fr-FR", options);
+      const dateStr = formatDate(ride.departure_at);
 
-      const departureTime = ride.departure_at.toLocaleTimeString("fr-FR", {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-      const arrivalTime = ride.arrival_at.toLocaleTimeString("fr-FR", {
-        hour: "2-digit",
-        minute: "2-digit",
-      });
+      const departureTime = formatTime(ride.departure_at);
+      const arrivalTime = formatTime(ride.arrival_at);
 
       const durationMin = Math.floor(
         (ride.arrival_at.getTime() - ride.departure_at.getTime()) / 60000
@@ -122,6 +114,7 @@ const RideResults = () => {
         price: 10 + Math.random() * 15, // prix aléatoire
         date: dateStr,
         availableSeats: ride.max_passenger - ride.nb_passenger,
+        is_canceled: ride.is_canceled,
       };
     });
 
@@ -129,10 +122,18 @@ const RideResults = () => {
     setSelectedIndex(0);
   }, []);
 
-  const getVariant = (data: CardData): VariantType => {
+  const getVariant = (
+    data: CardData & { is_canceled?: boolean }
+  ): VariantType => {
+    const today = new Date();
+
+    // 🔴 1. Si le trajet est annulé
+    if (data.is_canceled) return "cancel";
+
+    // 🔴 2. Si complet
     if (data.availableSeats === 0) return "error";
 
-    const today = new Date();
+    // 🟠 3. Si le trajet est dans le passé
     const [jour, moisNom, annee] = data.date.split(" ");
     const moisMap: Record<string, number> = {
       janvier: 0,
@@ -148,10 +149,14 @@ const RideResults = () => {
       novembre: 10,
       décembre: 11,
     };
-
     const parsedDate = new Date(+annee, moisMap[moisNom.toLowerCase()], +jour);
-    return parsedDate < today ? "validation" : "pending";
+
+    if (parsedDate < today) return "validation";
+
+    // ✅ Sinon : trajet à venir avec places dispo
+    return "primary";
   };
+
   if (rides.length === 0 || !rides[selectedIndex]) {
     return (
       <div className="text-center w-full mt-10 text-gray-600">
