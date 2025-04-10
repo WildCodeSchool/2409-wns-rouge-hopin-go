@@ -1,15 +1,39 @@
-import { useState } from "react";
-import { Tab } from "../pages/Authentication";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
-type SwitchTabs = {
+type SwitchTabsProps = {
   tabs: Tab[];
+  tabParams?: string;
+  path?: string;
 };
 
-const SwitchTabs = ({ tabs }: SwitchTabs) => {
-  const [activeTab, setActiveTab] = useState(1);
+export type Tab = {
+  label: string;
+  content: JSX.Element;
+  path: string;
+};
+
+const SwitchTabs = ({ tabs, tabParams }: SwitchTabsProps) => {
+  const navigate = useNavigate();
+  const currentTab = tabs.find(
+    (tab) => tab.label.toLowerCase() === tabParams?.toLowerCase()
+  );
+  const currentTabIndex = currentTab ? tabs.indexOf(currentTab) : 1;
+  const [activeTab, setActiveTab] = useState(currentTabIndex);
+
+  // rerender the component if a user clicks on the menu
+  useEffect(() => {
+    const newIndex = currentTab ? tabs.indexOf(currentTab) : 1;
+    setActiveTab(newIndex);
+  }, [currentTab, tabs]);
+
+  const handleTabClick = (index: number) => {
+    setActiveTab(index);
+    navigate(tabs[index].path);
+  };
 
   return (
-    <div className="mx-4 max-w-1xl md:max-w-4xl md:mx-auto border border-textDark rounded-md overflow-hidden">
+    <div className="border border-textDark rounded-md z-50">
       <div className="flex ">
         {tabs.map((tab, index) => (
           <button
@@ -18,14 +42,16 @@ const SwitchTabs = ({ tabs }: SwitchTabs) => {
               activeTab === index
                 ? "bg-primary text-textLight"
                 : "bg-white text-primary"
+            } ${index === 0 ? "rounded-tl-md" : ""} ${
+              index === tabs.length - 1 ? "rounded-tr-md" : ""
             }`}
-            onClick={() => setActiveTab(index)}
+            onClick={() => handleTabClick(index)}
           >
             {tab.label}
           </button>
         ))}
       </div>
-      <div className="w-full rounded-b-md p-10  bg-primary ">
+      <div className="w-full rounded-b-md p-5  bg-primary ">
         {tabs[activeTab].content}
       </div>
     </div>

@@ -42,6 +42,23 @@ describe("Signup", () => {
           },
         },
       },
+      {
+        request: {
+          query: mutationCreateUser,
+          variables: {
+            data: {
+              firstName: "John",
+              lastName: "Doe",
+              email: "test@gmail.com",
+              password: "Password123!",
+            },
+          },
+        },
+        result: {
+          data: null,
+          errors: [],
+        },
+      },
     ];
 
     render(
