@@ -20,14 +20,12 @@ type CardTemplateProps = {
   variant: VariantType;
   data: CardData;
   onClick?: () => void;
-  isSelected?: boolean;
 };
 
 const CardTemplate: React.FC<CardTemplateProps> = ({
   variant,
   data,
   onClick,
-  isSelected,
 }) => {
   const windowSize = useWindowSize();
   const {
@@ -39,17 +37,17 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
 
   return (
     <div
-      className={`w-full max-w-lg p-4 transition-transform ${
-        isSelected ? "scale-[1.02] border-2 border-primary shadow-xl" : ""
-      } ${onClick ? "cursor-pointer" : ""}`}
+      className={`w-full md:min-w-[32rem] max-w-lg p-4 transition-transform ${
+        onClick ? "cursor-pointer" : ""
+      }`}
       onClick={onClick}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
     >
-      <div className="flex flex-col items-center justify-center bg-textLight border border-primary rounded-t-2xl rounded-br-2xl shadow-lg">
-        <div className="grid grid-cols-3 w-full p-4 h-40">
+      <div className="flex flex-col items-center justify-center bg-textLight border border-primary rounded-t-2xl rounded-br-2xl shadow-lg z-30">
+        <div className="grid grid-cols-3 w-full p-4 h-40 z-30">
           <div
-            className={`flex flex-col justify-between ${textColor} text-lg sm:text-2xl font-semibold`}
+            className={`flex flex-col justify-between ${textColor} text-base md:text-2xl font-semibold`}
           >
             <p>{data.departureTime}</p>
             <p>{data.arrivalTime}</p>
@@ -67,11 +65,17 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             <div
               className={`dot absolute h-3 w-3 rounded-full ${bgFill} bottom-2 left-0 -translate-x-7`}
             />
-            <p className="text-lg sm:text-2xl sm:font-bold">
+            <p
+              className="text-lg md:text-xl sm:font-bold truncate"
+              title={data.departureCity}
+            >
               {data.departureCity}
             </p>
             <p className="font-semibold">{data.travelDuration}</p>
-            <p className="text-lg sm:text-2xl sm:font-bold">
+            <p
+              className="text-lg md:text-xl sm:font-bold truncate"
+              title={data.arrivalCity}
+            >
               {data.arrivalCity}
             </p>
           </div>
@@ -81,16 +85,21 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           >
             <div className="flex flex-col items-end gap-2 text-right">
               <CircleUserRound size={30} />
-              <p className="font-semibold">{data.driverName}</p>
+              <p
+                className="font-semibold truncate max-w-[8rem]"
+                title={data.driverName}
+              >
+                {data.driverName}
+              </p>
             </div>
-            <p className="text-xl sm:text-4xl font-semibold">
+            <p className="text-xl md:text-4xl font-semibold">
               {data.price.toFixed(2)}€
             </p>
           </div>
         </div>
       </div>
 
-      <div className="relative w-full flex justify-between">
+      <div className="relative w-full flex justify-between z-30">
         <p className="absolute left-0 flex gap-2 items-center z-10 p-4 text-sm md:text-base text-textLight">
           {statusLabel === "" ? (
             <>
