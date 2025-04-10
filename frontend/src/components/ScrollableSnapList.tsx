@@ -1,5 +1,3 @@
-// ✅ ScrollableSnapList : aligne dynamiquement une CardTemplate avec CardRideDetails
-
 import { useEffect, useRef, useState } from "react";
 import CardTemplate, { CardData } from "./CardTemplate";
 import { VariantType } from "../types/variantTypes";
@@ -8,7 +6,7 @@ type ScrollableSnapListProps = {
   dataset: CardData[];
   getVariant: (data: CardData) => VariantType;
   onSelect: (index: number) => void;
-  alignRef: React.RefObject<HTMLDivElement>; // 📌 Point d'ancrage visuel (CardRideDetails)
+  alignRef: React.RefObject<HTMLDivElement>; // Pour alignement éventuel
 };
 
 const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
@@ -18,48 +16,93 @@ const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
+
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [firstItem, setFirstItem] = useState<HTMLDivElement | null>(null);
+  const [padding, setPadding] = useState(200); // Valeur de secours
+  const [isScrollingManually, setIsScrollingManually] = useState(false);
+  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const [cardHeight, setCardHeight] = useState(0);
-
+  // Calcule le padding haut/bas dynamiquement
   useEffect(() => {
-    if (firstItem) {
-      setCardHeight(firstItem.offsetHeight);
-    }
-  }, [firstItem]);
+    const container = containerRef.current;
+    const firstItem = itemRefs.current[0];
+    if (!container || !firstItem) return;
 
-  // Mesure du scroll en fonction de la position de alignRef (CardRideDetails)
-  const scrollToAlignWithDetails = (index: number) => {
+    const updatePadding = () => {
+      const containerHeight = container.clientHeight;
+      const itemHeight = firstItem.offsetHeight;
+      const pad = containerHeight / 2 - itemHeight / 2;
+      setPadding(pad);
+    };
+
+    updatePadding();
+    window.addEventListener("resize", updatePadding);
+    return () => window.removeEventListener("resize", updatePadding);
+  }, [dataset]);
+
+  // Scroll smooth vers le centre
+  const scrollToCenter = (index: number) => {
     const container = containerRef.current;
     const target = itemRefs.current[index];
     if (!container || !target) return;
 
     const containerHeight = container.clientHeight;
-    const targetOffsetTop = target.offsetTop;
-    const targetHeight = target.clientHeight;
+    const targetTop = target.offsetTop;
+    const targetHeight = target.offsetHeight;
 
-    const scrollTop = targetOffsetTop - containerHeight / 2 + targetHeight / 2;
-
+    const scrollTop = targetTop - containerHeight / 2 + targetHeight / 2;
     container.scrollTo({ top: scrollTop, behavior: "smooth" });
+    setIsScrollingManually(false);
+  };
+
+  // Auto-sélection de la carte la plus proche du centre quand on scroll
+  const handleScroll = () => {
+    if (isScrollingManually) return;
+
+    const container = containerRef.current;
+    if (!container) return;
+
+    const centerY = container.scrollTop + container.clientHeight / 2;
+
+    let closestIndex = 0;
+    let minDistance = Infinity;
+
+    itemRefs.current.forEach((el, i) => {
+      if (!el) return;
+      const elTop = el.offsetTop;
+      const elCenter = elTop + el.offsetHeight / 2;
+      const distance = Math.abs(elCenter - centerY);
+
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestIndex = i;
+      }
+    });
+
+    if (closestIndex !== selectedIndex) {
+      setSelectedIndex(closestIndex);
+      onSelect(closestIndex);
+
+      if (debounceTimeoutRef.current) {
+        clearTimeout(debounceTimeoutRef.current);
+      }
+
+      debounceTimeoutRef.current = setTimeout(() => {
+        scrollToCenter(closestIndex);
+      }, 150);
+    }
   };
 
   return (
     <div className="relative h-full w-full z-30">
-      {/* Scrollable container */}
       <div
         ref={containerRef}
         className="flex flex-col items-center gap-4 overflow-y-scroll scroll-smooth h-full no-scrollbar my-2"
-        style={{ paddingTop: cardHeight + 54, paddingBottom: cardHeight + 54 }}
+        style={{ paddingTop: padding, paddingBottom: padding }}
+        onScroll={handleScroll}
       >
         {dataset.map((data, index) => (
-          <div
-            key={index}
-            ref={(el) => {
-              itemRefs.current[index] = el;
-              if (index === 0) setFirstItem(el);
-            }}
-          >
+          <div key={index} ref={(el) => (itemRefs.current[index] = el)}>
             <CardTemplate
               variant={getVariant(data)}
               data={data}
@@ -67,7 +110,11 @@ const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
               onClick={() => {
                 setSelectedIndex(index);
                 onSelect(index);
-                scrollToAlignWithDetails(index);
+                scrollToCenter(index);
+                setIsScrollingManually(true);
+                setTimeout(() => {
+                  setIsScrollingManually(false);
+                }, 500); // Timeout pour éviter le scroll immédiat
               }}
             />
           </div>
