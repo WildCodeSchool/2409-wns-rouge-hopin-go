@@ -35,7 +35,7 @@ h1 {
 }
 
 .button-secondary {
-  @apply bg-secondary text-textDark transition-200;
+  @apply bg-secondary text-primary transition-200;
 }
 
 .button-validation {

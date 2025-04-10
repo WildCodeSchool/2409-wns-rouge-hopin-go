@@ -6,8 +6,6 @@ import Home from "./pages/Home.tsx";
 import About from "./pages/About.tsx";
 import Page404 from "./pages/Page404.tsx";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
-import Signin from "./components/Signin.tsx";
-import Signup from "./components/Signup.tsx";
 import Create from "./pages/Admin.tsx";
 import AuthComponent from "./components/AuthComponent.tsx";
 import BadURLRedirect from "./components/BadURLRedirect.tsx";
@@ -43,6 +41,7 @@ const router = createBrowserRouter([
         element: <About />,
       },
       {
+<<<<<<< HEAD
         path: `/ride-results`,
         element: (
           <AuthComponent authStates={[AuthStates.unauthenticated]}>
@@ -68,6 +67,9 @@ const router = createBrowserRouter([
       },
       {
         path: `/authentication`,
+=======
+        path: `/auth/:tab`,
+>>>>>>> dev
         element: (
           <AuthComponent authStates={[AuthStates.unauthenticated]}>
             <AuthenticationPage />

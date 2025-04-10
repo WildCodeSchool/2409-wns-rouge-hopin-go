@@ -18,12 +18,15 @@ const App = () => {
         draggable
         pauseOnHover
       />
-
-      <div className="flex flex-col h-screen w-full">
+      <div className="flex flex-col min-h-screen">
         <header>
           <NavBar />
         </header>
+<<<<<<< HEAD
         <main>
+=======
+        <main className="md:pt-[58px] pb-[18px] md:pb-0 flex-grow flex items-center justify-center md:h-[calc(100vh_-_58px)] mb-4">
+>>>>>>> dev
           <Outlet />
         </main>
       </div>
