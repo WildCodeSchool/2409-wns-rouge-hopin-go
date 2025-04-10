@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-  "test:postgres": "node ./scripts/test-postgres.js && dotenv -e .env.test -- npx jest",
-  "start": "concurrently -n \"BACK\" -c \"cyan.bgBlack\" \"ts-node-dev src/index.ts\""
+    "test:postgres": "node ./scripts/test-postgres.js && dotenv -e .env.test -- npx jest",
+    "start": "concurrently -n \"BACK\" -c \"cyan.bgBlack\" \"ts-node-dev src/index.ts\""
   },
   "keywords": [],
   "author": "",
