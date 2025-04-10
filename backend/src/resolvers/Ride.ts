@@ -25,15 +25,6 @@ export class RidesResolver {
 
         filter.departure_at = Between(startDay, endDay);
       }
-
-      if (data.arrival_at) {
-        const startDay = new Date(data.arrival_at);
-        startDay.setHours(0, 0, 0, 0);
-        const endDay = new Date(data.arrival_at);
-        endDay.setHours(23, 59, 59, 999);
-
-        filter.arrival_at = Between(startDay, endDay);
-      }
     }
 
     const rides = await Ride.find({

@@ -124,10 +124,18 @@ const NavBar = () => {
             label="Rechercher"
             className="font-semibold"
           />
-          {me && (
+          {me ? (
             <Button
               isLink
               to="/proposer"
+              variant="secondary"
+              label="Proposer"
+              className="font-semibold"
+            />
+          ) : (
+            <Button
+              isLink
+              to="/auth/connexion"
               variant="secondary"
               label="Proposer"
               className="font-semibold"

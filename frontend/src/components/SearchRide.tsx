@@ -2,12 +2,17 @@ import { useState } from "react";
 import Button from "./Button";
 import { useLazyQuery } from "@apollo/client";
 import { querySearchRide } from "../api/SearchRide";
+import {
+  validateDepartureCity as validateDepartureCityUtils,
+  validateDepartureAt as validateDepartureAtUtils,
+  validateArrivalCity as validateArrivalCityUtils,
+} from "../utils/searchRideValidators";
+import { toast } from "react-toastify";
 
 const SearchRide = () => {
   const [departureCity, setDepartureCity] = useState("");
   const [arrivalCity, setArrivalCity] = useState("");
   const [departureAt, setDepartureAt] = useState("");
-  const [arrivalAt, setArrivalAt] = useState("");
   const [error, setError] = useState<Record<string, string[]>>({});
 
   //Fonction pour regrouper les erreurs en une phrase
@@ -21,7 +26,6 @@ const SearchRide = () => {
   const validateCreateForm = (): boolean => {
     const departureCityErrors = validateDepartureCityUtils(departureCity);
     const departureAtErrors = validateDepartureAtUtils(departureAt);
-    const arrivalAtErrors = validateArrivalAtUtils(arrivalAt);
     const arrivalCityErrors = validateArrivalCityUtils(arrivalCity);
 
     // Mise à jour de l'état des erreurs une seule fois (plus clean !)
@@ -29,36 +33,41 @@ const SearchRide = () => {
       departureCity: departureCityErrors,
       arrivalCity: arrivalCityErrors,
       departureAt: departureAtErrors,
-      arrivalAt: arrivalAtErrors,
     });
 
     // Retourne true si TOUT est valide
-    return [
-      departureCityErrors,
-      arrivalCityErrors,
-      departureAtErrors,
-      arrivalAtErrors,
-    ].every((errors) => errors.length === 0);
+    return [departureCityErrors, arrivalCityErrors, departureAtErrors].every(
+      (errors) => errors.length === 0
+    );
   };
 
-  const [searchRide, { loading, data }] = useLazyQuery(querySearchRide);
+  const [searchRide, data, loading] = useLazyQuery(querySearchRide);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!validateCreateForm()) {
+      return;
+    }
     try {
-      const data = await searchRide({
+      const result = await searchRide({
         variables: {
-          departure_city: departureCity,
-          arrival_city: arrivalCity,
-          departure_at: departureAt,
-          arrival_at: arrivalAt,
+          data: {
+            departure_city: departureCity,
+            arrival_city: arrivalCity,
+            departure_at: departureAt,
+          },
         },
       });
-      console.log(data);
+      console.log(result.data?.searchRide);
+      toast.success("Inscription réussie !");
     } catch (error) {
-      console.error("Error fetching data:", error);
+      console.error(error);
+      setError({
+        form: ["Une erreur est survenue lors de l'inscription. Réessayez."],
+      });
     }
   };
+
   return (
     <form
       onSubmit={(e) => {
@@ -105,20 +114,20 @@ const SearchRide = () => {
           Date de départ
         </label>
         <input
-          type="date"
+          type="datetime-local"
           id="departure-at"
           className={`${
             error.departureCity?.length
               ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
               : "border-gray-300 bg-gray-50"
           } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
-          placeholder="Dupont"
+          placeholder="2025-05-15T08:00"
           value={departureAt}
           onChange={(e) => setDepartureAt(e.target.value)}
         />
-        {error.departureCity && (
+        {error.departureAt && (
           <p className="text-red-400 text-sm">
-            {formatErrors(error.departureCity)}
+            {formatErrors(error.departureAt)}
           </p>
         )}
       </div>
@@ -145,32 +154,6 @@ const SearchRide = () => {
         {error.arrivalCity && (
           <p className="text-red-400 text-sm">
             {formatErrors(error.arrivalCity)}
-          </p>
-        )}
-      </div>
-      {/* Date d'arrivée' */}
-      <div className="mb-5">
-        <label
-          htmlFor="arrival-at"
-          className="block mb-2 text-sm font-medium text-white"
-        >
-          Date d'arrivée
-        </label>
-        <input
-          type="date"
-          id="arrival-at"
-          className={`${
-            error.arrivalAt?.length
-              ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-              : "border-gray-300 bg-gray-50"
-          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
-          placeholder="Dupont"
-          value={arrivalAt}
-          onChange={(e) => setArrivalAt(e.target.value)}
-        />
-        {error.arrivalAt && (
-          <p className="text-red-400 text-sm">
-            {formatErrors(error.arrivalAt)}
           </p>
         )}
       </div>
