@@ -19,7 +19,7 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
       <div className="pointer-events-none absolute -left-full lg:translate-x-[3px] xl:translate-x-[1px] bg-gray-100  top-1/2 -translate-y-1/2 w-full flex justify-center">
         <svg
           id="overlay"
-          className=" md:scale-y-[1.02] lg:scale-y-[1.01] lg:scale-x-[0.99] xl:scale-y-[1.005] xl:scale-x-[0.999] "
+          className=" md:scale-y-[1.04] lg:scale-y-[1.01] lg:scale-x-[0.99] xl:scale-y-[1.005] xl:scale-x-[0.999] "
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 648.14 389.63"
         >
@@ -27,7 +27,7 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
             style={{
               fill: "#f3f4f6",
               stroke: "#8e387c",
-              strokeWidth: `${isXl ? 4 : isLg ? 4.6 : isMd ? 5 : 1}px`,
+              strokeWidth: `${isXl ? 4 : isLg ? 4.6 : isMd ? 6 : 1}px`,
             }}
             className="overlay"
             d="M645.72,389.63c0-20.75-13.43-37.57-30-37.57H28c-14.36,0-26-14.58-26-32.56V70.26c0-17.98,11.64-32.56,26-32.56h588.14c16.6,0,30.05-16.89,30-37.69"
