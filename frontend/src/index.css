@@ -126,6 +126,11 @@ h1 {
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
+
+  .shadow-custom {
+    box-shadow: rgba(0, 0, 0, 0.15) 10px 15px 25px,
+      rgba(0, 0, 0, 0.05) 10px 5px 10px;
+  }
 }
 
 /* -----------------------------LOADER---------------------------- */

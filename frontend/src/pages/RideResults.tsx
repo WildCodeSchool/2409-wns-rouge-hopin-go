@@ -166,8 +166,8 @@ const RideResults = () => {
   }
 
   return (
-    <div className="flex items-center justify-center max-w-7xl m-auto  h-screen p-4 bg-gray-100">
-      <div className="flex-1 h-full w-1/2 overflow-hidden">
+    <div className="flex items-center justify-center max-w-7xl m-auto h-screen p-4 bg-gray-100">
+      <div className="flex-1 h-full w-full md:w-1/2 overflow-hidden">
         <ScrollableSnapList
           dataset={rides}
           getVariant={getVariant}
@@ -176,7 +176,7 @@ const RideResults = () => {
         />
       </div>
 
-      <div ref={detailsRef} className=" w-1/2">
+      <div ref={detailsRef} className=" md:w-1/2">
         <CardRideDetails
           variant={getVariant(rides[selectedIndex])}
           data={rides[selectedIndex]}

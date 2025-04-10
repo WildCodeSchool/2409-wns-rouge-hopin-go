@@ -89,20 +89,24 @@ const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
 
       debounceTimeoutRef.current = setTimeout(() => {
         scrollToCenter(closestIndex);
-      }, 150);
+      }, 200);
     }
   };
 
   return (
-    <div className="relative h-full w-full z-30">
+    <div className="relative h-full w-full z-30 transition-200">
       <div
         ref={containerRef}
-        className="flex flex-col items-center gap-4 overflow-y-scroll scroll-smooth h-full no-scrollbar my-2"
+        className="flex flex-col items-center gap-4 overflow-y-scroll scroll-smooth h-full no-scrollbar transition-200 my-2"
         style={{ paddingTop: padding, paddingBottom: padding }}
         onScroll={handleScroll}
       >
         {dataset.map((data, index) => (
-          <div key={index} ref={(el) => (itemRefs.current[index] = el)}>
+          <div
+            className="w-full sm:w-auto"
+            key={index}
+            ref={(el) => (itemRefs.current[index] = el)}
+          >
             <CardTemplate
               variant={getVariant(data)}
               data={data}
