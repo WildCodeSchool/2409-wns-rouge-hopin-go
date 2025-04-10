@@ -1,15 +1,13 @@
-import { Arg, Ctx, Query, Resolver } from "type-graphql";
-import { Ride, SearchRidesInput } from "../entities/Ride";
-import { ContextType } from "../auth";
+import { Arg, Query, Resolver } from "type-graphql";
+import { Ride, SearchRideInput } from "../entities/Ride";
 import { Between, ILike } from "typeorm";
-import { start } from "repl";
 
 @Resolver()
 export class RidesResolver {
   @Query(() => [Ride])
   async searchRide(
-    @Arg("data", () => SearchRidesInput, { nullable: true })
-    data: SearchRidesInput
+    @Arg("data", () => SearchRideInput, { nullable: true })
+    data: SearchRideInput
   ): Promise<Ride[] | null> {
     const filter: any = {};
     if (data) {

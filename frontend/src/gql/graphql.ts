@@ -52,7 +52,7 @@ export type Query = {
 
 
 export type QuerySearchRideArgs = {
-  data?: InputMaybe<SearchRidesInput>;
+  data?: InputMaybe<SearchRideInput>;
 };
 
 
@@ -80,7 +80,7 @@ export type Ride = {
   nb_passenger: Scalars['Float']['output'];
 };
 
-export type SearchRidesInput = {
+export type SearchRideInput = {
   arrival_at?: InputMaybe<Scalars['String']['input']>;
   arrival_city: Scalars['String']['input'];
   departure_at: Scalars['String']['input'];

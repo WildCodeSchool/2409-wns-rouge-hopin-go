@@ -151,7 +151,7 @@ export class RideUpdateInput {
 }
 
 @InputType()
-export class SearchRidesInput {
+export class SearchRideInput {
   @Field()
   @MaxLength(255)
   departure_city!: string;

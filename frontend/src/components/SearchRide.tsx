@@ -1,5 +1,7 @@
 import { useState } from "react";
 import Button from "./Button";
+import { DocumentNode, useLazyQuery } from "@apollo/client";
+import { querySearchRide } from "../api/SearchRide";
 
 const SearchRide = () => {
   const [departureCity, setDepartureCity] = useState("");
@@ -16,8 +18,32 @@ const SearchRide = () => {
   //     return `${errors.join(", ")} et ${lastError}.`;
   //   };
 
+  const [searchRide, { loading, error, data }] = useLazyQuery(querySearchRide);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    try {
+      const data = await searchRide({
+        variables: {
+          departure_city: departureCity,
+          arrival_city: arrivalCity,
+          departure_at: departureAt,
+          arrival_at: arrivalAt,
+        },
+      });
+      console.log(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  };
   return (
-    <form className="max-w-sm mx-auto">
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        handleSubmit(e);
+      }}
+      className="max-w-sm mx-auto"
+    >
       {/* Ville de départ */}
       <div className="mb-5">
         <label
@@ -47,7 +73,6 @@ const SearchRide = () => {
           </p>
         )} */}
       </div>
-
       {/* Date de départ */}
       <div className="mb-5">
         <label
@@ -120,15 +145,9 @@ const SearchRide = () => {
           <p className="text-red-400 text-sm">{formatErrors(error.lastName)}</p>
         )} */}
       </div>
-
       {/* Bouton */}
       <div className="flex w-full justify-end">
-        {/* <Button
-          onClick={doSubmit}
-          variant="validation"
-          type="button"
-          label="S'inscrire"
-        /> */}
+        <Button variant="validation" type="submit" label="Rechercher" />
       </div>
     </form>
   );
