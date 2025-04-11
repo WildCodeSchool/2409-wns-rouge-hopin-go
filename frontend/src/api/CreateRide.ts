@@ -14,5 +14,6 @@ mutation CreateRide($data: RideCreateInput!) {
       departure_at
       arrival_at
       max_passenger
+      created_at
     }
   }`);

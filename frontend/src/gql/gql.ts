@@ -13,8 +13,15 @@ import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/
  * Therefore it is highly recommended to use the babel or swc plugin for production.
  * Learn more about it here: https://the-guild.dev/graphql/codegen/plugins/presets/preset-client#reducing-bundle-size
  */
-const documents = {
-    "\nmutation CreateRide($data: RideCreateInput!) {\n    createRide(data: $data) {\n      driver_id {\n        id\n        email\n      }\n      departure_city\n      arrival_city\n      departure_address\n      arrival_address\n      departure_at\n      arrival_at\n      max_passenger\n    }\n  }": types.CreateRideDocument,
+type Documents = {
+    "\nmutation CreateRide($data: RideCreateInput!) {\n    createRide(data: $data) {\n      driver_id {\n        id\n        email\n      }\n      departure_city\n      arrival_city\n      departure_address\n      arrival_address\n      departure_at\n      arrival_at\n      max_passenger\n      created_at\n    }\n  }": typeof types.CreateRideDocument,
+    "\nmutation CreateUser($data: UserCreateInput!) {\n    createUser(data: $data) {\n      id\n      firstName\n      lastName\n      email\n    }\n  }": typeof types.CreateUserDocument,
+    "\nmutation Signin($email: String!, $password: String! ) {\n  signin(email: $email, password: $password) {\n    id\n    email\n  }\n}": typeof types.SigninDocument,
+    "\nmutation Mutation {\n  signout\n}\n  ": typeof types.MutationDocument,
+    "\nquery Whoami {\n  whoami {\n    id\n    email\n    role\n  }\n}\n": typeof types.WhoamiDocument,
+};
+const documents: Documents = {
+    "\nmutation CreateRide($data: RideCreateInput!) {\n    createRide(data: $data) {\n      driver_id {\n        id\n        email\n      }\n      departure_city\n      arrival_city\n      departure_address\n      arrival_address\n      departure_at\n      arrival_at\n      max_passenger\n      created_at\n    }\n  }": types.CreateRideDocument,
     "\nmutation CreateUser($data: UserCreateInput!) {\n    createUser(data: $data) {\n      id\n      firstName\n      lastName\n      email\n    }\n  }": types.CreateUserDocument,
     "\nmutation Signin($email: String!, $password: String! ) {\n  signin(email: $email, password: $password) {\n    id\n    email\n  }\n}": types.SigninDocument,
     "\nmutation Mutation {\n  signout\n}\n  ": types.MutationDocument,
@@ -38,7 +45,7 @@ export function gql(source: string): unknown;
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\nmutation CreateRide($data: RideCreateInput!) {\n    createRide(data: $data) {\n      driver_id {\n        id\n        email\n      }\n      departure_city\n      arrival_city\n      departure_address\n      arrival_address\n      departure_at\n      arrival_at\n      max_passenger\n    }\n  }"): (typeof documents)["\nmutation CreateRide($data: RideCreateInput!) {\n    createRide(data: $data) {\n      driver_id {\n        id\n        email\n      }\n      departure_city\n      arrival_city\n      departure_address\n      arrival_address\n      departure_at\n      arrival_at\n      max_passenger\n    }\n  }"];
+export function gql(source: "\nmutation CreateRide($data: RideCreateInput!) {\n    createRide(data: $data) {\n      driver_id {\n        id\n        email\n      }\n      departure_city\n      arrival_city\n      departure_address\n      arrival_address\n      departure_at\n      arrival_at\n      max_passenger\n      created_at\n    }\n  }"): (typeof documents)["\nmutation CreateRide($data: RideCreateInput!) {\n    createRide(data: $data) {\n      driver_id {\n        id\n        email\n      }\n      departure_city\n      arrival_city\n      departure_address\n      arrival_address\n      departure_at\n      arrival_at\n      max_passenger\n      created_at\n    }\n  }"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

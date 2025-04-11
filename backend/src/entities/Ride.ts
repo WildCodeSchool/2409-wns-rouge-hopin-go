@@ -1,4 +1,4 @@
-import { IsDate, IsString, Matches, Max, MaxLength, Min, MinLength } from "class-validator";
+import { IsDate, IsString, Max, MaxLength, Min } from "class-validator";
 import {
   Field,
   ID,
@@ -14,6 +14,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { User } from "./User";
+import { IdInput } from "./Id";
 
 @Entity()
 @ObjectType()
@@ -38,13 +39,13 @@ export class Ride extends BaseEntity {
   @Field()
   arrival_address!: string;
 
-  @Column()
+  @Column({ type: "timestamp" })
   @Field()
   departure_at!: Date;
 
-  @Column()
+  @Column({ type: "timestamp" }) // how to put timestampz ?
   @Field()
-  arrival_at!: Date;
+  arrival_at!: Date
 
   @Column()
   @Field()
@@ -79,8 +80,8 @@ export class Ride extends BaseEntity {
   @Field()
   is_canceled!: boolean;
 
-  @CreateDateColumn()
   @Field()
+  @CreateDateColumn()
   created_at!: Date;
 }
 
@@ -101,6 +102,9 @@ export class RideCreateInput {
   @MaxLength(255)
   @IsString()
   departure_address!: string;
+
+  @Field((type) => IdInput)
+  driver_id!: IdInput;
 
   @Field()
   @MaxLength(255)
@@ -131,6 +135,10 @@ export class RideCreateInput {
   @Min(1)
   @Max(4)
   max_passenger!: number;
+
+  @Field()
+  @CreateDateColumn()
+  created_at!: Date;
 }
 
 @InputType()
