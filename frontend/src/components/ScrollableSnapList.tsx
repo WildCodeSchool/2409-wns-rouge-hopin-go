@@ -118,7 +118,7 @@ const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
                 setIsScrollingManually(true);
                 setTimeout(() => {
                   setIsScrollingManually(false);
-                }, 500); // Timeout pour éviter le scroll immédiat
+                }, 1000); // Timeout pour éviter le scroll immédiat
               }}
             />
           </div>

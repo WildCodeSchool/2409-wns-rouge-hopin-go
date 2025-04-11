@@ -14,12 +14,12 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
 
   return (
     <div
-      className={`hidden md:block p-8 relative rounded-3xl space-y-5 shadow-custom py-20 md:w-full border-4 border-primary  ${textColor}`}
+      className={`hidden md:block p-8 relative my-40 rounded-3xl space-y-5 shadow-custom py-20 md:w-full border-4 border-primary  ${textColor}`}
     >
       <div className="pointer-events-none absolute -left-full lg:translate-x-[3px] xl:translate-x-[1px] bg-gray-100  top-1/2 -translate-y-1/2 w-full flex justify-center">
         <svg
           id="overlay"
-          className=" md:scale-y-[1.04] lg:scale-y-[1.01] lg:scale-x-[0.99] xl:scale-y-[1.005] xl:scale-x-[0.999] "
+          className=" md:scale-y-[1.04] lg:scale-y-[1.01] lg:scale-x-[0.99] xl:scale-y-[1.005] xl:scale-x-[0.999] xl:skew-x-[0.04deg] "
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 648.14 389.63"
         >

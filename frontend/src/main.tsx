@@ -45,7 +45,9 @@ const router = createBrowserRouter([
       {
         path: `/ride-results`,
         element: (
-          <AuthComponent authStates={[AuthStates.unauthenticated]}>
+          <AuthComponent
+            authStates={[AuthStates.unauthenticated, AuthStates.user]}
+          >
             <RideResults />
           </AuthComponent>
         ),

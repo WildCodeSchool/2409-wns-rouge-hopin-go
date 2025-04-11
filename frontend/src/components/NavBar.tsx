@@ -97,7 +97,13 @@ const NavBar = () => {
             />
           ) : null}
 
-          <Button isLink to="/" icon={Search} iconSize={26} isFlexCol />
+          <Button
+            isLink
+            to="/ride-results"
+            icon={Search}
+            iconSize={26}
+            isFlexCol
+          />
 
           {me ? (
             <Button isLink to="/" icon={CirclePlus} iconSize={26} isFlexCol />
@@ -135,7 +141,7 @@ const NavBar = () => {
             isHoverBgColor
           />
         </div>
-        <div className="rounded-full bg-gray-100 -ml-4 p-4 m-2 flex items-center justify-center">
+        <div className="rounded-l-full rounded-br-full bg-gray-100 -ml-4 p-4 m-2 flex items-center justify-center">
           <button onClick={() => setIsOpen(!isOpen)}>
             <img src={maleUser} alt="profile" width={80} />
           </button>
@@ -177,12 +183,14 @@ const NavBar = () => {
                 label="Trajets"
                 className="font-semibold w-full"
                 variant="secondary"
+                isHoverBgColor
               />
               <Button
                 label="Déconnexion"
                 className="font-semibold"
                 variant="secondary"
                 onClick={handleSignout}
+                isHoverBgColor
               />
             </>
           ) : null}

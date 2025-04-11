@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 
-const breakpoints = {
+type BreakpointKey = "sm" | "md" | "lg" | "xl" | "2xl";
+
+const breakpoints: Record<BreakpointKey, number> = {
   sm: 640,
   md: 768,
   lg: 1024,
@@ -8,8 +10,17 @@ const breakpoints = {
   "2xl": 1536,
 };
 
-const useBreakpoints = () => {
-  const [windowWidth, setWidth] = useState(window.innerWidth);
+type Breakpoints = {
+  windowWidth: number;
+  isSm: boolean;
+  isMd: boolean;
+  isLg: boolean;
+  isXl: boolean;
+  is2xl: boolean;
+};
+
+const useBreakpoints = (): Breakpoints => {
+  const [windowWidth, setWidth] = useState<number>(window.innerWidth);
 
   useEffect(() => {
     const onResize = () => setWidth(window.innerWidth);
