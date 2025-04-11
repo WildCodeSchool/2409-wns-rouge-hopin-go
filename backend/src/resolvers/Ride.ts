@@ -29,7 +29,9 @@ export class RidesResolver {
 
     const rides = await Ride.find({
       where: filter,
+      relations: ["driverId"],
     });
+    console.log("Rides found:", rides);
     return rides;
   }
 }

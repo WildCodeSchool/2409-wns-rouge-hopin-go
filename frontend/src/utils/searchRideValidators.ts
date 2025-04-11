@@ -23,12 +23,12 @@ export const validateDepartureAt = (value: string): string[] => {
   if (isNaN(date.getTime())) {
     errors.push("La date et l'heure sont invalides");
   }
-  //   else {
-  //     const now = new Date();
-  //     if (date < now) {
-  //       errors.push("La date et l'heure ne peuvent pas être dans le passé");
-  //     }
+  // else {
+  //   const now = new Date();
+  //   if (date < now) {
+  //     errors.push("La date et l'heure ne peuvent pas être dans le passé");
   //   }
+  // }
 
   return errors;
 };

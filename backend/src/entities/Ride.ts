@@ -41,12 +41,12 @@ export class Ride extends BaseEntity {
   @Field()
   arrival_address!: string;
 
-  @Column()
-  @Field()
+  @Field(() => Date)
+  @Column({ type: "timestamp" })
   departure_at!: Date;
 
-  @Column()
-  @Field()
+  @Field(() => Date)
+  @Column({ type: "timestamp" })
   arrival_at!: Date;
 
   @Column()
@@ -55,7 +55,7 @@ export class Ride extends BaseEntity {
 
   @ManyToOne(() => User)
   @Field(() => User)
-  driver!: User;
+  driverId!: User;
 
   @Column({ default: 0 })
   @Field()
@@ -109,11 +109,11 @@ export class RideCreateInput {
   @IsString()
   arrival_address!: string;
 
-  @Field()
+  @Field(() => Date)
   @IsDate()
   departure_at!: Date;
 
-  @Field()
+  @Field(() => Date)
   @IsDate()
   arrival_at!: Date;
 
@@ -162,7 +162,7 @@ export class SearchRideInput {
   @MaxLength(100, { message: "City cannot exceed 100 characters" })
   arrival_city!: string;
 
-  @Field()
-  @MaxLength(255)
-  departure_at!: string;
+  @Field(() => Date)
+  @IsDate()
+  departure_at!: Date;
 }

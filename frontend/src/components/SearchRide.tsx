@@ -41,7 +41,7 @@ const SearchRide = () => {
     );
   };
 
-  const [searchRide, data, loading] = useLazyQuery(querySearchRide);
+  const [searchRide] = useLazyQuery(querySearchRide);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,7 +54,7 @@ const SearchRide = () => {
           data: {
             departure_city: departureCity,
             arrival_city: arrivalCity,
-            departure_at: departureAt,
+            departure_at: new Date(departureAt + ":00"),
           },
         },
       });
@@ -70,6 +70,7 @@ const SearchRide = () => {
 
   return (
     <form
+      noValidate
       onSubmit={(e) => {
         e.preventDefault();
         handleSubmit(e);
@@ -87,8 +88,6 @@ const SearchRide = () => {
         <input
           type="text"
           id="departure-city"
-          minLength={2}
-          maxLength={50}
           required
           className={`${
             error.firstName?.length
@@ -117,7 +116,7 @@ const SearchRide = () => {
           type="datetime-local"
           id="departure-at"
           className={`${
-            error.departureCity?.length
+            error.departureAt?.length
               ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
               : "border-gray-300 bg-gray-50"
           } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
