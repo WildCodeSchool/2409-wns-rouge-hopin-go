@@ -1,15 +1,14 @@
 import { useState } from "react";
 import Button from "./Button";
-import { useLazyQuery } from "@apollo/client";
-import { querySearchRide } from "../api/SearchRide";
 import {
   validateDepartureCity as validateDepartureCityUtils,
   validateDepartureAt as validateDepartureAtUtils,
   validateArrivalCity as validateArrivalCityUtils,
 } from "../utils/searchRideValidators";
-import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 const SearchRide = () => {
+  const navigate = useNavigate();
   const [departureCity, setDepartureCity] = useState("");
   const [arrivalCity, setArrivalCity] = useState("");
   const [departureAt, setDepartureAt] = useState("");
@@ -41,31 +40,39 @@ const SearchRide = () => {
     );
   };
 
-  const [searchRide] = useLazyQuery(querySearchRide);
+  // const [searchRide] = useLazyQuery(querySearchRide);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateCreateForm()) {
       return;
     }
-    try {
-      const result = await searchRide({
-        variables: {
-          data: {
-            departure_city: departureCity,
-            arrival_city: arrivalCity,
-            departure_at: new Date(departureAt + ":00"),
-          },
-        },
-      });
-      console.log(result.data?.searchRide);
-      toast.success("Inscription réussie !");
-    } catch (error) {
-      console.error(error);
-      setError({
-        form: ["Une erreur est survenue lors de l'inscription. Réessayez."],
-      });
-    }
+
+    const params = new URLSearchParams();
+    params.append("departure_city", departureCity);
+    params.append("arrival_city", arrivalCity);
+    params.append("departure_at", departureAt);
+
+    navigate(`/ride-results?${params.toString()}`);
+
+    // try {
+    //   const result = await searchRide({
+    //     variables: {
+    //       data: {
+    //         departure_city: departureCity,
+    //         arrival_city: arrivalCity,
+    //         departure_at: new Date(departureAt + ":00"),
+    //       },
+    //     },
+    //   });
+    //   console.log(result.data?.searchRide);
+    //   toast.success("Inscription réussie !");
+    // } catch (error) {
+    //   console.error(error);
+    //   setError({
+    //     form: ["Une erreur est survenue lors de l'inscription. Réessayez."],
+    //   });
+    // }
   };
 
   return (

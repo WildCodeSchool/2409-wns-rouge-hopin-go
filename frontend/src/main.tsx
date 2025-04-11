@@ -18,6 +18,7 @@ import AuthenticationPage from "./pages/Authentication";
 import RideResults from "./pages/RideResults.tsx";
 import Signup from "./components/Signup.tsx";
 import Signin from "./components/Signin.tsx";
+import RideResultTemp from "./pages/RideResultTemp";
 
 const client = new ApolloClient({
   uri: "/api",
@@ -56,7 +57,7 @@ const router = createBrowserRouter([
           <AuthComponent
             authStates={[AuthStates.unauthenticated, AuthStates.user]}
           >
-            <RideResults />
+            <RideResultTemp />
           </AuthComponent>
         ),
       },
