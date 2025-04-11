@@ -1,45 +1,45 @@
 services:
-    back:
-        build: ./backend
-        ports:
-            - 5000:5000
-        environment:
-            - CHOKIDAR_USEPOLLING=true
-        volumes:
-            - ./backend/src:/app/src
-        env_file:
-            - database.env
-            - backend.env
-        healthcheck:
-            test: 'curl --fail  --request POST --header ''Content-Type: application/json'' --url ''http://localhost:5000/'' --data ''{"query": "query { __typename }"}'''
-            interval: 2s
-            timeout: 260s
+  back:
+    build: ./backend
+    ports:
+      - 5000:5000
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    volumes:
+      - ./backend/src:/app/src
+    env_file:
+      - database.env
+      - backend.env
+    healthcheck:
+      test: 'curl --fail  --request POST --header ''Content-Type: application/json'' --url ''http://localhost:5000/'' --data ''{"query": "query { __typename }"}'''
+      interval: 5s
+      timeout: 260s
 
-    front:
-        build: ./frontend
-        environment:
-            - GRAPHQL_SCHEMA_URL=http://back:5000
-        ports:
-            - 5173:5173 # host_port:container_port
-        volumes:
-            - ./frontend/index.html:/app/index.html
-            - ./frontend/src:/app/src
-            - ./frontend/public:/app/public
-            - ./frontend/vite.config.ts:/app/vite.config.ts
-            - ./frontend/tsconfig.json:/app/tsconfig.json
-        depends_on:
-            back:
-                condition: service_healthy
+  front:
+    build: ./frontend
+    environment:
+      - GRAPHQL_SCHEMA_URL=http://back:5000
+    ports:
+      - 5173:5173 # host_port:container_port
+    volumes:
+      - ./frontend/index.html:/app/index.html
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      - ./frontend/vite.config.ts:/app/vite.config.ts
+      - ./frontend/tsconfig.json:/app/tsconfig.json
+    depends_on:
+      back:
+        condition: service_healthy
 
-    db:
-        image: postgres
-        ports:
-            - 5432:5432
-        env_file:
-            - database.env
-        volumes:
-            - dbdata:/var/lib/postgresql/data
+  db:
+    image: postgres
+    ports:
+      - 5432:5432
+    env_file:
+      - database.env
+    volumes:
+      - dbdata:/var/lib/postgresql/data
 
 volumes:
-    dbdata:
-        driver: local
+  dbdata:
+    driver: local
