@@ -1,6 +1,6 @@
 import { Arg, Query, Resolver } from "type-graphql";
 import { Ride, SearchRideInput } from "../entities/Ride";
-import { Between, ILike } from "typeorm";
+import { Between, ILike, MoreThan } from "typeorm";
 
 @Resolver()
 export class RidesResolver {
@@ -17,7 +17,14 @@ export class RidesResolver {
       if (data.arrival_city) {
         filter.arrival_city = ILike(`%${data.arrival_city}%`);
       }
-      if (data.departure_at) {
+      if (data.departure_at < new Date()) {
+        console.error(
+          "La date et l'heure de départ doivent être supérieures à la date et l'heure actuelle"
+        );
+        throw new Error(
+          "La date et l'heure de départ doivent être supérieures à la date et l'heure actuelle"
+        );
+      } else {
         const startDay = new Date(data.departure_at);
         startDay.setHours(0, 0, 0, 0);
         const endDay = new Date(data.departure_at);
@@ -26,12 +33,30 @@ export class RidesResolver {
         filter.departure_at = Between(startDay, endDay);
       }
     }
+    filter.is_canceled = false;
+    const fromToday = new Date(data.departure_at);
+    fromToday.setHours(0, 0, 0, 0);
+    filter.departure_at = MoreThan(fromToday);
 
     const rides = await Ride.find({
       where: filter,
+      order: {
+        departure_at: "ASC",
+      },
       relations: ["driverId"],
     });
-    console.log("Rides found:", rides);
+
+    const ridesFiltered = rides.filter((ride) => {
+      return Number(ride.nb_passenger) < Number(ride.max_passenger);
+    });
+    return ridesFiltered;
+  }
+
+  @Query(() => [Ride])
+  async Rides(): Promise<Ride[] | null> {
+    const rides = await Ride.find({
+      relations: ["driverId"],
+    });
     return rides;
   }
 }

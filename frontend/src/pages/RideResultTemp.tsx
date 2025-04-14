@@ -17,7 +17,7 @@ const RideResultTemp = () => {
       data: {
         departure_city,
         arrival_city,
-        departure_at: new Date(departure_at + ":00"), // ajuste le format si nécessaire
+        departure_at: new Date(departure_at + ":00"),
       },
     },
     // On ne lance pas la requête si certains paramètres sont manquants
