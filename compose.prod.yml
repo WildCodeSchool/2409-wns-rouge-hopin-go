@@ -1,12 +1,11 @@
 services:
   back:
-    build: ./backend
+    image: adriendavy/hopingo-back
     ports:
       - 5000:5000
     environment:
       - CHOKIDAR_USEPOLLING=true
-    volumes:
-      - ./backend/src:/app/src
+
     env_file:
       - database.env
       - backend.env
@@ -16,17 +15,12 @@ services:
       timeout: 260s
 
   front:
-    build: ./frontend
+    image: adriendavy/hopingo-front
     environment:
       - GRAPHQL_SCHEMA_URL=http://back:5000
     ports:
       - 5173:5173 # host_port:container_port
-    volumes:
-      - ./frontend/index.html:/app/index.html
-      - ./frontend/src:/app/src
-      - ./frontend/public:/app/public
-      - ./frontend/vite.config.ts:/app/vite.config.ts
-      - ./frontend/tsconfig.json:/app/tsconfig.json
+
     depends_on:
       back:
         condition: service_healthy
