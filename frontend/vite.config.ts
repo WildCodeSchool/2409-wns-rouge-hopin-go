@@ -18,9 +18,9 @@ export default defineConfig({
     allowedHosts: ["front"],
     hmr: { path: "hmr" },
   },
-  // test: {
-  //   environment: "jsdom",
-  //   globals: true,
-  //   setupFiles: "./src/setup.ts",
-  // },
+  test: {
+    environment: "jsdom",
+    globals: true,
+    setupFiles: "./src/setup.ts",
+  },
 });
