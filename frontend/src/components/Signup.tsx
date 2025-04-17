@@ -57,7 +57,6 @@ export default function Signup() {
     if (!validateCreateForm()) {
       return;
     }
-    console.log("doSubmit");
 
     try {
       await doCreateUser({
@@ -105,10 +104,11 @@ export default function Signup() {
           minLength={2}
           maxLength={50}
           required
-          className={`${error.firstName?.length
-            ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-            : "border-gray-300 bg-gray-50"
-            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          className={`${
+            error.firstName?.length
+              ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+              : "border-gray-300 bg-gray-50"
+          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="Jean"
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
@@ -135,10 +135,11 @@ export default function Signup() {
           max="100"
           required
           maxLength={100}
-          className={`${error.lastName?.length
-            ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-            : "border-gray-300 bg-gray-50"
-            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          className={`${
+            error.lastName?.length
+              ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+              : "border-gray-300 bg-gray-50"
+          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="Dupont"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
@@ -158,10 +159,11 @@ export default function Signup() {
         <input
           type="email"
           id="email"
-          className={`${error.email?.length
-            ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-            : "border-gray-300 bg-gray-50"
-            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          className={`${
+            error.email?.length
+              ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+              : "border-gray-300 bg-gray-50"
+          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="nom@mail.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -184,10 +186,11 @@ export default function Signup() {
           <input
             type={revealPassword ? "text" : "password"}
             id="password"
-            className={`${error.password?.length
-              ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-              : "border-gray-300 bg-gray-50"
-              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+            className={`${
+              error.password?.length
+                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                : "border-gray-300 bg-gray-50"
+            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
@@ -221,10 +224,11 @@ export default function Signup() {
           <input
             type={revealPassword ? "text" : "password"}
             id="repeat-password"
-            className={`${error.confirmPassword?.length
-              ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-              : "border-gray-300 bg-gray-50"
-              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+            className={`${
+              error.confirmPassword?.length
+                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                : "border-gray-300 bg-gray-50"
+            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
           />
