@@ -6,6 +6,7 @@ import {
   MaxLength,
   Min,
   MinLength,
+  Validate,
 } from "class-validator";
 import { Field, ID, InputType, ObjectType } from "type-graphql";
 import {
@@ -17,6 +18,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { User } from "./User";
+import { IsFutureDate } from "../validators/IsFutureDate";
 
 @Entity()
 @ObjectType()
@@ -164,5 +166,6 @@ export class SearchRideInput {
 
   @Field(() => Date)
   @IsDate()
+  @Validate(IsFutureDate)
   departure_at!: Date;
 }
