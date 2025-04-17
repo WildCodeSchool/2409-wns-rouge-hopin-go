@@ -1,10 +1,14 @@
-import { IsDate, IsString, Max, MaxLength, Min } from "class-validator";
 import {
-  Field,
-  ID,
-  InputType,
-  ObjectType,
-} from "type-graphql";
+  IsDate,
+  IsString,
+  Matches,
+  Max,
+  MaxLength,
+  Min,
+  MinLength,
+  Validate,
+} from "class-validator";
+import { Field, ID, InputType, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
@@ -15,7 +19,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { User } from "./User";
-import { IdInput } from "./Id";
+import { IsFutureDate } from "../validators/IsFutureDate";
 
 @Entity()
 @ObjectType()
@@ -40,13 +44,13 @@ export class Ride extends BaseEntity {
   @Field()
   arrival_address!: string;
 
+  @Field(() => Date)
   @Column({ type: "timestamp" })
-  @Field()
   departure_at!: Date;
 
-  @Column({ type: "timestamp" }) // how to put timestampz ?
-  @Field()
-  arrival_at!: Date
+  @Field(() => Date)
+  @Column({ type: "timestamp" })
+  arrival_at!: Date;
 
   @Column()
   @Field()
@@ -55,9 +59,9 @@ export class Ride extends BaseEntity {
   @ManyToOne(() => User)
   @JoinColumn({ name: 'driver_id' }) // this specifies the name of the column in the database
   @Field(() => User)
-  driver_id!: User;
+  driverId!: User;
 
-  @Column({default: 0})
+  @Column({ default: 0 })
   @Field()
   nb_passenger!: number;
 
@@ -78,18 +82,17 @@ export class Ride extends BaseEntity {
   @Field()
   arrival_lng!: number;
 
-  @Column({default: false})
+  @Column({ default: false })
   @Field()
   is_canceled!: boolean;
 
-  @Field()
   @CreateDateColumn()
+  @Field()
   created_at!: Date;
 }
 
 @InputType()
 export class RideCreateInput {
-
   @Field()
   @MaxLength(255)
   @IsString()
@@ -105,19 +108,16 @@ export class RideCreateInput {
   @IsString()
   departure_address!: string;
 
-  @Field((type) => IdInput)
-  driver_id!: IdInput;
-
   @Field()
   @MaxLength(255)
   @IsString()
   arrival_address!: string;
 
-  @Field()
+  @Field(() => Date)
   @IsDate()
   departure_at!: Date;
 
-  @Field()
+  @Field(() => Date)
   @IsDate()
   arrival_at!: Date;
 
@@ -129,7 +129,7 @@ export class RideCreateInput {
 
   @Field()
   arrival_lng!: number;
-  
+
   @Field()
   arrival_lat!: number;
 
@@ -137,10 +137,6 @@ export class RideCreateInput {
   @Min(1)
   @Max(4)
   max_passenger!: number;
-
-  @Field()
-  @CreateDateColumn()
-  created_at!: Date;
 }
 
 @InputType()
@@ -156,4 +152,22 @@ export class RideUpdateInput {
 
   @Field()
   is_canceled!: boolean;
+}
+
+@InputType()
+export class SearchRideInput {
+  @Field()
+  @MinLength(2, { message: "City must be at least 2 characters long" })
+  @MaxLength(100, { message: "City cannot exceed 100 characters" })
+  departure_city!: string;
+
+  @Field()
+  @MinLength(2, { message: "City must be at least 2 characters long" })
+  @MaxLength(100, { message: "City cannot exceed 100 characters" })
+  arrival_city!: string;
+
+  @Field(() => Date)
+  @IsDate()
+  @Validate(IsFutureDate)
+  departure_at!: Date;
 }

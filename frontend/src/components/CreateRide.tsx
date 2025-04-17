@@ -30,8 +30,8 @@ const CreateRide = () => {
 
     const [doCreateRide] = useMutation(mutationCreateRide);
     const { data: whoAmIData } = useQuery(queryWhoAmI);
-    const driver_id = whoAmIData?.whoami;
-    console.log("driver_id => ", driver_id);
+    const driver = whoAmIData?.whoami;
+    console.log("driver => ", driver);
 
     type Suggestion = {
         properties: {
@@ -132,7 +132,7 @@ const CreateRide = () => {
         }
         console.log("doSubmit => ", departureCity, arrivalCity, departureAt, arrivalAt, maxPassenger, departureCoords.lat, arrivalCoords.lat, departureCoords.long, arrivalCoords.long);
         try {
-            if (driver_id) await doCreateRide({
+            if (driver) await doCreateRide({
                 variables: {
                     data: {
                         departure_city: departureCity,
@@ -146,8 +146,7 @@ const CreateRide = () => {
                         departure_lng: departureCoords.long,
                         arrival_lat: arrivalCoords.lat,
                         arrival_lng: arrivalCoords.long,
-                        created_at: new Date(),
-                        driver_id: { id: driver_id.id },
+                        driver_id: { id: driver.id },
                     },
                 },
             });

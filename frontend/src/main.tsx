@@ -1,7 +1,11 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import Home from "./pages/Home.tsx";
 import About from "./pages/About.tsx";
 import Page404 from "./pages/Page404.tsx";
@@ -11,6 +15,10 @@ import AuthComponent from "./components/AuthComponent.tsx";
 import BadURLRedirect from "./components/BadURLRedirect.tsx";
 import { AuthStates } from "./services/AuthStates.ts";
 import AuthenticationPage from "./pages/Authentication";
+import RideResults from "./pages/RideResults.tsx";
+import Signup from "./components/Signup.tsx";
+import Signin from "./components/Signin.tsx";
+import RideResultTemp from "./pages/RideResultTemp";
 
 const client = new ApolloClient({
   uri: "/api",
@@ -24,7 +32,11 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "/",
+        index: true,
+        element: <Navigate to="/rechercher" replace />,
+      },
+      {
+        path: "/:tab",
         element: <Home />,
       },
       {
@@ -38,6 +50,42 @@ const router = createBrowserRouter([
       {
         path: "/about",
         element: <About />,
+      },
+      // {
+      //   path: `/ride-results`,
+      //   element: (
+      //     <AuthComponent
+      //       authStates={[AuthStates.unauthenticated, AuthStates.user]}
+      //     >
+      //       <RideResult />
+      //     </AuthComponent>
+      //   ),
+      // },
+      {
+        path: `/ride-results`,
+        element: (
+          <AuthComponent
+            authStates={[AuthStates.unauthenticated, AuthStates.user]}
+          >
+            <RideResultTemp />
+          </AuthComponent>
+        ),
+      },
+      {
+        path: `/signin`,
+        element: (
+          <AuthComponent authStates={[AuthStates.unauthenticated]}>
+            <Signin />
+          </AuthComponent>
+        ),
+      },
+      {
+        path: `/signup`,
+        element: (
+          <AuthComponent authStates={[AuthStates.unauthenticated]}>
+            <Signup />
+          </AuthComponent>
+        ),
       },
       {
         path: `/auth/:tab`,
