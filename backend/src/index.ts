@@ -1,22 +1,16 @@
 import "reflect-metadata";
 import { datasource } from "./datasource";
-import { buildSchema } from "type-graphql";
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
-import { UsersResolver } from "./resolvers/Users";
-import { authChecker, getUserFromContext } from "./auth";
+import { getUserFromContext } from "./auth";
 import { User } from "./entities/User";
-import { RidesResolver } from "./resolvers/Ride";
+import { getSchema } from "./schema";
 
 async function initiliaze() {
   await datasource.initialize();
   console.info("Datasource is connected 🔌");
 
-  const schema = await buildSchema({
-    resolvers: [UsersResolver, RidesResolver],
-    validate: true,
-    authChecker,
-  });
+  const schema = await getSchema();
 
   const server = new ApolloServer({ schema });
 
