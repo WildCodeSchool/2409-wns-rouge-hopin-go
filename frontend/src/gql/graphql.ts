@@ -44,6 +44,7 @@ export type MutationSigninArgs = {
 
 export type Query = {
   __typename?: 'Query';
+  Rides: Array<Ride>;
   searchRide: Array<Ride>;
   user: User;
   users: Array<User>;

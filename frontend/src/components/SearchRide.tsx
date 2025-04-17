@@ -40,8 +40,6 @@ const SearchRide = () => {
     );
   };
 
-  // const [searchRide] = useLazyQuery(querySearchRide);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateCreateForm()) {
@@ -54,25 +52,6 @@ const SearchRide = () => {
     params.append("departure_at", departureAt);
 
     navigate(`/ride-results?${params.toString()}`);
-
-    // try {
-    //   const result = await searchRide({
-    //     variables: {
-    //       data: {
-    //         departure_city: departureCity,
-    //         arrival_city: arrivalCity,
-    //         departure_at: new Date(departureAt + ":00"),
-    //       },
-    //     },
-    //   });
-    //   console.log(result.data?.searchRide);
-    //   toast.success("Inscription réussie !");
-    // } catch (error) {
-    //   console.error(error);
-    //   setError({
-    //     form: ["Une erreur est survenue lors de l'inscription. Réessayez."],
-    //   });
-    // }
   };
 
   return (

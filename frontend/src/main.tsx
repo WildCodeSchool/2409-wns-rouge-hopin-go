@@ -51,6 +51,16 @@ const router = createBrowserRouter([
         path: "/about",
         element: <About />,
       },
+      // {
+      //   path: `/ride-results`,
+      //   element: (
+      //     <AuthComponent
+      //       authStates={[AuthStates.unauthenticated, AuthStates.user]}
+      //     >
+      //       <RideResult />
+      //     </AuthComponent>
+      //   ),
+      // },
       {
         path: `/ride-results`,
         element: (
