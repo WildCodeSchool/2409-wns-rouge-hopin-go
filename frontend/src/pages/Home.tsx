@@ -2,9 +2,9 @@ import SwitchTab, { Tab } from "../components/SwitchTabs";
 
 import { useParams } from "react-router-dom";
 import SearchRide from "../components/SearchRide";
-import Signin from "../components/Signin";
 import { useQuery } from "@apollo/client";
 import { queryWhoAmI } from "../api/WhoAmI";
+import CreateRide from "../components/CreateRide";
 import InformationMessage from "../components/InformationMessage";
 
 const Home = () => {
@@ -15,7 +15,7 @@ const Home = () => {
   const tabs: Tab[] = [
     { label: "Rechercher", content: <SearchRide />, path: "/rechercher" },
     ...(me
-      ? [{ label: "Proposer", content: <Signin />, path: "/proposer" }]
+      ? [{ label: "Proposer", content: <CreateRide />, path: "/proposer" }]
       : [
           {
             label: "Proposer",
