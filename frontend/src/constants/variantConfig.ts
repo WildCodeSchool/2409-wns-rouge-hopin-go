@@ -6,6 +6,7 @@ export type VariantConfig = {
   bgFill: string;
   statusLabel: string;
   icon: React.ElementType;
+  hoverBg?: string;
 };
 
 export const variantConfigMap: Record<VariantType, VariantConfig> = {
@@ -14,35 +15,41 @@ export const variantConfigMap: Record<VariantType, VariantConfig> = {
     bgFill: "fill-primary bg-primary",
     statusLabel: "",
     icon: TicketPlus,
+    hoverBg: "hover:bg-primaryHover",
   },
   secondary: {
     textColor: "text-textDark",
     bgFill: "fill-textDark bg-textDark",
     statusLabel: "",
     icon: TicketPlus,
+    hoverBg: "hover:bg-secondaryHover",
   },
   validation: {
     textColor: "text-validation",
     bgFill: "fill-validation bg-validation",
     statusLabel: "Validé",
     icon: TicketCheck,
+    hoverBg: "hover:bg-validationHover",
   },
   pending: {
     textColor: "text-pending",
     bgFill: "fill-pending bg-pending",
     statusLabel: "En attente",
     icon: History,
+    hoverBg: "hover:bg-pendingHover",
   },
   error: {
     textColor: "text-error",
     bgFill: "fill-error bg-error",
     statusLabel: "Complet",
     icon: TicketX,
+    hoverBg: "hover:bg-errorHover",
   },
   cancel: {
     textColor: "text-cancel",
     bgFill: "fill-cancel bg-cancel",
     statusLabel: "Annulé",
     icon: TicketX,
+    hoverBg: "hover:bg-cancelHover",
   },
 };
