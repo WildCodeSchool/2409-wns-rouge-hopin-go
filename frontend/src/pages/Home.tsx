@@ -5,6 +5,7 @@ import SearchRide from "../components/SearchRide";
 import Signin from "../components/Signin";
 import { useQuery } from "@apollo/client";
 import { queryWhoAmI } from "../api/WhoAmI";
+import CreateRide from "../components/CreateRide";
 
 const Home = () => {
   const { tab } = useParams();
@@ -14,7 +15,7 @@ const Home = () => {
   const tabs: Tab[] = [
     { label: "Rechercher", content: <SearchRide />, path: "/rechercher" },
     ...(me
-      ? [{ label: "Proposer", content: <Signin />, path: "/proposer" }]
+      ? [{ label: "Proposer", content: <CreateRide />, path: "/proposer" }]
       : [{ label: "Proposer", content: <Signin />, path: "/proposer" }]),
   ];
   return (
@@ -26,5 +27,6 @@ const Home = () => {
 
   );
 };
+
 
 export default Home;
