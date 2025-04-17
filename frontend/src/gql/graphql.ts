@@ -35,6 +35,18 @@ export type IdInput = {
   id: Scalars["ID"]["input"];
 };
 
+export type IdInput = {
+  id: Scalars["ID"]["input"];
+};
+
+export type IdInput = {
+  id: Scalars["ID"]["input"];
+};
+
+export type IdInput = {
+  id: Scalars["ID"]["input"];
+};
+
 export type Mutation = {
   __typename?: "Mutation";
   createRide: Ride;
@@ -50,8 +62,16 @@ export type MutationCreateRideArgs = {
   data: RideCreateInput;
 };
 
+export type MutationCreateRideArgs = {
+  data: RideCreateInput;
+};
+
 export type MutationCreateUserArgs = {
   data: UserCreateInput;
+};
+
+export type MutationDeleteRideArgs = {
+  id: Scalars["ID"]["input"];
 };
 
 export type MutationDeleteRideArgs = {
@@ -76,13 +96,32 @@ export type MutationUpdateRideArgs = {
   id: Scalars["ID"]["input"];
 };
 
+export type MutationUpdateRideArgs = {
+  data: RideUpdateInput;
+  id: Scalars["ID"]["input"];
+};
+
+export type MutationUpdateRideArgs = {
+  data: RideUpdateInput;
+  id: Scalars["ID"]["input"];
+};
+
 export type Query = {
   __typename?: "Query";
+  ride: Ride;
   rides: Array<Ride>;
   searchRide: Array<Ride>;
   user: User;
   users: Array<User>;
   whoami?: Maybe<User>;
+};
+
+export type QueryRideArgs = {
+  id: Scalars["ID"]["input"];
+};
+
+export type QueryRideArgs = {
+  id: Scalars["ID"]["input"];
 };
 
 export type QueryRideArgs = {
@@ -251,6 +290,89 @@ export type WhoamiQuery = {
   } | null;
 };
 
+export const CreateRideDocument = {
+  kind: "Document",
+  definitions: [
+    {
+      kind: "OperationDefinition",
+      operation: "mutation",
+      name: { kind: "Name", value: "CreateRide" },
+      variableDefinitions: [
+        {
+          kind: "VariableDefinition",
+          variable: { kind: "Variable", name: { kind: "Name", value: "data" } },
+          type: {
+            kind: "NonNullType",
+            type: {
+              kind: "NamedType",
+              name: { kind: "Name", value: "RideCreateInput" },
+            },
+          },
+        },
+      ],
+      selectionSet: {
+        kind: "SelectionSet",
+        selections: [
+          {
+            kind: "Field",
+            name: { kind: "Name", value: "createRide" },
+            arguments: [
+              {
+                kind: "Argument",
+                name: { kind: "Name", value: "data" },
+                value: {
+                  kind: "Variable",
+                  name: { kind: "Name", value: "data" },
+                },
+              },
+            ],
+            selectionSet: {
+              kind: "SelectionSet",
+              selections: [
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "driver_id" },
+                  selectionSet: {
+                    kind: "SelectionSet",
+                    selections: [
+                      { kind: "Field", name: { kind: "Name", value: "id" } },
+                      { kind: "Field", name: { kind: "Name", value: "email" } },
+                    ],
+                  },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "departure_city" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "arrival_city" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "departure_address" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "arrival_address" },
+                },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "departure_at" },
+                },
+                { kind: "Field", name: { kind: "Name", value: "arrival_at" } },
+                {
+                  kind: "Field",
+                  name: { kind: "Name", value: "max_passenger" },
+                },
+              ],
+            },
+          },
+        ],
+      },
+    },
+  ],
+} as unknown as DocumentNode<CreateRideMutation, CreateRideMutationVariables>;
 export const CreateUserDocument = {
   kind: "Document",
   definitions: [
