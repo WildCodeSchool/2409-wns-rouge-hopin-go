@@ -46,7 +46,7 @@ export class RidesResolver {
         order: {
           departure_at: "ASC",
         },
-        relations: ["driverId"],
+        relations: ["driver_id"],
       });
 
       const ridesFiltered = rides.filter((ride) => {
@@ -59,22 +59,13 @@ export class RidesResolver {
     }
   }
 
-  @Query(() => [Ride])
-  async Rides(): Promise<Ride[] | null> {
-    const rides = await Ride.find({
-      relations: ["driverId"],
-    });
-    return rides;
-  }
   @Authorized()
   @Query(() => [Ride])
-  async rides(@Ctx() context: ContextType): Promise<Ride[] | null> {
-    const rides = await Ride.find();
-    if (rides !== null) {
-      return rides;
-    } else {
-      return null;
-    }
+  async rides(): Promise<Ride[] | null> {
+    const rides = await Ride.find({
+      relations: ["driver_id"],
+    });
+    return rides;
   }
 
   @Authorized()
