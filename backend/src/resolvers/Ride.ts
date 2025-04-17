@@ -49,7 +49,7 @@ export class RidesResolver {
   }
 
   @Query(() => [Ride])
-  async Rides(): Promise<Ride[] | null> {
+  async rides(): Promise<Ride[] | null> {
     const rides = await Ride.find({
       relations: ["driverId"],
     });

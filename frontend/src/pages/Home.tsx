@@ -5,6 +5,7 @@ import SearchRide from "../components/SearchRide";
 import Signin from "../components/Signin";
 import { useQuery } from "@apollo/client";
 import { queryWhoAmI } from "../api/WhoAmI";
+import InformationMessage from "../components/InformationMessage";
 
 const Home = () => {
   const { tab } = useParams();
@@ -15,7 +16,13 @@ const Home = () => {
     { label: "Rechercher", content: <SearchRide />, path: "/rechercher" },
     ...(me
       ? [{ label: "Proposer", content: <Signin />, path: "/proposer" }]
-      : [{ label: "Proposer", content: <Signin />, path: "/proposer" }]),
+      : [
+          {
+            label: "Proposer",
+            content: <InformationMessage />,
+            path: "/proposer",
+          },
+        ]),
   ];
   return (
     <div className="flex-grow flex items-center justify-center h-full m-auto max-w-sm sm:max-w-lg lg:max-w-4xl overflow-hidden z-50">
@@ -23,7 +30,6 @@ const Home = () => {
         <SwitchTab tabs={tabs} tabParams={tab} />
       </div>
     </div>
-
   );
 };
 
