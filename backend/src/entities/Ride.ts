@@ -14,11 +14,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { User } from "./User";
 import { IsFutureDate } from "../validators/IsFutureDate";
+import { IdInput } from "./Id";
 
 @Entity()
 @ObjectType()
@@ -56,8 +58,9 @@ export class Ride extends BaseEntity {
   max_passenger!: number;
 
   @ManyToOne(() => User)
+  @JoinColumn({ name: 'driver_id' }) // this specifies the name of the column in the database
   @Field(() => User)
-  driverId!: User;
+  driver_id!: User;
 
   @Column({ default: 0 })
   @Field()
@@ -110,6 +113,9 @@ export class RideCreateInput {
   @MaxLength(255)
   @IsString()
   arrival_address!: string;
+
+  @Field()
+  driver_id!: IdInput;
 
   @Field(() => Date)
   @IsDate()

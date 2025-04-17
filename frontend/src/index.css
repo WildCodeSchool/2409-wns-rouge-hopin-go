@@ -23,6 +23,8 @@ h1 {
   @apply m-0;
 }
 
+
+
 .button-flex {
   @apply rounded-lg gap-2 flex items-center justify-center font-montserrat text-sm;
 }
@@ -36,6 +38,10 @@ h1 {
 
 .button-secondary {
   @apply bg-secondary text-primary transition-200;
+}
+
+.button-secondary {
+  @apply rounded-lg bg-secondary text-textDark hover:bg-secondaryHover cursor-pointer transition-200;
 }
 
 .button-validation {

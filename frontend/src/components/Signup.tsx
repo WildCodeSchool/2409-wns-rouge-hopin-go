@@ -11,25 +11,18 @@ import {
   validatePassword as validatePasswordUtils,
   validateConfirmPassword as validateConfirmPasswordUtils,
 } from "../utils/validators";
+import { formatErrors } from "../utils/formatErrors";
 
 export default function Signup() {
-  const [firstName, setFirstName] = useState("Adrien");
-  const [lastName, setLastName] = useState("Davy");
-  const [email, setEmail] = useState("adri@mail.com");
-  const [password, setPassword] = useState("Nuagebleu73!");
-  const [confirmPassword, setConfirmPassword] = useState("Nuagebleu73!");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<Record<string, string[]>>({});
   const [revealPassword, setRevealPassword] = useState(false);
 
   const [doCreateUser, { data }] = useMutation(mutationCreateUser);
-
-  // Fonction pour regrouper les erreurs en une phrase
-  const formatErrors = (errors: string[]) => {
-    if (errors.length === 0) return "";
-    if (errors.length === 1) return errors[0];
-    const lastError = errors.pop();
-    return `${errors.join(", ")} et ${lastError}.`;
-  };
 
   const validateCreateForm = (): boolean => {
     const firstNameErrors = validateFirstNameUtils(firstName);
@@ -64,7 +57,6 @@ export default function Signup() {
     if (!validateCreateForm()) {
       return;
     }
-    console.log("doSubmit");
 
     try {
       await doCreateUser({

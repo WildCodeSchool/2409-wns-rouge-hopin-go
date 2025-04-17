@@ -15,7 +15,7 @@ export const querySearchRide = gql(`
       arrival_lat
       max_passenger
       is_canceled
-      driverId{
+      driver_id{
         id
         firstName
         lastName
