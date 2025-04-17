@@ -57,7 +57,7 @@ const router = createBrowserRouter([
       //     <AuthComponent
       //       authStates={[AuthStates.unauthenticated, AuthStates.user]}
       //     >
-      //       <RideResult />
+      //       <RideResults />
       //     </AuthComponent>
       //   ),
       // },
