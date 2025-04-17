@@ -57,30 +57,6 @@ h1 {
   @apply flex flex-grow justify-center gap-1;
 }
 
-.Toastify__toast-container {
-  z-index: 9999; /* Met un z-index élevé pour être au-dessus de tout */
-}
-
-.toast-custom {
-  background-color: var(--primary-color);
-  color: white;
-  font-weight: bold;
-}
-
-.toast-success {
-  background-color: var(--primary-color);
-  color: #fff;
-}
-
-.toast-error {
-  background-color: #ff4d4f;
-  color: #fff;
-}
-
-.toast-icon {
-  font-size: 1.5rem;
-}
-
 .logo {
   @apply border-none;
 }
