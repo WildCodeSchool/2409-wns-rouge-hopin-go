@@ -11,11 +11,14 @@ import {
   MessageCircle,
   Search,
 } from "lucide-react";
-import { useState } from "react";
+import { useRef, useState } from "react";
+import { useOutsideClick } from "../hooks/useOutsideClick";
 
 const NavBar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const toggleMenuRef = useRef<HTMLDivElement>(null);
+  useOutsideClick(toggleMenuRef, () => setIsOpen(false), isOpen);
 
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const me = whoAmIData?.whoami;
@@ -149,6 +152,7 @@ const NavBar = () => {
 
       {/* Toggle Menu */}
       <div
+        ref={toggleMenuRef}
         className={`hidden md:flex fixed md:top-[62px] md:bottom-auto transition-transform duration-300 ease-in-out transform right-0 z-40 w-fit h-18  p-2 rounded-tl-lg md:h-fit md:pt-10 md:rounded-bl-3xl bg-primary
         ${isOpen ? "translate-y-0 " : "!-translate-y-full"}
         `}
