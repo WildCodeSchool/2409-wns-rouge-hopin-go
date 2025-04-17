@@ -23,6 +23,7 @@ const Home = () => {
         <SwitchTab tabs={tabs} tabParams={tab} />
       </div>
     </div>
+
   );
 };
 
