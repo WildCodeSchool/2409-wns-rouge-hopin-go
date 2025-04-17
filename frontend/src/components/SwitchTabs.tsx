@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 type SwitchTabsProps = {
   tabs: Tab[];
   tabParams?: string;
-  path?: string;
 };
 
 export type Tab = {
@@ -19,7 +18,7 @@ const SwitchTabs = ({ tabs, tabParams }: SwitchTabsProps) => {
     (tab) => tab.label.toLowerCase() === tabParams?.toLowerCase()
   );
   const currentTabIndex = currentTab ? tabs.indexOf(currentTab) : 1;
-  const [activeTab, setActiveTab] = useState(currentTabIndex);
+  const [activeTab, setActiveTab] = useState<number>(currentTabIndex);
 
   // rerender the component if a user clicks on the menu
   useEffect(() => {

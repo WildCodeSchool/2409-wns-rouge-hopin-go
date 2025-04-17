@@ -117,6 +117,20 @@ h1 {
   ::-webkit-scrollbar-thumb:hover {
     background: var(--color-primary-hover);
   }
+
+  /* no scrollbar visible */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .shadow-custom {
+    box-shadow: rgba(0, 0, 0, 0.15) 10px 15px 25px,
+      rgba(0, 0, 0, 0.05) 10px 5px 10px;
+  }
 }
 
 /* -----------------------------LOADER---------------------------- */

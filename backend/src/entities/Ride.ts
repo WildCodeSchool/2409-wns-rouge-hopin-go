@@ -6,6 +6,7 @@ import {
   MaxLength,
   Min,
   MinLength,
+  Validate,
 } from "class-validator";
 import { Field, ID, InputType, ObjectType } from "type-graphql";
 import {
@@ -17,6 +18,7 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { User } from "./User";
+import { IsFutureDate } from "../validators/IsFutureDate";
 
 @Entity()
 @ObjectType()
@@ -41,12 +43,12 @@ export class Ride extends BaseEntity {
   @Field()
   arrival_address!: string;
 
-  @Column()
-  @Field()
+  @Field(() => Date)
+  @Column({ type: "timestamp" })
   departure_at!: Date;
 
-  @Column()
-  @Field()
+  @Field(() => Date)
+  @Column({ type: "timestamp" })
   arrival_at!: Date;
 
   @Column()
@@ -55,7 +57,7 @@ export class Ride extends BaseEntity {
 
   @ManyToOne(() => User)
   @Field(() => User)
-  driver!: User;
+  driverId!: User;
 
   @Column({ default: 0 })
   @Field()
@@ -109,11 +111,11 @@ export class RideCreateInput {
   @IsString()
   arrival_address!: string;
 
-  @Field()
+  @Field(() => Date)
   @IsDate()
   departure_at!: Date;
 
-  @Field()
+  @Field(() => Date)
   @IsDate()
   arrival_at!: Date;
 
@@ -153,18 +155,17 @@ export class RideUpdateInput {
 @InputType()
 export class SearchRideInput {
   @Field()
-  @MaxLength(255)
+  @MinLength(2, { message: "City must be at least 2 characters long" })
+  @MaxLength(100, { message: "City cannot exceed 100 characters" })
   departure_city!: string;
 
   @Field()
-  @MaxLength(255)
+  @MinLength(2, { message: "City must be at least 2 characters long" })
+  @MaxLength(100, { message: "City cannot exceed 100 characters" })
   arrival_city!: string;
 
-  @Field()
-  @MaxLength(255)
-  departure_at!: string;
-
-  @Field({ nullable: true })
-  @MaxLength(255)
-  arrival_at!: string;
+  @Field(() => Date)
+  @IsDate()
+  @Validate(IsFutureDate)
+  departure_at!: Date;
 }
