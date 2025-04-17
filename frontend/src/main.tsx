@@ -1,7 +1,11 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import Home from "./pages/Home.tsx";
 import About from "./pages/About.tsx";
 import Page404 from "./pages/Page404.tsx";
@@ -14,6 +18,7 @@ import AuthenticationPage from "./pages/Authentication";
 import RideResults from "./pages/RideResults.tsx";
 import Signup from "./components/Signup.tsx";
 import Signin from "./components/Signin.tsx";
+import RideResultTemp from "./pages/RideResultTemp";
 
 const client = new ApolloClient({
   uri: "/api",
@@ -27,7 +32,11 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "/",
+        index: true,
+        element: <Navigate to="/rechercher" replace />,
+      },
+      {
+        path: "/:tab",
         element: <Home />,
       },
       {
@@ -42,13 +51,23 @@ const router = createBrowserRouter([
         path: "/about",
         element: <About />,
       },
+      // {
+      //   path: `/ride-results`,
+      //   element: (
+      //     <AuthComponent
+      //       authStates={[AuthStates.unauthenticated, AuthStates.user]}
+      //     >
+      //       <RideResult />
+      //     </AuthComponent>
+      //   ),
+      // },
       {
         path: `/ride-results`,
         element: (
           <AuthComponent
             authStates={[AuthStates.unauthenticated, AuthStates.user]}
           >
-            <RideResults />
+            <RideResultTemp />
           </AuthComponent>
         ),
       },

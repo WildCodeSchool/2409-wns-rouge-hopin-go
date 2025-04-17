@@ -125,16 +125,15 @@ const NavBar = () => {
         <div className=" flex justify-between gap-4 pl-6 pr-8 my-6 w-fit items-center bg-primary rounded-bl-3xl">
           <Button
             isLink
-            to="/ride-results"
+            to="/rechercher"
             variant="secondary"
             label="Rechercher"
             className="font-semibold"
             isHoverBgColor
           />
-
           <Button
             isLink
-            to="/"
+            to="/proposer"
             variant="secondary"
             label="Proposer"
             className="font-semibold"
