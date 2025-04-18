@@ -16,6 +16,7 @@
     "class-validator": "^0.14.1",
     "concurrently": "^9.1.2",
     "cookies": "^0.9.1",
+    "date-fns": "^4.1.0",
     "graphql": "^16.9.0",
     "graphql-scalars": "^1.23.0",
     "joi": "^17.13.3",
