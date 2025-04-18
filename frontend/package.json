@@ -16,6 +16,7 @@
     "@apollo/client": "^3.11.10",
     "@lucide/lab": "^0.1.2",
     "concurrently": "^9.1.2",
+    "date-fns": "^4.1.0",
     "graphql": "^16.9.0",
     "lucide-react": "^0.479.0",
     "react": "^18.3.1",

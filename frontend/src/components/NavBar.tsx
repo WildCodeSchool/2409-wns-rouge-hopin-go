@@ -17,7 +17,6 @@ import { useOutsideClick } from "../hooks/useOutsideClick";
 const NavBar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-  console.log(isOpen);
 
   const toggleMenuRef = useRef<HTMLDivElement>(null);
   useOutsideClick(toggleMenuRef, () => setIsOpen(false), isOpen);
@@ -34,7 +33,6 @@ const NavBar = () => {
     doSignout();
     navigate("/");
   };
-  console.log("me => ", me);
 
   return (
     <>

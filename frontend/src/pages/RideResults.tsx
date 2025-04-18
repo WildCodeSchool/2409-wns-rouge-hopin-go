@@ -24,7 +24,7 @@ const RideResults = () => {
       data: {
         departure_city,
         arrival_city,
-        departure_at: new Date(departure_at + ":00"),
+        departure_at: new Date(departure_at + ":00:00:00Z"),
       },
     },
     skip: !departure_city || !arrival_city || !departure_at,

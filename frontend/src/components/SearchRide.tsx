@@ -99,7 +99,7 @@ const SearchRide = () => {
           Date de départ
         </label>
         <input
-          type="datetime-local"
+          type="date"
           id="departure-at"
           className={`${
             error.departureAt?.length

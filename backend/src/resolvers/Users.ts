@@ -74,7 +74,6 @@ export class UsersResolver {
             httpOnly: true,
             maxAge: 1000 * 60 * 60 * 72, // 72 hours
           });
-          console.log("cookies", cookies.get("token"));
 
           return user;
         } else {

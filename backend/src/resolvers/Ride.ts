@@ -6,6 +6,7 @@ import {
   SearchRideInput,
 } from "../entities/Ride";
 import { validate } from "class-validator";
+import { endOfDay, startOfDay } from "date-fns";
 
 @Resolver()
 export class RidesResolver {
@@ -15,10 +16,8 @@ export class RidesResolver {
     data: SearchRideInput
   ): Promise<Ride[]> {
     try {
-      const startDay = new Date(data.departure_at);
-      startDay.setHours(0, 0, 0, 0);
-      const endDay = new Date(data.departure_at);
-      endDay.setHours(23, 59, 59, 999);
+      const startDay = startOfDay(data.departure_at);
+      const endDay = endOfDay(data.departure_at);
       const rides = await Ride.createQueryBuilder("ride")
         .innerJoinAndSelect("ride.driver_id", "driver")
         .where("ride.departure_city ILIKE :departure_city", {
