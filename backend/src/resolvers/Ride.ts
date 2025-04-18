@@ -1,60 +1,43 @@
+import { Arg, Authorized, ID, Mutation, Query, Resolver } from "type-graphql";
 import {
-  Arg,
-  Authorized,
-  Ctx,
-  ID,
-  Info,
-  Mutation,
-  Query,
-  Resolver,
-} from "type-graphql";
-import { Ride, RideCreateInput, RideUpdateInput, SearchRideInput } from "../entities/Ride";
+  Ride,
+  RideCreateInput,
+  RideUpdateInput,
+  SearchRideInput,
+} from "../entities/Ride";
 import { validate } from "class-validator";
-import { ContextType } from "../auth";
-import { Between, ILike, MoreThan } from "typeorm";
 
 @Resolver()
 export class RidesResolver {
   @Query(() => [Ride])
   async searchRide(
-    @Arg("data", () => SearchRideInput, { nullable: true })
+    @Arg("data", () => SearchRideInput)
     data: SearchRideInput
-  ): Promise<Ride[] | null> {
+  ): Promise<Ride[]> {
     try {
-      const filter: any = {};
-      if (data) {
-        if (data.departure_city) {
-          filter.departure_city = ILike(`%${data.departure_city}%`);
-        }
-        if (data.arrival_city) {
-          filter.arrival_city = ILike(`%${data.arrival_city}%`);
-        }
-        const startDay = new Date(data.departure_at);
-        startDay.setHours(0, 0, 0, 0);
-        const endDay = new Date(data.departure_at);
-        endDay.setHours(23, 59, 59, 999);
-
-        filter.departure_at = Between(startDay, endDay);
-      }
-      filter.is_canceled = false;
-      // const fromToday = new Date(data.departure_at);
-      // fromToday.setHours(0, 0, 0, 0);
-      // filter.departure_at = MoreThan(fromToday);
-
-      const rides = await Ride.find({
-        where: filter,
-        order: {
-          departure_at: "ASC",
-        },
-        relations: ["driver_id"],
-      });
-
-      const ridesFiltered = rides.filter((ride) => {
-        return Number(ride.nb_passenger) < Number(ride.max_passenger);
-      });
-      return ridesFiltered;
+      const startDay = new Date(data.departure_at);
+      startDay.setHours(0, 0, 0, 0);
+      const endDay = new Date(data.departure_at);
+      endDay.setHours(23, 59, 59, 999);
+      const rides = await Ride.createQueryBuilder("ride")
+        .innerJoinAndSelect("ride.driver_id", "driver")
+        .where("ride.departure_city ILIKE :departure_city", {
+          departure_city: `%${data.departure_city}%`,
+        })
+        .andWhere("ride.arrival_city ILIKE :arrival_city", {
+          arrival_city: `%${data.arrival_city}%`,
+        })
+        .andWhere("ride.departure_at BETWEEN :start AND :end", {
+          start: startDay,
+          end: endDay,
+        })
+        .andWhere("ride.is_canceled = false")
+        .andWhere("ride.nb_passenger < ride.max_passenger")
+        .orderBy("ride.departure_at", "ASC")
+        .getMany();
+      return rides;
     } catch (error) {
-      console.error("Une erreur est survenue lors de la recherche.");
+      console.error("Une erreur est survenue lors de la recherche.", error);
       throw new Error("Une erreur est survenue lors de la recherche.");
     }
   }
@@ -71,8 +54,8 @@ export class RidesResolver {
   @Authorized()
   @Query(() => Ride)
   async ride(
-    @Arg("id", () => ID) id: number,
-   // @Ctx() context: ContextType
+    @Arg("id", () => ID) id: number
+    // @Ctx() context: ContextType
   ): Promise<Ride | null> {
     const ride = await Ride.findOneBy({ id });
     if (ride) {
@@ -82,7 +65,7 @@ export class RidesResolver {
     }
   }
 
- // Need a Middleware to verify if the user is logged in
+  // Need a Middleware to verify if the user is logged in
   @Mutation(() => Ride)
   async createRide(
     @Arg("data", () => RideCreateInput) data: RideCreateInput
@@ -102,23 +85,22 @@ export class RidesResolver {
     }
   }
 
- // Need a Middleware to verify if the user is logged in and is the user that created the ride
+  // Need a Middleware to verify if the user is logged in and is the user that created the ride
   @Mutation(() => Ride, { nullable: true })
   async updateRide(
-      @Arg("id", () => ID) id: number,
-      @Arg("data", () => RideUpdateInput) data: RideUpdateInput
+    @Arg("id", () => ID) id: number,
+    @Arg("data", () => RideUpdateInput) data: RideUpdateInput
   ): Promise<Ride | null> {
-      const ride = await Ride.findOneBy({ id });
-      if (ride !== null) {
-
-          await ride.save();
-          return ride;
-      } else {
-          return null;
-      }
+    const ride = await Ride.findOneBy({ id });
+    if (ride !== null) {
+      await ride.save();
+      return ride;
+    } else {
+      return null;
+    }
   }
 
- // Need a Middleware to verify if the user is logged in and is the user that created the ride
+  // Need a Middleware to verify if the user is logged in and is the user that created the ride
   @Mutation(() => Ride, { nullable: true })
   async deleteRide(@Arg("id", () => ID) id: number): Promise<Ride | null> {
     const ride = await Ride.findOneBy({ id });

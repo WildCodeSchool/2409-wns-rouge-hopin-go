@@ -82,7 +82,7 @@ export type QueryRideArgs = {
 
 
 export type QuerySearchRideArgs = {
-  data?: InputMaybe<SearchRideInput>;
+  data: SearchRideInput;
 };
 
 
