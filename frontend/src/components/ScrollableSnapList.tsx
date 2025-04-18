@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
-import CardTemplate, { CardData } from "./CardTemplate";
+import CardTemplate from "./CardTemplate";
 import { VariantType } from "../types/variantTypes";
+import { Ride } from "../gql/graphql";
+import useWindowSize from "../utils/useWindowSize";
 
 type ScrollableSnapListProps = {
-  dataset: CardData[];
-  getVariant: (data: CardData) => VariantType;
+  dataset: Ride[] | undefined;
+  getVariant: (data: Ride) => VariantType;
   onSelect: (index: number) => void;
   alignRef: React.RefObject<HTMLDivElement>; // Pour alignement éventuel
 };
@@ -17,9 +19,13 @@ const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
+  const { isMd } = useWindowSize();
+
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [padding, setPadding] = useState(200); // Valeur de secours
+  const [padding, setPadding] = useState(0); // Valeur de secours
   const [isScrollingManually, setIsScrollingManually] = useState(false);
+  const [bottomPadding, setBottomPadding] = useState(0);
+
   const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Calcule le padding haut/bas dynamiquement
@@ -31,14 +37,20 @@ const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
     const updatePadding = () => {
       const containerHeight = container.clientHeight;
       const itemHeight = firstItem.offsetHeight;
-      const pad = containerHeight / 2 - itemHeight / 2;
+
+      const mobileNavbarOffset = 58;
+      const pad = isMd ? containerHeight / 2 - itemHeight / 2 : 0;
+
       setPadding(pad);
+
+      // Pour le bottom uniquement, on ajoute l’offset mobile si en dessous de 768px
+      setBottomPadding(isMd ? pad : mobileNavbarOffset);
     };
 
     updatePadding();
     window.addEventListener("resize", updatePadding);
     return () => window.removeEventListener("resize", updatePadding);
-  }, [dataset]);
+  }, [dataset, isMd]);
 
   // Scroll smooth vers le centre
   const scrollToCenter = (index: number) => {
@@ -50,7 +62,7 @@ const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
     const targetTop = target.offsetTop;
     const targetHeight = target.offsetHeight;
 
-    const scrollTop = targetTop - containerHeight / 2 + targetHeight / 2;
+    const scrollTop = targetTop - 5 - containerHeight / 2 + targetHeight / 2;
     container.scrollTo({ top: scrollTop, behavior: "smooth" });
     setIsScrollingManually(false);
   };
@@ -97,11 +109,11 @@ const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
     <div className="relative h-full w-full z-30 transition-200">
       <div
         ref={containerRef}
-        className="flex flex-col items-center gap-4 overflow-y-scroll scroll-smooth h-full no-scrollbar transition-200 my-2"
-        style={{ paddingTop: padding, paddingBottom: padding }}
+        className="flex flex-col items-center gap-4 overflow-y-scroll scroll-smooth h-full no-scrollbar transition-200"
+        style={{ paddingTop: padding, paddingBottom: bottomPadding }}
         onScroll={handleScroll}
       >
-        {dataset.map((data, index) => (
+        {dataset?.map((data, index) => (
           <div
             className="w-full sm:w-auto"
             key={index}
@@ -118,7 +130,7 @@ const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
                 setIsScrollingManually(true);
                 setTimeout(() => {
                   setIsScrollingManually(false);
-                }, 1000); // Timeout pour éviter le scroll immédiat
+                }, 1000);
               }}
             />
           </div>
