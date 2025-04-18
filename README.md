@@ -122,7 +122,7 @@ docker compose stop
  ```
 
 
- ## CD
+ ## Continue delivery
 
   - **Connect on server**
 
