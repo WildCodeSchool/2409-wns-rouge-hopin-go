@@ -3,6 +3,8 @@ import { gql } from "../gql";
 export const querySearchRide = gql(`
   query SearchRides($data: SearchRideInput!) {
     searchRide(data: $data) {
+      id
+      created_at
       departure_city
       departure_at
       arrival_city
@@ -14,12 +16,15 @@ export const querySearchRide = gql(`
       arrival_lng
       arrival_lat
       max_passenger
+      nb_passenger
       is_canceled
-      driver_id{
+      driver_id {
         id
         firstName
         lastName
-        }
-}
+        createdAt
+        role
+      }
+    }
   }
 `);
