@@ -58,7 +58,7 @@ export class Ride extends BaseEntity {
   max_passenger!: number;
 
   @ManyToOne(() => User)
-  @JoinColumn({ name: 'driver_id' }) // this specifies the name of the column in the database
+  @JoinColumn({ name: "driver_id" }) // this specifies the name of the column in the database
   @Field(() => User)
   driver_id!: User;
 
