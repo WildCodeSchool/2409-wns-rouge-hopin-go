@@ -16,11 +16,13 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { User } from "./User";
 import { IsFutureDate } from "../validators/IsFutureDate";
 import { IdInput } from "./Id";
+import { PassengerRide } from "./PassengerRide";
 
 @Entity()
 @ObjectType()
@@ -90,6 +92,9 @@ export class Ride extends BaseEntity {
   @CreateDateColumn()
   @Field()
   created_at!: Date;
+
+  @OneToMany(() => PassengerRide, (pr) => pr.ride)
+  passengerRides!: PassengerRide[];
 }
 
 @InputType()
