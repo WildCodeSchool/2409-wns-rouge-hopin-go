@@ -16,6 +16,7 @@ export class RidesResolver {
     data: SearchRideInput
   ): Promise<Ride[]> {
     try {
+      console.log("data", data);
       const startDay = startOfDay(data.departure_at);
       const endDay = endOfDay(data.departure_at);
       const rides = await Ride.createQueryBuilder("ride")
@@ -34,6 +35,7 @@ export class RidesResolver {
         .andWhere("ride.nb_passenger < ride.max_passenger")
         .orderBy("ride.departure_at", "ASC")
         .getMany();
+      console.log("rides", rides);
       return rides;
     } catch (error) {
       console.error("Une erreur est survenue lors de la recherche.", error);
