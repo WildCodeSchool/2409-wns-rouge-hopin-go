@@ -3,14 +3,16 @@ import {
   ValidatorConstraintInterface,
   ValidationArguments,
 } from "class-validator";
+import { isBefore, startOfDay } from "date-fns";
+import { start } from "repl";
 
 @ValidatorConstraint({ name: "isFutureDate", async: false })
 export class IsFutureDate implements ValidatorConstraintInterface {
   validate(date: Date, args: ValidationArguments) {
-    return date.getTime() > Date.now();
+    return !isBefore(startOfDay(date), startOfDay(new Date()));
   }
 
   defaultMessage(args: ValidationArguments) {
-    return "The departure date and time must be greater than the current date and time.";
+    return "The departure date cannot be in the past.";
   }
 }

@@ -1,3 +1,5 @@
+import { isBefore, startOfDay } from "date-fns";
+
 export const validateDepartureCity = (value: string): string[] => {
   const errors: string[] = [];
   if (!value) errors.push("La ville de départ est requise");
@@ -24,7 +26,7 @@ export const validateDepartureAt = (value: string): string[] => {
     errors.push("La date et l'heure sont invalides");
   } else {
     const now = new Date();
-    if (date < now) {
+    if (isBefore(startOfDay(date), startOfDay(now))) {
       errors.push("La date et l'heure ne peuvent pas être dans le passé");
     }
   }
