@@ -23,8 +23,6 @@ h1 {
   @apply m-0;
 }
 
-
-
 .button-flex {
   @apply rounded-lg gap-2 flex items-center justify-center font-montserrat text-sm;
 }

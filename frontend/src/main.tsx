@@ -16,8 +16,7 @@ import BadURLRedirect from "./components/BadURLRedirect.tsx";
 import { AuthStates } from "./services/AuthStates.ts";
 import AuthenticationPage from "./pages/Authentication";
 import RideResults from "./pages/RideResults.tsx";
-import Signup from "./components/Signup.tsx";
-import Signin from "./components/Signin.tsx";
+import PassengerRides from "./pages/PassengerRides.tsx";
 // import RideResultTemp from "./pages/RideResultTemp";
 
 const client = new ApolloClient({
@@ -62,18 +61,10 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: `/signin`,
+        path: `/my-rides/:tab`,
         element: (
-          <AuthComponent authStates={[AuthStates.unauthenticated]}>
-            <Signin />
-          </AuthComponent>
-        ),
-      },
-      {
-        path: `/signup`,
-        element: (
-          <AuthComponent authStates={[AuthStates.unauthenticated]}>
-            <Signup />
+          <AuthComponent authStates={[AuthStates.user]}>
+            <PassengerRides />
           </AuthComponent>
         ),
       },
