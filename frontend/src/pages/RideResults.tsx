@@ -19,7 +19,11 @@ const RideResults = () => {
   const arrival_city = searchParams.get("arrival_city")!;
   const departure_at = searchParams.get("departure_at")!;
 
-  const { data: dataSearched, loading } = useQuery(querySearchRide, {
+  const {
+    data: dataSearched,
+    loading,
+    error,
+  } = useQuery(querySearchRide, {
     variables: {
       data: {
         departure_city,
@@ -29,6 +33,14 @@ const RideResults = () => {
     },
     skip: !departure_city || !arrival_city || !departure_at,
   });
+  if (error) {
+    return (
+      <div className="text-center w-full mt-10 text-red-500">
+        Une erreur est survenue lors de la recherche des trajets. Veuillez
+        réessayer.
+      </div>
+    );
+  }
 
   const rides = dataSearched?.searchRide ?? [];
 
