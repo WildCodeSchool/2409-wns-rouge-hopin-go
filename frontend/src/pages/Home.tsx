@@ -16,15 +16,15 @@ const Home = () => {
     {
       label: "Rechercher",
       content: <SearchRide variant="searchFormRide" />,
-      path: "/rechercher",
+      path: "/research",
     },
     ...(me
-      ? [{ label: "Proposer", content: <CreateRide />, path: "/proposer" }]
+      ? [{ label: "Proposer", content: <CreateRide />, path: "/propose" }]
       : [
           {
             label: "Proposer",
             content: <InformationMessage />,
-            path: "/proposer",
+            path: "/propose",
           },
         ]),
   ];
