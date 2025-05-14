@@ -14,9 +14,11 @@ export type Tab = {
 
 const SwitchTabs = ({ tabs, tabParams }: SwitchTabsProps) => {
   const navigate = useNavigate();
-  const currentTab = tabs.find(
-    (tab) => tab.label.toLowerCase() === tabParams?.toLowerCase()
-  );
+  const currentTab = tabs.find((tab) => {
+    const lastSegment = tab.path.split("/").pop();
+    return lastSegment?.toLowerCase() === tabParams?.toLowerCase();
+  });
+
   const currentTabIndex = currentTab ? tabs.indexOf(currentTab) : 1;
   const [activeTab, setActiveTab] = useState<number>(currentTabIndex);
 

@@ -184,7 +184,7 @@ const NavBar = () => {
               <>
                 <Button
                   isLink
-                  to="/my-rides/passenger"
+                  to="/mes-trajets/passager"
                   label="Trajets"
                   className="font-semibold w-full"
                   variant="secondary"
