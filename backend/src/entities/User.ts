@@ -12,9 +12,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ContextType } from "../auth";
+import { PassengerRide } from "./PassengerRide";
 
 export const IsUser: MiddlewareFn<ContextType> = async (
   { context, root },
@@ -62,6 +64,9 @@ export class User extends BaseEntity {
   @CreateDateColumn()
   @Field()
   createdAt!: Date;
+
+  @OneToMany(() => PassengerRide, (pr) => pr.user)
+  passengerRides!: PassengerRide[];
 
   // may be needed if user can create other users
   // @ManyToOne(() => User)
