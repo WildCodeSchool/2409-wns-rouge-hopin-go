@@ -3,6 +3,7 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import ScrollableSnapList from "./ScrollableSnapList";
 import { Ride } from "../gql/graphql";
 import { VariantType } from "../types/variantTypes";
+import useBreakpoints from "../utils/useWindowSize";
 import { useQuery } from "@apollo/client";
 import { queryWhoAmI } from "../api/WhoAmI";
 
@@ -11,6 +12,8 @@ const DriverRidesList = ({ dataset }: any) => {
   const [, setSelectedIndex] = useState(0);
   const [showUpcoming, setShowUpcoming] = useState(true);
   const [showArchived, setShowArchived] = useState(false);
+
+  const { isSm } = useBreakpoints();
 
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const me = whoAmIData?.whoami;
@@ -27,60 +30,63 @@ const DriverRidesList = ({ dataset }: any) => {
     return "primary";
   };
 
+  const upcomingRides = dataset.filter(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (ride: any) =>
+      new Date(ride.departure_at) >= new Date() &&
+      !ride.is_canceled &&
+      me?.id === ride.driver_id.id
+  );
+
+  const archivedRides = dataset.filter(
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (ride: any) =>
+      new Date(ride.departure_at) < new Date() && me?.id === ride.driver_id.id
+  );
+
   return (
-    <div className="flex flex-col gap-4">
+    <div className=" h-full w-full pt-4 pb-32 sm:pb-16 overflow-auto">
       <span
-        className="flex items-center gap-2 text-white cursor-pointer"
+        className="flex items-center w-fit gap-2 ml-4  cursor-pointer"
         onClick={() => setShowUpcoming((prev) => !prev)}
       >
-        {showUpcoming ? (
-          <ChevronUp color="white" />
-        ) : (
-          <ChevronDown color="white" />
-        )}
+        {showUpcoming ? <ChevronUp /> : <ChevronDown />}
         Trajets à venir
       </span>
-      {showUpcoming && (
-        <div className="flex h-full w-full z-20  overflow-hidden">
-          <ScrollableSnapList
-            dataset={dataset.filter(
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (ride: any) =>
-                new Date(ride.departure_at) >= new Date() &&
-                !ride.is_canceled &&
-                me?.id === ride.driver_id.id
-            )}
-            getVariant={getVariant}
-            onSelect={setSelectedIndex}
-            direction="horizontal"
-          />
-        </div>
+      {upcomingRides.length > 0 ? (
+        showUpcoming && (
+          <div className="flex h-fit w-full overflow-auto">
+            <ScrollableSnapList
+              dataset={upcomingRides}
+              getVariant={getVariant}
+              onSelect={setSelectedIndex}
+              direction={isSm ? "horizontal" : "vertical"}
+            />
+          </div>
+        )
+      ) : (
+        <div className="text-center w-full mt-10">Aucun trajet à venir.</div>
       )}
       <span
-        className="flex items-center gap-2 text-white cursor-pointer"
+        className="flex items-center w-fit gap-2 ml-4  cursor-pointer"
         onClick={() => setShowArchived((prev) => !prev)}
       >
-        {showArchived ? (
-          <ChevronUp color="white" />
-        ) : (
-          <ChevronDown color="white" />
-        )}
+        {showArchived ? <ChevronUp /> : <ChevronDown />}
         Trajets archivés
       </span>
-      {showArchived && (
-        <div className="flex h-full w-full z-20  overflow-hidden">
-          <ScrollableSnapList
-            dataset={dataset.filter(
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (ride: any) =>
-                new Date(ride.departure_at) < new Date() &&
-                me?.id === ride.driver_id.id
-            )}
-            getVariant={getVariant}
-            onSelect={setSelectedIndex}
-            direction="horizontal"
-          />
-        </div>
+      {archivedRides.length > 0 ? (
+        showArchived && (
+          <div className="flex h-fit w-full overflow-auto">
+            <ScrollableSnapList
+              dataset={archivedRides}
+              getVariant={getVariant}
+              onSelect={setSelectedIndex}
+              direction={isSm ? "horizontal" : "vertical"}
+            />
+          </div>
+        )
+      ) : (
+        <div className="text-center w-full mt-10 ">Aucun trajet archivé.</div>
       )}
     </div>
   );

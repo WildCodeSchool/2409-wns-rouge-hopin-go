@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 type SwitchTabsProps = {
   tabs: Tab[];
   tabParams?: string;
+  classContainer?: string;
 };
 
 export type Tab = {
@@ -12,7 +13,7 @@ export type Tab = {
   path: string;
 };
 
-const SwitchTabs = ({ tabs, tabParams }: SwitchTabsProps) => {
+const SwitchTabs = ({ tabs, tabParams, classContainer }: SwitchTabsProps) => {
   const navigate = useNavigate();
   const currentTab = tabs.find((tab) => {
     const lastSegment = tab.path.split("/").pop();
@@ -50,7 +51,7 @@ const SwitchTabs = ({ tabs, tabParams }: SwitchTabsProps) => {
           </button>
         ))}
       </div>
-      <div className="w-full h-full bg-primary overflow-auto">
+      <div className={`${classContainer} w-full h-full overflow-auto`}>
         {tabs[activeTab].content}
       </div>
     </div>

@@ -26,10 +26,8 @@ const Home = () => {
   ];
   return (
     <>
-      <div className="flex-grow flex items-center justify-center h-full m-auto max-w-sm sm:max-w-lg lg:max-w-4xl overflow-hidden z-50">
-        <div className="flex-1">
-          <SwitchTab tabs={tabs} tabParams={tab} />
-        </div>
+      <div className=" flex flex-col fixed justify-center items-center h-full w-full sm:p-8">
+        <SwitchTab classContainer="bg-primary" tabs={tabs} tabParams={tab} />
       </div>
     </>
   );

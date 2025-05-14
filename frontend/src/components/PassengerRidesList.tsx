@@ -26,24 +26,23 @@ const PassengerRidesList = ({ dataset }: any) => {
   };
 
   const upcomingRides = dataset.filter(
-    (ride) => new Date(ride.departure_at) >= new Date() && !ride.is_canceled
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (ride: any) =>
+      new Date(ride.departure_at) >= new Date() && !ride.is_canceled
   );
 
   const archivedRides = dataset.filter(
-    (ride) => new Date(ride.departure_at) < new Date()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (ride: any) => new Date(ride.departure_at) < new Date()
   );
 
   return (
-    <div className=" h-full w-full  pt-4 pb-32 sm:pb-16 overflow-auto">
+    <div className=" h-full w-full pt-4 pb-32 sm:pb-16 overflow-auto">
       <span
-        className="flex items-center w-fit gap-2 ml-4 text-white cursor-pointer"
+        className="flex items-center w-fit gap-2 ml-4  cursor-pointer"
         onClick={() => setShowUpcoming((prev) => !prev)}
       >
-        {showUpcoming ? (
-          <ChevronUp color="white" />
-        ) : (
-          <ChevronDown color="white" />
-        )}
+        {showUpcoming ? <ChevronUp /> : <ChevronDown />}
         Trajets à venir
       </span>
       {upcomingRides.length > 0 ? (
@@ -58,19 +57,13 @@ const PassengerRidesList = ({ dataset }: any) => {
           </div>
         )
       ) : (
-        <div className="text-center w-full mt-10 text-textLight">
-          Aucun trajet à venir.
-        </div>
+        <div className="text-center w-full mt-10">Aucun trajet à venir.</div>
       )}
       <span
-        className="flex items-center w-fit gap-2 ml-4 text-white cursor-pointer"
+        className="flex items-center w-fit gap-2 ml-4  cursor-pointer"
         onClick={() => setShowArchived((prev) => !prev)}
       >
-        {showArchived ? (
-          <ChevronUp color="white" />
-        ) : (
-          <ChevronDown color="white" />
-        )}
+        {showArchived ? <ChevronUp /> : <ChevronDown />}
         Trajets archivés
       </span>
       {archivedRides.length > 0 ? (
@@ -85,9 +78,7 @@ const PassengerRidesList = ({ dataset }: any) => {
           </div>
         )
       ) : (
-        <div className="text-center w-full mt-10 text-textLight">
-          Aucun trajet archivé.
-        </div>
+        <div className="text-center w-full mt-10 ">Aucun trajet archivé.</div>
       )}
     </div>
   );
