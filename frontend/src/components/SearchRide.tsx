@@ -144,7 +144,12 @@ const SearchRide = () => {
       </div>
       {/* Bouton */}
       <div className="flex w-full justify-end">
-        <Button variant="validation" type="submit" label="Rechercher" />
+        <Button
+          variant="validation"
+          type="submit"
+          label="Rechercher"
+          isHoverBgColor
+        />
       </div>
     </form>
   );

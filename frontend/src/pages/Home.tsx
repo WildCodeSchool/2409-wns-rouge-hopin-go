@@ -26,7 +26,7 @@ const Home = () => {
   ];
   return (
     <>
-      <div className=" flex flex-col fixed justify-center items-center h-full w-full sm:p-8">
+      <div className=" flex flex-col fixed justify-center items-center h-full w-full sm:py-24 sm:px-24 lg:px-60">
         <SwitchTab classContainer="bg-primary" tabs={tabs} tabParams={tab} />
       </div>
     </>
