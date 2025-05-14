@@ -71,6 +71,7 @@ const RideResults = () => {
           getVariant={getVariant}
           onSelect={setSelectedIndex}
           direction="vertical"
+          scaleEffect
         />
       </div>
       <div className="h-full flex md:w-1/2">

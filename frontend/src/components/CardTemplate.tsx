@@ -13,6 +13,7 @@ type CardTemplateProps = {
   data: Ride;
   onClick?: () => void;
   isSelected?: boolean;
+  additionalClassName?: string;
 };
 
 const CardTemplate: React.FC<CardTemplateProps> = ({
@@ -20,8 +21,9 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   data,
   onClick,
   isSelected = false,
+  additionalClassName = "",
 }) => {
-  const { isSm, isMd, isLg, isXl, windowWidth } = useWindowSize();
+  const { isSm, isMd, isXl, windowWidth } = useWindowSize();
   const {
     textColor,
     bgFill,
@@ -50,9 +52,11 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
 
   return (
     <div
-      className={`select-none transition-200 w-full sm:min-w-[32rem] sm:max-w-lg md:min-w-[23rem] md:max-w-[23rem] lg:min-w-[28rem] lg:max-w-[28rem] xl:min-w-[32rem] xl:max-w-lg p-4 ${
-        isSelected && isLg ? "scale-110" : isSelected && isMd ? "scale-105" : ""
-      } transition-transform ${onClick ? "cursor-pointer" : ""}`}
+      className={`${
+        isSelected && additionalClassName
+      } select-none transition-200 w-full sm:min-w-[32rem] sm:max-w-lg md:min-w-[23rem] md:max-w-[23rem] lg:min-w-[28rem] lg:max-w-[28rem] xl:min-w-[32rem] xl:max-w-lg p-4 transition-transform ${
+        onClick ? "cursor-pointer" : ""
+      }`}
       onClick={onClick}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}

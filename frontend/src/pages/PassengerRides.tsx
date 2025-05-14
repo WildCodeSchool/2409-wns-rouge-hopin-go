@@ -106,8 +106,8 @@ const PassengerRides = () => {
     },
   ];
   return (
-    <div className="flex-grow flex items-center justify-center h-full mx-4  overflow-hidden z-50">
-      <div className="rounded-xl bg-gray-100 shadow-lg w-full max-w-7xl">
+    <div className="flex-grow flex items-center sm:mx-8  justify-center h-full  overflow-hidden z-50">
+      <div className="w-full h-full sm:h-auto max-w-7xl">
         <SwitchTab tabs={tabs} tabParams={tab} />
       </div>
     </div>

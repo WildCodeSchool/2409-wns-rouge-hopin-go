@@ -34,27 +34,23 @@ const SwitchTabs = ({ tabs, tabParams }: SwitchTabsProps) => {
   };
 
   return (
-    <div className="border border-textDark rounded-lg overflow-hidden z-50">
-      <div className="flex ">
+    <div className="sm:border border-textDark sm:rounded-xl shadow-xl h-full overflow-hidden z-50">
+      <div className="flex">
         {tabs.map((tab, index) => (
           <button
             key={index}
-            className={`flex-1 py-4 font-semibold ${
+            className={`flex-1 py-4 font-semibold transition-200 ${
               activeTab === index
                 ? "bg-primary text-textLight"
                 : "bg-white text-primary"
-            } ${index === 0 ? "rounded-tl-md" : ""} ${
-              index === tabs.length - 1 ? "rounded-tr-md" : ""
-            }`}
+            } `}
             onClick={() => handleTabClick(index)}
           >
             {tab.label}
           </button>
         ))}
       </div>
-      <div className="w-full rounded-b-md p-5  bg-primary ">
-        {tabs[activeTab].content}
-      </div>
+      <div className="w-full h-full bg-primary">{tabs[activeTab].content}</div>
     </div>
   );
 };

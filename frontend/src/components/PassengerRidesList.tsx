@@ -3,12 +3,15 @@ import { ChevronDown, ChevronUp } from "lucide-react";
 import ScrollableSnapList from "./ScrollableSnapList";
 import { Ride } from "../gql/graphql";
 import { VariantType } from "../types/variantTypes";
+import useBreakpoints from "../utils/useWindowSize";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const PassengerRidesList = ({ dataset }: any) => {
   const [, setSelectedIndex] = useState(0);
   const [showUpcoming, setShowUpcoming] = useState(true);
   const [showArchived, setShowArchived] = useState(false);
+
+  const { isSm } = useBreakpoints();
 
   const getVariant = (ride: Ride): VariantType => {
     if (ride.is_canceled) return "cancel";
@@ -23,7 +26,7 @@ const PassengerRidesList = ({ dataset }: any) => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="">
       <span
         className="flex items-center gap-2 text-white cursor-pointer"
         onClick={() => setShowUpcoming((prev) => !prev)}
@@ -36,18 +39,16 @@ const PassengerRidesList = ({ dataset }: any) => {
         Trajets à venir
       </span>
       {showUpcoming && (
-        <div className="flex h-full w-full z-20  overflow-hidden">
-          <ScrollableSnapList
-            dataset={dataset.filter(
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (ride: any) =>
-                new Date(ride.departure_at) >= new Date() && !ride.is_canceled
-            )}
-            getVariant={getVariant}
-            onSelect={setSelectedIndex}
-            direction="horizontal"
-          />
-        </div>
+        <ScrollableSnapList
+          dataset={dataset.filter(
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (ride: any) =>
+              new Date(ride.departure_at) >= new Date() && !ride.is_canceled
+          )}
+          getVariant={getVariant}
+          onSelect={setSelectedIndex}
+          direction={isSm ? "horizontal" : "vertical"}
+        />
       )}
       <span
         className="flex items-center gap-2 text-white cursor-pointer"
@@ -61,7 +62,7 @@ const PassengerRidesList = ({ dataset }: any) => {
         Trajets archivés
       </span>
       {showArchived && (
-        <div className="flex h-full w-full z-20  overflow-hidden">
+        <div className="flex h-full w-full z-20 overflow-hidden">
           <ScrollableSnapList
             dataset={dataset.filter(
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -69,7 +70,7 @@ const PassengerRidesList = ({ dataset }: any) => {
             )}
             getVariant={getVariant}
             onSelect={setSelectedIndex}
-            direction="horizontal"
+            direction={isSm ? "horizontal" : "vertical"}
           />
         </div>
       )}

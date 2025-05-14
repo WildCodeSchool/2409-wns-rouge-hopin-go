@@ -9,6 +9,7 @@ type ScrollableSnapListProps = {
   getVariant: (data: Ride) => VariantType;
   onSelect: (index: number) => void;
   direction?: "vertical" | "horizontal";
+  scaleEffect?: boolean;
 };
 
 const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
@@ -16,11 +17,12 @@ const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
   getVariant,
   onSelect,
   direction = "vertical",
+  scaleEffect = false,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  const { isMd } = useWindowSize();
+  const { isMd, isLg } = useWindowSize();
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [padding, setPadding] = useState(0);
@@ -128,25 +130,31 @@ const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
           flex ${isVertical ? "flex-col" : "flex-row"}
           items-center gap-4 scroll-smooth no-scrollbar transition-200
           ${
-            isVertical
-              ? "overflow-y-scroll h-full"
-              : "overflow-x-scroll w-full px-4"
+            isVertical ? "overflow-y-scroll h-full" : "overflow-x-scroll w-full"
           }
         `}
         style={
           isVertical
             ? { paddingTop: padding, paddingBottom: bottomPadding }
-            : { paddingLeft: padding, paddingRight: padding }
+            : { paddingLeft: 20, paddingRight: 20 }
         }
         onScroll={handleScroll}
       >
         {dataset?.map((data, index) => (
           <div
-            className={isVertical ? "w-full sm:w-auto" : "flex-shrink-0"}
+            className={`${isVertical ? "w-full sm:w-auto" : ""}  `}
             key={index}
             ref={(el) => (itemRefs.current[index] = el)}
           >
             <CardTemplate
+              additionalClassName={`${
+                scaleEffect &&
+                (selectedIndex && isLg
+                  ? "scale-110"
+                  : selectedIndex && isMd
+                  ? "scale-105"
+                  : "")
+              } `}
               variant={getVariant(data)}
               data={data}
               isSelected={index === selectedIndex}
