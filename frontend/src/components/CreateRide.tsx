@@ -239,7 +239,7 @@ const CreateRide = () => {
 
   return (
     <form
-      className="flex flex-col h-full w-full px-8 max-w-xl mx-auto  justify-center"
+      className="flex flex-col items-center h-full w-full px-8 max-w-xl mx-auto  justify-center"
       onSubmit={(e) => {
         e.preventDefault();
         doSubmit();
@@ -392,7 +392,7 @@ const CreateRide = () => {
         </div>
       </div>
       {/* MaxPassenger */}
-      <div className="">
+      <div className=" w-full">
         <label
           htmlFor="maxPassenger"
           className="flex mb-2 text-sm font-medium text-textLight"

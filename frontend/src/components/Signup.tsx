@@ -89,9 +89,9 @@ export default function Signup() {
   }
 
   return (
-    <form className="max-w-sm mx-auto">
+    <form className="flex flex-col justify-center items-center max-w-sm mx-auto w-full h-full px-4 sm:px-0 ">
       {/* Prénom */}
-      <div className="mb-5">
+      <div className="mb-5 w-full">
         <label
           htmlFor="first-name"
           className="block mb-2 text-sm font-medium text-textLight"
@@ -121,7 +121,7 @@ export default function Signup() {
       </div>
 
       {/* Nom */}
-      <div className="mb-5">
+      <div className="mb-5 w-full">
         <label
           htmlFor="last-name"
           className="block mb-2 text-sm font-medium text-white"
@@ -149,7 +149,7 @@ export default function Signup() {
         )}
       </div>
       {/* Email */}
-      <div className="mb-5">
+      <div className="mb-5 w-full">
         <label
           htmlFor="email"
           className="block mb-2 text-sm font-medium text-white "
@@ -175,7 +175,7 @@ export default function Signup() {
       </div>
 
       {/* Mot de passe */}
-      <div className="mb-5">
+      <div className="mb-5 w-full">
         <label
           htmlFor="password"
           className="block mb-2 text-sm font-medium text-white dark:text-white"
@@ -213,7 +213,7 @@ export default function Signup() {
       </div>
 
       {/* Confirmation du mot de passe */}
-      <div className="mb-10">
+      <div className="mb-10 w-full">
         <label
           htmlFor="repeat-password"
           className="block mb-2 text-sm font-medium text-white"

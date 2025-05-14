@@ -61,7 +61,7 @@ const SearchRide = () => {
         e.preventDefault();
         handleSubmit(e);
       }}
-      className=" h-full flex flex-col justify-center max-w-sm px-4 sm:px-0 mx-auto"
+      className=" h-full w-full flex flex-col justify-center max-w-sm  px-4 sm:px-0 mx-auto"
     >
       {/* Ville de départ */}
       <div className="mb-5">

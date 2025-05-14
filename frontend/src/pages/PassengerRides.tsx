@@ -106,9 +106,9 @@ const PassengerRides = () => {
     },
   ];
   return (
-    <div className=" flex flex-col fixed justify-center items-center h-full w-full sm:p-8">
+    <div className=" flex flex-col justify-center items-center h-full sm:h-[calc(100dvh-180px)] sm:mt-10 sm:px-8 w-full fixed">
       <SwitchTab
-        classContainer="bg-secondary text-primary"
+        classContainer="bg-secondary text-primary h-full overflow-scroll"
         tabs={tabs}
         tabParams={tab}
       />

@@ -35,7 +35,7 @@ const SwitchTabs = ({ tabs, tabParams, classContainer }: SwitchTabsProps) => {
   };
 
   return (
-    <div className="sm:border border-textDark sm:rounded-xl shadow-xl sm:mt-28 sm:mb-8 h-full w-full overflow-hidden z-50">
+    <div className="sm:border border-textDark sm:rounded-xl shadow-xl  h-full w-full overflow-hidden z-50">
       <div className="flex h-fit w-full ">
         {tabs.map((tab, index) => (
           <button
