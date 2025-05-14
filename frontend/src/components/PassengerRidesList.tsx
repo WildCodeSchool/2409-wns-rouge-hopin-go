@@ -34,9 +34,9 @@ const PassengerRidesList = ({ dataset }: any) => {
   );
 
   return (
-    <div className=" h-full w-full pt-4 pb-16 overflow-auto">
+    <div className=" h-full w-full  pt-4 pb-32 sm:pb-16 overflow-auto">
       <span
-        className="flex items-center gap-2 ml-4 text-white cursor-pointer"
+        className="flex items-center w-fit gap-2 ml-4 text-white cursor-pointer"
         onClick={() => setShowUpcoming((prev) => !prev)}
       >
         {showUpcoming ? (
@@ -63,7 +63,7 @@ const PassengerRidesList = ({ dataset }: any) => {
         </div>
       )}
       <span
-        className="flex items-center gap-2 ml-4 text-white cursor-pointer"
+        className="flex items-center w-fit gap-2 ml-4 text-white cursor-pointer"
         onClick={() => setShowArchived((prev) => !prev)}
       >
         {showArchived ? (
