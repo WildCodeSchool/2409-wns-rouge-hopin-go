@@ -61,7 +61,7 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: `/mes-trajets/:tab`,
+        path: `/my-rides/:tab`,
         element: (
           <AuthComponent authStates={[AuthStates.user]}>
             <PassengerRides />

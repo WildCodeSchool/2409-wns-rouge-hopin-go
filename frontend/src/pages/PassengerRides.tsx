@@ -97,12 +97,12 @@ const PassengerRides = () => {
     {
       label: "Conducteur",
       content: <DriverRidesList dataset={dataset} />,
-      path: "/mes-trajets/driver",
+      path: "/my-rides/driver",
     },
     {
       label: "Passager",
       content: <PassengerRidesList dataset={dataset} />,
-      path: "/mes-trajets/passenger",
+      path: "/my-rides/passenger",
     },
   ];
   return (
