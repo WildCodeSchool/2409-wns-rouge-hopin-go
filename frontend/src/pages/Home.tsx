@@ -13,7 +13,11 @@ const Home = () => {
   const me = whoAmIData?.whoami;
 
   const tabs: Tab[] = [
-    { label: "Rechercher", content: <SearchRide />, path: "/rechercher" },
+    {
+      label: "Rechercher",
+      content: <SearchRide variant="searchFormRide" />,
+      path: "/rechercher",
+    },
     ...(me
       ? [{ label: "Proposer", content: <CreateRide />, path: "/proposer" }]
       : [
