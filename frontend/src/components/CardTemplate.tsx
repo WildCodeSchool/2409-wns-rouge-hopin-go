@@ -1,10 +1,10 @@
 import { CircleUserRound, UsersRound } from "lucide-react";
 import { VariantType } from "../types/variantTypes";
 import { variantConfigMap } from "../constants/variantConfig";
-import Button from "./Button";
 import useWindowSize from "../utils/useWindowSize";
 import { formatDate, formatTime } from "../utils/formatDate";
 import { SearchRidesQuery } from "../gql/graphql";
+import RegisterButton from "./RegisterButton";
 
 type Ride = SearchRidesQuery["searchRide"][number];
 
@@ -50,9 +50,8 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
 
   return (
     <div
-      className={`select-none transition-200 w-full sm:min-w-[32rem] sm:max-w-lg md:min-w-[23rem] md:max-w-[23rem] lg:min-w-[28rem] lg:max-w-[28rem] xl:min-w-[32rem] xl:max-w-lg p-4 ${
-        isSelected && isLg ? "scale-110" : isSelected && isMd ? "scale-105" : ""
-      } transition-transform ${onClick ? "cursor-pointer" : ""}`}
+      className={`select-none transition-200 w-full sm:min-w-[32rem] sm:max-w-lg md:min-w-[23rem] md:max-w-[23rem] lg:min-w-[28rem] lg:max-w-[28rem] xl:min-w-[32rem] xl:max-w-lg p-4 ${isSelected && isLg ? "scale-110" : isSelected && isMd ? "scale-105" : ""
+        } transition-transform ${onClick ? "cursor-pointer" : ""}`}
       onClick={onClick}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
@@ -67,9 +66,8 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           </div>
 
           <div
-            className={`relative flex flex-col justify-between ${
-              windowWidth > 450 ? "col-span-1" : "col-span-2"
-            } ${textColor}`}
+            className={`relative flex flex-col justify-between ${windowWidth > 450 ? "col-span-1" : "col-span-2"
+              } ${textColor}`}
           >
             <div
               className={`dot absolute h-3 w-3 rounded-full ${bgFill} top-2 left-0 -translate-x-7`}
@@ -123,8 +121,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             <>
               {availableSeats}
               {isSm &&
-                `${
-                  availableSeats > 1 ? " places restantes" : " place restante"
+                `${availableSeats > 1 ? " places restantes" : " place restante"
                 }`}
               {!isSm && (variant === "primary" || variant === "secondary") && (
                 <UsersRound size={16} />
@@ -154,15 +151,8 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           />
         </svg>
 
-        <Button
-          isDisabled={variant !== "primary" && variant !== "secondary"}
-          icon={CardIcon}
-          iconRotate={variant === "primary" || variant === "secondary"}
-          variant={variant}
-          iconSize={isMd ? 32 : isSm ? 32 : 24}
-          isHoverBgColor={variant === "primary" || variant === "secondary"}
-          className="!rounded-full shadow-lg -ml-2 sm:-ml-6 my-2 z-10"
-        />
+        <RegisterButton rideId={data.id} size="small" variant={variant} icon={CardIcon} />
+
       </div>
     </div>
   );

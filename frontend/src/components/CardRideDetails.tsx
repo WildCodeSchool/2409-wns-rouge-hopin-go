@@ -3,6 +3,7 @@ import { variantConfigMap } from "../constants/variantConfig";
 import useBreakpoints from "../utils/useWindowSize";
 import { formatDate, formatTime } from "../utils/formatDate";
 import { SearchRidesQuery } from "../gql/graphql";
+import RegisterButton from "./RegisterButton";
 
 type Ride = SearchRidesQuery["searchRide"][number];
 
@@ -71,9 +72,8 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
         <p>
           {variant === "cancel" || variant === "error"
             ? "Non disponible"
-            : `${availableSeats} ${
-                availableSeats > 1 ? "places restantes" : "place restante"
-              }`}
+            : `${availableSeats} ${availableSeats > 1 ? "places restantes" : "place restante"
+            }`}
         </p>
 
         <div className="flex justify-start h-40">
@@ -114,6 +114,12 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
           </div>
         </div>
       </div>
+
+      <RegisterButton
+        variant={variant}
+        rideId={data.id}
+        size="large"
+      />
     </div>
   );
 };

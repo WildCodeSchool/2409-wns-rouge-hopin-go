@@ -5,7 +5,7 @@ import { validate } from "class-validator";
 @Resolver()
 export class PassengerRideResolver {
 @Mutation(() => PassengerRide)
-  async addPassengerRide(
+  async createPassengerRide(
     @Arg("data", () => CreatePassengerRideInput) data: CreatePassengerRideInput
   ): Promise<PassengerRide> {
     const errors = await validate(data);
