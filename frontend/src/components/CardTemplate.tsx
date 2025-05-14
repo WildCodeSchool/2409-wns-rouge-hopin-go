@@ -1,10 +1,10 @@
 import { CircleUserRound, UsersRound } from "lucide-react";
 import { VariantType } from "../types/variantTypes";
 import { variantConfigMap } from "../constants/variantConfig";
-import Button from "./Button";
 import useWindowSize from "../utils/useWindowSize";
 import { formatDate, formatTime } from "../utils/formatDate";
 import { SearchRidesQuery } from "../gql/graphql";
+import RegisterButton from "./RegisterButton";
 
 type Ride = SearchRidesQuery["searchRide"][number];
 
@@ -158,14 +158,11 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           />
         </svg>
 
-        <Button
-          isDisabled={variant !== "primary" && variant !== "secondary"}
-          icon={CardIcon}
-          iconRotate={variant === "primary" || variant === "secondary"}
+        <RegisterButton
+          rideId={data.id}
+          size="small"
           variant={variant}
-          iconSize={isMd ? 32 : isSm ? 32 : 24}
-          isHoverBgColor={variant === "primary" || variant === "secondary"}
-          className="!rounded-full shadow-lg -ml-2 sm:-ml-6 my-2 z-10"
+          icon={CardIcon}
         />
       </div>
     </div>

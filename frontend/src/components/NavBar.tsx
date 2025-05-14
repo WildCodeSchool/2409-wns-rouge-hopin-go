@@ -54,14 +54,14 @@ const NavBar = () => {
               <>
                 <Button
                   isLink
-                  to="/auth/inscription"
+                  to="/auth/signup"
                   label="Inscription"
                   className="font-semibold"
                   variant="secondary"
                 />
                 <Button
                   isLink
-                  to="/auth/connexion"
+                  to="/auth/signin"
                   label="Connexion"
                   className="font-semibold"
                   variant="secondary"
@@ -131,7 +131,7 @@ const NavBar = () => {
           <div className=" flex justify-between gap-4 pl-6 pr-8 my-6 w-fit items-center bg-primary rounded-bl-3xl">
             <Button
               isLink
-              to="/rechercher"
+              to="/research"
               variant="secondary"
               label="Rechercher"
               className="font-semibold"
@@ -139,7 +139,7 @@ const NavBar = () => {
             />
             <Button
               isLink
-              to="/proposer"
+              to="/propose"
               variant="secondary"
               label="Proposer"
               className="font-semibold"
@@ -164,7 +164,7 @@ const NavBar = () => {
               <>
                 <Button
                   isLink
-                  to="/auth/inscription"
+                  to="/auth/signup"
                   label="Inscription"
                   className="font-semibold"
                   variant="secondary"
@@ -172,7 +172,7 @@ const NavBar = () => {
                 />
                 <Button
                   isLink
-                  to="/auth/connexion"
+                  to="/auth/signin"
                   label="Connexion"
                   className="font-semibold"
                   variant="secondary"

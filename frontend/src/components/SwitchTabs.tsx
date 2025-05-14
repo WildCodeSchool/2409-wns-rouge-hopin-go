@@ -19,7 +19,6 @@ const SwitchTabs = ({ tabs, tabParams, classContainer }: SwitchTabsProps) => {
     const lastSegment = tab.path.split("/").pop();
     return lastSegment?.toLowerCase() === tabParams?.toLowerCase();
   });
-
   const currentTabIndex = currentTab ? tabs.indexOf(currentTab) : 1;
   const [activeTab, setActiveTab] = useState<number>(currentTabIndex);
 

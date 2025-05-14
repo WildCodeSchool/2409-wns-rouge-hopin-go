@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ButtonHTMLAttributes } from "react";
 import { NavLink } from "react-router-dom";
 import { VariantType } from "../types/variantTypes";
 import { variantConfigMap } from "../constants/variantConfig";
@@ -19,7 +19,7 @@ type ButtonProps = {
   onClick?: () => void;
   isLink?: boolean;
   to?: string;
-};
+} & ButtonHTMLAttributes<HTMLButtonElement>;
 
 const Button: React.FC<ButtonProps> = ({
   label,
@@ -37,6 +37,7 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
   isLink = false,
   to = "/",
+  ...rest
 }) => {
   const config = variantConfigMap[variant];
 
@@ -93,6 +94,7 @@ const Button: React.FC<ButtonProps> = ({
       disabled={isDisabled}
       className={finalButtonClass}
       aria-label={label || "icon button"}
+      {...rest}
     >
       {content}
     </button>

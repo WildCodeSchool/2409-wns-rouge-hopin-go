@@ -7,8 +7,8 @@ const AuthenticationPage = () => {
   const { tab } = useParams();
 
   const tabs: Tab[] = [
-    { label: "Inscription", content: <Signup />, path: "/auth/inscription" },
-    { label: "Connexion", content: <Signin />, path: "/auth/connexion" },
+    { label: "Inscription", content: <Signup />, path: "/auth/signup" },
+    { label: "Connexion", content: <Signin />, path: "/auth/signin" },
   ];
   return (
     <div className=" flex flex-col justify-center items-center w-full h-full md:w-1/2 md:h-fit  fixed">
