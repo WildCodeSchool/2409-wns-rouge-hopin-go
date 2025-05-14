@@ -34,8 +34,8 @@ const SwitchTabs = ({ tabs, tabParams }: SwitchTabsProps) => {
   };
 
   return (
-    <div className="sm:border border-textDark sm:rounded-xl shadow-xl h-full overflow-hidden z-50">
-      <div className="flex">
+    <div className="sm:border border-textDark sm:rounded-xl shadow-xl sm:mt-28 sm:mb-8 h-full w-full overflow-hidden z-50">
+      <div className="flex h-fit w-full ">
         {tabs.map((tab, index) => (
           <button
             key={index}
@@ -50,7 +50,9 @@ const SwitchTabs = ({ tabs, tabParams }: SwitchTabsProps) => {
           </button>
         ))}
       </div>
-      <div className="w-full h-full bg-primary">{tabs[activeTab].content}</div>
+      <div className="w-full h-full bg-primary overflow-auto">
+        {tabs[activeTab].content}
+      </div>
     </div>
   );
 };

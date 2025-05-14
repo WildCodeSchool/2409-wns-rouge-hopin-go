@@ -25,10 +25,18 @@ const PassengerRidesList = ({ dataset }: any) => {
     return "primary";
   };
 
+  const upcomingRides = dataset.filter(
+    (ride) => new Date(ride.departure_at) >= new Date() && !ride.is_canceled
+  );
+
+  const archivedRides = dataset.filter(
+    (ride) => new Date(ride.departure_at) < new Date()
+  );
+
   return (
-    <div className="">
+    <div className=" h-full w-full pt-4 pb-16 overflow-auto">
       <span
-        className="flex items-center gap-2 text-white cursor-pointer"
+        className="flex items-center gap-2 ml-4 text-white cursor-pointer"
         onClick={() => setShowUpcoming((prev) => !prev)}
       >
         {showUpcoming ? (
@@ -38,20 +46,24 @@ const PassengerRidesList = ({ dataset }: any) => {
         )}
         Trajets à venir
       </span>
-      {showUpcoming && (
-        <ScrollableSnapList
-          dataset={dataset.filter(
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            (ride: any) =>
-              new Date(ride.departure_at) >= new Date() && !ride.is_canceled
-          )}
-          getVariant={getVariant}
-          onSelect={setSelectedIndex}
-          direction={isSm ? "horizontal" : "vertical"}
-        />
+      {upcomingRides.length > 0 ? (
+        showUpcoming && (
+          <div className="flex h-fit w-full overflow-auto">
+            <ScrollableSnapList
+              dataset={upcomingRides}
+              getVariant={getVariant}
+              onSelect={setSelectedIndex}
+              direction={isSm ? "horizontal" : "vertical"}
+            />
+          </div>
+        )
+      ) : (
+        <div className="text-center w-full mt-10 text-textLight">
+          Aucun trajet à venir.
+        </div>
       )}
       <span
-        className="flex items-center gap-2 text-white cursor-pointer"
+        className="flex items-center gap-2 ml-4 text-white cursor-pointer"
         onClick={() => setShowArchived((prev) => !prev)}
       >
         {showArchived ? (
@@ -61,17 +73,20 @@ const PassengerRidesList = ({ dataset }: any) => {
         )}
         Trajets archivés
       </span>
-      {showArchived && (
-        <div className="flex h-full w-full z-20 overflow-hidden">
-          <ScrollableSnapList
-            dataset={dataset.filter(
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (ride: any) => new Date(ride.departure_at) < new Date()
-            )}
-            getVariant={getVariant}
-            onSelect={setSelectedIndex}
-            direction={isSm ? "horizontal" : "vertical"}
-          />
+      {archivedRides.length > 0 ? (
+        showArchived && (
+          <div className="flex h-fit w-full overflow-auto">
+            <ScrollableSnapList
+              dataset={archivedRides}
+              getVariant={getVariant}
+              onSelect={setSelectedIndex}
+              direction={isSm ? "horizontal" : "vertical"}
+            />
+          </div>
+        )
+      ) : (
+        <div className="text-center w-full mt-10 text-textLight">
+          Aucun trajet archivé.
         </div>
       )}
     </div>

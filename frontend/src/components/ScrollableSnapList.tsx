@@ -128,10 +128,8 @@ const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
         ref={containerRef}
         className={`
           flex ${isVertical ? "flex-col" : "flex-row"}
-          items-center gap-4 scroll-smooth no-scrollbar transition-200
-          ${
-            isVertical ? "overflow-y-scroll h-full" : "overflow-x-scroll w-full"
-          }
+          items-center gap-4 scroll-smooth h-full w-full no-scrollbar transition-200
+          ${isVertical ? "overflow-y-scroll " : "overflow-x-scroll "}
         `}
         style={
           isVertical
@@ -142,7 +140,7 @@ const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
       >
         {dataset?.map((data, index) => (
           <div
-            className={`${isVertical ? "w-full sm:w-auto" : ""}  `}
+            className={` h-full ${isVertical ? "w-full sm:w-auto" : ""}  `}
             key={index}
             ref={(el) => (itemRefs.current[index] = el)}
           >
