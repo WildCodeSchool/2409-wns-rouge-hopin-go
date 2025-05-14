@@ -52,7 +52,7 @@ const AuthComponent: React.FC<AuthComponentProps> = ({
     (me && authStates.includes(AuthStates.user)) ||
     (me && me.role === "admin" && authStates.includes(AuthStates.admin))
   ) {
-    return <>{children}</>;
+    return children;
   }
 
   return <Navigate to={redirectTo} replace />;

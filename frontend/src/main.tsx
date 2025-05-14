@@ -59,22 +59,6 @@ const router = createBrowserRouter([
           </AuthComponent>
         ),
       },
-      // {
-      //   path: `/signin`,
-      //   element: (
-      //     <AuthComponent authStates={[AuthStates.unauthenticated]}>
-      //       <Signin />
-      //     </AuthComponent>
-      //   ),
-      // },
-      // {
-      //   path: `/signup`,
-      //   element: (
-      //     <AuthComponent authStates={[AuthStates.unauthenticated]}>
-      //       <Signup />
-      //     </AuthComponent>
-      //   ),
-      // },
       {
         path: `/auth/:tab`,
         element: (

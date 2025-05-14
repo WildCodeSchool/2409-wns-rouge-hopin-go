@@ -6,6 +6,7 @@ import { SearchRidesQuery } from "../gql/graphql";
 import SearchRide from "./SearchRide";
 import Button from "./Button";
 import { Search } from "lucide-react";
+import RegisterButton from "./RegisterButton";
 
 type Ride = SearchRidesQuery["searchRide"][number];
 
@@ -97,44 +98,56 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
                 }`}
           </p>
 
-          <div className="flex justify-start h-40">
-            <div
-              className={`flex flex-col w-28 justify-between ${textColor} text-base md:text-2xl font-semibold`}
-            >
-              <p>{departureTime}</p>
-              <p>{arrivalTime}</p>
-            </div>
+          <div className="flex flex-col gap-2">
+            <p>
+              {variant === "cancel" || variant === "error"
+                ? "Non disponible"
+                : `${availableSeats} ${
+                    availableSeats > 1 ? "places restantes" : "place restante"
+                  }`}
+            </p>
 
-            <div
-              className={`relative flex flex-col justify-between ${textColor}`}
-            >
+            <div className="flex justify-start h-40">
               <div
-                className={`dot absolute h-3 w-3 rounded-full ${bgFill} top-2 left-0 -translate-x-7`}
-              />
+                className={`flex flex-col w-28 justify-between ${textColor} text-base md:text-2xl font-semibold`}
+              >
+                <p>{departureTime}</p>
+                <p>{arrivalTime}</p>
+              </div>
+
               <div
-                className={`trait absolute h-5/6 w-[3px] rounded-sm ${bgFill} top-2 left-0 -translate-x-[23.5px]`}
-              />
-              <div
-                className={`dot absolute h-3 w-3 rounded-full ${bgFill} bottom-2 left-0 -translate-x-7`}
-              />
-              <div className="flex flex-col ml-2 justify-between h-full text-left">
-                <p
-                  className="text-lg md:text-xl sm:font-bold"
-                  title={data.departure_city}
-                >
-                  {data.departure_city}
-                </p>
-                <p className="font-semibold">{travelDuration}</p>
-                <p
-                  className="text-lg md:text-xl sm:font-bold"
-                  title={data.arrival_city}
-                >
-                  {data.arrival_city}
-                </p>
+                className={`relative flex flex-col justify-between ${textColor}`}
+              >
+                <div
+                  className={`dot absolute h-3 w-3 rounded-full ${bgFill} top-2 left-0 -translate-x-7`}
+                />
+                <div
+                  className={`trait absolute h-5/6 w-[3px] rounded-sm ${bgFill} top-2 left-0 -translate-x-[23.5px]`}
+                />
+                <div
+                  className={`dot absolute h-3 w-3 rounded-full ${bgFill} bottom-2 left-0 -translate-x-7`}
+                />
+                <div className="flex flex-col ml-2 justify-between h-full text-left">
+                  <p
+                    className="text-lg md:text-xl sm:font-bold"
+                    title={data.departure_city}
+                  >
+                    {data.departure_city}
+                  </p>
+                  <p className="font-semibold">{travelDuration}</p>
+                  <p
+                    className="text-lg md:text-xl sm:font-bold"
+                    title={data.arrival_city}
+                  >
+                    {data.arrival_city}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
         </div>
+
+        <RegisterButton variant={variant} rideId={data.id} size="large" />
       </div>
     </div>
   );
