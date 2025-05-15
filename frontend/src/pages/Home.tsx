@@ -30,7 +30,7 @@ const Home = () => {
   ];
   return (
     <>
-      <div className=" flex flex-col justify-center items-center w-full h-full md:w-3/4 md:h-3/4  fixed">
+      <div className=" flex flex-col justify-center items-center w-full h-full md:w-3/4 md:h-3/4 top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2  fixed">
         <SwitchTab
           classContainer="bg-primary px-4"
           tabs={tabs}

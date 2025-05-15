@@ -57,7 +57,7 @@ const RideResults = () => {
 
   if (loading || rides.length === 0 || !rides[selectedIndex]) {
     return (
-      <div className="text-center w-full mt-10 text-gray-600">
+      <div className="fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-center mt-10 text-gray-600">
         Chargement des trajets...
       </div>
     );
