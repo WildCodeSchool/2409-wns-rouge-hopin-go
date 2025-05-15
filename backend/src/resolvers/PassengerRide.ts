@@ -1,6 +1,8 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
 import { CreatePassengerRideInput, PassengerRide } from "../entities/PassengerRide";
 import { validate } from "class-validator";
+import { datasource } from "../datasource";
+import { Ride } from "../entities/Ride";
 
 @Resolver()
 export class PassengerRideResolver {
@@ -32,14 +34,24 @@ export class PassengerRideResolver {
     if (errors.length > 0) {
       throw new Error(`Validation error: ${JSON.stringify(errors)}`);
     }
-    const newPassengerRide = new PassengerRide();
-    try {
-      Object.assign(newPassengerRide, data);
-      await newPassengerRide.save();
-      return newPassengerRide;
-    } catch (error) {
-      console.error(error);
-      throw new Error("unable to create passenger_ride");
-    }
+  return await datasource.transaction(async (manager) => {
+        const ride = await manager.findOne(Ride, {
+          where: { id: data.ride_id },
+          lock: { mode: "pessimistic_write" }, // évite les conflits concurrents
+        });
+
+        if (!ride) throw new Error("Trajet introuvable");
+
+        // Vérification du nombre de places restantes
+        if (ride.nb_passenger >= ride.max_passenger) {
+          throw new Error("Ce trajet est déjà complet");
+        }
+
+        // Création du tuple PassengerRide
+        const newPassengerRide = manager.create(PassengerRide, data);
+        await manager.save(newPassengerRide);
+
+        return newPassengerRide;
+      });
   }
 }

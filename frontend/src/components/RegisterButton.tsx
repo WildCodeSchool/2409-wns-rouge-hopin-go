@@ -5,6 +5,7 @@ import useWindowSize from "../utils/useWindowSize";
 import { queryWhoAmI } from "../api/WhoAmI";
 import { mutationCreatePassengerRide } from "../api/CreatePassengerRide";
 import { VariantType } from "../types/variantTypes";
+import { toast } from "react-toastify";
 // import { useEffect, useState } from "react";
 // import { queryPassengerRide } from "../api/PassengerRide";
 
@@ -30,7 +31,7 @@ export default function RegisterButton({ rideId, size, variant, icon }: { rideId
     // Quel icone et quel label utiliser pour chaque variant ?
     // "Annuler/Gérer l'inscription" au lieu de "Réserver" et changer le comportement du bouton ?
     const hasRegistered = variant === "pending" || variant === "validation" ? true : false;
-    console.log("hasRegistered", hasRegistered);
+    // console.log("hasRegistered", hasRegistered);
 
 
     // Attention, selon l'endroit où ce composant est utilisé, on voudra afficher soit un petit bouton avec juste l'icone de ticket , soit un gros bouton avec aussi le texte "Réserver"
@@ -38,12 +39,10 @@ export default function RegisterButton({ rideId, size, variant, icon }: { rideId
     // La taille du bouton pourrait aussi dépendre de la résolution de l'écran !
 
     const handleRegister = async () => {
-        console.log("handleRegister", rideId);
+        // console.log("handleRegister", rideId);
         // modale de confirmation ???
 
         // nb_passenger sera incrémenté seulement quand driver valide un passager
-
-        // To DO : générer un toast selon le succès ou l'échec de la requête
 
         try {
             // Normalement un user non connecté ne peut pas déclencher cette fonction
@@ -76,16 +75,15 @@ export default function RegisterButton({ rideId, size, variant, icon }: { rideId
                         },
                     },
                 });
-                // TO DO : toast de succès "Demande prise en compte !" + bouton "Voir mes trajets"
-                console.log("Demande de réservation envoyée avec succès !");
+                // TO DO : ajouter un bouton "Voir mes trajets" dans le toast
+                toast.success("Demande de réservation envoyée avec succès !");
                 // Normalement la variant va changer automatiquement à "pending" donc hasRegistered devient true
             } else {
-                console.error("Le nombre maximum de passagers a été atteint.");
-                // Afficher un toast d'erreur
+                toast.error("Ce trajet est complet.");
             }
         } catch (error) {
             console.error("Error during registration:", error);
-            // Afficher un toast d'erreur
+            toast.error("Une erreur est survenue lors de l'inscription.");
         }
     };
 
