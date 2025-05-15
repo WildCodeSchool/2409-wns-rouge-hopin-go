@@ -75,7 +75,7 @@ const SearchFormRide = ({
             className={`${
               error.departureAt?.length
                 ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-                : "border-gray-300 bg-gray-50"
+                : "!border-gray-300 !bg-gray-50"
             } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
             placeholder="2025-05-15T08:00"
             value={departureAt}
