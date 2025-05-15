@@ -11,10 +11,8 @@ const AuthenticationPage = () => {
     { label: "Connexion", content: <Signin />, path: "/auth/signin" },
   ];
   return (
-    <div className="flex-grow flex items-center justify-center h-full m-auto max-w-sm sm:max-w-lg lg:max-w-4xl overflow-hidden z-50">
-      <div className="flex-1">
-        <SwitchTab tabs={tabs} tabParams={tab} />
-      </div>
+    <div className=" flex flex-col justify-center items-center w-full h-full md:w-1/2 md:h-fit top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2  fixed">
+      <SwitchTab tabs={tabs} tabParams={tab} classContainer="bg-primary py-4" />
     </div>
   );
 };
