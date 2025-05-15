@@ -136,9 +136,8 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
             </div>
           </div>
         </div>
+        <RegisterButton variant={variant} rideId={data.id} size="large" />
       </div>
-
-      <RegisterButton variant={variant} rideId={data.id} size="large" />
     </div>
   );
 };

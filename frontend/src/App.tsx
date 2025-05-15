@@ -17,7 +17,7 @@ const App = () => {
           </Link>
           <NavBar />
         </header>
-        <main className="h-screen flex justify-center items-center">
+        <main className="h-screen">
           <Outlet />
         </main>
       </div>
