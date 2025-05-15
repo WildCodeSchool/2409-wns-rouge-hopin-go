@@ -91,7 +91,7 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
 
         <div className="flex flex-col gap-2">
           <p>
-            {variant === "cancel" || variant === "error"
+            {variant === "cancel" || variant === "full"
               ? "Non disponible"
               : `${availableSeats} ${
                   availableSeats > 1 ? "places restantes" : "place restante"
