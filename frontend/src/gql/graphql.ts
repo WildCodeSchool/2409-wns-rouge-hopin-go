@@ -85,12 +85,18 @@ export type PassengerRide = {
 
 export type Query = {
   __typename?: 'Query';
+  passengerRide: Array<PassengerRide>;
   ride: Ride;
   rides: Array<Ride>;
   searchRide: Array<Ride>;
   user: User;
   users: Array<User>;
   whoami?: Maybe<User>;
+};
+
+
+export type QueryPassengerRideArgs = {
+  data: CreatePassengerRideInput;
 };
 
 
@@ -126,6 +132,7 @@ export type Ride = {
   is_canceled: Scalars['Boolean']['output'];
   max_passenger: Scalars['Float']['output'];
   nb_passenger: Scalars['Float']['output'];
+  passenger_rides: Array<PassengerRide>;
 };
 
 export type RideCreateInput = {
