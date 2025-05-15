@@ -1,12 +1,19 @@
 import { Field, ID, InputType, ObjectType } from "type-graphql";
-import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from "typeorm";
+import {
+  BaseEntity,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
+  PrimaryColumn,
+} from "typeorm";
 import { Ride } from "./Ride";
 import { User } from "./User";
 
 @Entity()
 @ObjectType()
 export class PassengerRide extends BaseEntity {
-
   @PrimaryColumn()
   @Field(() => ID)
   user_id!: number;
@@ -19,12 +26,12 @@ export class PassengerRide extends BaseEntity {
   @Column({ enum: ["approved", "refused", "waiting"], default: "waiting" })
   status!: string;
 
-  @ManyToOne(() => User, (user) => user.passengerRides)
-  @JoinColumn({ name: 'user_id' })
+  @ManyToOne(() => User, (user) => user.passenger_rides)
+  @JoinColumn({ name: "user_id" })
   user!: User;
 
-  @ManyToOne(() => Ride, (ride) => ride.passengerRides)
-  @JoinColumn({ name: 'ride_id' })
+  @ManyToOne(() => Ride, (ride) => ride.passenger_rides)
+  @JoinColumn({ name: "ride_id" })
   ride!: Ride;
 }
 

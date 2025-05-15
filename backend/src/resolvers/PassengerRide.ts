@@ -1,10 +1,13 @@
-import { Arg, Mutation, Resolver } from "type-graphql";
-import { CreatePassengerRideInput, PassengerRide } from "../entities/PassengerRide";
+import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import {
+  CreatePassengerRideInput,
+  PassengerRide,
+} from "../entities/PassengerRide";
 import { validate } from "class-validator";
 
 @Resolver()
 export class PassengerRideResolver {
-@Mutation(() => PassengerRide)
+  @Mutation(() => PassengerRide)
   async createPassengerRide(
     @Arg("data", () => CreatePassengerRideInput) data: CreatePassengerRideInput
   ): Promise<PassengerRide> {
@@ -20,6 +23,25 @@ export class PassengerRideResolver {
     } catch (error) {
       console.error(error);
       throw new Error("unable to create passenger_ride");
+    }
+  }
+
+  @Query(() => [PassengerRide])
+  async passengerRide(
+    @Arg("data", () => CreatePassengerRideInput) data: CreatePassengerRideInput
+  ): Promise<PassengerRide | null> {
+    try {
+      const passengerRide = await PassengerRide.findOne({
+        where: { ride_id: data.ride_id, user_id: data.user_id },
+      });
+      if (passengerRide) {
+        return passengerRide;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error(error);
+      throw new Error("unable to communicate with the database");
     }
   }
 }
