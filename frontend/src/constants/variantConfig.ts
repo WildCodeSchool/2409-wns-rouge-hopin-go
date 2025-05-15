@@ -40,10 +40,10 @@ export const variantConfigMap: Record<VariantType, VariantConfig> = {
   },
   full: {
     textColor: "text-error",
-    bgFill: "fill-error bg-error",
+    bgFill: "fill-error bg-full",
     statusLabel: "Complet",
     icon: TicketX,
-    hoverBg: "hover:bg-errorHover",
+    hoverBg: "hover:bg-fullHover",
   },
   cancel: {
     textColor: "text-cancel",
