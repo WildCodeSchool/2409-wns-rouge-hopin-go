@@ -45,6 +45,8 @@ const RideResults = () => {
 
   const getVariant = (ride: Ride): VariantType => {
     if (ride.is_canceled) return "cancel";
+    if (ride.passenger_status === "waiting") return "pending";
+    if (ride.passenger_status === "approved") return "validation";
     const availableSeats = ride.max_passenger - (ride.nb_passenger ?? 0);
     if (availableSeats <= 0) return "error";
 
