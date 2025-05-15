@@ -1,4 +1,14 @@
-import { Arg, Authorized, ID, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Authorized,
+  Ctx,
+  FieldResolver,
+  ID,
+  Mutation,
+  Query,
+  Resolver,
+  Root,
+} from "type-graphql";
 import {
   Ride,
   RideCreateInput,
@@ -7,8 +17,12 @@ import {
 } from "../entities/Ride";
 import { validate } from "class-validator";
 import { endOfDay, startOfDay } from "date-fns";
+import { User } from "../entities/User";
+import { PassengerRide } from "../entities/PassengerRide";
+import { Context } from "vm";
+import { ContextType } from "../auth";
 
-@Resolver()
+@Resolver(() => Ride)
 export class RidesResolver {
   @Query(() => [Ride])
   async searchRide(
@@ -56,10 +70,10 @@ export class RidesResolver {
     @Arg("id", () => ID) id: number
     // @Ctx() context: ContextType
   ): Promise<Ride | null> {
-    const ride = await Ride.findOne(({
+    const ride = await Ride.findOne({
       where: { id },
       relations: ["driver_id"],
-    }));
+    });
     if (ride) {
       return ride;
     } else {
@@ -113,5 +127,23 @@ export class RidesResolver {
     } else {
       return null;
     }
+  }
+
+  @FieldResolver(() => String, { nullable: true })
+  async passengerStatus(
+    @Root() ride: Ride,
+    @Ctx() ctx: ContextType
+  ): Promise<string | null> {
+    const user = ctx.user as User;
+    if (!user) return null;
+
+    const passengerRide = await PassengerRide.findOne({
+      where: {
+        ride_id: ride.id,
+        user_id: user.id,
+      },
+    });
+
+    return passengerRide?.status ?? null;
   }
 }
