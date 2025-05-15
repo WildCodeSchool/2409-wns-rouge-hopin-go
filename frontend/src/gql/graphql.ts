@@ -133,6 +133,7 @@ export type Ride = {
   max_passenger: Scalars['Float']['output'];
   nb_passenger: Scalars['Float']['output'];
   passenger_rides: Array<PassengerRide>;
+  passenger_status?: Maybe<Scalars['String']['output']>;
 };
 
 export type RideCreateInput = {
