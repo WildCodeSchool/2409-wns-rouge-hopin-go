@@ -17,6 +17,7 @@ import { AuthStates } from "./services/AuthStates.ts";
 import AuthenticationPage from "./pages/Authentication";
 import RideResults from "./pages/RideResults.tsx";
 import PassengerRides from "./pages/PassengerRides.tsx";
+import { ToastContainer } from "react-toastify";
 // import RideResultTemp from "./pages/RideResultTemp";
 
 const client = new ApolloClient({
@@ -93,5 +94,6 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")!).render(
   <ApolloProvider client={client}>
     <RouterProvider router={router} />
+    <ToastContainer position="bottom-right" />
   </ApolloProvider>
 );
