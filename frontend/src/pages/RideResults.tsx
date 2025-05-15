@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 
@@ -11,7 +11,6 @@ import { SearchRidesQuery } from "../gql/graphql";
 type Ride = SearchRidesQuery["searchRide"][number];
 
 const RideResults = () => {
-  const detailsRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [searchParams] = useSearchParams();
 
@@ -46,8 +45,11 @@ const RideResults = () => {
 
   const getVariant = (ride: Ride): VariantType => {
     if (ride.is_canceled) return "cancel";
+    if (ride.passenger_status === "waiting") return "pending";
+    if (ride.passenger_status === "approved") return "validation";
+    if (ride.passenger_status === "refused") return "refused";
     const availableSeats = ride.max_passenger - (ride.nb_passenger ?? 0);
-    if (availableSeats <= 0) return "error";
+    if (availableSeats <= 0) return "full";
 
     const departureDate = new Date(ride.departure_at);
     const today = new Date();
@@ -58,7 +60,7 @@ const RideResults = () => {
 
   if (loading || rides.length === 0 || !rides[selectedIndex]) {
     return (
-      <div className="text-center w-full mt-10 text-gray-600">
+      <div className="fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-center mt-10 text-gray-600">
         Chargement des trajets...
       </div>
     );
@@ -71,7 +73,8 @@ const RideResults = () => {
           dataset={rides}
           getVariant={getVariant}
           onSelect={setSelectedIndex}
-          alignRef={detailsRef}
+          direction="vertical"
+          scaleEffect
         />
       </div>
       <div className="h-full flex md:w-1/2">

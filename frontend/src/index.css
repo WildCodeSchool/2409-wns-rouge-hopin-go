@@ -23,8 +23,6 @@ h1 {
   @apply m-0;
 }
 
-
-
 .button-flex {
   @apply rounded-lg gap-2 flex items-center justify-center font-montserrat text-sm;
 }
@@ -52,7 +50,7 @@ h1 {
   @apply bg-pending text-textLight transition-200;
 }
 
-.button-error {
+.button-full {
   @apply bg-error text-textLight transition-200;
 }
 .button-cancel {
@@ -83,13 +81,13 @@ h1 {
 
   /* Track */
   ::-webkit-scrollbar-track {
-    background: var(--color-tertiary);
+    background: transparent;
     border-radius: 0.5rem;
   }
 
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: var(--color-primary);
+    background: #fff;
     cursor: -webkit-grabbing;
     border-radius: 0.5rem;
     transition: all 350ms ease;
@@ -97,7 +95,7 @@ h1 {
 
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-primary-hover);
+    background: #e6e6e6;
   }
 
   /* no scrollbar visible */

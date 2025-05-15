@@ -70,13 +70,13 @@ const Signin = () => {
   return (
     <form
       noValidate
-      className="max-w-sm mx-auto"
+      className=" h-full w-full flex flex-col justify-center items-center max-w-sm mx-auto px-4 sm:px-0"
       onSubmit={(e) => {
         e.preventDefault();
         doSubmit();
       }}
     >
-      <div className="mb-5">
+      <div className="mb-5 w-full">
         <label
           htmlFor="email"
           className="block mb-2 text-sm font-medium text-white "
@@ -101,7 +101,7 @@ const Signin = () => {
         )}
       </div>
       {/* Mot de passe */}
-      <div className="mb-5">
+      <div className="mb-5 w-full">
         <label
           htmlFor="password"
           className="block mb-2 text-sm font-medium text-white dark:text-white"

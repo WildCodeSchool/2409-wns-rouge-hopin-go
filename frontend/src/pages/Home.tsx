@@ -13,23 +13,29 @@ const Home = () => {
   const me = whoAmIData?.whoami;
 
   const tabs: Tab[] = [
-    { label: "Rechercher", content: <SearchRide />, path: "/rechercher" },
+    {
+      label: "Rechercher",
+      content: <SearchRide variant="searchFormRide" />,
+      path: "/research",
+    },
     ...(me
-      ? [{ label: "Proposer", content: <CreateRide />, path: "/proposer" }]
+      ? [{ label: "Proposer", content: <CreateRide />, path: "/propose" }]
       : [
           {
             label: "Proposer",
             content: <InformationMessage />,
-            path: "/proposer",
+            path: "/propose",
           },
         ]),
   ];
   return (
     <>
-      <div className="flex-grow flex items-center justify-center h-full m-auto max-w-sm sm:max-w-lg lg:max-w-4xl overflow-hidden z-50">
-        <div className="flex-1">
-          <SwitchTab tabs={tabs} tabParams={tab} />
-        </div>
+      <div className=" flex flex-col justify-center items-center w-full h-full md:w-3/4 md:h-3/4 top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2  fixed">
+        <SwitchTab
+          classContainer="bg-primary px-4"
+          tabs={tabs}
+          tabParams={tab}
+        />
       </div>
     </>
   );

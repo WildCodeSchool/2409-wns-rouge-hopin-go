@@ -9,14 +9,18 @@ import { toast } from "react-toastify";
 // import { useEffect, useState } from "react";
 // import { queryPassengerRide } from "../api/PassengerRide";
 
-export default function RegisterButton({ rideId, size, variant, icon }: { rideId: string, size: "small" | "large", variant: VariantType, icon?: React.ElementType }) {
-
-    // tests
-    // variant = "pending"
-
-
+export default function RegisterButton({
+    rideId,
+    size,
+    variant,
+    icon,
+}: {
+    rideId: string;
+    size: "small" | "large";
+    variant: VariantType;
+    icon?: React.ElementType;
+}) {
     const [getRide] = useLazyQuery(queryRide);
-    // const [getPassengerRide] = useLazyQuery(queryPassengerRide);
     const [doCreatePassengerRide] = useMutation(mutationCreatePassengerRide);
 
     const { data: whoAmIData } = useQuery(queryWhoAmI);
@@ -59,7 +63,12 @@ export default function RegisterButton({ rideId, size, variant, icon }: { rideId
             const nbPassenger = data?.ride?.nb_passenger;
             const maxPassenger = data?.ride?.max_passenger;
 
-            console.log("data, nbPassenger, maxPassenger", data, nbPassenger, maxPassenger);
+            console.log(
+                "data, nbPassenger, maxPassenger",
+                data,
+                nbPassenger,
+                maxPassenger
+            );
 
             // création d'un tuple passenger_ride
             if (
@@ -97,9 +106,9 @@ export default function RegisterButton({ rideId, size, variant, icon }: { rideId
                 return "En attente de validation";
             case "cancel":
                 return "Trajet annulé";
-            // case "refused":
-            //     return "Inscription refusée";
-            case "error":
+            case "refused":
+                return "Inscription refusée";
+            case "full":
                 return "Trajet complet";
             default:
                 return "";

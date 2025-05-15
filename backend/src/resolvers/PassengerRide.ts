@@ -1,5 +1,8 @@
 import { Arg, Mutation, Query, Resolver } from "type-graphql";
-import { CreatePassengerRideInput, PassengerRide } from "../entities/PassengerRide";
+import {
+  CreatePassengerRideInput,
+  PassengerRide,
+} from "../entities/PassengerRide";
 import { validate } from "class-validator";
 import { datasource } from "../datasource";
 import { Ride } from "../entities/Ride";
