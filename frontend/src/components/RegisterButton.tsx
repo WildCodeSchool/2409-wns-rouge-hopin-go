@@ -137,7 +137,7 @@ export default function RegisterButton({
                 label={chooseLabel()}
                 onClick={isLoggedIn && !hasRegistered ? handleRegister : undefined}
                 isLink={isLoggedIn ? false : true}
-                to="signin"
+                to="/auth/signin"
                 className="w-full"
             />
         )
