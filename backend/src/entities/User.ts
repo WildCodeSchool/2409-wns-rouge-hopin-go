@@ -66,7 +66,7 @@ export class User extends BaseEntity {
   createdAt!: Date;
 
   @OneToMany(() => PassengerRide, (pr) => pr.user)
-  passengerRides!: PassengerRide[];
+  passenger_rides!: PassengerRide[];
 
   // may be needed if user can create other users
   // @ManyToOne(() => User)

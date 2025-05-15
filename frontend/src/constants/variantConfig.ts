@@ -52,4 +52,11 @@ export const variantConfigMap: Record<VariantType, VariantConfig> = {
     icon: TicketX,
     hoverBg: "hover:bg-cancelHover",
   },
+  refused: {
+    textColor: "text-refused",
+    bgFill: "fill-refused bg-refused",
+    statusLabel: "Refusé",
+    icon: TicketX,
+    hoverBg: "hover:bg-refusedHover",
+  },
 };

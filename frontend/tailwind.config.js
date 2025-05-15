@@ -14,6 +14,8 @@ module.exports = {
         pendingHover: "#0e7597",
         full: "#FF595C", //axelle red
         fullHover: "#e64f52",
+        refused: "#FF8E47", //orange is the new black
+        refusedHover: "#e67c3c",
         cancel: "#959494", //sasha grey
         cancelHover: "#868585",
         textLight: "#FFFFFF",

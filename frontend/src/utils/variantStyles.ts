@@ -46,6 +46,13 @@ export const getVariantDetails = (variant: VariantType) => {
         status: "Annulé",
         icon: TicketX,
       };
+    case "refused":
+      return {
+        text: "text-refused",
+        background: "fill-refused bg-refused",
+        status: "Refusé",
+        icon: TicketX,
+      };
     default:
       return {
         text: "text-primary",

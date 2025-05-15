@@ -107,4 +107,23 @@ export class PassengerRideResolver {
       throw new Error("unable to create passenger_ride");
     }
   }
+
+  @Query(() => [PassengerRide])
+  async passengerRide(
+    @Arg("data", () => CreatePassengerRideInput) data: CreatePassengerRideInput
+  ): Promise<PassengerRide | null> {
+    try {
+      const passengerRide = await PassengerRide.findOne({
+        where: { ride_id: data.ride_id, user_id: data.user_id },
+      });
+      if (passengerRide) {
+        return passengerRide;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      console.error(error);
+      throw new Error("unable to communicate with the database");
+    }
+  }
 }

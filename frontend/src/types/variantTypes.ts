@@ -4,4 +4,5 @@ export type VariantType =
   | "validation"
   | "pending"
   | "full"
-  | "cancel";
+  | "cancel"
+  | "refused";
