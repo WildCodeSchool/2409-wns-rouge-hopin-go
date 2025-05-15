@@ -23,6 +23,12 @@ export type CreatePassengerRideInput = {
   user_id: Scalars['ID']['input'];
 };
 
+export type GroupedPassengerRides = {
+  __typename?: 'GroupedPassengerRides';
+  approved: Array<Ride>;
+  waiting: Array<Ride>;
+};
+
 export type IdInput = {
   id: Scalars['ID']['input'];
 };
@@ -85,12 +91,24 @@ export type PassengerRide = {
 
 export type Query = {
   __typename?: 'Query';
+  driverRides: Array<Ride>;
+  passengerRidesGrouped: GroupedPassengerRides;
   ride: Ride;
   rides: Array<Ride>;
   searchRide: Array<Ride>;
   user: User;
   users: Array<User>;
   whoami?: Maybe<User>;
+};
+
+
+export type QueryDriverRidesArgs = {
+  filter?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryPassengerRidesGroupedArgs = {
+  filter?: InputMaybe<Scalars['String']['input']>;
 };
 
 
