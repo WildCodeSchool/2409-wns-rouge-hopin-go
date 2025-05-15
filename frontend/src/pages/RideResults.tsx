@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 
@@ -11,7 +11,6 @@ import { SearchRidesQuery } from "../gql/graphql";
 type Ride = SearchRidesQuery["searchRide"][number];
 
 const RideResults = () => {
-  const detailsRef = useRef<HTMLDivElement>(null);
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [searchParams] = useSearchParams();
 
@@ -71,7 +70,8 @@ const RideResults = () => {
           dataset={rides}
           getVariant={getVariant}
           onSelect={setSelectedIndex}
-          alignRef={detailsRef}
+          direction="vertical"
+          scaleEffect
         />
       </div>
       <div className="h-full flex md:w-1/2">
