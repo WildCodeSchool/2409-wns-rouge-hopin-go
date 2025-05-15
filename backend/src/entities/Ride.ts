@@ -93,7 +93,11 @@ export class Ride extends BaseEntity {
   created_at!: Date;
 
   @OneToMany(() => PassengerRide, (pr) => pr.ride)
-  passengerRides!: PassengerRide[];
+  @Field((type) => [PassengerRide])
+  passenger_rides!: PassengerRide[];
+
+  @Field(() => String, { nullable: true })
+  passenger_status?: string;
 }
 
 @InputType()
