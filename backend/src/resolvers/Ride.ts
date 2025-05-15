@@ -130,7 +130,7 @@ export class RidesResolver {
   }
 
   @FieldResolver(() => String, { nullable: true })
-  async passengerStatus(
+  async passenger_status(
     @Root() ride: Ride,
     @Ctx() ctx: ContextType
   ): Promise<string | null> {

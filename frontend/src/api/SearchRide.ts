@@ -25,7 +25,7 @@ export const querySearchRide = gql(`
         createdAt
         role
       }
-      passengerStatus
+      passenger_status
     }
   }
 `);
