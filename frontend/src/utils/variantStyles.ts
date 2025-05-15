@@ -32,10 +32,10 @@ export const getVariantDetails = (variant: VariantType) => {
         status: "En attente",
         icon: History,
       };
-    case "error":
+    case "full":
       return {
-        text: "text-error",
-        background: "fill-error bg-error",
+        text: "text-full",
+        background: "fill-full bg-full",
         status: "Complet",
         icon: TicketX,
       };

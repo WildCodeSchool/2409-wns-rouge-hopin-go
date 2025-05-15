@@ -5,7 +5,7 @@ import { Ride } from "../gql/graphql";
 import useWindowSize from "../utils/useWindowSize";
 
 type ScrollableSnapListProps = {
-  dataset: Ride[] | undefined;
+  dataset: Ride[];
   getVariant: (data: Ride) => VariantType;
   onSelect: (index: number) => void;
   direction?: "vertical" | "horizontal";

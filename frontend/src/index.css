@@ -50,8 +50,8 @@ h1 {
   @apply bg-pending text-textLight transition-200;
 }
 
-.button-error {
-  @apply bg-error text-textLight transition-200;
+.button-full {
+  @apply bg-full text-textLight transition-200;
 }
 .button-cancel {
   @apply bg-cancel text-textLight transition-200;

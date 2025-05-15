@@ -3,5 +3,5 @@ export type VariantType =
   | "secondary"
   | "validation"
   | "pending"
-  | "error"
+  | "full"
   | "cancel";

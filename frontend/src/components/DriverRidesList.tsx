@@ -5,23 +5,19 @@ import { Ride } from "../gql/graphql";
 import { VariantType } from "../types/variantTypes";
 import useBreakpoints from "../utils/useWindowSize";
 import { useQuery } from "@apollo/client";
-import { queryWhoAmI } from "../api/WhoAmI";
+import { queryDriverRides } from "../api/DriverRides";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const DriverRidesList = ({ dataset }: any) => {
+const DriverRidesList = () => {
   const [, setSelectedIndex] = useState(0);
   const [showUpcoming, setShowUpcoming] = useState(true);
   const [showArchived, setShowArchived] = useState(false);
 
   const { isSm } = useBreakpoints();
 
-  const { data: whoAmIData } = useQuery(queryWhoAmI);
-  const me = whoAmIData?.whoami;
-
   const getVariant = (ride: Ride): VariantType => {
     if (ride.is_canceled) return "cancel";
     const availableSeats = ride.max_passenger - (ride.nb_passenger ?? 0);
-    if (availableSeats <= 0) return "error";
+    if (availableSeats <= 0) return "full";
 
     const departureDate = new Date(ride.departure_at);
     const today = new Date();
@@ -29,20 +25,15 @@ const DriverRidesList = ({ dataset }: any) => {
 
     return "primary";
   };
+  const { data: upcomingRidesData } = useQuery(queryDriverRides, {
+    variables: { filter: "upcoming" },
+  });
+  const upcomingRides = upcomingRidesData?.driverRides;
 
-  const upcomingRides = dataset.filter(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (ride: any) =>
-      new Date(ride.departure_at) >= new Date() &&
-      !ride.is_canceled &&
-      me?.id === ride.driver_id.id
-  );
-
-  const archivedRides = dataset.filter(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (ride: any) =>
-      new Date(ride.departure_at) < new Date() && me?.id === ride.driver_id.id
-  );
+  const { data: archivedRidesData } = useQuery(queryDriverRides, {
+    variables: { filter: "archived" },
+  });
+  const archivedRides = archivedRidesData?.driverRides;
 
   return (
     <div className=" h-full w-full pt-4 pb-32 sm:pb-16 overflow-auto">
@@ -53,7 +44,7 @@ const DriverRidesList = ({ dataset }: any) => {
         {showUpcoming ? <ChevronUp /> : <ChevronDown />}
         Trajets à venir
       </span>
-      {upcomingRides.length > 0 ? (
+      {upcomingRides && upcomingRides?.length > 0 ? (
         showUpcoming && (
           <div className="flex h-fit w-full overflow-auto">
             <ScrollableSnapList
@@ -74,7 +65,7 @@ const DriverRidesList = ({ dataset }: any) => {
         {showArchived ? <ChevronUp /> : <ChevronDown />}
         Trajets archivés
       </span>
-      {archivedRides.length > 0 ? (
+      {archivedRides && archivedRides.length > 0 ? (
         showArchived && (
           <div className="flex h-fit w-full overflow-auto">
             <ScrollableSnapList

@@ -41,7 +41,6 @@ export class RidesResolver {
     }
   }
 
-  @Authorized()
   @Query(() => [Ride])
   async rides(): Promise<Ride[] | null> {
     const rides = await Ride.find({
@@ -56,10 +55,10 @@ export class RidesResolver {
     @Arg("id", () => ID) id: number
     // @Ctx() context: ContextType
   ): Promise<Ride | null> {
-    const ride = await Ride.findOne(({
+    const ride = await Ride.findOne({
       where: { id },
       relations: ["driver_id"],
-    }));
+    });
     if (ride) {
       return ride;
     } else {

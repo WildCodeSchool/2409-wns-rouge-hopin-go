@@ -4,37 +4,34 @@ import ScrollableSnapList from "./ScrollableSnapList";
 import { Ride } from "../gql/graphql";
 import { VariantType } from "../types/variantTypes";
 import useBreakpoints from "../utils/useWindowSize";
+import { useQuery } from "@apollo/client";
+import { queryPassengerRides } from "../api/PassengerRides";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const PassengerRidesList = ({ dataset }: any) => {
+const PassengerRidesList = () => {
   const [, setSelectedIndex] = useState(0);
   const [showUpcoming, setShowUpcoming] = useState(true);
   const [showArchived, setShowArchived] = useState(false);
 
   const { isSm } = useBreakpoints();
 
-  const getVariant = (ride: Ride): VariantType => {
-    if (ride.is_canceled) return "cancel";
-    const availableSeats = ride.max_passenger - (ride.nb_passenger ?? 0);
-    if (availableSeats <= 0) return "error";
+  const { data: upcomingPassengerRidesData } = useQuery(queryPassengerRides, {
+    variables: { filter: "upcoming" },
+  });
+  const upcomingRides = upcomingPassengerRidesData?.passengerRidesGrouped;
+  console.log("🚀 ~ PassengerRidesList ~ upcomingRides:", upcomingRides);
 
-    const departureDate = new Date(ride.departure_at);
-    const today = new Date();
-    if (departureDate < today) return "validation";
-
+  const { data: archivedPassengerRidesData } = useQuery(queryPassengerRides, {
+    variables: { filter: "archived" },
+  });
+  const archivedRides = archivedPassengerRidesData?.passengerRidesGrouped;
+  // "primary" | "secondary" | "validation" | "pending" | "full" | "cancel"
+  const getVariant = (dataset: Ride): VariantType => {
+    if (dataset.is_canceled) return "cancel";
+    if (dataset.nb_passenger === dataset.max_passenger) return "full";
+    if (upcomingRides?.waiting) return "pending";
+    if (upcomingRides?.approved) return "validation";
     return "primary";
   };
-
-  const upcomingRides = dataset.filter(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (ride: any) =>
-      new Date(ride.departure_at) >= new Date() && !ride.is_canceled
-  );
-
-  const archivedRides = dataset.filter(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (ride: any) => new Date(ride.departure_at) < new Date()
-  );
 
   return (
     <div className=" h-full w-full pt-4 pb-32 sm:pb-16 overflow-auto">
@@ -45,11 +42,11 @@ const PassengerRidesList = ({ dataset }: any) => {
         {showUpcoming ? <ChevronUp /> : <ChevronDown />}
         Trajets à venir
       </span>
-      {upcomingRides.length > 0 ? (
+      {upcomingRides ? (
         showUpcoming && (
           <div className="flex h-fit w-full overflow-auto">
             <ScrollableSnapList
-              dataset={upcomingRides}
+              dataset={upcomingRides.waiting}
               getVariant={getVariant}
               onSelect={setSelectedIndex}
               direction={isSm ? "horizontal" : "vertical"}
@@ -66,11 +63,11 @@ const PassengerRidesList = ({ dataset }: any) => {
         {showArchived ? <ChevronUp /> : <ChevronDown />}
         Trajets archivés
       </span>
-      {archivedRides.length > 0 ? (
+      {archivedRides && archivedRides.approved.length > 0 ? (
         showArchived && (
           <div className="flex h-fit w-full overflow-auto">
             <ScrollableSnapList
-              dataset={archivedRides}
+              dataset={archivedRides.approved}
               getVariant={getVariant}
               onSelect={setSelectedIndex}
               direction={isSm ? "horizontal" : "vertical"}
