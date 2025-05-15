@@ -38,7 +38,7 @@ export const variantConfigMap: Record<VariantType, VariantConfig> = {
     icon: History,
     hoverBg: "hover:bg-pendingHover",
   },
-  error: {
+  full: {
     textColor: "text-error",
     bgFill: "fill-error bg-error",
     statusLabel: "Complet",
@@ -51,5 +51,12 @@ export const variantConfigMap: Record<VariantType, VariantConfig> = {
     statusLabel: "Annulé",
     icon: TicketX,
     hoverBg: "hover:bg-cancelHover",
+  },
+  refused: {
+    textColor: "text-refused",
+    bgFill: "fill-refused bg-refused",
+    statusLabel: "Refusé",
+    icon: TicketX,
+    hoverBg: "hover:bg-refusedHover",
   },
 };

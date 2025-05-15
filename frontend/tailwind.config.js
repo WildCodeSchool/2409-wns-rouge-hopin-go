@@ -12,8 +12,10 @@ module.exports = {
         validationHover: "#0e966a",
         pending: "#1083A9", //blue lock
         pendingHover: "#0e7597",
-        error: "#FF595C", //axelle red
-        errorHover: "#e64f52",
+        full: "#FF595C", //axelle red
+        fullHover: "#e64f52",
+        refused: "#FF8E47", //orange is the new black
+        refusedHover: "#e67c3c",
         cancel: "#959494", //sasha grey
         cancelHover: "#868585",
         textLight: "#FFFFFF",

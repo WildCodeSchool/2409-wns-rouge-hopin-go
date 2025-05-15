@@ -16,7 +16,7 @@ const PassengerRidesList = ({ dataset }: any) => {
   const getVariant = (ride: Ride): VariantType => {
     if (ride.is_canceled) return "cancel";
     const availableSeats = ride.max_passenger - (ride.nb_passenger ?? 0);
-    if (availableSeats <= 0) return "error";
+    if (availableSeats <= 0) return "full";
 
     const departureDate = new Date(ride.departure_at);
     const today = new Date();
