@@ -85,7 +85,7 @@ export class PassengerRideResolver {
     });
 
     const rides = passengerRides
-      .map((pr) => pr.ride)
+      .map((passengerRide) => passengerRide.ride)
       .filter((ride) => {
         if (!ride) return false;
         if (ride.driver_id.id === ctx.user.id) return false; // pas ses propres rides
