@@ -6,9 +6,7 @@ import ScrollableSnapList from "../components/ScrollableSnapList";
 import CardRideDetails from "../components/CardRideDetails";
 import { VariantType } from "../types/variantTypes";
 import { querySearchRide } from "../api/SearchRide";
-import { SearchRidesQuery } from "../gql/graphql";
-
-type Ride = SearchRidesQuery["searchRide"][number];
+import { Ride } from "../gql/graphql";
 
 const RideResults = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);

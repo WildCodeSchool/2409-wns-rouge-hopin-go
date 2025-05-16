@@ -1,4 +1,4 @@
-import { Arg, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Authorized, ID, Mutation, Query, Resolver } from "type-graphql";
 import {
   CreatePassengerRideInput,
   PassengerRide,
@@ -28,9 +28,10 @@ export class PassengerRideResolver {
     }
   }
 
+  @Authorized()
   @Query(() => [PassengerRide])
   async passengersByRide(
-    @Arg("ride_id", () => Number) ride_id: number
+    @Arg("ride_id", () => ID) ride_id: number
   ): Promise<PassengerRide[]> {
     try {
       const passengersRide = await PassengerRide.find({

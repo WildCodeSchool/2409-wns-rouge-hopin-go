@@ -94,7 +94,7 @@ export class Ride extends BaseEntity {
 
   @OneToMany(() => PassengerRide, (pr) => pr.ride)
   @Field((type) => [PassengerRide])
-  passenger_rides!: PassengerRide[];
+  passenger_rides?: PassengerRide[];
 
   @Field(() => String, { nullable: true })
   passenger_status?: string;

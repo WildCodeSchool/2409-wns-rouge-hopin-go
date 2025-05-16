@@ -12,6 +12,7 @@ type ScrollableSnapListProps = {
   onSelect: (index: number) => void;
   direction?: "vertical" | "horizontal";
   scaleEffect?: boolean;
+  onSelectRide?: (rideId: number) => void;
 };
 
 const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
@@ -20,6 +21,7 @@ const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
   onSelect,
   direction = "vertical",
   scaleEffect = false,
+  onSelectRide,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -166,6 +168,7 @@ const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
                 setTimeout(() => {
                   setIsScrollingManually(false);
                 }, 1000);
+                onSelectRide?.(data.id);
               }}
             />
           </div>
