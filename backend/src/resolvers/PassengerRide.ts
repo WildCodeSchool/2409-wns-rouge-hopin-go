@@ -77,14 +77,14 @@ export class PassengerRideResolver {
 
     const now = new Date();
 
-    const prs = await PassengerRide.find({
+    const passengerRides = await PassengerRide.find({
       where: { user_id: ctx.user.id },
       relations: {
         ride: { driver_id: true },
       },
     });
 
-    const rides = prs
+    const rides = passengerRides
       .map((pr) => pr.ride)
       .filter((ride) => {
         if (!ride) return false;
