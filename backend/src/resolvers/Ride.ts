@@ -19,7 +19,6 @@ import { validate } from "class-validator";
 import { endOfDay, startOfDay } from "date-fns";
 import { User } from "../entities/User";
 import { PassengerRide } from "../entities/PassengerRide";
-import { Context } from "vm";
 import { ContextType } from "../auth";
 
 @Resolver(() => Ride)

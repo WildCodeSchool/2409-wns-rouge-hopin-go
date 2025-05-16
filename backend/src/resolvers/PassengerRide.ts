@@ -1,7 +1,6 @@
 import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import {
   CreatePassengerRideInput,
-  GroupedPassengerRides,
   PassengerRide,
 } from "../entities/PassengerRide";
 import { validate } from "class-validator";
@@ -37,56 +36,6 @@ export class PassengerRideResolver {
       relations: ["driver_id"],
       order: { departure_at: "DESC" },
     });
-  }
-
-  // Rides où je suis passager
-  @Query(() => GroupedPassengerRides)
-  async passengerRidesGrouped(
-    @Ctx() ctx: AuthContextType,
-    @Arg("filter", () => String, { nullable: true }) filter?: string
-  ): Promise<GroupedPassengerRides> {
-    if (!ctx.user) throw new Error("Unauthorized");
-
-    const now = new Date();
-
-    const allPassengerRides = await PassengerRide.find({
-      where: { user_id: ctx.user.id },
-      relations: {
-        ride: { driver_id: true },
-      },
-    });
-
-    const approvedRides: Ride[] = [];
-    const waitingRides: Ride[] = [];
-
-    for (const pr of allPassengerRides) {
-      if (!pr.ride) continue;
-
-      if (pr.status === "approved") {
-        if (
-          filter === "upcoming" &&
-          new Date(pr.ride.departure_at) > now &&
-          !pr.ride.is_canceled &&
-          pr.ride.driver_id.id !== ctx.user.id
-        ) {
-          approvedRides.push(pr.ride);
-        } else if (
-          filter !== "upcoming" &&
-          pr.ride.driver_id.id !== ctx.user.id
-        ) {
-          approvedRides.push(pr.ride);
-        }
-      }
-
-      if (pr.status === "waiting" && pr.ride.driver_id.id !== ctx.user.id) {
-        waitingRides.push(pr.ride);
-      }
-    }
-
-    return {
-      approved: approvedRides,
-      waiting: waitingRides,
-    };
   }
 
   @Mutation(() => PassengerRide)
@@ -125,5 +74,35 @@ export class PassengerRideResolver {
       console.error(error);
       throw new Error("unable to communicate with the database");
     }
+  }
+
+  @Query(() => [Ride])
+  async passengerRides(
+    @Ctx() ctx: AuthContextType,
+    @Arg("filter", () => String, { nullable: true }) filter?: string
+  ): Promise<Ride[]> {
+    if (!ctx.user) throw new Error("Unauthorized");
+
+    const now = new Date();
+
+    const prs = await PassengerRide.find({
+      where: { user_id: ctx.user.id },
+      relations: {
+        ride: { driver_id: true },
+      },
+    });
+
+    const rides = prs
+      .map((pr) => pr.ride)
+      .filter((ride) => {
+        if (!ride) return false;
+        if (ride.driver_id.id === ctx.user.id) return false; // pas ses propres rides
+        if (filter === "upcoming")
+          return new Date(ride.departure_at) > now && !ride.is_canceled;
+        if (filter === "archived") return new Date(ride.departure_at) < now;
+        return true; // "all"
+      });
+
+    return rides;
   }
 }

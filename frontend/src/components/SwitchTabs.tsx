@@ -41,8 +41,8 @@ const SwitchTabs = ({ tabs, tabParams, classContainer }: SwitchTabsProps) => {
             key={index}
             className={`flex-1 py-4 font-semibold transition-200 ${
               activeTab === index
-                ? "bg-white text-primary"
-                : "bg-primary text-textLight"
+                ? "bg-primary text-white"
+                : "bg-gray-100 text-primary"
             } `}
             onClick={() => handleTabClick(index)}
           >

@@ -2,9 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import CardTemplate from "./CardTemplate";
 import { VariantType } from "../types/variantTypes";
 import useWindowSize from "../utils/useWindowSize";
-import { SearchRidesQuery } from "../gql/graphql";
-
-type Ride = SearchRidesQuery["searchRide"][number];
+import { Ride } from "../gql/graphql";
 
 type ScrollableSnapListProps = {
   dataset: Ride[];

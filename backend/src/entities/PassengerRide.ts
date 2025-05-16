@@ -35,15 +35,6 @@ export class PassengerRide extends BaseEntity {
   ride!: Ride;
 }
 
-@ObjectType()
-export class GroupedPassengerRides {
-  @Field(() => [Ride])
-  approved!: Ride[];
-
-  @Field(() => [Ride])
-  waiting!: Ride[];
-}
-
 @InputType()
 export class CreatePassengerRideInput {
   @Field(() => ID)

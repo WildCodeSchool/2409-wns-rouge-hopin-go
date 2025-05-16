@@ -3,7 +3,7 @@ import { useParams } from "react-router-dom";
 import DriverRidesList from "../components/DriverRidesList";
 import PassengerRidesList from "../components/PassengerRidesList";
 
-const PassengerRides = () => {
+const MyRides = () => {
   const { tab } = useParams();
 
   const tabs: Tab[] = [
@@ -29,4 +29,4 @@ const PassengerRides = () => {
   );
 };
 
-export default PassengerRides;
+export default MyRides;
