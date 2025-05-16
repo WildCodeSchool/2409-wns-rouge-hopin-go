@@ -1,10 +1,14 @@
-import { CircleUserRound, UsersRound } from "lucide-react";
+import { CircleUserRound, Eye, UsersRound } from "lucide-react";
 import { VariantType } from "../types/variantTypes";
 import { variantConfigMap } from "../constants/variantConfig";
 import useWindowSize from "../utils/useWindowSize";
 import { formatDate, formatTime } from "../utils/formatDate";
 import { SearchRidesQuery } from "../gql/graphql";
 import RegisterButton from "./RegisterButton";
+import Button from "./Button";
+import { useModal } from "../hooks/useModal";
+import RideCardModal from "./RideCardModal";
+import Modal from "./Modal";
 
 type Ride = SearchRidesQuery["searchRide"][number];
 
@@ -14,6 +18,7 @@ type CardTemplateProps = {
   onClick?: () => void;
   isSelected?: boolean;
   additionalClassName?: string;
+  driverUpcomingRides?: boolean;
 };
 
 const CardTemplate: React.FC<CardTemplateProps> = ({
@@ -22,6 +27,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   onClick,
   isSelected = false,
   additionalClassName = "",
+  driverUpcomingRides,
 }) => {
   const { isSm, isMd, isXl, windowWidth } = useWindowSize();
   const {
@@ -36,6 +42,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   const departureTime = formatTime(departureDate);
   const arrivalTime = formatTime(arrivalDate);
   const dateStr = formatDate(departureDate);
+  const { isOpen, visible, toggleModal } = useModal();
 
   const durationMin = Math.floor(
     (arrivalDate.getTime() - departureDate.getTime()) / 60000
@@ -138,7 +145,16 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             statusLabel
           )}
         </p>
-
+        <div className="absolute right-[150px] flex gap-2 items-center z-10 p-4 text-sm lg:text-base text-textLight">
+          {driverUpcomingRides && (
+            <Button icon={Eye} type="button" onClick={toggleModal} />
+          )}
+        </div>
+        {/* <Button
+          label=" Test pour ouvrir une modale"
+          type="button"
+          onClick={toggleModal}
+        /> */}
         <p className="absolute right-0 pr-[70px] sm:pr-[70px] md:pr-[75px] lg:pr-[70px] z-10 p-4 text-sm lg:text-base text-textLight">
           {dateStr}
         </p>
@@ -165,6 +181,9 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           icon={CardIcon}
         />
       </div>
+      <Modal isOpen={isOpen} visible={visible} toggleModal={toggleModal}>
+        {() => <RideCardModal rideId={data.id} toggleModal={toggleModal} />}
+      </Modal>
     </div>
   );
 };

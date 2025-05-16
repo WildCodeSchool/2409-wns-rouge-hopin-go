@@ -5,15 +5,11 @@ import { VariantType } from "../types/variantTypes";
 import useBreakpoints from "../utils/useWindowSize";
 import { useQuery } from "@apollo/client";
 import { queryDriverRides } from "../api/DriverRides";
-import { useModal } from "../hooks/useModal";
-import RideCardModal from "./RideCardModal";
 
 const DriverRidesList = () => {
   const [, setSelectedIndex] = useState(0);
   const [showAllUpcoming, setShowAllUpcoming] = useState(false);
   const [showAllArchived, setShowAllArchived] = useState(false);
-  const { isOpen, visible, openModal, closeModal } = useModal();
-  const [selectedRideId, setSelectedRideId] = useState<number | null>(null);
   const { isSm } = useBreakpoints();
 
   const getVariant = (dataset: Ride): VariantType => {
@@ -35,11 +31,6 @@ const DriverRidesList = () => {
   });
   const archivedRides = archivedRidesData?.driverRides;
 
-  const handleSelectedRide = () => {
-    setSelectedRideId(data.id);
-    openModal();
-  };
-
   return (
     <div className=" h-full w-full pt-4 pb-32 sm:pb-16 overflow-auto bg-gray-100">
       <span className="flex items-center w-fit gap-2 ml-8  cursor-pointer">
@@ -49,11 +40,11 @@ const DriverRidesList = () => {
         <>
           <div className="flex h-fit w-full overflow-auto">
             <ScrollableSnapList
+              driverUpcomingRides
               dataset={upcomingRides}
               getVariant={getVariant}
               onSelect={setSelectedIndex}
               direction={isSm ? "horizontal" : "vertical"}
-              onSelectRide={handleSelectedRide}
             />
           </div>
           {upcomingRides.length > 3 && (
@@ -96,14 +87,6 @@ const DriverRidesList = () => {
         </>
       ) : (
         <div className="text-center w-full mt-10 ">Aucun trajet archivé.</div>
-      )}
-      {isOpen && selectedRideId !== null && (
-        <div className={`modal ${visible ? "modal-visible" : "modal-hidden"}`}>
-          <div className="modal-content">
-            <RideCardModal rideId={selectedRideId} />
-            <button onClick={closeModal}>Fermer</button>
-          </div>
-        </div>
       )}
     </div>
   );

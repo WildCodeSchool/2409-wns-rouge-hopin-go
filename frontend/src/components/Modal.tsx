@@ -26,7 +26,7 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <>
-      {isOpen && <div className="fixed inset-0 bg-black/50 z-40" />}
+      {isOpen && <div className="fixed inset-0 bg-black/50 z-80" />}
 
       {isOpen && (
         <div

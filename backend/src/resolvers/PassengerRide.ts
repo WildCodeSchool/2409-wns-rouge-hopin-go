@@ -47,7 +47,7 @@ export class PassengerRideResolver {
     });
   }
 
-  @Authorized()
+  // @Authorized()
   @Query(() => [PassengerRide])
   async passengersByRide(
     @Arg("ride_id", () => ID) ride_id: number

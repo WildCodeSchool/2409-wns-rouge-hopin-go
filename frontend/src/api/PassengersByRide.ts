@@ -1,4 +1,4 @@
-import { gql } from "../gql";
+import { gql } from "@apollo/client";
 
 export const queryPassengersByRide = gql(`
   query PassengersByRide($ride_id: ID!) {
