@@ -6,6 +6,8 @@ import { queryWhoAmI } from "../api/WhoAmI";
 import { mutationCreatePassengerRide } from "../api/CreatePassengerRide";
 import { VariantType } from "../types/variantTypes";
 import { toast } from "react-toastify";
+import { querySearchRide } from "../api/SearchRide";
+import { useSearchParams } from "react-router-dom";
 // import { useEffect, useState } from "react";
 // import { queryPassengerRide } from "../api/PassengerRide";
 
@@ -13,21 +15,39 @@ export default function RegisterButton({
     rideId,
     size,
     variant,
-    icon,
+    icon
 }: {
     rideId: string;
     size: "small" | "large";
     variant: VariantType;
     icon?: React.ElementType;
 }) {
+    const [searchParams] = useSearchParams();
+    const departure_city = searchParams.get("departure_city")!;
+    const arrival_city = searchParams.get("arrival_city")!;
+    const departure_at = searchParams.get("departure_at")!;
+
     const [getRide] = useLazyQuery(queryRide);
-    const [doCreatePassengerRide] = useMutation(mutationCreatePassengerRide);
+    const [doCreatePassengerRide] = useMutation(mutationCreatePassengerRide, {
+        refetchQueries: [
+            {
+                query: querySearchRide,
+                variables: {
+                    data: {
+                        departure_city,
+                        arrival_city,
+                        departure_at: new Date(departure_at + ":00:00:00Z"),
+                    },
+                },
+            },
+        ],
+    });
 
     const { data: whoAmIData } = useQuery(queryWhoAmI);
     const me = whoAmIData?.whoami;
     const isLoggedIn = me ? true : false;
 
-    console.log("me, rideId, size", me, rideId, size);
+    // console.log("me, rideId, size", me, rideId, size);
     const { isSm, isMd } = useWindowSize();
 
     // selon le variant reçu en prop, on sait si l'utilisateur est inscrit ou pas
