@@ -34,8 +34,8 @@ export const getVariantDetails = (variant: VariantType) => {
       };
     case "full":
       return {
-        text: "text-error",
-        background: "fill-error bg-error",
+        text: "text-full",
+        background: "fill-full bg-full",
         status: "Complet",
         icon: TicketX,
       };

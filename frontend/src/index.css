@@ -57,6 +57,10 @@ h1 {
   @apply bg-cancel text-textLight transition-200;
 }
 
+.button-refused {
+  @apply bg-refused text-textLight transition-200;
+}
+
 .text-field-with-button {
   @apply flex flex-grow justify-center gap-1;
 }

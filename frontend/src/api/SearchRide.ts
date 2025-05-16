@@ -25,6 +25,11 @@ export const querySearchRide = gql(`
         createdAt
         role
       }
+      passenger_rides {
+        ride_id
+        user_id
+        status
+      }
       passenger_status
     }
   }

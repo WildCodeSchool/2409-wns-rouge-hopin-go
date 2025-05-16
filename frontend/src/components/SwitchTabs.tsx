@@ -35,14 +35,14 @@ const SwitchTabs = ({ tabs, tabParams, classContainer }: SwitchTabsProps) => {
 
   return (
     <div className="sm:border border-textDark sm:rounded-xl shadow-xl  h-full w-full overflow-hidden z-50">
-      <div className="flex h-fit w-full ">
+      <div className="flex h-fit w-full">
         {tabs.map((tab, index) => (
           <button
             key={index}
             className={`flex-1 py-4 font-semibold transition-200 ${
               activeTab === index
-                ? "bg-primary text-textLight"
-                : "bg-white text-primary"
+                ? "bg-primary text-white"
+                : "bg-gray-100 text-primary"
             } `}
             onClick={() => handleTabClick(index)}
           >

@@ -1,60 +1,44 @@
 import { useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
 import ScrollableSnapList from "./ScrollableSnapList";
 import { Ride } from "../gql/graphql";
 import { VariantType } from "../types/variantTypes";
 import useBreakpoints from "../utils/useWindowSize";
 import { useQuery } from "@apollo/client";
-import { queryWhoAmI } from "../api/WhoAmI";
+import { queryDriverRides } from "../api/DriverRides";
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const DriverRidesList = ({ dataset }: any) => {
+const DriverRidesList = () => {
   const [, setSelectedIndex] = useState(0);
-  const [showUpcoming, setShowUpcoming] = useState(true);
-  const [showArchived, setShowArchived] = useState(false);
+  const [showAllUpcoming, setShowAllUpcoming] = useState(false);
+  const [showAllArchived, setShowAllArchived] = useState(false);
 
   const { isSm } = useBreakpoints();
 
-  const { data: whoAmIData } = useQuery(queryWhoAmI);
-  const me = whoAmIData?.whoami;
-
-  const getVariant = (ride: Ride): VariantType => {
-    if (ride.is_canceled) return "cancel";
-    const availableSeats = ride.max_passenger - (ride.nb_passenger ?? 0);
-    if (availableSeats <= 0) return "full";
-
-    const departureDate = new Date(ride.departure_at);
-    const today = new Date();
-    if (departureDate < today) return "validation";
-
+  const getVariant = (dataset: Ride): VariantType => {
+    if (dataset.is_canceled) return "cancel";
+    if (dataset.nb_passenger === dataset.max_passenger) return "validation";
+    if (dataset.passenger_status === "waiting") return "pending";
+    if (dataset.passenger_status === "approved") return "validation";
+    if (dataset.passenger_status === "refused") return "refused";
     return "primary";
   };
 
-  const upcomingRides = dataset.filter(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (ride: any) =>
-      new Date(ride.departure_at) >= new Date() &&
-      !ride.is_canceled &&
-      me?.id === ride.driver_id.id
-  );
+  const { data: upcomingRidesData } = useQuery(queryDriverRides, {
+    variables: { filter: "upcoming" },
+  });
+  const upcomingRides = upcomingRidesData?.driverRides;
 
-  const archivedRides = dataset.filter(
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (ride: any) =>
-      new Date(ride.departure_at) < new Date() && me?.id === ride.driver_id.id
-  );
+  const { data: archivedRidesData } = useQuery(queryDriverRides, {
+    variables: { filter: "archived" },
+  });
+  const archivedRides = archivedRidesData?.driverRides;
 
   return (
-    <div className=" h-full w-full pt-4 pb-32 sm:pb-16 overflow-auto">
-      <span
-        className="flex items-center w-fit gap-2 ml-4  cursor-pointer"
-        onClick={() => setShowUpcoming((prev) => !prev)}
-      >
-        {showUpcoming ? <ChevronUp /> : <ChevronDown />}
+    <div className=" h-full w-full pt-4 pb-32 sm:pb-16 overflow-auto bg-gray-100">
+      <span className="flex items-center w-fit gap-2 ml-8  cursor-pointer">
         Trajets à venir
       </span>
-      {upcomingRides.length > 0 ? (
-        showUpcoming && (
+      {upcomingRides && upcomingRides?.length > 0 ? (
+        <>
           <div className="flex h-fit w-full overflow-auto">
             <ScrollableSnapList
               dataset={upcomingRides}
@@ -63,19 +47,25 @@ const DriverRidesList = ({ dataset }: any) => {
               direction={isSm ? "horizontal" : "vertical"}
             />
           </div>
-        )
+          {upcomingRides.length > 3 && (
+            <div className="mr-4 mt-2 flex justify-end">
+              <button
+                onClick={() => setShowAllUpcoming((prev) => !prev)}
+                className="text-primary underline"
+              >
+                {showAllUpcoming ? "Voir moins" : "Voir plus"}
+              </button>
+            </div>
+          )}
+        </>
       ) : (
         <div className="text-center w-full mt-10">Aucun trajet à venir.</div>
       )}
-      <span
-        className="flex items-center w-fit gap-2 ml-4  cursor-pointer"
-        onClick={() => setShowArchived((prev) => !prev)}
-      >
-        {showArchived ? <ChevronUp /> : <ChevronDown />}
+      <span className="flex items-center w-fit gap-2 ml-8  cursor-pointer">
         Trajets archivés
       </span>
-      {archivedRides.length > 0 ? (
-        showArchived && (
+      {archivedRides && archivedRides.length > 0 ? (
+        <>
           <div className="flex h-fit w-full overflow-auto">
             <ScrollableSnapList
               dataset={archivedRides}
@@ -84,7 +74,17 @@ const DriverRidesList = ({ dataset }: any) => {
               direction={isSm ? "horizontal" : "vertical"}
             />
           </div>
-        )
+          {archivedRides.length > 3 && (
+            <div className="mr-4 mt-2 flex justify-end">
+              <button
+                onClick={() => setShowAllArchived((prev) => !prev)}
+                className="text-primary underline"
+              >
+                {showAllArchived ? "Voir moins" : "Voir plus"}
+              </button>
+            </div>
+          )}
+        </>
       ) : (
         <div className="text-center w-full mt-10 ">Aucun trajet archivé.</div>
       )}

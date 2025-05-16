@@ -9,6 +9,11 @@ export const queryRide = gql(`
       driver_id {
         id
       }
+      passenger_rides{
+        user_id
+        ride_id
+        status
+      }
     }
   }
 `);
