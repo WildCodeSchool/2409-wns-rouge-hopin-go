@@ -7,6 +7,7 @@ import { validate } from "class-validator";
 import { Ride } from "../entities/Ride";
 import { LessThan, MoreThan } from "typeorm";
 import { AuthContextType } from "../auth";
+import { datasource } from "../datasource";
 
 @Resolver()
 export class PassengerRideResolver {
@@ -46,34 +47,25 @@ export class PassengerRideResolver {
     if (errors.length > 0) {
       throw new Error(`Validation error: ${JSON.stringify(errors)}`);
     }
-    const newPassengerRide = new PassengerRide();
-    try {
-      Object.assign(newPassengerRide, data);
-      await newPassengerRide.save();
-      return newPassengerRide;
-    } catch (error) {
-      console.error(error);
-      throw new Error("unable to create passenger_ride");
-    }
-  }
-
-  @Query(() => [PassengerRide])
-  async passengerRide(
-    @Arg("data", () => CreatePassengerRideInput) data: CreatePassengerRideInput
-  ): Promise<PassengerRide | null> {
-    try {
-      const passengerRide = await PassengerRide.findOne({
-        where: { ride_id: data.ride_id, user_id: data.user_id },
+    return await datasource.transaction(async (manager) => {
+      const ride = await manager.findOne(Ride, {
+        where: { id: data.ride_id },
+        lock: { mode: "pessimistic_write" }, // évite les conflits concurrents
       });
-      if (passengerRide) {
-        return passengerRide;
-      } else {
-        return null;
+
+      if (!ride) throw new Error("Trajet introuvable");
+
+      // Vérification du nombre de places restantes
+      if (ride.nb_passenger >= ride.max_passenger) {
+        throw new Error("Ce trajet est déjà complet");
       }
-    } catch (error) {
-      console.error(error);
-      throw new Error("unable to communicate with the database");
-    }
+
+      // Création du tuple PassengerRide
+      const newPassengerRide = manager.create(PassengerRide, data);
+      await manager.save(newPassengerRide);
+
+      return newPassengerRide;
+    });
   }
 
   @Query(() => [Ride])
