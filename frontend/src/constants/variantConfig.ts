@@ -39,8 +39,8 @@ export const variantConfigMap: Record<VariantType, VariantConfig> = {
     hoverBg: "hover:bg-pendingHover",
   },
   full: {
-    textColor: "text-error",
-    bgFill: "fill-error bg-full",
+    textColor: "text-full",
+    bgFill: "fill-full bg-full",
     statusLabel: "Complet",
     icon: TicketX,
     hoverBg: "hover:bg-fullHover",
