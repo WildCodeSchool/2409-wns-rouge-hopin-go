@@ -168,6 +168,7 @@ const SearchFormRide = ({
           Ville d'arrivée
         </label>
         <input
+          autoComplete="off"
           type="text"
           id="arrival-city"
           className={`${
