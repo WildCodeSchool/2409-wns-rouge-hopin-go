@@ -49,7 +49,8 @@ const SearchFormRide = ({
         );
         const data = await res.json();
 
-        const labels = data.features.map((f: any) => f.properties.label);
+        type Feature = { properties: { label: string } };
+        const labels = data.features.map((f: Feature) => f.properties.label);
 
         setSuggestions((prev) => ({
           ...prev,
@@ -62,7 +63,7 @@ const SearchFormRide = ({
 
     const timer = setTimeout(fetchSuggestions, 300); // debounce
     return () => clearTimeout(timer);
-  }, [departureCity, arrivalCity]);
+  }, [departureCity, arrivalCity, lastModifiedField]);
 
   const handleSelect = (field: "departure" | "arrival", value: string) => {
     if (field === "departure") {
