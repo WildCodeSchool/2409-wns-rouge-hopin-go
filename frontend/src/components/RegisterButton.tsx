@@ -27,7 +27,6 @@ export default function RegisterButton({
   const me = whoAmIData?.whoami;
   const isLoggedIn = me ? true : false;
 
-  console.log("me, rideId, size", me, rideId, size);
   const { isSm, isMd } = useWindowSize();
 
   // selon le variant reçu en prop, on sait si l'utilisateur est inscrit ou pas

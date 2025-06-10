@@ -1,16 +1,14 @@
-import { CircleUserRound, Eye, UsersRound } from "lucide-react";
+import { BellRing, CircleUserRound, Eye, UsersRound } from "lucide-react";
 import { VariantType } from "../types/variantTypes";
 import { variantConfigMap } from "../constants/variantConfig";
 import useWindowSize from "../utils/useWindowSize";
 import { formatDate, formatTime } from "../utils/formatDate";
-import { SearchRidesQuery } from "../gql/graphql";
+import { Ride } from "../gql/graphql";
 import RegisterButton from "./RegisterButton";
 import Button from "./Button";
 import { useModal } from "../hooks/useModal";
 import RideCardModal from "./RideCardModal";
 import Modal from "./Modal";
-
-type Ride = SearchRidesQuery["searchRide"][number];
 
 type CardTemplateProps = {
   variant: VariantType;
@@ -36,13 +34,13 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
     statusLabel,
     icon: CardIcon,
   } = variantConfigMap[variant];
+  const { isOpen, visible, toggleModal } = useModal();
 
   const departureDate = new Date(data.departure_at);
   const arrivalDate = new Date(data.arrival_at);
   const departureTime = formatTime(departureDate);
   const arrivalTime = formatTime(arrivalDate);
   const dateStr = formatDate(departureDate);
-  const { isOpen, visible, toggleModal } = useModal();
 
   const durationMin = Math.floor(
     (arrivalDate.getTime() - departureDate.getTime()) / 60000
@@ -145,16 +143,20 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             statusLabel
           )}
         </p>
-        <div className="absolute right-[150px] flex gap-2 items-center z-10 p-4 text-sm lg:text-base text-textLight">
+        <div className="absolute right-[170px] flex gap-2 items-center z-10 p-2 text-sm lg:text-base text-textLight font-semibold">
           {driverUpcomingRides && (
-            <Button icon={Eye} type="button" onClick={toggleModal} />
+            // <Button icon={Eye} type="button" onClick={toggleModal} />
+            <>
+              <Button
+                icon={Eye}
+                type="button"
+                onClick={toggleModal}
+                label="Passagers"
+                variant="secondary"
+              />
+            </>
           )}
         </div>
-        {/* <Button
-          label=" Test pour ouvrir une modale"
-          type="button"
-          onClick={toggleModal}
-        /> */}
         <p className="absolute right-0 pr-[70px] sm:pr-[70px] md:pr-[75px] lg:pr-[70px] z-10 p-4 text-sm lg:text-base text-textLight">
           {dateStr}
         </p>
@@ -182,7 +184,14 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
         />
       </div>
       <Modal isOpen={isOpen} visible={visible} toggleModal={toggleModal}>
-        {() => <RideCardModal rideId={data.id} toggleModal={toggleModal} />}
+        {() => (
+          <RideCardModal
+            rideId={data.id}
+            variant={variant}
+            toggleModal={toggleModal}
+            data={data}
+          />
+        )}
       </Modal>
     </div>
   );

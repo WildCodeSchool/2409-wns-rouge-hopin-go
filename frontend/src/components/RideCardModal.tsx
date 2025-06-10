@@ -3,18 +3,39 @@ import { useQuery } from "@apollo/client";
 import Button from "./Button";
 import { X } from "lucide-react";
 import { queryPassengersByRide } from "../api/PassengersByRide";
+import CardTemplate from "./CardTemplate";
+import { VariantType } from "../types/variantTypes";
+import { Ride } from "../gql/graphql";
 
 type RideCardModalProps = {
   rideId: string;
   toggleModal: () => void;
+  variant: VariantType;
+  data: Ride;
 };
 
-const RideCardModal = ({ rideId, toggleModal }: RideCardModalProps) => {
-  const { data, loading, error } = useQuery(queryPassengersByRide, {
+const RideCardModal = ({
+  rideId,
+  toggleModal,
+  variant,
+  data,
+}: RideCardModalProps) => {
+  console.log("Rideid", rideId);
+  const { data: passengersData, loading } = useQuery(queryPassengersByRide, {
     variables: { ride_id: rideId },
   });
 
-  console.log("data", data);
+  if (loading) return <p>Chargement des passagers…</p>;
+  const passengers = passengersData?.passengersByRide;
+
+  const waitingPassengers = passengers.filter(
+    (passenger) => passenger.status === "waiting"
+  );
+
+  const acceptedPassengers = passengers.filter(
+    (passenger) => passenger.status === "validate"
+  );
+  console.log("data", passengersData);
 
   return (
     <div>
@@ -28,13 +49,43 @@ const RideCardModal = ({ rideId, toggleModal }: RideCardModalProps) => {
           onClick={toggleModal}
           className="hover:!bg-primaryHover self-end mb-4"
         />
-        <div className="flex flex-col items-center justify-center">
-          <h1 className="text-2xl font-bold">
-            Bienvenue sur notre plateforme de covoiturage !
-          </h1>
-          <p className="text-lg">
-            Connectez-vous pour profiter de toutes nos fonctionnalités.
-          </p>
+        <CardTemplate variant={variant} data={data} />
+        <div className="flex flex-col items-start">
+          <div className="mb-5 mt-5">
+            <h2 className="text-xl font-semi-bold text-white ">
+              Passagers à valider :
+            </h2>
+            {waitingPassengers.length > 0 ? (
+              waitingPassengers.map((passenger) => (
+                <p key={passenger.id}>
+                  {passenger.user.firstName} {passenger.user.lastName}
+                </p>
+              ))
+            ) : (
+              <p>
+                Vous n'avez pas de passagers à valider sur ce trajet pour le
+                moment.
+              </p>
+            )}
+          </div>
+
+          <div className="mb-12">
+            <h2 className="text-xl font-semi-bold text-white">
+              Passagers acceptés :
+            </h2>
+            {acceptedPassengers.length > 0 ? (
+              acceptedPassengers.map((passenger) => (
+                <p key={passenger.id}>
+                  {passenger.user.firstName} {passenger.user.lastName}
+                </p>
+              ))
+            ) : (
+              <p>
+                Vous n'avez pas acceptés de passager sur ce trajet pour le
+                moment.
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </div>
