@@ -6,7 +6,11 @@ import ScrollableSnapList from "../components/ScrollableSnapList";
 import CardRideDetails from "../components/CardRideDetails";
 import { VariantType } from "../types/variantTypes";
 import { querySearchRide } from "../api/SearchRide";
-import { Ride } from "../gql/graphql";
+import { SearchRidesQuery } from "../gql/graphql";
+import Button from "../components/Button";
+import { ArrowLeft } from "lucide-react";
+
+type Ride = SearchRidesQuery["searchRide"][number];
 
 const RideResults = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -56,7 +60,24 @@ const RideResults = () => {
     return "primary";
   };
 
-  if (loading || rides.length === 0 || !rides[selectedIndex]) {
+  if (rides.length === 0 || !rides[selectedIndex]) {
+    return (
+      <div className="fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-center mt-10 text-gray-600">
+        Aucun trajet trouvé.
+        <Button
+          icon={ArrowLeft}
+          isLink
+          label="Retour à la recherche"
+          isHoverBgColor
+          variant="primary"
+          className="mt-4"
+          to="/research"
+        />
+      </div>
+    );
+  }
+
+  if (loading) {
     return (
       <div className="fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-center mt-10 text-gray-600">
         Chargement des trajets...

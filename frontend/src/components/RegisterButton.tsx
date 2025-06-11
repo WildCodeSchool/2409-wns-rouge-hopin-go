@@ -6,8 +6,8 @@ import { queryWhoAmI } from "../api/WhoAmI";
 import { mutationCreatePassengerRide } from "../api/CreatePassengerRide";
 import { VariantType } from "../types/variantTypes";
 import { toast } from "react-toastify";
-// import { useEffect, useState } from "react";
-// import { queryPassengerRide } from "../api/PassengerRide";
+import { querySearchRide } from "../api/SearchRide";
+import { useSearchParams } from "react-router-dom";
 
 export default function RegisterButton({
   rideId,
@@ -20,35 +20,45 @@ export default function RegisterButton({
   variant?: VariantType;
   icon?: React.ElementType;
 }) {
+  const [searchParams] = useSearchParams();
+  const departure_city = searchParams.get("departure_city")!;
+  const arrival_city = searchParams.get("arrival_city")!;
+  const departure_at = searchParams.get("departure_at")!;
+
   const [getRide] = useLazyQuery(queryRide);
-  const [doCreatePassengerRide] = useMutation(mutationCreatePassengerRide);
+  const [doCreatePassengerRide, { loading }] = useMutation(
+    mutationCreatePassengerRide,
+    {
+      refetchQueries: [
+        {
+          query: querySearchRide,
+          variables: {
+            data: {
+              departure_city,
+              arrival_city,
+              departure_at: new Date(departure_at + ":00:00:00Z"),
+            },
+          },
+        },
+      ],
+    }
+  );
 
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const me = whoAmIData?.whoami;
   const isLoggedIn = me ? true : false;
-
   const { isSm, isMd } = useWindowSize();
 
   // selon le variant reçu en prop, on sait si l'utilisateur est inscrit ou pas
-  // TO DO : créer un variant "refusé" pour le cas où le conducteur refuse l'inscription
-  // Quel icone et quel label utiliser pour chaque variant ?
-  // "Annuler/Gérer l'inscription" au lieu de "Réserver" et changer le comportement du bouton ?
+  // To Do : Changer d'icone selon le variant ?
+  // Si variant === validation : "Annuler/Gérer l'inscription" au lieu de "Réserver" et changer le comportement du bouton ? => handleCancelRegister
   const hasRegistered =
     variant === "pending" || variant === "validation" ? true : false;
-  // console.log("hasRegistered", hasRegistered);
-
-  // Attention, selon l'endroit où ce composant est utilisé, on voudra afficher soit un petit bouton avec juste l'icone de ticket , soit un gros bouton avec aussi le texte "Réserver"
-  // Passer un prop pour savoir quelle version afficher ??
-  // La taille du bouton pourrait aussi dépendre de la résolution de l'écran !
 
   const handleRegister = async () => {
-    // console.log("handleRegister", rideId);
-    // modale de confirmation ???
-
-    // nb_passenger sera incrémenté seulement quand driver valide un passager
-
+    // implémenter une modale de confirmation ???
     try {
-      // Normalement un user non connecté ne peut pas déclencher cette fonction
+      // Normalement un user non connecté ne peut pas déclencher cette fonction mais on vérifie quand même
       if (!me) {
         console.error("Vous devez être connecté pour réserver un trajet.");
         return;
@@ -62,14 +72,9 @@ export default function RegisterButton({
       const nbPassenger = data?.ride?.nb_passenger;
       const maxPassenger = data?.ride?.max_passenger;
 
-      console.log(
-        "data, nbPassenger, maxPassenger",
-        data,
-        nbPassenger,
-        maxPassenger
-      );
+      // On pourrait mettre une erreur personnalisée si l'utilisateur essaie de réserver son propre trajet mais c'est un cas qui ne devrait pas arriver
 
-      // création d'un tuple passenger_ride
+      // création d'un tuple passenger_ride s'il reste de la place
       if (
         typeof nbPassenger === "number" &&
         typeof maxPassenger === "number" &&
@@ -85,7 +90,6 @@ export default function RegisterButton({
         });
         // TO DO : ajouter un bouton "Voir mes trajets" dans le toast
         toast.success("Demande de réservation envoyée avec succès !");
-        // Normalement la variant va changer automatiquement à "pending" donc hasRegistered devient true
       } else {
         toast.error("Ce trajet est complet.");
       }
@@ -96,6 +100,9 @@ export default function RegisterButton({
   };
 
   const chooseLabel = () => {
+    if (loading) {
+      return "Inscription en cours ...";
+    }
     switch (variant) {
       case "primary":
         return isLoggedIn ? "Réserver" : "Connectez-vous pour réserver";
@@ -117,7 +124,9 @@ export default function RegisterButton({
   {
     return size === "small" ? (
       <Button
-        isDisabled={variant !== "primary" && variant !== "secondary"}
+        isDisabled={
+          (variant !== "primary" && variant !== "secondary") || loading
+        }
         iconRotate={variant === "primary" || variant === "secondary"}
         variant={variant}
         icon={icon}
@@ -130,13 +139,16 @@ export default function RegisterButton({
       />
     ) : (
       <Button
+        isDisabled={
+          (variant !== "primary" && variant !== "secondary") || loading
+        }
         variant={variant}
         icon={icon}
         iconSize={isMd ? 32 : isSm ? 32 : 24}
         label={chooseLabel()}
         onClick={isLoggedIn && !hasRegistered ? handleRegister : undefined}
         isLink={isLoggedIn ? false : true}
-        to="signin"
+        to="/auth/signin"
         className="w-full"
       />
     );
