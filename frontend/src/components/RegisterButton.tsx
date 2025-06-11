@@ -17,7 +17,7 @@ export default function RegisterButton({
 }: {
     rideId: string;
     size: "small" | "large";
-    variant: VariantType;
+    variant?: VariantType;
     icon?: React.ElementType;
 }) {
     const [searchParams] = useSearchParams();
