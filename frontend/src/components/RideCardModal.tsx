@@ -20,7 +20,7 @@ const RideCardModal = ({
   variant,
   data,
 }: RideCardModalProps) => {
-  console.log("Rideid", rideId);
+  // Query to fetch passengers by ride ID
   const { data: passengersData, loading } = useQuery(queryPassengersByRide, {
     variables: { ride_id: rideId },
   });
@@ -28,14 +28,13 @@ const RideCardModal = ({
   if (loading) return <p>Chargement des passagers…</p>;
   const passengers = passengersData?.passengersByRide;
 
-  const waitingPassengers = passengers.filter(
+  const waitingPassengers = passengers?.filter(
     (passenger) => passenger.status === "waiting"
   );
 
-  const acceptedPassengers = passengers.filter(
+  const acceptedPassengers = passengers?.filter(
     (passenger) => passenger.status === "validate"
   );
-  console.log("data", passengersData);
 
   return (
     <div>
@@ -55,9 +54,9 @@ const RideCardModal = ({
             <h2 className="text-xl font-semi-bold text-white ">
               Passagers à valider :
             </h2>
-            {waitingPassengers.length > 0 ? (
+            {waitingPassengers && waitingPassengers.length > 0 ? (
               waitingPassengers.map((passenger) => (
-                <p key={passenger.id}>
+                <p key={passenger.user.id}>
                   {passenger.user.firstName} {passenger.user.lastName}
                 </p>
               ))
@@ -73,9 +72,9 @@ const RideCardModal = ({
             <h2 className="text-xl font-semi-bold text-white">
               Passagers acceptés :
             </h2>
-            {acceptedPassengers.length > 0 ? (
+            {acceptedPassengers && acceptedPassengers.length > 0 ? (
               acceptedPassengers.map((passenger) => (
-                <p key={passenger.id}>
+                <p key={passenger.user.id}>
                   {passenger.user.firstName} {passenger.user.lastName}
                 </p>
               ))
