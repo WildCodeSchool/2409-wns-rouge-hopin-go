@@ -1,41 +1,29 @@
-import { useQuery } from "@apollo/client";
-
 import Button from "./Button";
 import { X } from "lucide-react";
-import { queryPassengersByRide } from "../api/PassengersByRide";
 import CardTemplate from "./CardTemplate";
 import { VariantType } from "../types/variantTypes";
-import { Ride } from "../gql/graphql";
+import { PassengersByRideQuery, SearchRidesQuery } from "../gql/graphql";
+
+type SearchRide = SearchRidesQuery["searchRide"][number];
 
 type RideCardModalProps = {
   rideId: string;
   toggleModal: () => void;
   variant: VariantType;
-  data: Ride;
+  data: SearchRide;
+  waitingPassengers?: PassengersByRideQuery["passengersByRide"];
+  acceptedPassengers?: PassengersByRideQuery["passengersByRide"];
 };
 
 const RideCardModal = ({
-  rideId,
   toggleModal,
   variant,
   data,
+  waitingPassengers,
+  acceptedPassengers,
 }: RideCardModalProps) => {
-  // Query to fetch passengers by ride ID
-  const { data: passengersData, loading } = useQuery(queryPassengersByRide, {
-    variables: { ride_id: rideId },
-  });
-
-  if (loading) return <p>Chargement des passagers…</p>;
-  const passengers = passengersData?.passengersByRide;
-
-  const waitingPassengers = passengers?.filter(
-    (passenger) => passenger.status === "waiting"
-  );
-
-  const acceptedPassengers = passengers?.filter(
-    (passenger) => passenger.status === "validate"
-  );
-
+  console.log("waiting passengers:", waitingPassengers);
+  console.log("accepted passengers:", acceptedPassengers);
   return (
     <div>
       <div className="relative flex flex-col items-center justify-center h-full bg-purple-500 p-4">

@@ -10,7 +10,7 @@ import { SearchRidesQuery } from "../gql/graphql";
 import Button from "../components/Button";
 import { ArrowLeft } from "lucide-react";
 
-type Ride = SearchRidesQuery["searchRide"][number];
+type SearchRide = SearchRidesQuery["searchRide"][number];
 
 const RideResults = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -45,7 +45,7 @@ const RideResults = () => {
 
   const rides = dataSearched?.searchRide ?? [];
 
-  const getVariant = (ride: Ride): VariantType => {
+  const getVariant = (ride: SearchRide): VariantType => {
     if (ride.is_canceled) return "cancel";
     if (ride.passenger_status === "waiting") return "pending";
     if (ride.passenger_status === "approved") return "validation";

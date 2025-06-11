@@ -1,10 +1,12 @@
 import { useState } from "react";
 import ScrollableSnapList from "./ScrollableSnapList";
-import { Ride } from "../gql/graphql";
 import { VariantType } from "../types/variantTypes";
 import useBreakpoints from "../utils/useWindowSize";
 import { useQuery } from "@apollo/client";
 import { queryDriverRides } from "../api/DriverRides";
+import { SearchRidesQuery } from "../gql/graphql";
+
+type SearchRide = SearchRidesQuery["searchRide"][number];
 
 const DriverRidesList = () => {
   const [, setSelectedIndex] = useState(0);
@@ -12,7 +14,7 @@ const DriverRidesList = () => {
   const [showAllArchived, setShowAllArchived] = useState(false);
   const { isSm } = useBreakpoints();
 
-  const getVariant = (dataset: Ride): VariantType => {
+  const getVariant = (dataset: SearchRide): VariantType => {
     if (dataset.is_canceled) return "cancel";
     if (dataset.nb_passenger === dataset.max_passenger) return "validation";
     if (dataset.passenger_status === "waiting") return "pending";

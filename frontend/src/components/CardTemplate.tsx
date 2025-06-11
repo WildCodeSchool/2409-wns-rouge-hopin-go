@@ -1,18 +1,17 @@
-import { CircleUserRound, Eye } from "lucide-react";
+import { CircleUserRound } from "lucide-react";
 import { VariantType } from "../types/variantTypes";
 import { variantConfigMap } from "../constants/variantConfig";
 import useWindowSize from "../utils/useWindowSize";
 import { formatDate, formatTime } from "../utils/formatDate";
-import { Ride } from "../gql/graphql";
+import { SearchRidesQuery } from "../gql/graphql";
 import RegisterButton from "./RegisterButton";
-import Button from "./Button";
-import { useModal } from "../hooks/useModal";
-import RideCardModal from "./RideCardModal";
-import Modal from "./Modal";
+import PassengersButtonWithModal from "./PassengersButtonWithModal";
+
+type SearchRide = SearchRidesQuery["searchRide"][number];
 
 type CardTemplateProps = {
   variant: VariantType;
-  data: Ride;
+  data: SearchRide;
   onClick?: () => void;
   isSelected?: boolean;
   additionalClassName?: string;
@@ -34,7 +33,6 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
     statusLabel,
     icon: CardIcon,
   } = variantConfigMap[variant];
-  const { isOpen, visible, toggleModal } = useModal();
 
   const departureDate = new Date(data.departure_at);
   const arrivalDate = new Date(data.arrival_at);
@@ -162,20 +160,25 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           )}
         </p>
         {driverUpcomingRides && (
-          <div className="absolute right-[170px] flex gap-2 items-center z-10 p-2 text-sm lg:text-base text-textLight font-semibold">
-            <div className="relative">
-              {/* // TODO : Add a condition to show the bell icon only if there are
-              passenger to validate */}
-              <span className="absolute rounded-full -right-[2px] -top-[2px] w-2 h-2 bg-refused animate-pulse "></span>
-              <Button
-                icon={Eye}
-                type="button"
-                onClick={toggleModal}
-                label={isXl ? "Passagers" : ""}
-                variant="secondary"
-              />
-            </div>
-          </div>
+          <PassengersButtonWithModal
+            rideId={data.id}
+            variant={variant}
+            data={data}
+          />
+          // <div className="absolute right-[170px] flex gap-2 items-center z-10 p-2 text-sm lg:text-base text-textLight font-semibold">
+          //   <div className="relative">
+          //     {/* // TODO : Add a condition to show the bell icon only if there are new
+          //     passenger to validate */}
+          //     <span className="absolute rounded-full -right-[2px] -top-[2px] w-2 h-2 bg-refused animate-pulse "></span>
+          //     <Button
+          //       icon={Eye}
+          //       type="button"
+          //       onClick={toggleModal}
+          //       label={isXl ? "Passagers" : ""}
+          //       variant="secondary"
+          //     />
+          //   </div>
+          // </div>
         )}
         <p className="absolute right-0 pr-[70px] sm:pr-[70px] md:pr-[75px] lg:pr-[70px] z-10 p-4 text-sm lg:text-base text-textLight">
           {dateStr}
@@ -203,7 +206,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           icon={CardIcon}
         />
       </div>
-      <Modal isOpen={isOpen} visible={visible} toggleModal={toggleModal}>
+      {/* <Modal isOpen={isOpen} visible={visible} toggleModal={toggleModal}>
         {() => (
           <RideCardModal
             rideId={data.id}
@@ -212,7 +215,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             data={data}
           />
         )}
-      </Modal>
+      </Modal> */}
     </div>
   );
 };
