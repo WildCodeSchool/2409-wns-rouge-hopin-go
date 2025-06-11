@@ -8,6 +8,7 @@ import { Ride } from "../entities/Ride";
 import { LessThan, MoreThan } from "typeorm";
 import { AuthContextType } from "../auth";
 import { datasource } from "../datasource";
+import { ContextType } from "../auth";
 
 @Resolver()
 export class PassengerRideResolver {
@@ -41,7 +42,8 @@ export class PassengerRideResolver {
 
   @Mutation(() => PassengerRide)
   async createPassengerRide(
-    @Arg("data", () => CreatePassengerRideInput) data: CreatePassengerRideInput
+    @Arg("data", () => CreatePassengerRideInput) data: CreatePassengerRideInput,
+    @Ctx() { user }: ContextType
   ): Promise<PassengerRide> {
     const errors = await validate(data);
     if (errors.length > 0) {
@@ -50,10 +52,25 @@ export class PassengerRideResolver {
     return await datasource.transaction(async (manager) => {
       const ride = await manager.findOne(Ride, {
         where: { id: data.ride_id },
-        lock: { mode: "pessimistic_write" }, // évite les conflits concurrents
+        lock: { mode: "pessimistic_write" }, // s'assure qu'un seul utilisateur peut réserver le trajet à la fois
       });
 
       if (!ride) throw new Error("Trajet introuvable");
+
+      if (user === null) {
+        throw new Error("Utilisateur non authentifié");
+      }
+
+      const rideWithDriver = await manager.findOne(Ride, {
+        where: { id: data.ride_id },
+        relations: ['driver_id']
+      });
+
+      if (!rideWithDriver) throw new Error("Conducteur introuvable");
+
+      if (rideWithDriver.driver_id.id === user!.id) {
+        throw new Error("Vous ne pouvez pas réserver votre propre trajet");
+      }
 
       // Vérification du nombre de places restantes
       if (ride.nb_passenger >= ride.max_passenger) {
