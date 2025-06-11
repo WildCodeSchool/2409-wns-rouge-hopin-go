@@ -1,4 +1,4 @@
-import { BellRing, CircleUserRound, Eye, UsersRound } from "lucide-react";
+import { CircleUserRound, Eye, UsersRound } from "lucide-react";
 import { VariantType } from "../types/variantTypes";
 import { variantConfigMap } from "../constants/variantConfig";
 import useWindowSize from "../utils/useWindowSize";
@@ -27,7 +27,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   additionalClassName = "",
   driverUpcomingRides,
 }) => {
-  const { isSm, isMd, isXl, windowWidth } = useWindowSize();
+  const { isMd, isLg, isXl, windowWidth } = useWindowSize();
   const {
     textColor,
     bgFill,
@@ -131,11 +131,11 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           {statusLabel === "" ? (
             <>
               {availableSeats}
-              {isSm &&
+              {isLg &&
                 `${
                   availableSeats > 1 ? " places restantes" : " place restante"
                 }`}
-              {!isSm && (variant === "primary" || variant === "secondary") && (
+              {!isLg && (variant === "primary" || variant === "secondary") && (
                 <UsersRound size={16} />
               )}
             </>
@@ -143,20 +143,22 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             statusLabel
           )}
         </p>
-        <div className="absolute right-[170px] flex gap-2 items-center z-10 p-2 text-sm lg:text-base text-textLight font-semibold">
-          {driverUpcomingRides && (
-            // <Button icon={Eye} type="button" onClick={toggleModal} />
-            <>
+        {driverUpcomingRides && (
+          <div className="absolute right-[170px] flex gap-2 items-center z-10 p-2 text-sm lg:text-base text-textLight font-semibold">
+            <div className="relative">
+              {/* // TODO : Add a condition to show the bell icon only if there are
+              passenger to validate */}
+              <span className="absolute rounded-full -right-[2px] -top-[2px] w-2 h-2 bg-refused animate-pulse "></span>
               <Button
                 icon={Eye}
                 type="button"
                 onClick={toggleModal}
-                label="Passagers"
+                label={isXl ? "Passagers" : ""}
                 variant="secondary"
               />
-            </>
-          )}
-        </div>
+            </div>
+          </div>
+        )}
         <p className="absolute right-0 pr-[70px] sm:pr-[70px] md:pr-[75px] lg:pr-[70px] z-10 p-4 text-sm lg:text-base text-textLight">
           {dateStr}
         </p>
