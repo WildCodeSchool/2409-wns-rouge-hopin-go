@@ -62,14 +62,10 @@ const PassengersButtonWithModal = ({
           )}
           <Button
             onMouseEnter={() => {
-              if (waitingPassengers && waitingPassengers.length > 0) {
-                setInfo(true);
-              }
+              setInfo(true);
             }}
             onMouseLeave={() => {
-              if (waitingPassengers && waitingPassengers.length > 0) {
-                setInfo(false);
-              }
+              setInfo(false);
             }}
             icon={Eye}
             type="button"
@@ -82,6 +78,13 @@ const PassengersButtonWithModal = ({
               <p className="text-xs flex items-center justify-center gap-1">
                 {waitingPassengers.length} passager
                 {waitingPassengers.length > 1 ? "s" : ""} en attente
+              </p>
+            </div>
+          )}
+          {info && waitingPassengers.length === 0 && (
+            <div className="absolute bottom-full left-full bg-refused text-white overflow-hidden p-2 w-40 rounded-lg shadow-lg z-50">
+              <p className="text-xs flex items-center justify-center gap-1">
+                Aucun passager en attente
               </p>
             </div>
           )}
