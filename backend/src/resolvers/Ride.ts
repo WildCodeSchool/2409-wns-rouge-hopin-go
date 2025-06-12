@@ -31,30 +31,31 @@ export class RidesResolver {
     try {
       const startDay = startOfDay(data.departure_at);
       const endDay = endOfDay(data.departure_at);
-      console.log(" 🚀🚀 voici les coordonnées recherchées", data.departure_lng, data.departure_lat);
+      console.log(" 🚀🚀 voici les coordonnées du départ recherché", data.departure_lng, data.departure_lat);
+      console.log(" 🚀🚀 voici les coordonnées de l'arrivée recherchée", data.arrival_lng, data.arrival_lat);
       const rides = await Ride.createQueryBuilder("ride")
         .innerJoinAndSelect("ride.driver_id", "driver")
         .where(`
           ST_DWithin(
             ride.departure_location,
-            ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography,
+            ST_SetSRID(ST_MakePoint(:d_lng, :d_lat), 4326)::geography,
             :radius
           )
         `, {
-          lng: data.departure_lng,
-          lat: data.departure_lat,
-          radius: 10900, // en mètres
+          d_lng: data.departure_lng,
+          d_lat: data.departure_lat,
+          radius: 15000, // en mètres
         })
-        // .andWhere(`ST_DWithin(
-        //     ride.arrival_location,
-        //     ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography,
-        //     :radius
-        //   )
-        // `, {
-        //   lng: data.arrival_lng,
-        //   lat: data.arrival_lat,
-        //   radius: 1000, // en mètres
-        // })
+        .andWhere(`ST_DWithin(
+            ride.arrival_location,
+            ST_SetSRID(ST_MakePoint(:a_lng, :a_lat), 4326)::geography,
+            :radius
+          )
+        `, {
+          a_lng: data.arrival_lng,
+          a_lat: data.arrival_lat,
+          radius: 15000, // en mètres
+        })
         .andWhere("ride.departure_at BETWEEN :start AND :end", {
           start: startDay,
           end: endDay,

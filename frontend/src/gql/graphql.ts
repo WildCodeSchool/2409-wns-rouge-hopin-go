@@ -162,6 +162,8 @@ export type RideUpdateInput = {
 
 export type SearchRideInput = {
   arrival_city: Scalars['String']['input'];
+  arrival_lat: Scalars['Float']['input'];
+  arrival_lng: Scalars['Float']['input'];
   departure_at: Scalars['DateTimeISO']['input'];
   departure_city: Scalars['String']['input'];
   departure_lat: Scalars['Float']['input'];

@@ -17,10 +17,13 @@ const RideResults = () => {
   const [searchParams] = useSearchParams();
 
   const departure_city = searchParams.get("departure_city")!;
-  const arrival_city = searchParams.get("arrival_city")!;
-  const departure_at = searchParams.get("departure_at")!;
   const departure_lng = parseFloat(searchParams.get("departure_lng")!);
   const departure_lat = parseFloat(searchParams.get("departure_lat")!);
+  const arrival_city = searchParams.get("arrival_city")!;
+  const arrival_lng = parseFloat(searchParams.get("arrival_lng")!);
+  const arrival_lat = parseFloat(searchParams.get("arrival_lat")!);
+  const departure_at = searchParams.get("departure_at")!;
+
 
   const {
     data: dataSearched,
@@ -33,6 +36,8 @@ const RideResults = () => {
         departure_lng,
         departure_lat,
         arrival_city,
+        arrival_lng,
+        arrival_lat,
         departure_at: new Date(departure_at + ":00:00:00Z"),
       },
     },

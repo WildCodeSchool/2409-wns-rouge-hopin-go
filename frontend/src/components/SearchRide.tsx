@@ -133,6 +133,8 @@ const SearchRide = ({ variant }: SearchRideProps) => {
     params.append("departure_lat", departureCoords.lat.toString());
     params.append("departure_lng", departureCoords.long.toString());
     params.append("arrival_city", arrivalCity);
+    params.append("arrival_lat", arrivalCoords.lat.toString());
+    params.append("arrival_lng", arrivalCoords.long.toString());
     params.append("departure_at", departureAt);
 
     navigate(`/ride-results?${params.toString()}`);
@@ -158,8 +160,6 @@ const SearchRide = ({ variant }: SearchRideProps) => {
     handleSubmit,
     formatErrors,
     validateCreateForm,
-    departureCoords,
-    setDepartureCoords,
     suggestions,
     showSuggestions,
     setShowSuggestions,

@@ -197,6 +197,12 @@ export class SearchRideInput {
   @MaxLength(100, { message: "City cannot exceed 100 characters" })
   arrival_city!: string;
 
+  @Field()
+  arrival_lng!: number;
+
+  @Field()
+  arrival_lat!: number;
+
   @Field(() => Date)
   @IsDate()
   @Validate(IsFutureDate)
