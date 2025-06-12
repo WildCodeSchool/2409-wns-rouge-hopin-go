@@ -23,6 +23,11 @@ import { IsFutureDate } from "../validators/IsFutureDate";
 import { IdInput } from "./Id";
 import { PassengerRide } from "./PassengerRide";
 
+export type Point = {
+  type: "Point";
+  coordinates: [number, number];
+};
+
 @Entity()
 @ObjectType()
 export class Ride extends BaseEntity {
@@ -67,22 +72,11 @@ export class Ride extends BaseEntity {
   @Field()
   nb_passenger!: number;
 
-  // It has to be declared automatically by the departure_city / arrival_city position
-  @Column({ type: "decimal", precision: 10, scale: 6 })
-  @Field()
-  departure_lat!: number;
+  @Column({ type: "geography", spatialFeatureType: "Point", srid: 4326 })
+  departure_location!: Point;
 
-  @Column({ type: "decimal", precision: 10, scale: 6 })
-  @Field()
-  departure_lng!: number;
-
-  @Column({ type: "decimal", precision: 10, scale: 6 })
-  @Field()
-  arrival_lat!: number;
-
-  @Column({ type: "decimal", precision: 10, scale: 6 })
-  @Field()
-  arrival_lng!: number;
+  @Column({ type: "geography", spatialFeatureType: "Point", srid: 4326 })
+  arrival_location!: Point;
 
   @Column({ default: false })
   @Field()
@@ -174,9 +168,27 @@ export class SearchRideInput {
   departure_city!: string;
 
   @Field()
+  departure_lng!: number;
+
+  @Field()
+  departure_lat!: number;
+
+  @Field()
+  departure_radius!: number;
+
+  @Field()
   @MinLength(2, { message: "City must be at least 2 characters long" })
   @MaxLength(100, { message: "City cannot exceed 100 characters" })
   arrival_city!: string;
+
+  @Field()
+  arrival_lng!: number;
+
+  @Field()
+  arrival_lat!: number;
+
+  @Field()
+  arrival_radius!: number;
 
   @Field(() => Date)
   @IsDate()

@@ -5,13 +5,13 @@ try {
   execSync("docker rm --force pgtest", { stdio: "inherit" });
 } catch (err) {}
 
-console.log("🐘 Lancement du conteneur PostgreSQL pour les tests...");
+console.log("🐘 Lancement du conteneur Postgis pour les tests...");
 execSync(
   `docker run -d -p 5434:5432 --name pgtest \
   -e POSTGRES_PASSWORD=password \
   -e POSTGRES_USER=user \
   -e POSTGRES_DB=db \
-  postgres`,
+  postgis/postgis`,
   { stdio: "inherit" }
 );
 
