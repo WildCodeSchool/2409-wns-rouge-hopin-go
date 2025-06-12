@@ -22,12 +22,13 @@ export class PassengerRide extends BaseEntity {
   @PrimaryColumn()
   ride_id!: number;
 
-  @Field()
   @Column({ enum: ["approved", "refused", "waiting"], default: "waiting" })
+  @Field(() => String)
   status!: string;
 
   @ManyToOne(() => User, (user) => user.passenger_rides)
   @JoinColumn({ name: "user_id" })
+  @Field(() => User)
   user!: User;
 
   @ManyToOne(() => Ride, (ride) => ride.passenger_rides)

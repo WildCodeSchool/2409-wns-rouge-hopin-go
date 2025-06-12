@@ -2,14 +2,17 @@ import { useEffect, useRef, useState } from "react";
 import CardTemplate from "./CardTemplate";
 import { VariantType } from "../types/variantTypes";
 import useWindowSize from "../utils/useWindowSize";
-import { Ride } from "../gql/graphql";
+import { SearchRidesQuery } from "../gql/graphql";
+
+type SearchRide = SearchRidesQuery["searchRide"][number];
 
 type ScrollableSnapListProps = {
-  dataset: Ride[];
-  getVariant: (data: Ride) => VariantType;
+  dataset: SearchRide[];
+  getVariant: (data: SearchRide) => VariantType;
   onSelect: (index: number) => void;
   direction?: "vertical" | "horizontal";
   scaleEffect?: boolean;
+  driverUpcomingRides?: boolean;
 };
 
 const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
@@ -18,6 +21,7 @@ const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
   onSelect,
   direction = "vertical",
   scaleEffect = false,
+  driverUpcomingRides,
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -156,6 +160,7 @@ const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
               variant={getVariant(data)}
               data={data}
               isSelected={index === selectedIndex}
+              driverUpcomingRides={driverUpcomingRides}
               onClick={() => {
                 setSelectedIndex(index);
                 onSelect(index);

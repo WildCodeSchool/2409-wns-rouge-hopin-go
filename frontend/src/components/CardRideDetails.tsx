@@ -8,11 +8,11 @@ import Button from "./Button";
 import { Search } from "lucide-react";
 import RegisterButton from "./RegisterButton";
 
-type Ride = SearchRidesQuery["searchRide"][number];
+type SearchRide = SearchRidesQuery["searchRide"][number];
 
 type CardRideDetailsProps = {
   variant: VariantType;
-  data: Ride;
+  data: SearchRide;
 };
 
 const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
