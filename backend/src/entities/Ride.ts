@@ -72,29 +72,10 @@ export class Ride extends BaseEntity {
   @Field()
   nb_passenger!: number;
 
-  // It has to be declared automatically by the departure_city / arrival_city position
-  // @Column({ type: "decimal", precision: 10, scale: 6 })
-  // @Field()
-  // departure_lat!: number;
-
-  // @Column({ type: "decimal", precision: 10, scale: 6 })
-  // @Field()
-  // departure_lng!: number;
-
   @Column({ type: "geography", spatialFeatureType: "Point", srid: 4326 })
-  // @Field(() => String, { nullable: true }) // à priori il faut enlever cette ligne
   departure_location!: Point;
 
-  // @Column({ type: "decimal", precision: 10, scale: 6 })
-  // @Field()
-  // arrival_lat!: number;
-
-  // @Column({ type: "decimal", precision: 10, scale: 6 })
-  // @Field()
-  // arrival_lng!: number;
-
   @Column({ type: "geography", spatialFeatureType: "Point", srid: 4326 })
-  // @Field(() => String, { nullable: true }) // à priori il faut enlever cette ligne
   arrival_location!: Point;
 
   @Column({ default: false })
