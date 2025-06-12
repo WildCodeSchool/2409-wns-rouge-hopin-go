@@ -22,7 +22,6 @@ export class PassengerRide extends BaseEntity {
   @PrimaryColumn()
   ride_id!: number;
 
-  @Field()
   @Column({ enum: ["approved", "refused", "waiting"], default: "waiting" })
   @Field(() => String)
   status!: string;
