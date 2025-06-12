@@ -80,6 +80,7 @@ export type PassengerRide = {
   __typename?: 'PassengerRide';
   ride_id: Scalars['ID']['output'];
   status: Scalars['String']['output'];
+  user: User;
   user_id: Scalars['ID']['output'];
 };
 
@@ -87,6 +88,7 @@ export type Query = {
   __typename?: 'Query';
   driverRides: Array<Ride>;
   passengerRides: Array<Ride>;
+  passengersByRide: Array<PassengerRide>;
   ride: Ride;
   rides: Array<Ride>;
   searchRide: Array<Ride>;
@@ -103,6 +105,11 @@ export type QueryDriverRidesArgs = {
 
 export type QueryPassengerRidesArgs = {
   filter?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryPassengersByRideArgs = {
+  ride_id: Scalars['ID']['input'];
 };
 
 
@@ -125,14 +132,10 @@ export type Ride = {
   arrival_address: Scalars['String']['output'];
   arrival_at: Scalars['DateTimeISO']['output'];
   arrival_city: Scalars['String']['output'];
-  arrival_lat: Scalars['Float']['output'];
-  arrival_lng: Scalars['Float']['output'];
   created_at: Scalars['DateTimeISO']['output'];
   departure_address: Scalars['String']['output'];
   departure_at: Scalars['DateTimeISO']['output'];
   departure_city: Scalars['String']['output'];
-  departure_lat: Scalars['Float']['output'];
-  departure_lng: Scalars['Float']['output'];
   driver_id: User;
   id: Scalars['ID']['output'];
   is_canceled: Scalars['Boolean']['output'];
@@ -166,8 +169,14 @@ export type RideUpdateInput = {
 
 export type SearchRideInput = {
   arrival_city: Scalars['String']['input'];
+  arrival_lat: Scalars['Float']['input'];
+  arrival_lng: Scalars['Float']['input'];
+  arrival_radius: Scalars['Float']['input'];
   departure_at: Scalars['DateTimeISO']['input'];
   departure_city: Scalars['String']['input'];
+  departure_lat: Scalars['Float']['input'];
+  departure_lng: Scalars['Float']['input'];
+  departure_radius: Scalars['Float']['input'];
 };
 
 export type User = {
