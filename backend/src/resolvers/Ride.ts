@@ -31,13 +31,32 @@ export class RidesResolver {
     try {
       const startDay = startOfDay(data.departure_at);
       const endDay = endOfDay(data.departure_at);
+      console.log(" 🚀🚀 voici les coordonnées du départ recherché", data.departure_lng, data.departure_lat);
+      console.log(" 🚀🚀 voici les coordonnées de l'arrivée recherchée", data.arrival_lng, data.arrival_lat);
+      console.log(" 🚀🚀 voici le rayon de recherche du départ", data.departure_radius);
+      console.log(" 🚀🚀 voici le rayon de recherche de l'arrivée", data.arrival_radius);
       const rides = await Ride.createQueryBuilder("ride")
         .innerJoinAndSelect("ride.driver_id", "driver")
-        .where("ride.departure_city ILIKE :departure_city", {
-          departure_city: `%${data.departure_city}%`,
+        .where(`
+          ST_DWithin(
+            ride.departure_location,
+            ST_SetSRID(ST_MakePoint(:d_lng, :d_lat), 4326)::geography,
+            :d_radius
+          )
+        `, {
+          d_lng: data.departure_lng,
+          d_lat: data.departure_lat,
+          d_radius: data.departure_radius * 1000, // en mètres
         })
-        .andWhere("ride.arrival_city ILIKE :arrival_city", {
-          arrival_city: `%${data.arrival_city}%`,
+        .andWhere(`ST_DWithin(
+            ride.arrival_location,
+            ST_SetSRID(ST_MakePoint(:a_lng, :a_lat), 4326)::geography,
+            :a_radius
+          )
+        `, {
+          a_lng: data.arrival_lng,
+          a_lat: data.arrival_lat,
+          a_radius: data.arrival_radius * 1000, // en mètres
         })
         .andWhere("ride.departure_at BETWEEN :start AND :end", {
           start: startDay,
@@ -47,7 +66,9 @@ export class RidesResolver {
         .andWhere("ride.nb_passenger < ride.max_passenger")
         .orderBy("ride.departure_at", "ASC")
         .getMany();
+      console.log("🚀 ~ RidesResolver ~ rides:", rides)
       return rides;
+
     } catch (error) {
       console.error("Une erreur est survenue lors de la recherche.", error);
       throw new Error("Une erreur est survenue lors de la recherche.");
@@ -90,7 +111,18 @@ export class RidesResolver {
     }
     const newRide = new Ride();
     try {
-      Object.assign(newRide, data);
+      console.log("🚀🚀 voici les coordonnées créées", data.departure_lng, data.departure_lat);
+      Object.assign(newRide, {
+        ...data,
+        departure_location: {
+          type: "Point",
+          coordinates: [data.departure_lng, data.departure_lat],
+        },
+        arrival_location: {
+          type: "Point",
+          coordinates: [data.arrival_lng, data.arrival_lat],
+        },
+      });
       await newRide.save();
       return newRide;
     } catch (error) {

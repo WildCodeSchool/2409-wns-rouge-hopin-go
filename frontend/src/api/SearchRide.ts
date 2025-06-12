@@ -11,10 +11,6 @@ export const querySearchRide = gql(`
       arrival_at
       departure_address
       arrival_address
-      departure_lng
-      departure_lat
-      arrival_lng
-      arrival_lat
       max_passenger
       nb_passenger
       is_canceled

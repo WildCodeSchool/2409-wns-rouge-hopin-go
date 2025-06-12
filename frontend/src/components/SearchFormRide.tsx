@@ -1,78 +1,64 @@
-import React, { useEffect, useState } from "react";
 import Button from "./Button";
 
 type SearchFormRideProps = {
   departureCity: string;
   setDepartureCity: React.Dispatch<React.SetStateAction<string>>;
+  departureRadius: number;
+  setDepartureRadius: React.Dispatch<React.SetStateAction<number>>;
   arrivalCity: string;
   setArrivalCity: React.Dispatch<React.SetStateAction<string>>;
+  arrivalRadius: number;
+  setArrivalRadius: React.Dispatch<React.SetStateAction<number>>;
   departureAt: string;
   setDepartureAt: React.Dispatch<React.SetStateAction<string>>;
   error: Record<string, string[]>;
   handleSubmit: (e: React.FormEvent) => void;
   formatErrors: (errors: string[]) => string;
+  suggestions?: {
+    departure: string[];
+    arrival: string[];
+  };
+
+  showSuggestions?: {
+    departure: boolean;
+    arrival: boolean;
+  };
+  setShowSuggestions?: React.Dispatch<
+    React.SetStateAction<{
+      departure: boolean;
+      arrival: boolean;
+    }>
+  >;
+  setLastModifiedField?: React.Dispatch<
+    React.SetStateAction<"departure" | "arrival" | null>
+  >;
+  handleSelect?: (
+    field: "departure" | "arrival",
+    value: string
+  ) => void;
 };
 
 const SearchFormRide = ({
   departureCity,
   setDepartureCity,
+  departureRadius,
+  setDepartureRadius,
   arrivalCity,
   setArrivalCity,
+  arrivalRadius,
+  setArrivalRadius,
   departureAt,
   setDepartureAt,
   error,
   handleSubmit,
   formatErrors,
+  suggestions = { departure: [], arrival: [] },
+  showSuggestions = { departure: false, arrival: false },
+  setShowSuggestions = () => { },
+  setLastModifiedField = () => { },
+  handleSelect = () => { },
 }: SearchFormRideProps) => {
-  const [suggestions, setSuggestions] = useState({
-    departure: [],
-    arrival: [],
-  });
-  const [showSuggestions, setShowSuggestions] = useState({
-    departure: false,
-    arrival: false,
-  });
-  const [lastModifiedField, setLastModifiedField] = useState<
-    "departure" | "arrival" | null
-  >(null);
 
-  useEffect(() => {
-    const fetchSuggestions = async () => {
-      const query =
-        lastModifiedField === "departure" ? departureCity : arrivalCity;
-
-      if (!query) return;
-
-      try {
-        const res = await fetch(
-          `https://api-adresse.data.gouv.fr/search/?q=${query}&limit=5`
-        );
-        const data = await res.json();
-
-        type Feature = { properties: { label: string } };
-        const labels = data.features.map((f: Feature) => f.properties.label);
-
-        setSuggestions((prev) => ({
-          ...prev,
-          [lastModifiedField!]: labels,
-        }));
-      } catch (err) {
-        console.error("Erreur de récupération des suggestions : ", err);
-      }
-    };
-
-    const timer = setTimeout(fetchSuggestions, 300); // debounce
-    return () => clearTimeout(timer);
-  }, [departureCity, arrivalCity, lastModifiedField]);
-
-  const handleSelect = (field: "departure" | "arrival", value: string) => {
-    if (field === "departure") {
-      setDepartureCity(value);
-    } else {
-      setArrivalCity(value);
-    }
-    setShowSuggestions((prev) => ({ ...prev, [field]: false }));
-  };
 
   const handleInputChange = (field: "departure" | "arrival", value: string) => {
     setLastModifiedField(field);
@@ -104,11 +90,10 @@ const SearchFormRide = ({
           type="text"
           id="departure-city"
           required
-          className={`${
-            error.departureCity?.length
-              ? "border-error border-2 bg-red-50"
-              : "border-gray-300 bg-gray-50"
-          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          className={`${error.departureCity?.length
+            ? "border-error border-2 bg-red-50"
+            : "border-gray-300 bg-gray-50"
+            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="Paris"
           value={departureCity}
           onChange={(e) => handleInputChange("departure", e.target.value)}
@@ -133,6 +118,25 @@ const SearchFormRide = ({
         )}
       </div>
 
+      <div className="text-white text-sm gap-2 grid grid-cols-2 mb-4">
+        <label
+          className="col-span-2"
+          htmlFor="departure-radius">
+          Rayon de recherche pour la ville de départ
+        </label>
+        <input
+          className="cursor-pointer grid-span-1 w-[300px]"
+          type="range"
+          id="departure-radius"
+          name="departure-radius"
+          min="1"
+          max="100"
+          value={departureRadius}
+          onChange={(e) => setDepartureRadius(Number(e.target.value))}
+        />
+        <label className="grid-span-1 flex justify-end" htmlFor="departure-radius">{departureRadius} km</label>
+      </div>
+
       {/* Date de départ */}
       <div className="mb-5 w-full">
         <label
@@ -144,11 +148,10 @@ const SearchFormRide = ({
         <input
           type="date"
           id="departure-at"
-          className={`${
-            error.departureAt?.length
-              ? "border-error border-2 bg-red-50"
-              : "border-gray-300 bg-gray-50"
-          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          className={`${error.departureAt?.length
+            ? "border-error border-2 bg-red-50"
+            : "border-gray-300 bg-gray-50"
+            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           value={departureAt}
           onChange={(e) => setDepartureAt(e.target.value)}
         />
@@ -171,11 +174,10 @@ const SearchFormRide = ({
           autoComplete="off"
           type="text"
           id="arrival-city"
-          className={`${
-            error.arrivalCity?.length
-              ? "border-error border-2 bg-red-50"
-              : "border-gray-300 bg-gray-50"
-          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          className={`${error.arrivalCity?.length
+            ? "border-error border-2 bg-red-50"
+            : "border-gray-300 bg-gray-50"
+            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="Lyon"
           value={arrivalCity}
           onChange={(e) => handleInputChange("arrival", e.target.value)}
@@ -199,10 +201,28 @@ const SearchFormRide = ({
           </p>
         )}
       </div>
+      <div className=" text-white text-sm gap-2 grid grid-cols-2 mb-6">
+        <label
+          className="col-span-2"
+          htmlFor="arrival-radius">
+          Rayon de recherche pour la ville d'arrivée
+        </label>
+        <input
+          className="cursor-pointer grid-span-1 w-[300px]"
+          type="range"
+          id="arrival-radius"
+          name="arrival-radius"
+          min="1"
+          max="100"
+          value={arrivalRadius}
+          onChange={(e) => setArrivalRadius(Number(e.target.value))}
+        />
+        <label className="grid-span-1 flex justify-end" htmlFor="arrival-radius">{arrivalRadius} km</label>
+      </div>
 
       {/* Bouton */}
       <div className="flex w-full justify-end">
-        <Button variant="validation" type="submit" label="Rechercher" />
+        <Button variant="validation" type="submit" label="Rechercher" className="border-white border-2" />
       </div>
     </form>
   );
