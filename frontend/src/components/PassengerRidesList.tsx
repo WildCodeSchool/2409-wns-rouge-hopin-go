@@ -4,8 +4,9 @@ import { VariantType } from "../types/variantTypes";
 import useBreakpoints from "../utils/useWindowSize";
 import { useQuery } from "@apollo/client";
 import { queryPassengerRides } from "../api/PassengerRides";
-import { Ride } from "../gql/graphql";
+import { SearchRidesQuery } from "../gql/graphql";
 
+type SearchRide = SearchRidesQuery["searchRide"][number];
 const PassengerRidesList = () => {
   const [, setSelectedIndex] = useState(0);
   const [showAllUpcoming, setShowAllUpcoming] = useState(false);
@@ -15,6 +16,7 @@ const PassengerRidesList = () => {
 
   const { data: upcomingPassengerRidesData } = useQuery(queryPassengerRides, {
     variables: { filter: "upcoming" },
+    fetchPolicy: "cache-and-network",
   });
   const upcomingRides = upcomingPassengerRidesData?.passengerRides ?? [];
 
@@ -23,7 +25,7 @@ const PassengerRidesList = () => {
   });
   const archivedRides = archivedPassengerRidesData?.passengerRides ?? [];
 
-  const getVariant = (dataset: Ride): VariantType => {
+  const getVariant = (dataset: SearchRide): VariantType => {
     if (dataset.is_canceled) return "cancel";
     if (dataset.nb_passenger === dataset.max_passenger) return "full";
     if (dataset.passenger_status === "waiting") return "pending";

@@ -165,20 +165,6 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             variant={variant}
             data={data}
           />
-          // <div className="absolute right-[170px] flex gap-2 items-center z-10 p-2 text-sm lg:text-base text-textLight font-semibold">
-          //   <div className="relative">
-          //     {/* // TODO : Add a condition to show the bell icon only if there are new
-          //     passenger to validate */}
-          //     <span className="absolute rounded-full -right-[2px] -top-[2px] w-2 h-2 bg-refused animate-pulse "></span>
-          //     <Button
-          //       icon={Eye}
-          //       type="button"
-          //       onClick={toggleModal}
-          //       label={isXl ? "Passagers" : ""}
-          //       variant="secondary"
-          //     />
-          //   </div>
-          // </div>
         )}
         <p className="absolute right-0 pr-[70px] sm:pr-[70px] md:pr-[75px] lg:pr-[70px] z-10 p-4 text-sm lg:text-base text-textLight">
           {dateStr}
@@ -198,7 +184,6 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             strokeWidth={1.5}
           />
         </svg>
-
         <RegisterButton
           rideId={data.id}
           size="small"
@@ -206,16 +191,6 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           icon={CardIcon}
         />
       </div>
-      {/* <Modal isOpen={isOpen} visible={visible} toggleModal={toggleModal}>
-        {() => (
-          <RideCardModal
-            rideId={data.id}
-            variant={variant}
-            toggleModal={toggleModal}
-            data={data}
-          />
-        )}
-      </Modal> */}
     </div>
   );
 };
