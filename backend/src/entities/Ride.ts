@@ -193,6 +193,9 @@ export class SearchRideInput {
   departure_lat!: number;
 
   @Field()
+  departure_radius!: number;
+
+  @Field()
   @MinLength(2, { message: "City must be at least 2 characters long" })
   @MaxLength(100, { message: "City cannot exceed 100 characters" })
   arrival_city!: string;
@@ -202,6 +205,9 @@ export class SearchRideInput {
 
   @Field()
   arrival_lat!: number;
+
+  @Field()
+  arrival_radius!: number;
 
   @Field(() => Date)
   @IsDate()

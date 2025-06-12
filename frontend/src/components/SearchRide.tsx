@@ -17,8 +17,10 @@ const SearchRide = ({ variant }: SearchRideProps) => {
   // Attention, contrairement à createRide, ici c'est City et pas Address qui impacte les suggestions
   const [departureCity, setDepartureCity] = useState("");
   const [departureCoords, setDepartureCoords] = useState({ lat: 0, long: 0 });
+  const [departureRadius, setDepartureRadius] = useState(10);
   const [arrivalCity, setArrivalCity] = useState("");
   const [arrivalCoords, setArrivalCoords] = useState({ lat: 0, long: 0 });
+  const [arrivalRadius, setArrivalRadius] = useState(10);
   const [departureAt, setDepartureAt] = useState("");
   const [error, setError] = useState<Record<string, string[]>>({});
   const [suggestions, setSuggestions] = useState({
@@ -132,9 +134,11 @@ const SearchRide = ({ variant }: SearchRideProps) => {
     params.append("departure_city", departureCity);
     params.append("departure_lat", departureCoords.lat.toString());
     params.append("departure_lng", departureCoords.long.toString());
+    params.append("departure_radius", departureRadius.toString());
     params.append("arrival_city", arrivalCity);
     params.append("arrival_lat", arrivalCoords.lat.toString());
     params.append("arrival_lng", arrivalCoords.long.toString());
+    params.append("arrival_radius", arrivalRadius.toString());
     params.append("departure_at", departureAt);
 
     navigate(`/ride-results?${params.toString()}`);
@@ -152,8 +156,12 @@ const SearchRide = ({ variant }: SearchRideProps) => {
   const props = {
     departureCity,
     setDepartureCity,
+    departureRadius,
+    setDepartureRadius,
     arrivalCity,
     setArrivalCity,
+    arrivalRadius,
+    setArrivalRadius,
     departureAt,
     setDepartureAt,
     error,

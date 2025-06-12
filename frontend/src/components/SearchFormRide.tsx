@@ -3,8 +3,12 @@ import Button from "./Button";
 type SearchFormRideProps = {
   departureCity: string;
   setDepartureCity: React.Dispatch<React.SetStateAction<string>>;
+  departureRadius: number;
+  setDepartureRadius: React.Dispatch<React.SetStateAction<number>>;
   arrivalCity: string;
   setArrivalCity: React.Dispatch<React.SetStateAction<string>>;
+  arrivalRadius: number;
+  setArrivalRadius: React.Dispatch<React.SetStateAction<number>>;
   departureAt: string;
   setDepartureAt: React.Dispatch<React.SetStateAction<string>>;
   error: Record<string, string[]>;
@@ -37,8 +41,12 @@ type SearchFormRideProps = {
 const SearchFormRide = ({
   departureCity,
   setDepartureCity,
+  departureRadius,
+  setDepartureRadius,
   arrivalCity,
   setArrivalCity,
+  arrivalRadius,
+  setArrivalRadius,
   departureAt,
   setDepartureAt,
   error,
@@ -50,6 +58,7 @@ const SearchFormRide = ({
   setLastModifiedField = () => { },
   handleSelect = () => { },
 }: SearchFormRideProps) => {
+
 
   const handleInputChange = (field: "departure" | "arrival", value: string) => {
     setLastModifiedField(field);
@@ -107,6 +116,25 @@ const SearchFormRide = ({
             {formatErrors(error.departureCity)}
           </p>
         )}
+      </div>
+
+      <div className="text-white text-sm gap-2 grid grid-cols-2 mb-4">
+        <label
+          className="col-span-2"
+          htmlFor="departure-radius">
+          Rayon de recherche pour la ville de départ
+        </label>
+        <input
+          className="cursor-pointer grid-span-1 w-[300px]"
+          type="range"
+          id="departure-radius"
+          name="departure-radius"
+          min="1"
+          max="100"
+          value={departureRadius}
+          onChange={(e) => setDepartureRadius(Number(e.target.value))}
+        />
+        <label className="grid-span-1 flex justify-end" htmlFor="departure-radius">{departureRadius} km</label>
       </div>
 
       {/* Date de départ */}
@@ -173,10 +201,28 @@ const SearchFormRide = ({
           </p>
         )}
       </div>
+      <div className=" text-white text-sm gap-2 grid grid-cols-2 mb-6">
+        <label
+          className="col-span-2"
+          htmlFor="arrival-radius">
+          Rayon de recherche pour la ville d'arrivée
+        </label>
+        <input
+          className="cursor-pointer grid-span-1 w-[300px]"
+          type="range"
+          id="arrival-radius"
+          name="arrival-radius"
+          min="1"
+          max="100"
+          value={arrivalRadius}
+          onChange={(e) => setArrivalRadius(Number(e.target.value))}
+        />
+        <label className="grid-span-1 flex justify-end" htmlFor="arrival-radius">{arrivalRadius} km</label>
+      </div>
 
       {/* Bouton */}
       <div className="flex w-full justify-end">
-        <Button variant="validation" type="submit" label="Rechercher" />
+        <Button variant="validation" type="submit" label="Rechercher" className="border-white border-2" />
       </div>
     </form>
   );

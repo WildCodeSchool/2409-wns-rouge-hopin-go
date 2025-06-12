@@ -164,10 +164,12 @@ export type SearchRideInput = {
   arrival_city: Scalars['String']['input'];
   arrival_lat: Scalars['Float']['input'];
   arrival_lng: Scalars['Float']['input'];
+  arrival_radius: Scalars['Float']['input'];
   departure_at: Scalars['DateTimeISO']['input'];
   departure_city: Scalars['String']['input'];
   departure_lat: Scalars['Float']['input'];
   departure_lng: Scalars['Float']['input'];
+  departure_radius: Scalars['Float']['input'];
 };
 
 export type User = {
