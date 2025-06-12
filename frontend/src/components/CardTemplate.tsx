@@ -1,19 +1,21 @@
-import { CircleUserRound, UsersRound } from "lucide-react";
+import { CircleUserRound } from "lucide-react";
 import { VariantType } from "../types/variantTypes";
 import { variantConfigMap } from "../constants/variantConfig";
 import useWindowSize from "../utils/useWindowSize";
 import { formatDate, formatTime } from "../utils/formatDate";
 import { SearchRidesQuery } from "../gql/graphql";
 import RegisterButton from "./RegisterButton";
+import PassengersButtonWithModal from "./PassengersButtonWithModal";
 
-type Ride = SearchRidesQuery["searchRide"][number];
+type SearchRide = SearchRidesQuery["searchRide"][number];
 
 type CardTemplateProps = {
   variant: VariantType;
-  data: Ride;
+  data: SearchRide;
   onClick?: () => void;
   isSelected?: boolean;
   additionalClassName?: string;
+  driverUpcomingRides?: boolean;
 };
 
 const CardTemplate: React.FC<CardTemplateProps> = ({
@@ -22,8 +24,9 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   onClick,
   isSelected = false,
   additionalClassName = "",
+  driverUpcomingRides,
 }) => {
-  const { isSm, isMd, isXl, windowWidth } = useWindowSize();
+  const { isMd, isLg, isXl, windowWidth } = useWindowSize();
   const {
     textColor,
     bgFill,
@@ -126,19 +129,43 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           {statusLabel === "" ? (
             <>
               {availableSeats}
-              {isSm &&
+              {isLg &&
                 `${
                   availableSeats > 1 ? " places restantes" : " place restante"
                 }`}
-              {!isSm && (variant === "primary" || variant === "secondary") && (
-                <UsersRound size={16} />
+              {!isLg && (variant === "primary" || variant === "secondary") && (
+                <svg
+                  fill="none"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  width="20"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <g
+                    clip-rule="evenodd"
+                    fill="currentColor"
+                    fill-rule="evenodd"
+                  >
+                    <path d="m5.25 22c0-.4142.33579-.75.75-.75h12c.4142 0 .75.3358.75.75s-.3358.75-.75.75h-12c-.41421 0-.75-.3358-.75-.75z" />
+                    <path d="m4.25 16.5c0-1.5188 1.23122-2.75 2.75-2.75h10c1.5188 0 2.75 1.2312 2.75 2.75v3c0 .4142-.3358.75-.75.75h-14c-.41421 0-.75-.3358-.75-.75zm2.75-1.25c-.69036 0-1.25.5596-1.25 1.25v2.25h12.5v-2.25c0-.6904-.5596-1.25-1.25-1.25z" />
+                    <path d="m6.75 4c0-1.51878 1.23122-2.75 2.75-2.75h5c1.5188 0 2.75 1.23122 2.75 2.75v.5c0 .41421-.3358.75-.75.75s-.75-.33579-.75-.75v-.5c0-.69036-.5596-1.25-1.25-1.25h-5c-.69036 0-1.25.55964-1.25 1.25v9.75h7.5v-5.25c0-.41421.3358-.75.75-.75s.75.33579.75.75v6c0 .4142-.3358.75-.75.75h-9c-.41421 0-.75-.3358-.75-.75z" />
+                    <path d="m3.75 10.5c0-1.24264 1.00736-2.25 2.25-2.25s2.25 1.00736 2.25 2.25v1.5c0 .4142-.33579.75-.75.75h-3c-.41421 0-.75-.3358-.75-.75zm2.25-.75c-.41421 0-.75.3358-.75.75v.75h1.5v-.75c0-.4142-.33579-.75-.75-.75z" />
+                    <path d="m15.75 10.5c0-1.24264 1.0074-2.25 2.25-2.25s2.25 1.00736 2.25 2.25v1.5c0 .4142-.3358.75-.75.75h-3c-.4142 0-.75-.3358-.75-.75zm2.25-.75c-.4142 0-.75.3358-.75.75v.75h1.5v-.75c0-.4142-.3358-.75-.75-.75z" />
+                  </g>
+                </svg>
               )}
             </>
           ) : (
             statusLabel
           )}
         </p>
-
+        {driverUpcomingRides && (
+          <PassengersButtonWithModal
+            rideId={data.id}
+            variant={variant}
+            data={data}
+          />
+        )}
         <p className="absolute right-0 pr-[70px] sm:pr-[70px] md:pr-[75px] lg:pr-[70px] z-10 p-4 text-sm lg:text-base text-textLight">
           {dateStr}
         </p>
@@ -157,7 +184,6 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             strokeWidth={1.5}
           />
         </svg>
-
         <RegisterButton
           rideId={data.id}
           size="small"

@@ -1,4 +1,12 @@
-import { Arg, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import {
+  Arg,
+  Authorized,
+  Ctx,
+  ID,
+  Mutation,
+  Query,
+  Resolver,
+} from "type-graphql";
 import {
   CreatePassengerRideInput,
   PassengerRide,
@@ -38,6 +46,23 @@ export class PassengerRideResolver {
       relations: ["driver_id"],
       order: { departure_at: "DESC" },
     });
+  }
+
+  // @Authorized()
+  @Query(() => [PassengerRide])
+  async passengersByRide(
+    @Arg("ride_id", () => ID) ride_id: number
+  ): Promise<PassengerRide[]> {
+    try {
+      const passengersRide = await PassengerRide.find({
+        where: { ride_id },
+        relations: ["user"],
+      });
+      return passengersRide;
+    } catch (error) {
+      console.error(error);
+      throw new Error("unable to communicate with the database");
+    }
   }
 
   @Mutation(() => PassengerRide)

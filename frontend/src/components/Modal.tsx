@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { useOutsideClick } from "../hooks/useOutsideClick";
+import { createPortal } from "react-dom";
 
 type ModalProps = {
   isOpen: boolean;
@@ -24,9 +25,9 @@ const Modal: React.FC<ModalProps> = ({
     isOpen
   );
 
-  return (
+  return createPortal(
     <>
-      {isOpen && <div className="fixed inset-0 bg-black/50 z-40" />}
+      {isOpen && <div className="fixed inset-0 bg-black/50 z-80" />}
 
       {isOpen && (
         <div
@@ -40,7 +41,8 @@ const Modal: React.FC<ModalProps> = ({
           {children(toggleModal)}
         </div>
       )}
-    </>
+    </>,
+    document.body
   );
 };
 
