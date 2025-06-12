@@ -28,13 +28,14 @@ services:
         condition: service_healthy
 
   db:
-    image: postgres
+    image: postgis/postgis
     ports:
       - 5432:5432
     env_file:
       - database.env
     volumes:
       - dbdata:/var/lib/postgresql/data
+      - ./init-db:/docker-entrypoint-initdb.d
   nginx:
     image: nginx
     volumes:

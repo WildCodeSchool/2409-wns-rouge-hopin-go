@@ -31,14 +31,30 @@ export class RidesResolver {
     try {
       const startDay = startOfDay(data.departure_at);
       const endDay = endOfDay(data.departure_at);
+      console.log(" 🚀🚀 voici les coordonnées recherchées", data.departure_lng, data.departure_lat);
       const rides = await Ride.createQueryBuilder("ride")
         .innerJoinAndSelect("ride.driver_id", "driver")
-        .where("ride.departure_city ILIKE :departure_city", {
-          departure_city: `%${data.departure_city}%`,
+        .where(`
+          ST_DWithin(
+            ride.departure_location,
+            ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography,
+            :radius
+          )
+        `, {
+          lng: data.departure_lng,
+          lat: data.departure_lat,
+          radius: 10900, // en mètres
         })
-        .andWhere("ride.arrival_city ILIKE :arrival_city", {
-          arrival_city: `%${data.arrival_city}%`,
-        })
+        // .andWhere(`ST_DWithin(
+        //     ride.arrival_location,
+        //     ST_SetSRID(ST_MakePoint(:lng, :lat), 4326)::geography,
+        //     :radius
+        //   )
+        // `, {
+        //   lng: data.arrival_lng,
+        //   lat: data.arrival_lat,
+        //   radius: 1000, // en mètres
+        // })
         .andWhere("ride.departure_at BETWEEN :start AND :end", {
           start: startDay,
           end: endDay,
@@ -47,7 +63,9 @@ export class RidesResolver {
         .andWhere("ride.nb_passenger < ride.max_passenger")
         .orderBy("ride.departure_at", "ASC")
         .getMany();
+      console.log("🚀 ~ RidesResolver ~ rides:", rides)
       return rides;
+
     } catch (error) {
       console.error("Une erreur est survenue lors de la recherche.", error);
       throw new Error("Une erreur est survenue lors de la recherche.");
@@ -90,7 +108,18 @@ export class RidesResolver {
     }
     const newRide = new Ride();
     try {
-      Object.assign(newRide, data);
+      console.log("🚀🚀 voici les coordonnées créées", data.departure_lng, data.departure_lat);
+      Object.assign(newRide, {
+        ...data,
+        departure_location: {
+          type: "Point",
+          coordinates: [data.departure_lng, data.departure_lat],
+        },
+        arrival_location: {
+          type: "Point",
+          coordinates: [data.arrival_lng, data.arrival_lat],
+        },
+      });
       await newRide.save();
       return newRide;
     } catch (error) {
