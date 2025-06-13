@@ -9,12 +9,15 @@ import { querySearchRide } from "../api/SearchRide";
 import { SearchRidesQuery } from "../gql/graphql";
 import Button from "../components/Button";
 import { ArrowLeft } from "lucide-react";
+import useBreakpoints from "../utils/useWindowSize";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
 
 const RideResults = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [searchParams] = useSearchParams();
+
+  const { isMd } = useBreakpoints();
 
   const departure_city = searchParams.get("departure_city")!;
   const departure_lng = parseFloat(searchParams.get("departure_lng")!);
@@ -25,7 +28,6 @@ const RideResults = () => {
   const arrival_lat = parseFloat(searchParams.get("arrival_lat")!);
   const arrival_radius = parseInt(searchParams.get("arrival_radius")!);
   const departure_at = searchParams.get("departure_at")!;
-
 
   const {
     data: dataSearched,
@@ -101,13 +103,16 @@ const RideResults = () => {
 
   return (
     <div className="flex items-center h-screen justify-center max-w-7xl m-auto bg-gray-100">
-      <div className="flex h-full w-full z-20 md:w-1/2 overflow-hidden">
+      <div className="flex h-full z-20 md:mr-10 overflow-hidden">
         <ScrollableSnapList
           dataset={rides}
           getVariant={getVariant}
           onSelect={setSelectedIndex}
-          direction="vertical"
+          sliderDirection="vertical"
           scaleEffect
+          centerSlides={isMd ? true : false}
+          swiperClassName="h-full !py-20 w-full"
+          slidePerView={3}
         />
       </div>
       <div className="h-full flex md:w-1/2">

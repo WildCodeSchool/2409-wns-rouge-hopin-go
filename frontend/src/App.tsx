@@ -20,7 +20,7 @@ const App = () => {
                 className="invisible sm:visible absolute top-0 left-0 w-16 h-16 m-2"
               />
             </Link>
-            {me?.email}
+            <p className="absolute top-5 left-24">{me?.email}</p>
           </div>
           <NavBar />
         </header>
