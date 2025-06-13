@@ -3,6 +3,7 @@ import { X } from "lucide-react";
 import CardTemplate from "./CardTemplate";
 import { VariantType } from "../types/variantTypes";
 import { PassengersByRideQuery, SearchRidesQuery } from "../gql/graphql";
+import RidePassengerValidationButtons from "./RidePassengerValidationButtons";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
 
@@ -26,9 +27,11 @@ const RideCardModal = ({
   console.log("accepted passengers:", acceptedPassengers);
   return (
     <div>
-      <div className="relative flex flex-col items-center justify-center h-full bg-purple-500 p-4">
+      <div className="relative flex flex-col md:items-center md:justify-center bg-gray-200 p-4 w-screen h-screen md:w-auto md:h-auto">
         <Button
           icon={X}
+          iconColor="!text-black"
+          hoverIconColor="text-white"
           iconSize={26}
           type="button"
           variant="full"
@@ -38,15 +41,23 @@ const RideCardModal = ({
         />
         <CardTemplate variant={variant} data={data} />
         <div className="flex flex-col items-start">
-          <div className="mb-5 mt-5">
-            <h2 className="text-xl font-semi-bold text-white ">
+          <div className="mb-5 mt-5 w-full">
+            <h2 className="text-xl font-bold text-primary">
               Passagers à valider :
             </h2>
             {waitingPassengers && waitingPassengers.length > 0 ? (
               waitingPassengers.map((passenger) => (
-                <p key={passenger.user.id}>
-                  {passenger.user.firstName} {passenger.user.lastName}
-                </p>
+                <div
+                  className="flex items-center justify-between"
+                  key={passenger.user.id}
+                >
+                  <p key={passenger.user.id}>
+                    {passenger.user.firstName} {passenger.user.lastName}
+                  </p>
+                  <div className="flex items-center">
+                    <RidePassengerValidationButtons />
+                  </div>
+                </div>
               ))
             ) : (
               <p>
@@ -57,7 +68,7 @@ const RideCardModal = ({
           </div>
 
           <div className="mb-12">
-            <h2 className="text-xl font-semi-bold text-white">
+            <h2 className="text-xl font-bold text-primary">
               Passagers acceptés :
             </h2>
             {acceptedPassengers && acceptedPassengers.length > 0 ? (

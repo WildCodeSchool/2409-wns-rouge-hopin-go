@@ -23,7 +23,7 @@ const PassengersButtonWithModal = ({
   variant,
   data,
 }: PassengersButtonWithModalProps) => {
-  const { isOpen, visible, toggleModal } = useModal();
+  const { isOpen, visible, toggleModal: toggleParentModal } = useModal();
   const { isXl } = useWindowSize();
 
   const [info, setInfo] = useState(false);
@@ -69,7 +69,7 @@ const PassengersButtonWithModal = ({
             }}
             icon={Eye}
             type="button"
-            onClick={toggleModal}
+            onClick={toggleParentModal}
             label={isXl ? "Passagers" : ""}
             variant="secondary"
           />
@@ -89,12 +89,16 @@ const PassengersButtonWithModal = ({
             </div>
           )}
         </div>
-        <Modal isOpen={isOpen} visible={visible} toggleModal={toggleModal}>
+        <Modal
+          isOpen={isOpen}
+          visible={visible}
+          toggleModal={toggleParentModal}
+        >
           {() => (
             <RideCardModal
               rideId={rideId}
               variant={variant}
-              toggleModal={toggleModal}
+              toggleModal={toggleParentModal}
               data={data}
               waitingPassengers={waitingPassengers}
               acceptedPassengers={acceptedPassengers}

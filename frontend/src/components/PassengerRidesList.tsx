@@ -7,6 +7,7 @@ import { queryPassengerRides } from "../api/PassengerRides";
 import { SearchRidesQuery } from "../gql/graphql";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
+
 const PassengerRidesList = () => {
   const [, setSelectedIndex] = useState(0);
   const [showAllUpcoming, setShowAllUpcoming] = useState(false);
