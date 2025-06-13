@@ -10,6 +10,7 @@ type ButtonProps = {
   icon?: React.ElementType;
   iconSize?: number;
   iconColor?: string;
+  hoverIconColor?: string;
   iconRotate?: boolean;
   isFlexCol?: boolean;
   className?: string;
@@ -28,6 +29,7 @@ const Button: React.FC<ButtonProps> = ({
   icon: Icon,
   iconSize = 18,
   iconColor = "text-current",
+  hoverIconColor = "hover:text-current",
   iconRotate = false,
   isFlexCol = false,
   className = "",
@@ -64,7 +66,10 @@ const Button: React.FC<ButtonProps> = ({
     <>
       {Icon && (
         <span className={iconClass}>
-          <Icon size={iconSize} className={iconColor} />
+          <Icon
+            size={iconSize}
+            className={`${iconColor} group-hover:${hoverIconColor}`}
+          />
         </span>
       )}
       {label}
