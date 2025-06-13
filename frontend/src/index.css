@@ -128,3 +128,20 @@ h1 {
     transform: rotate(360deg);
   }
 }
+
+/* -----------------------------SLIDER SWIPER---------------------------- */
+
+/* .mySwiper {
+  @apply w-full h-full bg-orange-600;
+}
+.swiper-wrapper {
+  @apply flex  items-center justify-center;
+} */
+
+.swiper-scrollbar {
+  @apply hidden;
+}
+
+/* .swiper-slide {
+  @apply flex items-center justify-center;
+} */
