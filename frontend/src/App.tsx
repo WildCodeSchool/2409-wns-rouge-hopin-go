@@ -1,26 +1,27 @@
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
+import Logo from "../public/logo.png";
+import { useQuery } from "@apollo/client";
+import { queryWhoAmI } from "./api/WhoAmI";
 
 const App = () => {
+  const { data: whoAmIData } = useQuery(queryWhoAmI);
+  const me = whoAmIData?.whoami;
   return (
     <>
-      <ToastContainer
-        toastClassName="toast-custom"
-        bodyClassName="toast-body"
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-
       <div className="flex flex-col min-h-screen">
         <header>
+          <div className="flex flex-row">
+            <Link to="/">
+              <img
+                src={Logo}
+                alt="Logo"
+                className="invisible sm:visible absolute top-0 left-0 w-16 h-16 m-2"
+              />
+            </Link>
+            <p className="absolute top-5 left-24">{me?.email}</p>
+          </div>
           <NavBar />
         </header>
         <main className="h-screen">

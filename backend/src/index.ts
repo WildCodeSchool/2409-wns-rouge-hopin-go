@@ -1,12 +1,9 @@
 import "reflect-metadata";
 import { datasource } from "./datasource";
-import { buildSchema } from "type-graphql";
 import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
-import { UsersResolver } from "./resolvers/Users";
-import { authChecker, getUserFromContext } from "./auth";
+import { getUserFromContext } from "./auth";
 import { User } from "./entities/User";
-import { get } from "http";
 import { getSchema } from "./schema";
 
 async function initiliaze() {

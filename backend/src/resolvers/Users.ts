@@ -74,7 +74,6 @@ export class UsersResolver {
             httpOnly: true,
             maxAge: 1000 * 60 * 60 * 72, // 72 hours
           });
-          console.log("cookies", cookies.get("token"));
 
           return user;
         } else {
@@ -93,8 +92,6 @@ export class UsersResolver {
   async createUser(
     @Arg("data", () => UserCreateInput) data: UserCreateInput
   ): Promise<User> {
-    console.log("data from createUser", data);
-
     const errors = await validate(data);
     if (errors.length > 0) {
       throw new Error(`Validation error: ${JSON.stringify(errors)}`);

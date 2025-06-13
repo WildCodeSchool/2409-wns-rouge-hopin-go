@@ -11,25 +11,18 @@ import {
   validatePassword as validatePasswordUtils,
   validateConfirmPassword as validateConfirmPasswordUtils,
 } from "../utils/validators";
+import { formatErrors } from "../utils/formatErrors";
 
 export default function Signup() {
-  const [firstName, setFirstName] = useState("Adrien");
-  const [lastName, setLastName] = useState("Davy");
-  const [email, setEmail] = useState("adri@mail.com");
-  const [password, setPassword] = useState("Nuagebleu73!");
-  const [confirmPassword, setConfirmPassword] = useState("Nuagebleu73!");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<Record<string, string[]>>({});
   const [revealPassword, setRevealPassword] = useState(false);
 
   const [doCreateUser, { data }] = useMutation(mutationCreateUser);
-
-  // Fonction pour regrouper les erreurs en une phrase
-  const formatErrors = (errors: string[]) => {
-    if (errors.length === 0) return "";
-    if (errors.length === 1) return errors[0];
-    const lastError = errors.pop();
-    return `${errors.join(", ")} et ${lastError}.`;
-  };
 
   const validateCreateForm = (): boolean => {
     const firstNameErrors = validateFirstNameUtils(firstName);
@@ -64,7 +57,6 @@ export default function Signup() {
     if (!validateCreateForm()) {
       return;
     }
-    console.log("doSubmit");
 
     try {
       await doCreateUser({
@@ -97,9 +89,9 @@ export default function Signup() {
   }
 
   return (
-    <form className="max-w-sm mx-auto">
+    <form className="flex flex-col justify-center items-center max-w-sm mx-auto w-full h-full px-4 sm:px-0 ">
       {/* Prénom */}
-      <div className="mb-5">
+      <div className="mb-5 w-full">
         <label
           htmlFor="first-name"
           className="block mb-2 text-sm font-medium text-textLight"
@@ -129,7 +121,7 @@ export default function Signup() {
       </div>
 
       {/* Nom */}
-      <div className="mb-5">
+      <div className="mb-5 w-full">
         <label
           htmlFor="last-name"
           className="block mb-2 text-sm font-medium text-white"
@@ -157,7 +149,7 @@ export default function Signup() {
         )}
       </div>
       {/* Email */}
-      <div className="mb-5">
+      <div className="mb-5 w-full">
         <label
           htmlFor="email"
           className="block mb-2 text-sm font-medium text-white "
@@ -183,7 +175,7 @@ export default function Signup() {
       </div>
 
       {/* Mot de passe */}
-      <div className="mb-5">
+      <div className="mb-5 w-full">
         <label
           htmlFor="password"
           className="block mb-2 text-sm font-medium text-white dark:text-white"
@@ -221,7 +213,7 @@ export default function Signup() {
       </div>
 
       {/* Confirmation du mot de passe */}
-      <div className="mb-10">
+      <div className="mb-10 w-full">
         <label
           htmlFor="repeat-password"
           className="block mb-2 text-sm font-medium text-white"

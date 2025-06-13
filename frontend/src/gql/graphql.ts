@@ -18,17 +18,45 @@ export type Scalars = {
   DateTimeISO: { input: any; output: any; }
 };
 
+export type CreatePassengerRideInput = {
+  ride_id: Scalars['ID']['input'];
+  user_id: Scalars['ID']['input'];
+};
+
+export type IdInput = {
+  id: Scalars['ID']['input'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  createPassengerRide: PassengerRide;
+  createRide: Ride;
   createUser: User;
+  deleteRide?: Maybe<Ride>;
   deleteUser?: Maybe<User>;
   signin?: Maybe<User>;
   signout: Scalars['Boolean']['output'];
+  updateRide?: Maybe<Ride>;
+};
+
+
+export type MutationCreatePassengerRideArgs = {
+  data: CreatePassengerRideInput;
+};
+
+
+export type MutationCreateRideArgs = {
+  data: RideCreateInput;
 };
 
 
 export type MutationCreateUserArgs = {
   data: UserCreateInput;
+};
+
+
+export type MutationDeleteRideArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -42,16 +70,122 @@ export type MutationSigninArgs = {
   password: Scalars['String']['input'];
 };
 
+
+export type MutationUpdateRideArgs = {
+  data: RideUpdateInput;
+  id: Scalars['ID']['input'];
+};
+
+export type PaginatedRides = {
+  __typename?: 'PaginatedRides';
+  rides: Array<Ride>;
+  totalCount: Scalars['Float']['output'];
+};
+
+export type PassengerRide = {
+  __typename?: 'PassengerRide';
+  ride_id: Scalars['ID']['output'];
+  status: Scalars['String']['output'];
+  user: User;
+  user_id: Scalars['ID']['output'];
+};
+
 export type Query = {
   __typename?: 'Query';
+  driverRides: PaginatedRides;
+  passengerRides: Array<Ride>;
+  passengersByRide: Array<PassengerRide>;
+  ride: Ride;
+  rides: Array<Ride>;
+  searchRide: Array<Ride>;
   user: User;
   users: Array<User>;
   whoami?: Maybe<User>;
 };
 
 
+export type QueryDriverRidesArgs = {
+  filter?: InputMaybe<Scalars['String']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryPassengerRidesArgs = {
+  filter?: InputMaybe<Scalars['String']['input']>;
+};
+
+
+export type QueryPassengersByRideArgs = {
+  ride_id: Scalars['ID']['input'];
+};
+
+
+export type QueryRideArgs = {
+  id: Scalars['ID']['input'];
+};
+
+
+export type QuerySearchRideArgs = {
+  data: SearchRideInput;
+};
+
+
 export type QueryUserArgs = {
   id: Scalars['ID']['input'];
+};
+
+export type Ride = {
+  __typename?: 'Ride';
+  arrival_address: Scalars['String']['output'];
+  arrival_at: Scalars['DateTimeISO']['output'];
+  arrival_city: Scalars['String']['output'];
+  created_at: Scalars['DateTimeISO']['output'];
+  departure_address: Scalars['String']['output'];
+  departure_at: Scalars['DateTimeISO']['output'];
+  departure_city: Scalars['String']['output'];
+  driver_id: User;
+  id: Scalars['ID']['output'];
+  is_canceled: Scalars['Boolean']['output'];
+  max_passenger: Scalars['Float']['output'];
+  nb_passenger: Scalars['Float']['output'];
+  passenger_rides?: Maybe<Array<PassengerRide>>;
+  passenger_status?: Maybe<Scalars['String']['output']>;
+};
+
+export type RideCreateInput = {
+  arrival_address: Scalars['String']['input'];
+  arrival_at: Scalars['DateTimeISO']['input'];
+  arrival_city: Scalars['String']['input'];
+  arrival_lat: Scalars['Float']['input'];
+  arrival_lng: Scalars['Float']['input'];
+  departure_address: Scalars['String']['input'];
+  departure_at: Scalars['DateTimeISO']['input'];
+  departure_city: Scalars['String']['input'];
+  departure_lat: Scalars['Float']['input'];
+  departure_lng: Scalars['Float']['input'];
+  driver_id: IdInput;
+  max_passenger: Scalars['Float']['input'];
+};
+
+export type RideUpdateInput = {
+  arrival_at: Scalars['String']['input'];
+  departure_at: Scalars['String']['input'];
+  is_canceled: Scalars['Boolean']['input'];
+  max_passenger: Scalars['Float']['input'];
+};
+
+export type SearchRideInput = {
+  arrival_city: Scalars['String']['input'];
+  arrival_lat: Scalars['Float']['input'];
+  arrival_lng: Scalars['Float']['input'];
+  arrival_radius: Scalars['Float']['input'];
+  departure_at: Scalars['DateTimeISO']['input'];
+  departure_city: Scalars['String']['input'];
+  departure_lat: Scalars['Float']['input'];
+  departure_lng: Scalars['Float']['input'];
+  departure_radius: Scalars['Float']['input'];
 };
 
 export type User = {
@@ -71,12 +205,69 @@ export type UserCreateInput = {
   password: Scalars['String']['input'];
 };
 
+export type CreatePassengerRideMutationVariables = Exact<{
+  data: CreatePassengerRideInput;
+}>;
+
+
+export type CreatePassengerRideMutation = { __typename?: 'Mutation', createPassengerRide: { __typename?: 'PassengerRide', user_id: string, ride_id: string } };
+
+export type CreateRideMutationVariables = Exact<{
+  data: RideCreateInput;
+}>;
+
+
+export type CreateRideMutation = { __typename?: 'Mutation', createRide: { __typename?: 'Ride', departure_city: string, arrival_city: string, departure_address: string, arrival_address: string, departure_at: any, arrival_at: any, max_passenger: number, driver_id: { __typename?: 'User', id: string, email?: string | null } } };
+
 export type CreateUserMutationVariables = Exact<{
   data: UserCreateInput;
 }>;
 
 
 export type CreateUserMutation = { __typename?: 'Mutation', createUser: { __typename?: 'User', id: string, firstName: string, lastName: string, email?: string | null } };
+
+export type DriverRidesQueryVariables = Exact<{
+  filter?: InputMaybe<Scalars['String']['input']>;
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
+  sort?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type DriverRidesQuery = { __typename?: 'Query', driverRides: { __typename?: 'PaginatedRides', totalCount: number, rides: Array<{ __typename?: 'Ride', id: string, created_at: any, departure_address: string, departure_at: any, departure_city: string, arrival_address: string, arrival_at: any, arrival_city: string, is_canceled: boolean, max_passenger: number, nb_passenger: number, driver_id: { __typename?: 'User', id: string, firstName: string, lastName: string, createdAt: any, role: string }, passenger_rides?: Array<{ __typename?: 'PassengerRide', ride_id: string, user_id: string, status: string }> | null }> } };
+
+export type PassengerRidesQueryVariables = Exact<{
+  filter?: InputMaybe<Scalars['String']['input']>;
+}>;
+
+
+export type PassengerRidesQuery = { __typename?: 'Query', passengerRides: Array<{ __typename?: 'Ride', id: string, created_at: any, departure_address: string, departure_at: any, departure_city: string, arrival_address: string, arrival_at: any, arrival_city: string, is_canceled: boolean, max_passenger: number, nb_passenger: number, passenger_status?: string | null, driver_id: { __typename?: 'User', id: string, firstName: string, lastName: string, createdAt: any, role: string }, passenger_rides?: Array<{ __typename?: 'PassengerRide', user_id: string, ride_id: string, status: string }> | null }> };
+
+export type PassengersByRideQueryVariables = Exact<{
+  ride_id: Scalars['ID']['input'];
+}>;
+
+
+export type PassengersByRideQuery = { __typename?: 'Query', passengersByRide: Array<{ __typename?: 'PassengerRide', status: string, user: { __typename?: 'User', id: string, firstName: string, lastName: string } }> };
+
+export type RideQueryVariables = Exact<{
+  id: Scalars['ID']['input'];
+}>;
+
+
+export type RideQuery = { __typename?: 'Query', ride: { __typename?: 'Ride', id: string, nb_passenger: number, max_passenger: number, driver_id: { __typename?: 'User', id: string }, passenger_rides?: Array<{ __typename?: 'PassengerRide', user_id: string, ride_id: string, status: string }> | null } };
+
+export type RidesQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type RidesQuery = { __typename?: 'Query', rides: Array<{ __typename?: 'Ride', id: string, created_at: any, departure_address: string, departure_at: any, departure_city: string, arrival_address: string, arrival_at: any, arrival_city: string, is_canceled: boolean, max_passenger: number, nb_passenger: number, driver_id: { __typename?: 'User', id: string, firstName: string, lastName: string } }> };
+
+export type SearchRidesQueryVariables = Exact<{
+  data: SearchRideInput;
+}>;
+
+
+export type SearchRidesQuery = { __typename?: 'Query', searchRide: Array<{ __typename?: 'Ride', id: string, created_at: any, departure_city: string, departure_at: any, arrival_city: string, arrival_at: any, departure_address: string, arrival_address: string, max_passenger: number, nb_passenger: number, is_canceled: boolean, passenger_status?: string | null, driver_id: { __typename?: 'User', id: string, firstName: string, lastName: string, createdAt: any, role: string }, passenger_rides?: Array<{ __typename?: 'PassengerRide', ride_id: string, user_id: string, status: string }> | null }> };
 
 export type SigninMutationVariables = Exact<{
   email: Scalars['String']['input'];
@@ -97,7 +288,15 @@ export type WhoamiQueryVariables = Exact<{ [key: string]: never; }>;
 export type WhoamiQuery = { __typename?: 'Query', whoami?: { __typename?: 'User', id: string, email?: string | null, role: string } | null };
 
 
+export const CreatePassengerRideDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreatePassengerRide"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"CreatePassengerRideInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createPassengerRide"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user_id"}},{"kind":"Field","name":{"kind":"Name","value":"ride_id"}}]}}]}}]} as unknown as DocumentNode<CreatePassengerRideMutation, CreatePassengerRideMutationVariables>;
+export const CreateRideDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateRide"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"RideCreateInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createRide"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"driver_id"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}},{"kind":"Field","name":{"kind":"Name","value":"departure_city"}},{"kind":"Field","name":{"kind":"Name","value":"arrival_city"}},{"kind":"Field","name":{"kind":"Name","value":"departure_address"}},{"kind":"Field","name":{"kind":"Name","value":"arrival_address"}},{"kind":"Field","name":{"kind":"Name","value":"departure_at"}},{"kind":"Field","name":{"kind":"Name","value":"arrival_at"}},{"kind":"Field","name":{"kind":"Name","value":"max_passenger"}}]}}]}}]} as unknown as DocumentNode<CreateRideMutation, CreateRideMutationVariables>;
 export const CreateUserDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateUser"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"UserCreateInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createUser"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]} as unknown as DocumentNode<CreateUserMutation, CreateUserMutationVariables>;
+export const DriverRidesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"DriverRides"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"limit"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"offset"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"Int"}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"sort"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"driverRides"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}},{"kind":"Argument","name":{"kind":"Name","value":"limit"},"value":{"kind":"Variable","name":{"kind":"Name","value":"limit"}}},{"kind":"Argument","name":{"kind":"Name","value":"offset"},"value":{"kind":"Variable","name":{"kind":"Name","value":"offset"}}},{"kind":"Argument","name":{"kind":"Name","value":"sort"},"value":{"kind":"Variable","name":{"kind":"Name","value":"sort"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"totalCount"}},{"kind":"Field","name":{"kind":"Name","value":"rides"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"driver_id"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"role"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"departure_address"}},{"kind":"Field","name":{"kind":"Name","value":"departure_at"}},{"kind":"Field","name":{"kind":"Name","value":"departure_city"}},{"kind":"Field","name":{"kind":"Name","value":"arrival_address"}},{"kind":"Field","name":{"kind":"Name","value":"arrival_at"}},{"kind":"Field","name":{"kind":"Name","value":"arrival_city"}},{"kind":"Field","name":{"kind":"Name","value":"is_canceled"}},{"kind":"Field","name":{"kind":"Name","value":"max_passenger"}},{"kind":"Field","name":{"kind":"Name","value":"nb_passenger"}},{"kind":"Field","name":{"kind":"Name","value":"passenger_rides"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ride_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]}}]}}]} as unknown as DocumentNode<DriverRidesQuery, DriverRidesQueryVariables>;
+export const PassengerRidesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PassengerRides"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"filter"}},"type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"passengerRides"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"filter"},"value":{"kind":"Variable","name":{"kind":"Name","value":"filter"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"driver_id"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"role"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"departure_address"}},{"kind":"Field","name":{"kind":"Name","value":"departure_at"}},{"kind":"Field","name":{"kind":"Name","value":"departure_city"}},{"kind":"Field","name":{"kind":"Name","value":"arrival_address"}},{"kind":"Field","name":{"kind":"Name","value":"arrival_at"}},{"kind":"Field","name":{"kind":"Name","value":"arrival_city"}},{"kind":"Field","name":{"kind":"Name","value":"is_canceled"}},{"kind":"Field","name":{"kind":"Name","value":"max_passenger"}},{"kind":"Field","name":{"kind":"Name","value":"nb_passenger"}},{"kind":"Field","name":{"kind":"Name","value":"passenger_rides"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user_id"}},{"kind":"Field","name":{"kind":"Name","value":"ride_id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}},{"kind":"Field","name":{"kind":"Name","value":"passenger_status"}}]}}]}}]} as unknown as DocumentNode<PassengerRidesQuery, PassengerRidesQueryVariables>;
+export const PassengersByRideDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"PassengersByRide"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"ride_id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"passengersByRide"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"ride_id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"ride_id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"user"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}}]}}]}}]} as unknown as DocumentNode<PassengersByRideQuery, PassengersByRideQueryVariables>;
+export const RideDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Ride"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"id"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"ID"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ride"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"id"},"value":{"kind":"Variable","name":{"kind":"Name","value":"id"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"nb_passenger"}},{"kind":"Field","name":{"kind":"Name","value":"max_passenger"}},{"kind":"Field","name":{"kind":"Name","value":"driver_id"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}}]}},{"kind":"Field","name":{"kind":"Name","value":"passenger_rides"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"user_id"}},{"kind":"Field","name":{"kind":"Name","value":"ride_id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}}]}}]}}]} as unknown as DocumentNode<RideQuery, RideQueryVariables>;
+export const RidesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Rides"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"rides"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"driver_id"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}}]}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"departure_address"}},{"kind":"Field","name":{"kind":"Name","value":"departure_at"}},{"kind":"Field","name":{"kind":"Name","value":"departure_city"}},{"kind":"Field","name":{"kind":"Name","value":"arrival_address"}},{"kind":"Field","name":{"kind":"Name","value":"arrival_at"}},{"kind":"Field","name":{"kind":"Name","value":"arrival_city"}},{"kind":"Field","name":{"kind":"Name","value":"is_canceled"}},{"kind":"Field","name":{"kind":"Name","value":"max_passenger"}},{"kind":"Field","name":{"kind":"Name","value":"nb_passenger"}}]}}]}}]} as unknown as DocumentNode<RidesQuery, RidesQueryVariables>;
+export const SearchRidesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"SearchRides"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"data"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"SearchRideInput"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"searchRide"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"data"},"value":{"kind":"Variable","name":{"kind":"Name","value":"data"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"created_at"}},{"kind":"Field","name":{"kind":"Name","value":"departure_city"}},{"kind":"Field","name":{"kind":"Name","value":"departure_at"}},{"kind":"Field","name":{"kind":"Name","value":"arrival_city"}},{"kind":"Field","name":{"kind":"Name","value":"arrival_at"}},{"kind":"Field","name":{"kind":"Name","value":"departure_address"}},{"kind":"Field","name":{"kind":"Name","value":"arrival_address"}},{"kind":"Field","name":{"kind":"Name","value":"max_passenger"}},{"kind":"Field","name":{"kind":"Name","value":"nb_passenger"}},{"kind":"Field","name":{"kind":"Name","value":"is_canceled"}},{"kind":"Field","name":{"kind":"Name","value":"driver_id"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"role"}}]}},{"kind":"Field","name":{"kind":"Name","value":"passenger_rides"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"ride_id"}},{"kind":"Field","name":{"kind":"Name","value":"user_id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}}]}},{"kind":"Field","name":{"kind":"Name","value":"passenger_status"}}]}}]}}]} as unknown as DocumentNode<SearchRidesQuery, SearchRidesQueryVariables>;
 export const SigninDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Signin"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"email"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"password"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signin"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"email"},"value":{"kind":"Variable","name":{"kind":"Name","value":"email"}}},{"kind":"Argument","name":{"kind":"Name","value":"password"},"value":{"kind":"Variable","name":{"kind":"Name","value":"password"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}}]}}]}}]} as unknown as DocumentNode<SigninMutation, SigninMutationVariables>;
 export const MutationDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"Mutation"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"signout"}}]}}]} as unknown as DocumentNode<MutationMutation, MutationMutationVariables>;
 export const WhoamiDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"Whoami"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"whoami"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"email"}},{"kind":"Field","name":{"kind":"Name","value":"role"}}]}}]}}]} as unknown as DocumentNode<WhoamiQuery, WhoamiQueryVariables>;

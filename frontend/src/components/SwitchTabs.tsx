@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 type SwitchTabsProps = {
   tabs: Tab[];
   tabParams?: string;
-  path?: string;
+  classContainer?: string;
 };
 
 export type Tab = {
@@ -13,13 +13,14 @@ export type Tab = {
   path: string;
 };
 
-const SwitchTabs = ({ tabs, tabParams }: SwitchTabsProps) => {
+const SwitchTabs = ({ tabs, tabParams, classContainer }: SwitchTabsProps) => {
   const navigate = useNavigate();
-  const currentTab = tabs.find(
-    (tab) => tab.label.toLowerCase() === tabParams?.toLowerCase()
-  );
+  const currentTab = tabs.find((tab) => {
+    const lastSegment = tab.path.split("/").pop();
+    return lastSegment?.toLowerCase() === tabParams?.toLowerCase();
+  });
   const currentTabIndex = currentTab ? tabs.indexOf(currentTab) : 1;
-  const [activeTab, setActiveTab] = useState(currentTabIndex);
+  const [activeTab, setActiveTab] = useState<number>(currentTabIndex);
 
   // rerender the component if a user clicks on the menu
   useEffect(() => {
@@ -33,25 +34,23 @@ const SwitchTabs = ({ tabs, tabParams }: SwitchTabsProps) => {
   };
 
   return (
-    <div className="border border-textDark rounded-md z-50">
-      <div className="flex ">
+    <div className="sm:border border-textDark sm:rounded-xl shadow-xl  h-full w-full overflow-hidden z-50">
+      <div className="flex h-fit w-full">
         {tabs.map((tab, index) => (
           <button
             key={index}
-            className={`flex-1 py-4 font-semibold ${
+            className={`flex-1 py-4 font-semibold transition-200 ${
               activeTab === index
-                ? "bg-primary text-textLight"
-                : "bg-white text-primary"
-            } ${index === 0 ? "rounded-tl-md" : ""} ${
-              index === tabs.length - 1 ? "rounded-tr-md" : ""
-            }`}
+                ? "bg-primary text-white"
+                : "bg-gray-100 text-primary"
+            } `}
             onClick={() => handleTabClick(index)}
           >
             {tab.label}
           </button>
         ))}
       </div>
-      <div className="w-full rounded-b-md p-5  bg-primary ">
+      <div className={`${classContainer} w-full h-full overflow-auto`}>
         {tabs[activeTab].content}
       </div>
     </div>

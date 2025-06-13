@@ -20,7 +20,6 @@ export function UsersResolverTest(testArgs: TestArgsType) {
           },
         },
       });
-      console.log(response);
       assert(response.body.kind === "single");
       expect(response.body.singleResult.errors).toBeUndefined();
       expect(response.body.singleResult.data).toBeDefined();

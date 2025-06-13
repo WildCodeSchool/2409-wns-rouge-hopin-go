@@ -38,6 +38,10 @@ h1 {
   @apply bg-secondary text-primary transition-200;
 }
 
+.button-secondary {
+  @apply rounded-lg bg-secondary text-textDark hover:bg-secondaryHover cursor-pointer transition-200;
+}
+
 .button-validation {
   @apply bg-validation text-textLight transition-200;
 }
@@ -46,39 +50,19 @@ h1 {
   @apply bg-pending text-textLight transition-200;
 }
 
-.button-error {
-  @apply bg-error text-textLight transition-200;
+.button-full {
+  @apply bg-full text-textLight transition-200;
 }
 .button-cancel {
   @apply bg-cancel text-textLight transition-200;
 }
 
+.button-refused {
+  @apply bg-refused text-textLight transition-200;
+}
+
 .text-field-with-button {
   @apply flex flex-grow justify-center gap-1;
-}
-
-.Toastify__toast-container {
-  z-index: 9999; /* Met un z-index élevé pour être au-dessus de tout */
-}
-
-.toast-custom {
-  background-color: var(--primary-color);
-  color: white;
-  font-weight: bold;
-}
-
-.toast-success {
-  background-color: var(--primary-color);
-  color: #fff;
-}
-
-.toast-error {
-  background-color: #ff4d4f;
-  color: #fff;
-}
-
-.toast-icon {
-  font-size: 1.5rem;
 }
 
 .logo {
@@ -101,13 +85,13 @@ h1 {
 
   /* Track */
   ::-webkit-scrollbar-track {
-    background: var(--color-tertiary);
+    background: transparent;
     border-radius: 0.5rem;
   }
 
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: var(--color-primary);
+    background: #fff;
     cursor: -webkit-grabbing;
     border-radius: 0.5rem;
     transition: all 350ms ease;
@@ -115,7 +99,7 @@ h1 {
 
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-primary-hover);
+    background: #e6e6e6;
   }
 
   /* no scrollbar visible */
@@ -144,3 +128,20 @@ h1 {
     transform: rotate(360deg);
   }
 }
+
+/* -----------------------------SLIDER SWIPER---------------------------- */
+
+/* .mySwiper {
+  @apply w-full h-full bg-orange-600;
+}
+.swiper-wrapper {
+  @apply flex  items-center justify-center;
+} */
+
+.swiper-scrollbar {
+  @apply hidden;
+}
+
+/* .swiper-slide {
+  @apply flex items-center justify-center;
+} */
