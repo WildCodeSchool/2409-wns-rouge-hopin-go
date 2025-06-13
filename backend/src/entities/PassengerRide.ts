@@ -44,3 +44,12 @@ export class CreatePassengerRideInput {
   @Field(() => ID)
   ride_id!: number;
 }
+
+@InputType()
+export class PassengerValidationInput {
+  @Field(() => ID)
+  user_id!: number;
+
+  @Field(() => ID)
+  ride_id!: number;
+}

@@ -1,5 +1,10 @@
 import { Check, X } from "lucide-react";
 import Button from "./Button";
+import { useState } from "react";
+import { useMutation } from "@apollo/client";
+import { mutationValidatePassengerRide } from "../api/ValidatePassengerRide";
+import { mutationRefusePassengerRide } from "../api/RefusePassengerRide";
+import { toast } from "react-toastify";
 
 type RidePassengerValidationConfirmationModalProps = {
   toggleModal: () => void;
@@ -10,6 +15,47 @@ const RidePassengerValidationConfirmationModal = ({
   toggleModal,
   actionType,
 }: RidePassengerValidationConfirmationModalProps) => {
+  const [selectedPassenger, setSelectedPassenger] = useState<{
+    user_id: number;
+    ride_id: number;
+  } | null>(null);
+
+  const [validatePassengerRide] = useMutation(mutationValidatePassengerRide);
+  const [refusePassengerRide] = useMutation(mutationRefusePassengerRide);
+
+  const handleConfirm = async () => {
+    if (!selectedPassenger) return;
+
+    try {
+      if (actionType === "accept") {
+        await validatePassengerRide({
+          variables: {
+            data: {
+              user_id: selectedPassenger.user_id,
+              ride_id: selectedPassenger.ride_id,
+            },
+          },
+        });
+      } else if (actionType === "refuse") {
+        await refusePassengerRide({
+          variables: {
+            data: {
+              user_id: selectedPassenger.user_id,
+              ride_id: selectedPassenger.ride_id,
+            },
+          },
+        });
+      }
+      setSelectedPassenger(null);
+      // Optionally, you can refresh the list of passengers or rides here
+      toggleModal();
+      toast.success(
+        `Passager ${actionType === "accept" ? "validé" : "refusé"} avec succès`
+      );
+    } catch (error) {
+      console.error("Error validating/refusing passenger:", error);
+    }
+  };
   return (
     <div>
       <div
@@ -39,15 +85,13 @@ const RidePassengerValidationConfirmationModal = ({
             icon={X}
             variant="refused"
             onClick={toggleModal}
-            // className=" border-white border-2"
           />
           <Button
             label="Confirmer"
             type="button"
             icon={Check}
             variant="validation"
-            onClick={toggleModal}
-            // className=" border-white border-2"
+            onClick={handleConfirm}
           />
         </div>
       </div>

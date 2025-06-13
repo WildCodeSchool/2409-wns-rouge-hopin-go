@@ -34,9 +34,11 @@ export type Mutation = {
   createUser: User;
   deleteRide?: Maybe<Ride>;
   deleteUser?: Maybe<User>;
+  refusePassengerRide: PassengerRide;
   signin?: Maybe<User>;
   signout: Scalars['Boolean']['output'];
   updateRide?: Maybe<Ride>;
+  validatePassengerRide: PassengerRide;
 };
 
 
@@ -65,6 +67,11 @@ export type MutationDeleteUserArgs = {
 };
 
 
+export type MutationRefusePassengerRideArgs = {
+  data: PassengerValidationInput;
+};
+
+
 export type MutationSigninArgs = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -74,6 +81,11 @@ export type MutationSigninArgs = {
 export type MutationUpdateRideArgs = {
   data: RideUpdateInput;
   id: Scalars['ID']['input'];
+};
+
+
+export type MutationValidatePassengerRideArgs = {
+  data: PassengerValidationInput;
 };
 
 export type PaginatedRides = {
@@ -88,6 +100,11 @@ export type PassengerRide = {
   status: Scalars['String']['output'];
   user: User;
   user_id: Scalars['ID']['output'];
+};
+
+export type PassengerValidationInput = {
+  ride_id: Scalars['ID']['input'];
+  user_id: Scalars['ID']['input'];
 };
 
 export type Query = {
