@@ -19,9 +19,9 @@ const MyRides = () => {
     },
   ];
   return (
-    <div className=" flex flex-col justify-center items-center h-full sm:h-[calc(100dvh-180px)] sm:mt-10 sm:px-8 w-full top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 fixed">
+    <div className=" flex flex-col justify-center items-center h-[calc(100dvh-60px)] sm:h-[calc(100dvh-180px)] sm:mt-10 sm:px-8 w-full sm:top-1/2 sm:-translate-y-1/2 left-1/2 -translate-x-1/2 fixed">
       <SwitchTab
-        classContainer="bg-secondary text-primary h-full overflow-scroll"
+        classContainer="bg-secondary text-primary h-full"
         tabs={tabs}
         tabParams={tab}
       />

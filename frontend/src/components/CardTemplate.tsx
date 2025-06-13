@@ -15,6 +15,7 @@ type CardTemplateProps = {
   variant: VariantType;
   data: SearchRide;
   onClick?: () => void;
+  onScroll?: (event: React.UIEvent<HTMLDivElement>) => void;
   isSelected?: boolean;
   additionalClassName?: string;
   driverUpcomingRides?: boolean;
@@ -24,6 +25,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   variant,
   data,
   onClick,
+  onScroll,
   isSelected = false,
   additionalClassName = "",
   driverUpcomingRides,
@@ -63,9 +65,10 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   return (
     <div
       className={`${isSelected && additionalClassName
-        } select-none transition-200 w-full sm:min-w-[32rem] sm:max-w-lg md:min-w-[23rem] md:max-w-[23rem] lg:min-w-[28rem] lg:max-w-[28rem] xl:min-w-[32rem] xl:max-w-lg p-4 transition-transform ${onClick ? "cursor-pointer" : ""
+        } select-none transition-200 min-h-[200px] w-full sm:min-w-[32rem] sm:max-w-lg md:min-w-[23rem] md:max-w-[23rem] lg:min-w-[28rem] lg:max-w-[28rem] xl:min-w-[32rem] xl:max-w-lg p-4 transition-transform ${onClick ? "cursor-pointer" : ""
         }`}
       onClick={onClick}
+      onScroll={onScroll}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
     >
@@ -144,11 +147,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
                   width="20"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <g
-                    clip-rule="evenodd"
-                    fill="currentColor"
-                    fill-rule="evenodd"
-                  >
+                  <g clipRule="evenodd" fill="currentColor" fill-rule="evenodd">
                     <path d="m5.25 22c0-.4142.33579-.75.75-.75h12c.4142 0 .75.3358.75.75s-.3358.75-.75.75h-12c-.41421 0-.75-.3358-.75-.75z" />
                     <path d="m4.25 16.5c0-1.5188 1.23122-2.75 2.75-2.75h10c1.5188 0 2.75 1.2312 2.75 2.75v3c0 .4142-.3358.75-.75.75h-14c-.41421 0-.75-.3358-.75-.75zm2.75-1.25c-.69036 0-1.25.5596-1.25 1.25v2.25h12.5v-2.25c0-.6904-.5596-1.25-1.25-1.25z" />
                     <path d="m6.75 4c0-1.51878 1.23122-2.75 2.75-2.75h5c1.5188 0 2.75 1.23122 2.75 2.75v.5c0 .41421-.3358.75-.75.75s-.75-.33579-.75-.75v-.5c0-.69036-.5596-1.25-1.25-1.25h-5c-.69036 0-1.25.55964-1.25 1.25v9.75h7.5v-5.25c0-.41421.3358-.75.75-.75s.75.33579.75.75v6c0 .4142-.3358.75-.75.75h-9c-.41421 0-.75-.3358-.75-.75z" />

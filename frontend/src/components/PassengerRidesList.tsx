@@ -50,7 +50,7 @@ const PassengerRidesList = () => {
               }
               getVariant={getVariant}
               onSelect={setSelectedIndex}
-              direction={isSm ? "horizontal" : "vertical"}
+              sliderDirection={isSm ? "horizontal" : "vertical"}
             />
           </div>
 
@@ -81,7 +81,7 @@ const PassengerRidesList = () => {
               }
               getVariant={getVariant}
               onSelect={setSelectedIndex}
-              direction={isSm ? "horizontal" : "vertical"}
+              sliderDirection={isSm ? "horizontal" : "vertical"}
             />
           </div>
 

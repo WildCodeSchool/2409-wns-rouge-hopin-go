@@ -12,7 +12,7 @@ const DriverRidesList = () => {
   const [, setSelectedIndex] = useState(0);
   const [showAllUpcoming, setShowAllUpcoming] = useState(false);
   const [showAllArchived, setShowAllArchived] = useState(false);
-  const { isSm } = useBreakpoints();
+  const { isMd } = useBreakpoints();
 
   const getVariant = (dataset: SearchRide): VariantType => {
     if (dataset.is_canceled) return "cancel";
@@ -22,34 +22,43 @@ const DriverRidesList = () => {
     if (dataset.passenger_status === "refused") return "refused";
     return "primary";
   };
-
   const { data: upcomingRidesData } = useQuery(queryDriverRides, {
-    variables: { filter: "upcoming" },
+    variables: {
+      filter: "upcoming",
+      limit: showAllUpcoming ? 100 : 3,
+      offset: 0,
+    },
   });
   const upcomingRides = upcomingRidesData?.driverRides;
+  console.log("🚀 ~ DriverRidesList ~ upcomingRides:", upcomingRides);
 
   const { data: archivedRidesData } = useQuery(queryDriverRides, {
-    variables: { filter: "archived" },
+    variables: {
+      filter: "archived",
+      limit: 6,
+      offset: 0,
+    },
   });
   const archivedRides = archivedRidesData?.driverRides;
+  console.log("🚀 ~ DriverRidesList ~ archivedRides:", archivedRides);
 
   return (
     <div className=" h-full w-full pt-4 pb-32 sm:pb-16 overflow-auto bg-gray-100">
-      <span className="flex items-center w-fit gap-2 ml-8  cursor-pointer">
+      <span className="flex items-center w-fit gap-2 ml-8 cursor-pointer">
         Trajets à venir
       </span>
-      {upcomingRides && upcomingRides?.length > 0 ? (
+      {upcomingRides && upcomingRides.rides.length > 0 ? (
         <>
-          <div className="flex h-fit w-full overflow-auto">
-            <ScrollableSnapList
-              driverUpcomingRides
-              dataset={upcomingRides}
-              getVariant={getVariant}
-              onSelect={setSelectedIndex}
-              direction={isSm ? "horizontal" : "vertical"}
-            />
-          </div>
-          {upcomingRides.length > 3 && (
+          <ScrollableSnapList
+            driverUpcomingRides
+            dataset={upcomingRides.rides}
+            getVariant={getVariant}
+            onSelect={setSelectedIndex}
+            sliderDirection={isMd ? "horizontal" : "vertical"}
+            slidePerView={2}
+            swiperClassName={!isMd ? "h-full w-full" : ""}
+          />
+          {upcomingRides.rides.length >= 3 && (
             <div className="mr-4 mt-2 flex justify-end">
               <button
                 onClick={() => setShowAllUpcoming((prev) => !prev)}
@@ -66,17 +75,20 @@ const DriverRidesList = () => {
       <span className="flex items-center w-fit gap-2 ml-8  cursor-pointer">
         Trajets archivés
       </span>
-      {archivedRides && archivedRides.length > 0 ? (
+      {archivedRides && archivedRides.rides.length > 0 ? (
         <>
-          <div className="flex h-fit w-full overflow-auto">
-            <ScrollableSnapList
-              dataset={archivedRides}
-              getVariant={getVariant}
-              onSelect={setSelectedIndex}
-              direction={isSm ? "horizontal" : "vertical"}
-            />
-          </div>
-          {archivedRides.length > 3 && (
+          {/* <div className="flex h-fit w-full overflow-auto"> */}
+          <ScrollableSnapList
+            driverUpcomingRides
+            dataset={archivedRides.rides}
+            getVariant={getVariant}
+            onSelect={setSelectedIndex}
+            sliderDirection={isMd ? "horizontal" : "vertical"}
+            slidePerView={2}
+            swiperClassName={!isMd ? "h-full w-full" : ""}
+          />
+          {/* </div> */}
+          {archivedRides.rides.length > 3 && (
             <div className="mr-4 mt-2 flex justify-end">
               <button
                 onClick={() => setShowAllArchived((prev) => !prev)}
