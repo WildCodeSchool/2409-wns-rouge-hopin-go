@@ -6,6 +6,8 @@ import { formatDate, formatTime } from "../utils/formatDate";
 import { SearchRidesQuery } from "../gql/graphql";
 import RegisterButton from "./RegisterButton";
 import PassengersButtonWithModal from "./PassengersButtonWithModal";
+import { useQuery } from "@apollo/client";
+import { queryWhoAmI } from "../api/WhoAmI";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
 
@@ -34,11 +36,16 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
     icon: CardIcon,
   } = variantConfigMap[variant];
 
+  const { data: whoAmIData } = useQuery(queryWhoAmI);
+  const me = whoAmIData?.whoami;
+
   const departureDate = new Date(data.departure_at);
   const arrivalDate = new Date(data.arrival_at);
   const departureTime = formatTime(departureDate);
   const arrivalTime = formatTime(arrivalDate);
   const dateStr = formatDate(departureDate);
+  const driver_id = data.driver_id?.id ?? "?";
+  console.log("Driver ID:", driver_id);
 
   const durationMin = Math.floor(
     (arrivalDate.getTime() - departureDate.getTime()) / 60000
@@ -55,16 +62,14 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
 
   return (
     <div
-      className={`${
-        isSelected && additionalClassName
-      } select-none transition-200 w-full sm:min-w-[32rem] sm:max-w-lg md:min-w-[23rem] md:max-w-[23rem] lg:min-w-[28rem] lg:max-w-[28rem] xl:min-w-[32rem] xl:max-w-lg p-4 transition-transform ${
-        onClick ? "cursor-pointer" : ""
-      }`}
+      className={`${isSelected && additionalClassName
+        } select-none transition-200 w-full sm:min-w-[32rem] sm:max-w-lg md:min-w-[23rem] md:max-w-[23rem] lg:min-w-[28rem] lg:max-w-[28rem] xl:min-w-[32rem] xl:max-w-lg p-4 transition-transform ${onClick ? "cursor-pointer" : ""
+        }`}
       onClick={onClick}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
     >
-      <div className="flex flex-col items-center justify-center bg-textLight border border-primary rounded-t-2xl rounded-br-2xl shadow-lg z-30">
+      <div className={`flex flex-col items-center justify-center bg-textLight border border-primary rounded-t-2xl ${me?.id !== driver_id ? "rounded-br-2xl" : ""} shadow-lg z-30`}>
         <div className="grid grid-cols-3 w-full p-4 h-32 sm:h-40 md:h-36 lg:h-40 z-30">
           <div
             className={`flex flex-col justify-between ${textColor} text-base sm:text-2xl md:text-base lg:text-2xl font-semibold`}
@@ -74,9 +79,8 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           </div>
 
           <div
-            className={`relative flex flex-col justify-between ${
-              windowWidth > 450 ? "col-span-1" : "col-span-2"
-            } ${textColor}`}
+            className={`relative flex flex-col justify-between ${windowWidth > 450 ? "col-span-1" : "col-span-2"
+              } ${textColor}`}
           >
             <div
               className={`dot absolute h-3 w-3 rounded-full ${bgFill} top-2 left-0 -translate-x-7`}
@@ -125,13 +129,12 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
       </div>
 
       <div className="relative w-full flex justify-between z-30">
-        <p className="absolute left-0 flex gap-2 items-center z-10 p-4 text-sm lg:text-base text-textLight">
+        <p className={`absolute left-0 flex gap-2 items-center z-10 p-4 text-sm lg:text-base text-textLight ${me?.id === driver_id ? "ml-3" : ""}`}>
           {statusLabel === "" ? (
             <>
               {availableSeats}
               {isLg &&
-                `${
-                  availableSeats > 1 ? " places restantes" : " place restante"
+                `${availableSeats > 1 ? " places restantes" : " place restante"
                 }`}
               {!isLg && (variant === "primary" || variant === "secondary") && (
                 <svg
@@ -166,30 +169,37 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             data={data}
           />
         )}
-        <p className="absolute right-0 pr-[70px] sm:pr-[70px] md:pr-[75px] lg:pr-[70px] z-10 p-4 text-sm lg:text-base text-textLight">
+        <p className={`absolute right-0 pr-[70px] sm:pr-[70px] md:pr-[75px] ${me?.id !== driver_id ? "lg:pr-[70px]" : "lg:pr-[50px]"} z-10 p-4 text-sm lg:text-base text-textLight`}>
           {dateStr}
         </p>
 
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 750.9 127"
-          className="w-full h-12 sm:h-14 md:scale-x-[0.95] lg:scale-100 md:-translate-x-[8.5px] lg:-translate-x-0 -translate-y-[1px] text-textDark z-0"
-          preserveAspectRatio="none"
-        >
-          <path
-            className={bgFill}
-            d="M1,1.5l-.5,92.98c0,17.68,14.34,32.02,32.02,32.02h630.96c17.68,0,32.02-14.34,32.02-32.02v-38.58c0-30.59,24.8-55.4,55.4-55.4L1,1.5Z"
-            stroke="currentColor"
-            strokeMiterlimit="10"
-            strokeWidth={1.5}
-          />
-        </svg>
-        <RegisterButton
-          rideId={data.id}
-          size="small"
-          variant={variant}
-          icon={CardIcon}
-        />
+        {me?.id !== driver_id ? (
+          <>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 750.9 127"
+              className="w-full h-12 sm:h-14 md:scale-x-[0.95] lg:scale-100 md:-translate-x-[8.5px] lg:-translate-x-0 -translate-y-[1px] text-textDark z-0"
+              preserveAspectRatio="none"
+            >
+              <path
+                className={bgFill}
+                d="M1,1.5l-.5,92.98c0,17.68,14.34,32.02,32.02,32.02h630.96c17.68,0,32.02-14.34,32.02-32.02v-38.58c0-30.59,24.8-55.4,55.4-55.4L1,1.5Z"
+                stroke="currentColor"
+                strokeMiterlimit="10"
+                strokeWidth={1.5}
+              />
+            </svg>
+            <RegisterButton
+              rideId={data.id}
+              size="small"
+              variant={variant}
+              icon={CardIcon}
+            />
+          </>
+        ) : (
+          <div className="bg-primary px-6 pt-2 rounded-b-3xl shadow-md w-[100%] h-14 pl-2"></div>
+        )}
+
       </div>
     </div>
   );
