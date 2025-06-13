@@ -195,3 +195,12 @@ export class SearchRideInput {
   @Validate(IsFutureDate)
   departure_at!: Date;
 }
+
+@ObjectType()
+export class PaginatedRides {
+  @Field(() => [Ride])
+  rides!: Ride[];
+
+  @Field()
+  totalCount!: number;
+}

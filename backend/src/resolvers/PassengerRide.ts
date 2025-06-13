@@ -20,34 +20,6 @@ import { ContextType } from "../auth";
 
 @Resolver()
 export class PassengerRideResolver {
-  // Rides où je suis conducteur
-  @Query(() => [Ride])
-  async driverRides(
-    @Ctx() ctx: AuthContextType,
-    @Arg("filter", () => String, { nullable: true }) filter?: string
-  ): Promise<Ride[]> {
-    if (!ctx.user) throw new Error("Unauthorized");
-
-    const userId = ctx.user.id;
-    const now = new Date();
-
-    let where: any = { driver_id: { id: userId } };
-
-    if (filter === "upcoming") {
-      where = { ...where, departure_at: MoreThan(now), is_canceled: false };
-    } else if (filter === "archived") {
-      where = { ...where, departure_at: LessThan(now) };
-    } else if (filter === "canceled") {
-      where = { ...where, is_canceled: true };
-    }
-
-    return Ride.find({
-      where,
-      relations: ["driver_id"],
-      order: { departure_at: "DESC" },
-    });
-  }
-
   // @Authorized()
   @Query(() => [PassengerRide])
   async passengersByRide(
@@ -88,7 +60,7 @@ export class PassengerRideResolver {
 
       const rideWithDriver = await manager.findOne(Ride, {
         where: { id: data.ride_id },
-        relations: ['driver_id']
+        relations: ["driver_id"],
       });
 
       if (!rideWithDriver) throw new Error("Conducteur introuvable");
