@@ -4,26 +4,34 @@ import { VariantType } from "../types/variantTypes";
 import useBreakpoints from "../utils/useWindowSize";
 import { useQuery } from "@apollo/client";
 import { queryPassengerRides } from "../api/PassengerRides";
-import { SearchRidesQuery } from "../gql/graphql";
+import { PassengerRidesQuery } from "../gql/graphql";
 
-type SearchRide = SearchRidesQuery["searchRide"][number];
+type SearchRide = PassengerRidesQuery["passengerRides"]["rides"][number];
+
 const PassengerRidesList = () => {
   const [, setSelectedIndex] = useState(0);
   const [showAllUpcoming, setShowAllUpcoming] = useState(false);
   const [showAllArchived, setShowAllArchived] = useState(false);
-
-  const { isSm } = useBreakpoints();
+  const { isSm, isMd, is2xl } = useBreakpoints();
 
   const { data: upcomingPassengerRidesData } = useQuery(queryPassengerRides, {
-    variables: { filter: "upcoming" },
+    variables: {
+      filter: "upcoming",
+      limit: showAllUpcoming ? 100 : 3,
+      offset: 0,
+    },
     fetchPolicy: "cache-and-network",
   });
-  const upcomingRides = upcomingPassengerRidesData?.passengerRides ?? [];
+  const upcomingRides = upcomingPassengerRidesData?.passengerRides.rides ?? [];
 
   const { data: archivedPassengerRidesData } = useQuery(queryPassengerRides, {
-    variables: { filter: "archived" },
+    variables: {
+      filter: "archived",
+      limit: showAllArchived ? 100 : 3,
+      offset: 0,
+    },
   });
-  const archivedRides = archivedPassengerRidesData?.passengerRides ?? [];
+  const archivedRides = archivedPassengerRidesData?.passengerRides.rides ?? [];
 
   const getVariant = (dataset: SearchRide): VariantType => {
     if (dataset.is_canceled) return "cancel";
@@ -37,22 +45,22 @@ const PassengerRidesList = () => {
   return (
     <div className="h-full w-full pt-4 pb-32 sm:pb-16 overflow-auto bg-gray-100">
       {/* Trajets à venir */}
-      {upcomingRides.length > 0 && (
+      {upcomingRides.length > 0 ? (
         <>
-          <span className="flex items-center w-fit gap-2 ml-8 cursor-pointer">
+          <span className="flex items-center w-fit gap-2 ml-4 cursor-pointer">
             Trajets à venir
           </span>
 
-          <div className="flex h-fit w-full overflow-auto">
-            <ScrollableSnapList
-              dataset={
-                showAllUpcoming ? upcomingRides : upcomingRides.slice(0, 3)
-              }
-              getVariant={getVariant}
-              onSelect={setSelectedIndex}
-              sliderDirection={isSm ? "horizontal" : "vertical"}
-            />
-          </div>
+          <ScrollableSnapList
+            dataset={upcomingRides}
+            getVariant={getVariant}
+            onSelect={setSelectedIndex}
+            sliderDirection={isMd ? "horizontal" : "vertical"}
+            slidePerView={is2xl ? 3 : isSm ? 2 : 3}
+            swiperClassName={!isMd ? "h-full w-full" : ""}
+            navigationArrows
+            showPagination
+          />
 
           {upcomingRides.length > 3 && (
             <div className="mr-4 mt-2 flex justify-end">
@@ -65,25 +73,27 @@ const PassengerRidesList = () => {
             </div>
           )}
         </>
+      ) : (
+        <div className="text-center w-full mt-10">Aucun trajet à venir.</div>
       )}
 
       {/* Trajets archivés */}
-      {archivedRides.length > 0 && (
+      {archivedRides.length > 0 ? (
         <>
-          <span className="flex items-center w-fit gap-2 ml-8 cursor-pointer mt-6">
+          <span className="flex items-center w-fit gap-2 ml-4 cursor-pointer mt-6">
             Trajets archivés
           </span>
 
-          <div className="flex h-fit w-full overflow-auto">
-            <ScrollableSnapList
-              dataset={
-                showAllArchived ? archivedRides : archivedRides.slice(0, 3)
-              }
-              getVariant={getVariant}
-              onSelect={setSelectedIndex}
-              sliderDirection={isSm ? "horizontal" : "vertical"}
-            />
-          </div>
+          <ScrollableSnapList
+            dataset={archivedRides}
+            getVariant={getVariant}
+            onSelect={setSelectedIndex}
+            sliderDirection={isMd ? "horizontal" : "vertical"}
+            slidePerView={is2xl ? 3 : isSm ? 2 : 3}
+            swiperClassName={!isMd ? "h-full w-full" : ""}
+            navigationArrows
+            showPagination
+          />
 
           {archivedRides.length > 3 && (
             <div className="mr-4 mt-2 flex justify-end">
@@ -96,13 +106,7 @@ const PassengerRidesList = () => {
             </div>
           )}
         </>
-      )}
-
-      {/* Messages si aucune donnée */}
-      {upcomingRides.length === 0 && (
-        <div className="text-center w-full mt-10">Aucun trajet à venir.</div>
-      )}
-      {archivedRides.length === 0 && (
+      ) : (
         <div className="text-center w-full mt-10">Aucun trajet archivé.</div>
       )}
     </div>

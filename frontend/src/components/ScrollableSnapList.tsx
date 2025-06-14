@@ -6,12 +6,20 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Swiper as SwiperType } from "swiper";
 import "swiper/css";
 import "swiper/css/scrollbar";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
-import { Keyboard, Mousewheel, Scrollbar } from "swiper/modules";
+import {
+  Keyboard,
+  Mousewheel,
+  Navigation,
+  Pagination,
+  Scrollbar,
+} from "swiper/modules";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
 
-type ScrollableSnapListProps<T extends SearchRide> = {
+interface ScrollableSnapListProps<T extends SearchRide> {
   dataset: T[];
   getVariant: (data: T) => VariantType;
   onSelect: (index: number) => void;
@@ -21,7 +29,9 @@ type ScrollableSnapListProps<T extends SearchRide> = {
   centerSlides?: boolean;
   swiperClassName?: string;
   slidePerView?: number;
-};
+  navigationArrows?: boolean;
+  showPagination?: boolean;
+}
 
 const ScrollableSnapList = <T extends SearchRide>({
   dataset,
@@ -33,6 +43,8 @@ const ScrollableSnapList = <T extends SearchRide>({
   centerSlides = false,
   swiperClassName = "",
   slidePerView = 3,
+  navigationArrows,
+  showPagination = false,
 }: ScrollableSnapListProps<T>) => {
   const swiperRef = useRef<SwiperType>();
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -60,10 +72,12 @@ const ScrollableSnapList = <T extends SearchRide>({
       mousewheel={true}
       rewind={true}
       keyboard={{ enabled: true }}
-      modules={[Keyboard, Mousewheel, Scrollbar]}
+      modules={[Keyboard, Mousewheel, Scrollbar, Navigation, Pagination]}
       className={`mySwiper  ${swiperClassName}`}
       scrollbar={{ hide: true, draggable: true }}
       slidesPerView={slidePerView}
+      navigation={navigationArrows}
+      pagination={showPagination ? { clickable: true } : false}
     >
       {dataset.map((data, index) => (
         <SwiperSlide

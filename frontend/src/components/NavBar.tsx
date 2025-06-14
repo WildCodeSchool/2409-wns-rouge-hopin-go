@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useMutation, useQuery } from "@apollo/client";
+import { useApolloClient, useMutation, useQuery } from "@apollo/client";
 import { queryWhoAmI } from "../api/WhoAmI";
 import { mutationSignout } from "../api/Signout";
 import maleUser from "../assets/male-user.png";
@@ -17,7 +17,7 @@ import { useOutsideClick } from "../hooks/useOutsideClick";
 const NavBar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-
+  const client = useApolloClient();
   const toggleMenuRef = useRef<HTMLDivElement>(null);
   useOutsideClick(toggleMenuRef, () => setIsOpen(false), isOpen);
 
@@ -31,6 +31,7 @@ const NavBar = () => {
 
   const handleSignout = () => {
     doSignout();
+    client.resetStore(); // Réinitialise le cache Apollo
     navigate("/");
   };
 
