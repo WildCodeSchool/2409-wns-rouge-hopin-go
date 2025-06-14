@@ -16,7 +16,7 @@ const DriverRidesList = () => {
   const [archivedList, setArchivedList] = useState<SearchRide[]>([]);
   const limit = 3;
 
-  const { isSm, isMd, is2xl } = useBreakpoints();
+  const { isSm, isMd, isLg, is2xl } = useBreakpoints();
 
   const getVariant = (dataset: SearchRide): VariantType => {
     if (dataset.is_canceled) return "cancel";
@@ -62,7 +62,7 @@ const DriverRidesList = () => {
             getVariant={getVariant}
             onSelect={setSelectedIndex}
             sliderDirection={isMd ? "horizontal" : "vertical"}
-            slidePerView={is2xl ? 3 : isSm ? 2 : 3}
+            slidePerView={isLg ? 3 : isSm ? 2 : 3}
             swiperClassName={!isMd ? "h-full w-full" : ""}
             navigationArrows
             showPagination

@@ -30,7 +30,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   additionalClassName = "",
   driverUpcomingRides,
 }) => {
-  const { isMd, isLg, isXl, windowWidth } = useWindowSize();
+  const { isMd, isXl, is2xl, windowWidth } = useWindowSize();
   const {
     textColor,
     bgFill,
@@ -65,7 +65,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
     <div
       className={`${
         isSelected && additionalClassName
-      } select-none transition-200 min-h-[200px] w-full sm:min-w-[32rem] sm:max-w-lg md:min-w-[23rem] md:max-w-[23rem] lg:min-w-[28rem] lg:max-w-[28rem] xl:min-w-[32rem] xl:max-w-lg p-4 transition-transform ${
+      } select-none transition-200 min-h-[200px] w-full max-w-[500px] p-4 transition-transform ${
         onClick ? "cursor-pointer" : ""
       }`}
       onClick={onClick}
@@ -146,11 +146,11 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           {statusLabel === "" ? (
             <>
               {availableSeats}
-              {isLg &&
+              {is2xl &&
                 `${
                   availableSeats > 1 ? " places restantes" : " place restante"
                 }`}
-              {!isLg && (variant === "primary" || variant === "secondary") && (
+              {!is2xl && (variant === "primary" || variant === "secondary") && (
                 <svg
                   fill="none"
                   height="20"
@@ -180,9 +180,9 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           />
         )}
         <p
-          className={`absolute right-0 pr-[70px] sm:pr-[70px] md:pr-[75px] ${
-            me?.id !== driver_id ? "lg:pr-[70px]" : "lg:pr-[50px]"
-          } z-10 p-4 text-sm lg:text-base text-textLight`}
+          className={`absolute ${
+            me?.id === driver_id ? "right-0" : "right-16"
+          }   z-10 p-4 text-sm lg:text-base text-textLight`}
         >
           {dateStr}
         </p>
