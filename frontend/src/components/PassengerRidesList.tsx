@@ -10,28 +10,13 @@ type SearchRide = PassengerRidesQuery["passengerRides"]["rides"][number];
 
 const PassengerRidesList = () => {
   const [, setSelectedIndex] = useState(0);
-  const [showAllUpcoming, setShowAllUpcoming] = useState(false);
-  const [showAllArchived, setShowAllArchived] = useState(false);
+  const [upcomingOffset, setUpcomingOffset] = useState(0);
+  const [upcomingList, setUpcomingList] = useState<SearchRide[]>([]);
+  const [archivedOffset, setArchivedOffset] = useState(0);
+  const [archivedList, setArchivedList] = useState<SearchRide[]>([]);
+  const limit = 3;
+
   const { isSm, isMd, is2xl } = useBreakpoints();
-
-  const { data: upcomingPassengerRidesData } = useQuery(queryPassengerRides, {
-    variables: {
-      filter: "upcoming",
-      limit: showAllUpcoming ? 100 : 3,
-      offset: 0,
-    },
-    fetchPolicy: "cache-and-network",
-  });
-  const upcomingRides = upcomingPassengerRidesData?.passengerRides.rides ?? [];
-
-  const { data: archivedPassengerRidesData } = useQuery(queryPassengerRides, {
-    variables: {
-      filter: "archived",
-      limit: showAllArchived ? 100 : 3,
-      offset: 0,
-    },
-  });
-  const archivedRides = archivedPassengerRidesData?.passengerRides.rides ?? [];
 
   const getVariant = (dataset: SearchRide): VariantType => {
     if (dataset.is_canceled) return "cancel";
@@ -42,17 +27,36 @@ const PassengerRidesList = () => {
     return "primary";
   };
 
+  const { data: upcomingData } = useQuery(queryPassengerRides, {
+    variables: { filter: "upcoming", limit, offset: upcomingOffset },
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      const newRides = data?.passengerRides?.rides ?? [];
+      setUpcomingList((prev) => [...prev, ...newRides]);
+    },
+  });
+  const totalUpcoming = upcomingData?.passengerRides?.totalCount ?? 0;
+
+  const { data: archivedData } = useQuery(queryPassengerRides, {
+    variables: { filter: "archived", limit, offset: archivedOffset },
+    onCompleted: (data) => {
+      const newRides = data?.passengerRides?.rides ?? [];
+      setArchivedList((prev) => [...prev, ...newRides]);
+    },
+  });
+  const totalArchived = archivedData?.passengerRides?.totalCount ?? 0;
+
   return (
     <div className="h-full w-full pt-4 pb-32 sm:pb-16 overflow-auto bg-gray-100">
       {/* Trajets à venir */}
-      {upcomingRides.length > 0 ? (
+      {upcomingList.length > 0 ? (
         <>
           <span className="flex items-center w-fit gap-2 ml-4 cursor-pointer">
             Trajets à venir
           </span>
 
           <ScrollableSnapList
-            dataset={upcomingRides}
+            dataset={upcomingList}
             getVariant={getVariant}
             onSelect={setSelectedIndex}
             sliderDirection={isMd ? "horizontal" : "vertical"}
@@ -62,30 +66,41 @@ const PassengerRidesList = () => {
             showPagination
           />
 
-          {upcomingRides.length > 3 && (
+          {totalUpcoming > upcomingList.length ? (
             <div className="mr-4 mt-2 flex justify-end">
               <button
-                onClick={() => setShowAllUpcoming((prev) => !prev)}
+                onClick={() => setUpcomingOffset((prev) => prev + limit)}
                 className="text-primary underline"
               >
-                {showAllUpcoming ? "Voir moins" : "Voir plus"}
+                Voir plus
               </button>
             </div>
-          )}
+          ) : upcomingList.length > limit ? (
+            <div className="mr-4 mt-2 flex justify-end">
+              <button
+                onClick={() => {
+                  setUpcomingList([]);
+                  setUpcomingOffset(0);
+                }}
+                className="text-primary underline"
+              >
+                Voir moins
+              </button>
+            </div>
+          ) : null}
         </>
       ) : (
         <div className="text-center w-full mt-10">Aucun trajet à venir.</div>
       )}
 
       {/* Trajets archivés */}
-      {archivedRides.length > 0 ? (
+      <span className="flex items-center w-fit gap-2 ml-4 cursor-pointer mt-6">
+        Trajets archivés
+      </span>
+      {archivedList.length > 0 ? (
         <>
-          <span className="flex items-center w-fit gap-2 ml-4 cursor-pointer mt-6">
-            Trajets archivés
-          </span>
-
           <ScrollableSnapList
-            dataset={archivedRides}
+            dataset={archivedList}
             getVariant={getVariant}
             onSelect={setSelectedIndex}
             sliderDirection={isMd ? "horizontal" : "vertical"}
@@ -95,16 +110,28 @@ const PassengerRidesList = () => {
             showPagination
           />
 
-          {archivedRides.length > 3 && (
+          {totalArchived > archivedList.length ? (
             <div className="mr-4 mt-2 flex justify-end">
               <button
-                onClick={() => setShowAllArchived((prev) => !prev)}
+                onClick={() => setArchivedOffset((prev) => prev + limit)}
                 className="text-primary underline"
               >
-                {showAllArchived ? "Voir moins" : "Voir plus"}
+                Voir plus
               </button>
             </div>
-          )}
+          ) : archivedList.length > limit ? (
+            <div className="mr-4 mt-2 flex justify-end">
+              <button
+                onClick={() => {
+                  setArchivedList([]);
+                  setArchivedOffset(0);
+                }}
+                className="text-primary underline"
+              >
+                Voir moins
+              </button>
+            </div>
+          ) : null}
         </>
       ) : (
         <div className="text-center w-full mt-10">Aucun trajet archivé.</div>

@@ -29,10 +29,28 @@ const NavBar = () => {
     refetchQueries: [queryWhoAmI],
   });
 
-  const handleSignout = () => {
-    doSignout();
-    client.resetStore(); // Réinitialise le cache Apollo
-    navigate("/");
+  const handleSignout = async () => {
+    try {
+      await doSignout(); // fait la mutation logout
+      await client.clearStore(); // vide le cache SANS refetch automatique
+
+      // On refetch manuellement WHOAMI, mais on ignore l'erreur si Unauthorized
+      try {
+        await client.refetchQueries({
+          include: [queryWhoAmI],
+        });
+      } catch (err) {
+        // Ignorer les erreurs 401
+        console.warn(
+          "Refetch whoami après logout a échoué (normal si 401)",
+          err
+        );
+      }
+
+      navigate("/");
+    } catch (error) {
+      console.error("Erreur lors de la déconnexion :", error);
+    }
   };
 
   return (
