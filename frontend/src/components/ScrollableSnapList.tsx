@@ -73,7 +73,7 @@ const ScrollableSnapList = <T extends SearchRide>({
       rewind={true}
       keyboard={{ enabled: true }}
       modules={[Keyboard, Mousewheel, Scrollbar, Navigation, Pagination]}
-      className={`mySwiper  ${swiperClassName}`}
+      className={`mySwiper w-full  ${swiperClassName}`}
       scrollbar={{ hide: true, draggable: true }}
       slidesPerView={slidePerView}
       navigation={navigationArrows}
@@ -89,7 +89,7 @@ const ScrollableSnapList = <T extends SearchRide>({
                 : "scale-100 z-0"
             }
             flex justify-center items-center
-            h-auto min-h-[200px]`}
+            h-auto min-h-[200px] w-full`}
         >
           <CardTemplate
             variant={getVariant(data)}

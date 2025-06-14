@@ -143,9 +143,9 @@ h1 {
   @apply hidden;
 }
 
-/* .swiper-slide {
-  @apply flex items-center justify-center;
-} */
+.swiper-slide {
+  @apply !flex !items-center !justify-center;
+}
 
 .swiper-button-prev,
 .swiper-button-next {

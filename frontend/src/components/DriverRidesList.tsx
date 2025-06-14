@@ -64,8 +64,8 @@ const DriverRidesList = () => {
             sliderDirection={isMd ? "horizontal" : "vertical"}
             slidePerView={isLg ? 3 : isSm ? 2 : 3}
             swiperClassName={!isMd ? "h-full w-full" : ""}
-            navigationArrows
-            showPagination
+            navigationArrows={isMd ? true : false}
+            showPagination={isMd ? true : false}
           />
           {totalUpcoming > upcomingList.length ? (
             <div className="mr-4 mt-2 flex justify-end">
