@@ -60,6 +60,8 @@ const RideResults = () => {
   }
 
   const rides = dataSearched?.searchRide ?? [];
+  console.log("🚀 ~ RideResults ~ rides:", rides);
+  console.log("🚀 ~ RideResults ~ dataSearched:", dataSearched?.searchRide);
 
   const getVariant = (ride: SearchRide): VariantType => {
     if (ride.is_canceled) return "cancel";

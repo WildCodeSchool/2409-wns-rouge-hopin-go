@@ -7,6 +7,7 @@ import SearchRide from "./SearchRide";
 import Button from "./Button";
 import { Search } from "lucide-react";
 import RegisterButton from "./RegisterButton";
+import Map from "./Map";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
 
@@ -16,6 +17,7 @@ type CardRideDetailsProps = {
 };
 
 const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
+  console.log("🚀 ~ data:", data);
   const { textColor, bgFill } = variantConfigMap[variant];
   const { isMd, isLg, isXl } = useBreakpoints();
 
@@ -58,7 +60,7 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
         </div>
       </div>
       <div
-        className={`hidden relative z-10 md:block p-8 mt-40 mb-40 mr-8 rounded-3xl space-y-5 shadow-custom py-20 md:w-full border-4 border-primary ${textColor} bg-gray-100`}
+        className={`hidden relative z-10 md:block p-8 mt-40 mb-40 mr-8 rounded-3xl space-y-5 shadow-custom  md:w-full h-fit border-4 border-primary ${textColor} bg-gray-100`}
       >
         <div className="pointer-events-none absolute -left-full lg:translate-x-[3px] xl:translate-x-[1px] bg-gray-100 top-1/2 -translate-y-1/2 w-full flex justify-center">
           <svg
@@ -78,26 +80,30 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
             />
           </svg>
         </div>
+        <div className="flex w-full justify-between  gap-2">
+          <div>
+            <h2 className={`text-2xl font-bold mb-2 ${textColor}`}>
+              {driverName}
+            </h2>
+            <h2 className={`text-xl font-bold mb-2 ${textColor}`}>
+              Détails du trajet
+            </h2>
+            <p className="text-sm md:text-base">{dateStr}</p>
+            <p className="text-xl md:text-4xl font-semibold">
+              {price.toFixed(2)}
+              <span className="text-sm md:text-2xl"> €</span>
+            </p>
 
-        <h2 className={`text-2xl font-bold mb-2 ${textColor}`}>{driverName}</h2>
-        <h2 className={`text-xl font-bold mb-2 ${textColor}`}>
-          Détails du trajet
-        </h2>
-        <p className="text-sm md:text-base">{dateStr}</p>
-        <p className="text-xl md:text-4xl font-semibold">
-          {price.toFixed(2)}
-          <span className="text-sm md:text-2xl"> €</span>
-        </p>
-
-        <div className="flex flex-col gap-2">
-          <p>
-            {variant === "cancel" || variant === "full"
-              ? "Non disponible"
-              : `${availableSeats} ${
-                  availableSeats > 1 ? "places restantes" : "place restante"
-                }`}
-          </p>
-
+            <div className="flex flex-col gap-2">
+              <p>
+                {variant === "cancel" || variant === "full"
+                  ? "Non disponible"
+                  : `${availableSeats} ${
+                      availableSeats > 1 ? "places restantes" : "place restante"
+                    }`}
+              </p>
+            </div>
+          </div>
           <div className="flex justify-start h-40">
             <div
               className={`flex flex-col w-28 justify-between ${textColor} text-base md:text-2xl font-semibold`}
@@ -137,6 +143,7 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
           </div>
         </div>
         <RegisterButton variant={variant} rideId={data.id} size="large" />
+        <Map />
       </div>
     </div>
   );
