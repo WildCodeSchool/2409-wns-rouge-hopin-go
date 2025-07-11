@@ -4,26 +4,19 @@ import { VariantType } from "../types/variantTypes";
 import useBreakpoints from "../utils/useWindowSize";
 import { useQuery } from "@apollo/client";
 import { queryPassengerRides } from "../api/PassengerRides";
-import { SearchRidesQuery } from "../gql/graphql";
+import { PassengerRidesQuery } from "../gql/graphql";
 
-type SearchRide = SearchRidesQuery["searchRide"][number];
+type SearchRide = PassengerRidesQuery["passengerRides"]["rides"][number];
+
 const PassengerRidesList = () => {
   const [, setSelectedIndex] = useState(0);
-  const [showAllUpcoming, setShowAllUpcoming] = useState(false);
-  const [showAllArchived, setShowAllArchived] = useState(false);
+  const [upcomingOffset, setUpcomingOffset] = useState(0);
+  const [upcomingList, setUpcomingList] = useState<SearchRide[]>([]);
+  const [archivedOffset, setArchivedOffset] = useState(0);
+  const [archivedList, setArchivedList] = useState<SearchRide[]>([]);
+  const limit = 3;
 
-  const { isSm } = useBreakpoints();
-
-  const { data: upcomingPassengerRidesData } = useQuery(queryPassengerRides, {
-    variables: { filter: "upcoming" },
-    fetchPolicy: "cache-and-network",
-  });
-  const upcomingRides = upcomingPassengerRidesData?.passengerRides ?? [];
-
-  const { data: archivedPassengerRidesData } = useQuery(queryPassengerRides, {
-    variables: { filter: "archived" },
-  });
-  const archivedRides = archivedPassengerRidesData?.passengerRides ?? [];
+  const { isSm, isMd, is2xl } = useBreakpoints();
 
   const getVariant = (dataset: SearchRide): VariantType => {
     if (dataset.is_canceled) return "cancel";
@@ -34,75 +27,113 @@ const PassengerRidesList = () => {
     return "primary";
   };
 
+  const { data: upcomingData } = useQuery(queryPassengerRides, {
+    variables: { filter: "upcoming", limit, offset: upcomingOffset },
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      const newRides = data?.passengerRides?.rides ?? [];
+      setUpcomingList((prev) => [...prev, ...newRides]);
+    },
+  });
+  const totalUpcoming = upcomingData?.passengerRides?.totalCount ?? 0;
+
+  const { data: archivedData } = useQuery(queryPassengerRides, {
+    variables: { filter: "archived", limit, offset: archivedOffset },
+    onCompleted: (data) => {
+      const newRides = data?.passengerRides?.rides ?? [];
+      setArchivedList((prev) => [...prev, ...newRides]);
+    },
+  });
+  const totalArchived = archivedData?.passengerRides?.totalCount ?? 0;
+
   return (
     <div className="h-full w-full pt-4 pb-32 sm:pb-16 overflow-auto bg-gray-100">
       {/* Trajets à venir */}
-      {upcomingRides.length > 0 && (
+      {upcomingList.length > 0 ? (
         <>
-          <span className="flex items-center w-fit gap-2 ml-8 cursor-pointer">
+          <span className="flex items-center w-fit gap-2 ml-4 cursor-pointer">
             Trajets à venir
           </span>
 
-          <div className="flex h-fit w-full overflow-auto">
-            <ScrollableSnapList
-              dataset={
-                showAllUpcoming ? upcomingRides : upcomingRides.slice(0, 3)
-              }
-              getVariant={getVariant}
-              onSelect={setSelectedIndex}
-              sliderDirection={isSm ? "horizontal" : "vertical"}
-            />
-          </div>
+          <ScrollableSnapList
+            dataset={upcomingList}
+            getVariant={getVariant}
+            onSelect={setSelectedIndex}
+            sliderDirection={isMd ? "horizontal" : "vertical"}
+            slidePerView={is2xl ? 3 : isSm ? 2 : 3}
+            swiperClassName={!isMd ? "h-full w-full" : ""}
+            navigationArrows
+            showPagination
+          />
 
-          {upcomingRides.length > 3 && (
+          {totalUpcoming > upcomingList.length ? (
             <div className="mr-4 mt-2 flex justify-end">
               <button
-                onClick={() => setShowAllUpcoming((prev) => !prev)}
+                onClick={() => setUpcomingOffset((prev) => prev + limit)}
                 className="text-primary underline"
               >
-                {showAllUpcoming ? "Voir moins" : "Voir plus"}
+                Voir plus
               </button>
             </div>
-          )}
+          ) : upcomingList.length > limit ? (
+            <div className="mr-4 mt-2 flex justify-end">
+              <button
+                onClick={() => {
+                  setUpcomingList([]);
+                  setUpcomingOffset(0);
+                }}
+                className="text-primary underline"
+              >
+                Voir moins
+              </button>
+            </div>
+          ) : null}
         </>
+      ) : (
+        <div className="text-center w-full mt-10">Aucun trajet à venir.</div>
       )}
 
       {/* Trajets archivés */}
-      {archivedRides.length > 0 && (
+      <span className="flex items-center w-fit gap-2 ml-4 cursor-pointer mt-6">
+        Trajets archivés
+      </span>
+      {archivedList.length > 0 ? (
         <>
-          <span className="flex items-center w-fit gap-2 ml-8 cursor-pointer mt-6">
-            Trajets archivés
-          </span>
+          <ScrollableSnapList
+            dataset={archivedList}
+            getVariant={getVariant}
+            onSelect={setSelectedIndex}
+            sliderDirection={isMd ? "horizontal" : "vertical"}
+            slidePerView={is2xl ? 3 : isSm ? 2 : 3}
+            swiperClassName={!isMd ? "h-full w-full" : ""}
+            navigationArrows
+            showPagination
+          />
 
-          <div className="flex h-fit w-full overflow-auto">
-            <ScrollableSnapList
-              dataset={
-                showAllArchived ? archivedRides : archivedRides.slice(0, 3)
-              }
-              getVariant={getVariant}
-              onSelect={setSelectedIndex}
-              sliderDirection={isSm ? "horizontal" : "vertical"}
-            />
-          </div>
-
-          {archivedRides.length > 3 && (
+          {totalArchived > archivedList.length ? (
             <div className="mr-4 mt-2 flex justify-end">
               <button
-                onClick={() => setShowAllArchived((prev) => !prev)}
+                onClick={() => setArchivedOffset((prev) => prev + limit)}
                 className="text-primary underline"
               >
-                {showAllArchived ? "Voir moins" : "Voir plus"}
+                Voir plus
               </button>
             </div>
-          )}
+          ) : archivedList.length > limit ? (
+            <div className="mr-4 mt-2 flex justify-end">
+              <button
+                onClick={() => {
+                  setArchivedList([]);
+                  setArchivedOffset(0);
+                }}
+                className="text-primary underline"
+              >
+                Voir moins
+              </button>
+            </div>
+          ) : null}
         </>
-      )}
-
-      {/* Messages si aucune donnée */}
-      {upcomingRides.length === 0 && (
-        <div className="text-center w-full mt-10">Aucun trajet à venir.</div>
-      )}
-      {archivedRides.length === 0 && (
+      ) : (
         <div className="text-center w-full mt-10">Aucun trajet archivé.</div>
       )}
     </div>

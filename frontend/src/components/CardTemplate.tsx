@@ -30,7 +30,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   additionalClassName = "",
   driverUpcomingRides,
 }) => {
-  const { isMd, isLg, isXl, windowWidth } = useWindowSize();
+  const { isMd, isXl, is2xl, windowWidth } = useWindowSize();
   const {
     textColor,
     bgFill,
@@ -47,7 +47,6 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   const arrivalTime = formatTime(arrivalDate);
   const dateStr = formatDate(departureDate);
   const driver_id = data.driver_id?.id ?? "?";
-  console.log("Driver ID:", driver_id);
 
   const durationMin = Math.floor(
     (arrivalDate.getTime() - departureDate.getTime()) / 60000
@@ -64,15 +63,21 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
 
   return (
     <div
-      className={`${isSelected && additionalClassName
-        } select-none transition-200 min-h-[200px] w-full sm:min-w-[32rem] sm:max-w-lg md:min-w-[23rem] md:max-w-[23rem] lg:min-w-[28rem] lg:max-w-[28rem] xl:min-w-[32rem] xl:max-w-lg p-4 transition-transform ${onClick ? "cursor-pointer" : ""
-        }`}
+      className={`${
+        isSelected && additionalClassName
+      } select-none transition-200 min-h-[200px] w-full max-w-[500px] p-4 transition-transform ${
+        onClick ? "cursor-pointer" : ""
+      }`}
       onClick={onClick}
       onScroll={onScroll}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
     >
-      <div className={`flex flex-col items-center justify-center bg-textLight border border-primary rounded-t-2xl ${me?.id !== driver_id ? "rounded-br-2xl" : ""} shadow-lg z-30`}>
+      <div
+        className={`flex flex-col items-center justify-center bg-textLight border border-primary rounded-t-2xl ${
+          me?.id !== driver_id ? "rounded-br-2xl" : ""
+        } shadow-lg z-30`}
+      >
         <div className="grid grid-cols-3 w-full p-4 h-32 sm:h-40 md:h-36 lg:h-40 z-30">
           <div
             className={`flex flex-col justify-between ${textColor} text-base sm:text-2xl md:text-base lg:text-2xl font-semibold`}
@@ -82,8 +87,9 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           </div>
 
           <div
-            className={`relative flex flex-col justify-between ${windowWidth > 450 ? "col-span-1" : "col-span-2"
-              } ${textColor}`}
+            className={`relative flex flex-col justify-between ${
+              windowWidth > 450 ? "col-span-1" : "col-span-2"
+            } ${textColor}`}
           >
             <div
               className={`dot absolute h-3 w-3 rounded-full ${bgFill} top-2 left-0 -translate-x-7`}
@@ -132,14 +138,19 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
       </div>
 
       <div className="relative w-full flex justify-between z-30">
-        <p className={`absolute left-0 flex gap-2 items-center z-10 p-4 text-sm lg:text-base text-textLight ${me?.id === driver_id ? "ml-3" : ""}`}>
+        <p
+          className={`absolute left-0 flex gap-2 items-center z-10 p-4 text-sm lg:text-base text-textLight ${
+            me?.id === driver_id ? "ml-3" : ""
+          }`}
+        >
           {statusLabel === "" ? (
             <>
               {availableSeats}
-              {isLg &&
-                `${availableSeats > 1 ? " places restantes" : " place restante"
+              {is2xl &&
+                `${
+                  availableSeats > 1 ? " places restantes" : " place restante"
                 }`}
-              {!isLg && (variant === "primary" || variant === "secondary") && (
+              {!is2xl && (variant === "primary" || variant === "secondary") && (
                 <svg
                   fill="none"
                   height="20"
@@ -147,7 +158,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
                   width="20"
                   xmlns="http://www.w3.org/2000/svg"
                 >
-                  <g clipRule="evenodd" fill="currentColor" fill-rule="evenodd">
+                  <g clipRule="evenodd" fill="currentColor" fillRule="evenodd">
                     <path d="m5.25 22c0-.4142.33579-.75.75-.75h12c.4142 0 .75.3358.75.75s-.3358.75-.75.75h-12c-.41421 0-.75-.3358-.75-.75z" />
                     <path d="m4.25 16.5c0-1.5188 1.23122-2.75 2.75-2.75h10c1.5188 0 2.75 1.2312 2.75 2.75v3c0 .4142-.3358.75-.75.75h-14c-.41421 0-.75-.3358-.75-.75zm2.75-1.25c-.69036 0-1.25.5596-1.25 1.25v2.25h12.5v-2.25c0-.6904-.5596-1.25-1.25-1.25z" />
                     <path d="m6.75 4c0-1.51878 1.23122-2.75 2.75-2.75h5c1.5188 0 2.75 1.23122 2.75 2.75v.5c0 .41421-.3358.75-.75.75s-.75-.33579-.75-.75v-.5c0-.69036-.5596-1.25-1.25-1.25h-5c-.69036 0-1.25.55964-1.25 1.25v9.75h7.5v-5.25c0-.41421.3358-.75.75-.75s.75.33579.75.75v6c0 .4142-.3358.75-.75.75h-9c-.41421 0-.75-.3358-.75-.75z" />
@@ -168,7 +179,11 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             data={data}
           />
         )}
-        <p className={`absolute right-0 pr-[70px] sm:pr-[70px] md:pr-[75px] ${me?.id !== driver_id ? "lg:pr-[70px]" : "lg:pr-[50px]"} z-10 p-4 text-sm lg:text-base text-textLight`}>
+        <p
+          className={`absolute ${
+            me?.id === driver_id ? "right-0" : "right-16"
+          }   z-10 p-4 text-sm lg:text-base text-textLight`}
+        >
           {dateStr}
         </p>
 
@@ -198,7 +213,6 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
         ) : (
           <div className="bg-primary px-6 pt-2 rounded-b-3xl shadow-md w-[100%] h-14 pl-2"></div>
         )}
-
       </div>
     </div>
   );

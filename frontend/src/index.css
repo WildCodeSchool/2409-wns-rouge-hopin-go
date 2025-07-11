@@ -134,14 +134,43 @@ h1 {
 /* .mySwiper {
   @apply w-full h-full bg-orange-600;
 }
+*/
 .swiper-wrapper {
-  @apply flex  items-center justify-center;
-} */
+  @apply min-h-[280px];
+}
 
 .swiper-scrollbar {
   @apply hidden;
 }
 
-/* .swiper-slide {
-  @apply flex items-center justify-center;
-} */
+.swiper-slide {
+  @apply !flex !items-center !justify-center;
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  @apply !text-primary transition-200 absolute top-1/2 -translate-y-1/2 z-10  flex items-center justify-center;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  @apply !text-primaryHover;
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+  @apply !text-2xl;
+}
+
+.swiper-pagination-bullet {
+  @apply !bg-primary;
+}
+.swiper-pagination-bullet-active {
+  @apply !bg-primaryHover;
+}
+.swiper-pagination-bullet:hover {
+  @apply !bg-primaryHover;
+}
+.swiper-pagination-bullet-active:hover {
+  @apply !bg-primary;
+}

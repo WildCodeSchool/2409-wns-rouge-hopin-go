@@ -17,7 +17,6 @@ import { useOutsideClick } from "../hooks/useOutsideClick";
 const NavBar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-
   const toggleMenuRef = useRef<HTMLDivElement>(null);
   useOutsideClick(toggleMenuRef, () => setIsOpen(false), isOpen);
 
