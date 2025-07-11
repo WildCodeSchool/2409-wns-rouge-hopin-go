@@ -10,7 +10,6 @@ import {
 import {
   CreatePassengerRideInput,
   PassengerRide,
-  PassengerValidationInput,
 } from "../entities/PassengerRide";
 import { validate } from "class-validator";
 import { Ride } from "../entities/Ride";
@@ -21,7 +20,7 @@ import { ContextType } from "../auth";
 
 @Resolver()
 export class PassengerRideResolver {
-  @Authorized()
+  // @Authorized()
   @Query(() => [PassengerRide])
   async passengersByRide(
     @Arg("ride_id", () => ID) ride_id: number
@@ -84,7 +83,6 @@ export class PassengerRideResolver {
     });
   }
 
-  @Authorized("user")
   @Query(() => [Ride])
   async passengerRides(
     @Ctx() ctx: AuthContextType,
@@ -113,63 +111,5 @@ export class PassengerRideResolver {
       });
 
     return rides;
-  }
-
-  private async getAuthorizedPassengerRide(
-    ctx: AuthContextType,
-    data: PassengerValidationInput
-  ): Promise<PassengerRide> {
-    if (!ctx.user) throw new Error("Unauthorized");
-
-    const passengerRide = await PassengerRide.findOne({
-      where: { user_id: data.user_id, ride_id: data.ride_id },
-      relations: ["ride", "ride.driver_id"],
-    });
-
-    if (!passengerRide) throw new Error("Passenger ride not found");
-
-    if (passengerRide.ride.driver_id.id !== ctx.user.id) {
-      throw new Error("You are not the driver of this ride");
-    }
-
-    return passengerRide;
-  }
-
-  @Authorized("user")
-  @Mutation(() => PassengerRide)
-  async validatePassengerRide(
-    @Ctx() ctx: AuthContextType,
-    @Arg("data", () => PassengerValidationInput) data: PassengerValidationInput
-  ): Promise<PassengerRide> {
-    try {
-      const passengerRide = await this.getAuthorizedPassengerRide(ctx, data);
-
-      passengerRide.status = "approved";
-      await passengerRide.save();
-
-      return passengerRide;
-    } catch (error) {
-      console.error(error);
-      throw new Error("Unable to validate the passenger ride");
-    }
-  }
-
-  @Authorized("user")
-  @Mutation(() => PassengerRide)
-  async refusePassengerRide(
-    @Arg("data", () => PassengerValidationInput) data: PassengerValidationInput,
-    @Ctx() ctx: AuthContextType
-  ): Promise<PassengerRide> {
-    try {
-      const passengerRide = await this.getAuthorizedPassengerRide(ctx, data);
-
-      passengerRide.status = "refused";
-      await passengerRide.save();
-
-      return passengerRide;
-    } catch (error) {
-      console.error(error);
-      throw new Error("Unable to refuse the passenger ride");
-    }
   }
 }

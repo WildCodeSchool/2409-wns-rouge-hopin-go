@@ -31,10 +31,12 @@ const PassengersButtonWithModal = ({
   const { data: passengersData, loading } = useQuery(queryPassengersByRide, {
     variables: { ride_id: rideId },
   });
+  console.log("data", passengersData);
 
   if (loading) return <p>Chargement des passagers…</p>;
 
   const passengers = passengersData?.passengersByRide ?? [];
+  console.log("Passengers data:", passengers);
 
   const waitingPassengers = passengers?.filter(
     (passenger) => passenger.status === "waiting"

@@ -20,6 +20,7 @@ const PassengerRidesList = () => {
     fetchPolicy: "cache-and-network",
   });
   const upcomingRides = upcomingPassengerRidesData?.passengerRides ?? [];
+  console.log("Upcoming rides:", upcomingRides);
 
   const { data: archivedPassengerRidesData } = useQuery(queryPassengerRides, {
     variables: { filter: "archived" },
