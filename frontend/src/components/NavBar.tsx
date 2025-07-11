@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useApolloClient, useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery } from "@apollo/client";
 import { queryWhoAmI } from "../api/WhoAmI";
 import { mutationSignout } from "../api/Signout";
 import maleUser from "../assets/male-user.png";
@@ -17,7 +17,6 @@ import { useOutsideClick } from "../hooks/useOutsideClick";
 const NavBar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
-  const client = useApolloClient();
   const toggleMenuRef = useRef<HTMLDivElement>(null);
   useOutsideClick(toggleMenuRef, () => setIsOpen(false), isOpen);
 
@@ -29,28 +28,9 @@ const NavBar = () => {
     refetchQueries: [queryWhoAmI],
   });
 
-  const handleSignout = async () => {
-    try {
-      await doSignout(); // fait la mutation logout
-      await client.clearStore(); // vide le cache SANS refetch automatique
-
-      // On refetch manuellement WHOAMI, mais on ignore l'erreur si Unauthorized
-      try {
-        await client.refetchQueries({
-          include: [queryWhoAmI],
-        });
-      } catch (err) {
-        // Ignorer les erreurs 401
-        console.warn(
-          "Refetch whoami après logout a échoué (normal si 401)",
-          err
-        );
-      }
-
-      navigate("/");
-    } catch (error) {
-      console.error("Erreur lors de la déconnexion :", error);
-    }
+  const handleSignout = () => {
+    doSignout();
+    navigate("/");
   };
 
   return (
