@@ -5,7 +5,7 @@ import Button from "./Button";
 import { Eye } from "lucide-react";
 import useWindowSize from "../utils/useWindowSize";
 import { VariantType } from "../types/variantTypes";
-import { SearchRidesQuery } from "../gql/graphql";
+import { PassengerRideStatus, SearchRidesQuery } from "../gql/graphql";
 import { useQuery } from "@apollo/client";
 import { queryPassengersByRide } from "../api/PassengersByRide";
 import { useState } from "react";
@@ -39,11 +39,11 @@ const PassengersButtonWithModal = ({
   console.log("Passengers data:", passengers);
 
   const waitingPassengers = passengers?.filter(
-    (passenger) => passenger.status === "waiting"
+    (passenger) => passenger.status === PassengerRideStatus.Waiting
   );
 
   const acceptedPassengers = passengers?.filter(
-    (passenger) => passenger.status === "validate"
+    (passenger) => passenger.status === PassengerRideStatus.Approved
   );
 
   return (

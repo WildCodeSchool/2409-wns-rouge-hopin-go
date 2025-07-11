@@ -1,53 +1,52 @@
 import { Check, X } from "lucide-react";
 import Button from "./Button";
-import { useState } from "react";
-import { useMutation } from "@apollo/client";
-import { mutationValidatePassengerRide } from "../api/ValidatePassengerRide";
-import { mutationRefusePassengerRide } from "../api/RefusePassengerRide";
+import { useApolloClient, useMutation } from "@apollo/client";
 import { toast } from "react-toastify";
+import { mutationUpdatePassengerRideStatus } from "../api/UpdatePassengerRideStatus";
+import { PassengerRideStatus } from "../gql/graphql";
+import { querySearchRide } from "../api/SearchRide";
+import { queryPassengersByRide } from "../api/PassengersByRide";
 
 type RidePassengerValidationConfirmationModalProps = {
   toggleModal: () => void;
   actionType?: "accept" | "refuse" | null;
+  rideId: string;
+  passengerId?: string;
 };
 
 const RidePassengerValidationConfirmationModal = ({
   toggleModal,
   actionType,
+  rideId,
+  passengerId,
 }: RidePassengerValidationConfirmationModalProps) => {
-  const [selectedPassenger, setSelectedPassenger] = useState<{
-    user_id: number;
-    ride_id: number;
-  } | null>(null);
-
-  const [validatePassengerRide] = useMutation(mutationValidatePassengerRide);
-  const [refusePassengerRide] = useMutation(mutationRefusePassengerRide);
+  const client = useApolloClient();
+  const [updatePassengerRideStatus] = useMutation(
+    mutationUpdatePassengerRideStatus
+  );
 
   const handleConfirm = async () => {
-    if (!selectedPassenger) return;
+    if (!rideId || !passengerId) return;
 
     try {
-      if (actionType === "accept") {
-        await validatePassengerRide({
-          variables: {
-            data: {
-              user_id: selectedPassenger.user_id,
-              ride_id: selectedPassenger.ride_id,
-            },
+      await updatePassengerRideStatus({
+        variables: {
+          data: {
+            user_id: passengerId,
+            ride_id: rideId,
+            status:
+              actionType === "accept"
+                ? PassengerRideStatus.Approved
+                : PassengerRideStatus.Refused,
           },
-        });
-      } else if (actionType === "refuse") {
-        await refusePassengerRide({
-          variables: {
-            data: {
-              user_id: selectedPassenger.user_id,
-              ride_id: selectedPassenger.ride_id,
-            },
-          },
-        });
-      }
-      setSelectedPassenger(null);
-      // Optionally, you can refresh the list of passengers or rides here
+        },
+      });
+
+      await client.refetchQueries({
+        // include: ["SearchRides", "PassengersByRide"],
+        include: [querySearchRide, queryPassengersByRide],
+      });
+
       toggleModal();
       toast.success(
         `Passager ${actionType === "accept" ? "validé" : "refusé"} avec succès`
@@ -61,6 +60,7 @@ const RidePassengerValidationConfirmationModal = ({
       <div
         className="relative flex flex-col md:items-center md:justify-center bg-gray-200 p-6 max-w-md w-full"
         onClick={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()} // Prevent closing modal on button click
       >
         <Button
           icon={X}

@@ -5,8 +5,16 @@ import Modal from "./Modal";
 import RidePassengerValidationConfirmationModal from "./RidePassengerValidationConfirmationModal";
 import { useState } from "react";
 
-const RidePassengerValidationButtons = () => {
-  const { isOpen, visible, toggleModal: toggleChildModal } = useModal();
+export type RidePassengerValidationButtonsProps = {
+  rideId: string;
+  passengerId: string;
+};
+
+const RidePassengerValidationButtons = ({
+  rideId,
+  passengerId,
+}: RidePassengerValidationButtonsProps) => {
+  const confirm = useModal();
   const [actionType, setActionType] = useState<"accept" | "refuse" | null>(
     null
   );
@@ -19,7 +27,8 @@ const RidePassengerValidationButtons = () => {
           type="button"
           onClick={() => {
             setActionType("accept");
-            toggleChildModal();
+            // toggleChildModal();
+            confirm.openModal();
           }}
         />
         <Button
@@ -28,16 +37,22 @@ const RidePassengerValidationButtons = () => {
           type="button"
           onClick={() => {
             setActionType("refuse");
-            toggleChildModal();
+            confirm.openModal();
           }}
         />
       </div>
 
-      <Modal isOpen={isOpen} visible={visible} toggleModal={toggleChildModal}>
+      <Modal
+        isOpen={confirm.isOpen}
+        visible={confirm.visible}
+        toggleModal={confirm.closeModal}
+      >
         {() => (
           <RidePassengerValidationConfirmationModal
-            toggleModal={toggleChildModal}
+            toggleModal={confirm.closeModal}
             actionType={actionType}
+            rideId={rideId}
+            passengerId={passengerId}
           />
         )}
       </Modal>

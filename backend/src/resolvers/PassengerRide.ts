@@ -11,6 +11,8 @@ import {
 import {
   CreatePassengerRideInput,
   PassengerRide,
+  PassengerRideStatus,
+  UpdatePassengerRideStatusInput,
 } from "../entities/PassengerRide";
 import { validate } from "class-validator";
 import { PaginatedRides, Ride } from "../entities/Ride";
@@ -124,5 +126,34 @@ export class PassengerRideResolver {
       .getManyAndCount();
 
     return { rides, totalCount };
+  }
+
+  @Authorized("user")
+  @Mutation(() => PassengerRide)
+  async updatePassengerRideStatus(
+    @Arg("data") { ride_id, user_id, status }: UpdatePassengerRideStatusInput,
+    @Ctx() ctx: AuthContextType
+  ): Promise<PassengerRide> {
+    const passengerRide = await PassengerRide.findOne({
+      where: { user_id, ride_id },
+      relations: { user: true, ride: true },
+    });
+
+    if (!passengerRide) {
+      throw new Error("Passager non trouvé pour ce trajet");
+    }
+    passengerRide.status = status;
+    if (passengerRide.status === PassengerRideStatus.APPROVED) {
+      const ride = await Ride.findOne({ where: { id: ride_id } });
+      if (!ride) {
+        throw new Error("Trajet non trouvé");
+      }
+      ride.nb_passenger += 1;
+      await ride.save();
+    }
+
+    await passengerRide?.save();
+
+    return passengerRide;
   }
 }

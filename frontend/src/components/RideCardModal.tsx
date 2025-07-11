@@ -22,6 +22,7 @@ const RideCardModal = ({
   data,
   waitingPassengers,
   acceptedPassengers,
+  rideId,
 }: RideCardModalProps) => {
   console.log("waiting passengers:", waitingPassengers);
   console.log("accepted passengers:", acceptedPassengers);
@@ -40,7 +41,7 @@ const RideCardModal = ({
           className="hover:!bg-primaryHover self-end mb-4"
         />
         <CardTemplate variant={variant} data={data} />
-        <div className="flex flex-col items-start">
+        <div className="flex flex-col items-start justify-start w-full">
           <div className="mb-5 mt-5 w-full">
             <h2 className="text-xl font-bold text-primary">
               Passagers à valider :
@@ -48,14 +49,17 @@ const RideCardModal = ({
             {waitingPassengers && waitingPassengers.length > 0 ? (
               waitingPassengers.map((passenger) => (
                 <div
-                  className="flex items-center justify-between"
+                  className="flex items-center justify-between space-y-4"
                   key={passenger.user.id}
                 >
                   <p key={passenger.user.id}>
                     {passenger.user.firstName} {passenger.user.lastName}
                   </p>
                   <div className="flex items-center">
-                    <RidePassengerValidationButtons />
+                    <RidePassengerValidationButtons
+                      rideId={rideId}
+                      passengerId={passenger.user.id}
+                    />
                   </div>
                 </div>
               ))
