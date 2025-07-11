@@ -35,9 +35,6 @@ const SearchRide = ({ variant }: SearchRideProps) => {
     "departure" | "arrival" | null
   >(null);
 
-  console.log(departureCity, departureCoords);
-  console.log(arrivalCity, arrivalCoords);
-
   useEffect(() => {
     const fetchSuggestions = async () => {
       const query =
@@ -63,12 +60,10 @@ const SearchRide = ({ variant }: SearchRideProps) => {
             long: data.features[0].geometry.coordinates[1],
           });
           console.log("Suggestions mises à jour ! : ", data.features);
-
         } catch (err) {
           console.error("Erreur de récupération des suggestions : ", err);
         }
-      }
-      else if (lastModifiedField === "arrival") {
+      } else if (lastModifiedField === "arrival") {
         try {
           const res = await fetch(
             `https://api-adresse.data.gouv.fr/search/?q=${query}&limit=5`
@@ -88,7 +83,6 @@ const SearchRide = ({ variant }: SearchRideProps) => {
             long: data.features[0].geometry.coordinates[1],
           });
           console.log("Suggestions mises à jour ! : ", data.features);
-
         } catch (err) {
           console.error("Erreur de récupération des suggestions : ", err);
         }

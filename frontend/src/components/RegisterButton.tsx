@@ -46,6 +46,7 @@ export default function RegisterButton({
 
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const me = whoAmIData?.whoami;
+  console.log("me", me);
   const isLoggedIn = me ? true : false;
   const { isSm, isMd } = useWindowSize();
 
@@ -69,6 +70,7 @@ export default function RegisterButton({
           id: rideId,
         },
       });
+      console.log("data ride", data);
       const nbPassenger = data?.ride?.nb_passenger;
       const maxPassenger = data?.ride?.max_passenger;
 

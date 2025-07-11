@@ -33,24 +33,7 @@ export class RidesResolver {
     try {
       const startDay = startOfDay(data.departure_at);
       const endDay = endOfDay(data.departure_at);
-      console.log(
-        " 🚀🚀 voici les coordonnées du départ recherché",
-        data.departure_lng,
-        data.departure_lat
-      );
-      console.log(
-        " 🚀🚀 voici les coordonnées de l'arrivée recherchée",
-        data.arrival_lng,
-        data.arrival_lat
-      );
-      console.log(
-        " 🚀🚀 voici le rayon de recherche du départ",
-        data.departure_radius
-      );
-      console.log(
-        " 🚀🚀 voici le rayon de recherche de l'arrivée",
-        data.arrival_radius
-      );
+
       const rides = await Ride.createQueryBuilder("ride")
         .innerJoinAndSelect("ride.driver_id", "driver")
         .where(
@@ -240,6 +223,6 @@ export class RidesResolver {
       },
     });
 
-    return passengerRide?.status ?? null;
+    return passengerRide?.status || null;
   }
 }

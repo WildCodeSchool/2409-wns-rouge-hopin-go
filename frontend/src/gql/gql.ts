@@ -20,11 +20,13 @@ type Documents = {
     "\n  query DriverRides(\n    $filter: String\n    $limit: Int\n    $offset: Int\n    $sort: String\n  ) {\n    driverRides(\n      filter: $filter\n      limit: $limit\n      offset: $offset\n      sort: $sort\n    ) {\n      totalCount\n      rides {\n        id\n        driver_id {\n          id\n          firstName\n          lastName\n          createdAt\n          role\n        }\n        created_at\n        departure_address\n        departure_at\n        departure_city\n        arrival_address\n        arrival_at\n        arrival_city\n        is_canceled\n        max_passenger\n        nb_passenger\n        passenger_rides {\n          ride_id\n          user_id\n          status\n        }\n      }\n    }\n  }\n": typeof types.DriverRidesDocument,
     "\n  query PassengerRides($filter: String) {\n  passengerRides(filter: $filter) {\n     id\n      driver_id {\n        id\n        firstName\n        lastName\n        createdAt\n        role\n      }\n      created_at\n      departure_address\n      departure_at\n      departure_city\n      arrival_address\n      arrival_at\n      arrival_city\n      is_canceled\n      max_passenger\n      nb_passenger\n      passenger_rides{\n        user_id\n        ride_id \n        status\n      }\n      passenger_status\n  }\n}\n": typeof types.PassengerRidesDocument,
     "\n  query PassengersByRide($ride_id: ID!) {\n    passengersByRide(ride_id: $ride_id) {\n      status\n      user {\n        id\n        firstName\n        lastName\n      }\n    }\n  }\n": typeof types.PassengersByRideDocument,
+    "\nmutation RefusePassengerRide($data: PassengerValidationInput!) {\n  refusePassengerRide(data: $data) {\n    user {\n      id\n    }\n    ride {\n      id\n    }\n  }\n}\n": typeof types.RefusePassengerRideDocument,
     "\n  query Ride($id: ID!) {\n    ride(id: $id) {\n      id\n      nb_passenger\n      max_passenger\n      driver_id {\n        id\n      }\n      passenger_rides{\n        user_id\n        ride_id\n        status\n      }\n    }\n  }\n": typeof types.RideDocument,
     "\nquery Rides {\n  rides {\n    id\n    driver_id {\n      id\n      firstName\n      lastName\n    }\n    created_at\n    departure_address\n    departure_at\n    departure_city\n    arrival_address\n    arrival_at\n    arrival_city\n    is_canceled\n    max_passenger\n    nb_passenger\n  }\n}\n": typeof types.RidesDocument,
     "\n  query SearchRides($data: SearchRideInput!) {\n    searchRide(data: $data) {\n      id\n      created_at\n      departure_city\n      departure_at\n      arrival_city\n      arrival_at\n      departure_address\n      arrival_address\n      max_passenger\n      nb_passenger\n      is_canceled\n      driver_id {\n        id\n        firstName\n        lastName\n        createdAt\n        role\n      }\n      passenger_rides {\n        ride_id\n        user_id\n        status\n      }\n      passenger_status\n    }\n  }\n": typeof types.SearchRidesDocument,
     "\nmutation Signin($email: String!, $password: String! ) {\n  signin(email: $email, password: $password) {\n    id\n    email\n  }\n}": typeof types.SigninDocument,
     "\nmutation Mutation {\n  signout\n}\n  ": typeof types.MutationDocument,
+    "\nmutation ValidatePassengerRide($data: PassengerValidationInput!) {\n  validatePassengerRide(data: $data) {\n    user {\n      id\n    }\n    ride {\n      id\n    }\n  }\n}\n": typeof types.ValidatePassengerRideDocument,
     "\nquery Whoami {\n  whoami {\n    id\n    email\n    role\n  }\n}\n": typeof types.WhoamiDocument,
 };
 const documents: Documents = {
@@ -34,11 +36,13 @@ const documents: Documents = {
     "\n  query DriverRides(\n    $filter: String\n    $limit: Int\n    $offset: Int\n    $sort: String\n  ) {\n    driverRides(\n      filter: $filter\n      limit: $limit\n      offset: $offset\n      sort: $sort\n    ) {\n      totalCount\n      rides {\n        id\n        driver_id {\n          id\n          firstName\n          lastName\n          createdAt\n          role\n        }\n        created_at\n        departure_address\n        departure_at\n        departure_city\n        arrival_address\n        arrival_at\n        arrival_city\n        is_canceled\n        max_passenger\n        nb_passenger\n        passenger_rides {\n          ride_id\n          user_id\n          status\n        }\n      }\n    }\n  }\n": types.DriverRidesDocument,
     "\n  query PassengerRides($filter: String) {\n  passengerRides(filter: $filter) {\n     id\n      driver_id {\n        id\n        firstName\n        lastName\n        createdAt\n        role\n      }\n      created_at\n      departure_address\n      departure_at\n      departure_city\n      arrival_address\n      arrival_at\n      arrival_city\n      is_canceled\n      max_passenger\n      nb_passenger\n      passenger_rides{\n        user_id\n        ride_id \n        status\n      }\n      passenger_status\n  }\n}\n": types.PassengerRidesDocument,
     "\n  query PassengersByRide($ride_id: ID!) {\n    passengersByRide(ride_id: $ride_id) {\n      status\n      user {\n        id\n        firstName\n        lastName\n      }\n    }\n  }\n": types.PassengersByRideDocument,
+    "\nmutation RefusePassengerRide($data: PassengerValidationInput!) {\n  refusePassengerRide(data: $data) {\n    user {\n      id\n    }\n    ride {\n      id\n    }\n  }\n}\n": types.RefusePassengerRideDocument,
     "\n  query Ride($id: ID!) {\n    ride(id: $id) {\n      id\n      nb_passenger\n      max_passenger\n      driver_id {\n        id\n      }\n      passenger_rides{\n        user_id\n        ride_id\n        status\n      }\n    }\n  }\n": types.RideDocument,
     "\nquery Rides {\n  rides {\n    id\n    driver_id {\n      id\n      firstName\n      lastName\n    }\n    created_at\n    departure_address\n    departure_at\n    departure_city\n    arrival_address\n    arrival_at\n    arrival_city\n    is_canceled\n    max_passenger\n    nb_passenger\n  }\n}\n": types.RidesDocument,
     "\n  query SearchRides($data: SearchRideInput!) {\n    searchRide(data: $data) {\n      id\n      created_at\n      departure_city\n      departure_at\n      arrival_city\n      arrival_at\n      departure_address\n      arrival_address\n      max_passenger\n      nb_passenger\n      is_canceled\n      driver_id {\n        id\n        firstName\n        lastName\n        createdAt\n        role\n      }\n      passenger_rides {\n        ride_id\n        user_id\n        status\n      }\n      passenger_status\n    }\n  }\n": types.SearchRidesDocument,
     "\nmutation Signin($email: String!, $password: String! ) {\n  signin(email: $email, password: $password) {\n    id\n    email\n  }\n}": types.SigninDocument,
     "\nmutation Mutation {\n  signout\n}\n  ": types.MutationDocument,
+    "\nmutation ValidatePassengerRide($data: PassengerValidationInput!) {\n  validatePassengerRide(data: $data) {\n    user {\n      id\n    }\n    ride {\n      id\n    }\n  }\n}\n": types.ValidatePassengerRideDocument,
     "\nquery Whoami {\n  whoami {\n    id\n    email\n    role\n  }\n}\n": types.WhoamiDocument,
 };
 
@@ -83,6 +87,10 @@ export function gql(source: "\n  query PassengersByRide($ride_id: ID!) {\n    pa
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
+export function gql(source: "\nmutation RefusePassengerRide($data: PassengerValidationInput!) {\n  refusePassengerRide(data: $data) {\n    user {\n      id\n    }\n    ride {\n      id\n    }\n  }\n}\n"): (typeof documents)["\nmutation RefusePassengerRide($data: PassengerValidationInput!) {\n  refusePassengerRide(data: $data) {\n    user {\n      id\n    }\n    ride {\n      id\n    }\n  }\n}\n"];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
 export function gql(source: "\n  query Ride($id: ID!) {\n    ride(id: $id) {\n      id\n      nb_passenger\n      max_passenger\n      driver_id {\n        id\n      }\n      passenger_rides{\n        user_id\n        ride_id\n        status\n      }\n    }\n  }\n"): (typeof documents)["\n  query Ride($id: ID!) {\n    ride(id: $id) {\n      id\n      nb_passenger\n      max_passenger\n      driver_id {\n        id\n      }\n      passenger_rides{\n        user_id\n        ride_id\n        status\n      }\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
@@ -100,6 +108,10 @@ export function gql(source: "\nmutation Signin($email: String!, $password: Strin
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\nmutation Mutation {\n  signout\n}\n  "): (typeof documents)["\nmutation Mutation {\n  signout\n}\n  "];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\nmutation ValidatePassengerRide($data: PassengerValidationInput!) {\n  validatePassengerRide(data: $data) {\n    user {\n      id\n    }\n    ride {\n      id\n    }\n  }\n}\n"): (typeof documents)["\nmutation ValidatePassengerRide($data: PassengerValidationInput!) {\n  validatePassengerRide(data: $data) {\n    user {\n      id\n    }\n    ride {\n      id\n    }\n  }\n}\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

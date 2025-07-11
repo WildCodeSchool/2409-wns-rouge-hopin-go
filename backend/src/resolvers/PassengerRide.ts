@@ -38,7 +38,7 @@ export class PassengerRideResolver {
     }
   }
 
-  @Authorized()
+  @Authorized("user")
   @Mutation(() => PassengerRide)
   async createPassengerRide(
     @Arg("data", () => CreatePassengerRideInput) data: CreatePassengerRideInput,
@@ -84,7 +84,7 @@ export class PassengerRideResolver {
     });
   }
 
-  @Authorized()
+  @Authorized("user")
   @Query(() => [Ride])
   async passengerRides(
     @Ctx() ctx: AuthContextType,
@@ -135,7 +135,7 @@ export class PassengerRideResolver {
     return passengerRide;
   }
 
-  @Authorized()
+  @Authorized("user")
   @Mutation(() => PassengerRide)
   async validatePassengerRide(
     @Ctx() ctx: AuthContextType,
@@ -154,7 +154,7 @@ export class PassengerRideResolver {
     }
   }
 
-  @Authorized()
+  @Authorized("user")
   @Mutation(() => PassengerRide)
   async refusePassengerRide(
     @Arg("data", () => PassengerValidationInput) data: PassengerValidationInput,

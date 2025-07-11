@@ -33,6 +33,7 @@ export class PassengerRide extends BaseEntity {
 
   @ManyToOne(() => Ride, (ride) => ride.passenger_rides)
   @JoinColumn({ name: "ride_id" })
+  @Field(() => Ride)
   ride!: Ride;
 }
 
@@ -52,4 +53,7 @@ export class PassengerValidationInput {
 
   @Field(() => ID)
   ride_id!: number;
+
+  @Field()
+  status!: "approved" | "refused" | "waiting";
 }

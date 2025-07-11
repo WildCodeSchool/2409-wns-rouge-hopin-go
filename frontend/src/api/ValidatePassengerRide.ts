@@ -5,7 +5,6 @@ mutation ValidatePassengerRide($data: PassengerValidationInput!) {
   validatePassengerRide(data: $data) {
     user {
       id
-      status
     }
     ride {
       id
