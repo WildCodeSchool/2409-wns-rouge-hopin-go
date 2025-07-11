@@ -6,12 +6,20 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { Swiper as SwiperType } from "swiper";
 import "swiper/css";
 import "swiper/css/scrollbar";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
-import { Keyboard, Mousewheel, Scrollbar } from "swiper/modules";
+import {
+  Keyboard,
+  Mousewheel,
+  Navigation,
+  Pagination,
+  Scrollbar,
+} from "swiper/modules";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
 
-type ScrollableSnapListProps<T extends SearchRide> = {
+interface ScrollableSnapListProps<T extends SearchRide> {
   dataset: T[];
   getVariant: (data: T) => VariantType;
   onSelect: (index: number) => void;
@@ -21,7 +29,9 @@ type ScrollableSnapListProps<T extends SearchRide> = {
   centerSlides?: boolean;
   swiperClassName?: string;
   slidePerView?: number;
-};
+  navigationArrows?: boolean;
+  showPagination?: boolean;
+}
 
 const ScrollableSnapList = <T extends SearchRide>({
   dataset,
@@ -33,6 +43,8 @@ const ScrollableSnapList = <T extends SearchRide>({
   centerSlides = false,
   swiperClassName = "",
   slidePerView = 3,
+  navigationArrows,
+  showPagination = false,
 }: ScrollableSnapListProps<T>) => {
   const swiperRef = useRef<SwiperType>();
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -60,10 +72,12 @@ const ScrollableSnapList = <T extends SearchRide>({
       mousewheel={true}
       rewind={true}
       keyboard={{ enabled: true }}
-      modules={[Keyboard, Mousewheel, Scrollbar]}
-      className={`mySwiper  ${swiperClassName}`}
+      modules={[Keyboard, Mousewheel, Scrollbar, Navigation, Pagination]}
+      className={`mySwiper w-full  ${swiperClassName}`}
       scrollbar={{ hide: true, draggable: true }}
       slidesPerView={slidePerView}
+      navigation={navigationArrows}
+      pagination={showPagination ? { clickable: true } : false}
     >
       {dataset.map((data, index) => (
         <SwiperSlide
@@ -75,7 +89,7 @@ const ScrollableSnapList = <T extends SearchRide>({
                 : "scale-100 z-0"
             }
             flex justify-center items-center
-            h-auto min-h-[200px]`}
+            h-auto min-h-[200px] w-full`}
         >
           <CardTemplate
             variant={getVariant(data)}
