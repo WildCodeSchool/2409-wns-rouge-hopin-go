@@ -113,7 +113,7 @@ const RideResults = () => {
           sliderDirection="vertical"
           scaleEffect
           centerSlides={isMd ? true : false}
-          swiperClassName="h-full !py-20 w-full"
+          swiperClassName="h-full !pt-32 w-full"
           slidePerView={3}
         />
       </div>

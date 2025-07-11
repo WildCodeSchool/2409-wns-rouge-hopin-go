@@ -26,7 +26,9 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
   const departureTime = formatTime(departureDate);
   const arrivalTime = formatTime(arrivalDate);
   const dateStr = formatDate(departureDate);
-
+  const departureCity = data.departure_city;
+  const departureLatitude = data.departure_location.coordinates[0];
+  const departureLongitude = data.departure_location.coordinates[1];
   const durationMin = Math.floor(
     (arrivalDate.getTime() - departureDate.getTime()) / 60000
   );
@@ -80,11 +82,9 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
             />
           </svg>
         </div>
-        <div className="flex w-full justify-between  gap-2">
+        <h2 className={`text-2xl font-bold ${textColor}`}>{driverName}</h2>
+        <div className="flex w-full justify-start  gap-2">
           <div>
-            <h2 className={`text-2xl font-bold mb-2 ${textColor}`}>
-              {driverName}
-            </h2>
             <h2 className={`text-xl font-bold mb-2 ${textColor}`}>
               Détails du trajet
             </h2>
@@ -143,7 +143,12 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
           </div>
         </div>
         <RegisterButton variant={variant} rideId={data.id} size="large" />
-        <Map />
+        <Map
+          mapId={`map-${data.id}`}
+          departureLatitude={departureLatitude}
+          departureLongitude={departureLongitude}
+          departureCity={departureCity}
+        />
       </div>
     </div>
   );
