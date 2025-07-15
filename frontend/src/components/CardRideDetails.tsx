@@ -8,6 +8,8 @@ import Button from "./Button";
 import { Search } from "lucide-react";
 import RegisterButton from "./RegisterButton";
 import Map from "./Map";
+import { useState } from "react";
+import { formatTravelDuration } from "../utils/formatTravelDuration";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
 
@@ -17,7 +19,6 @@ type CardRideDetailsProps = {
 };
 
 const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
-  console.log("🚀 ~ data:", data);
   const { textColor, bgFill } = variantConfigMap[variant];
   const { isMd, isLg, isXl } = useBreakpoints();
 
@@ -26,16 +27,18 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
   const departureTime = formatTime(departureDate);
   const arrivalTime = formatTime(arrivalDate);
   const dateStr = formatDate(departureDate);
+
+  // ---------------------Map---------------------
   const departureCity = data.departure_city;
   const departureLatitude = data.departure_location.coordinates[0];
   const departureLongitude = data.departure_location.coordinates[1];
-  const durationMin = Math.floor(
-    (arrivalDate.getTime() - departureDate.getTime()) / 60000
-  );
-  const travelDuration =
-    durationMin >= 60
-      ? `${Math.floor(durationMin / 60)}h${durationMin % 60 || ""}`
-      : `${durationMin}min`;
+  const arrivalCity = data.arrival_city;
+  const arrivalLatitude = data.arrival_location.coordinates[0];
+  const arrivalLongitude = data.arrival_location.coordinates[1];
+  // ---------------------End Map---------------------
+
+  const [travelDuration, setTravelDuration] = useState<string>("");
+  const [travelDistance, setTravelDistance] = useState<string>("");
 
   const availableSeats = data.max_passenger - (data.nb_passenger ?? 0);
   const driverName =
@@ -105,11 +108,14 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
             </div>
           </div>
           <div className="flex justify-start h-40">
-            <div
-              className={`flex flex-col w-28 justify-between ${textColor} text-base md:text-2xl font-semibold`}
-            >
-              <p>{departureTime}</p>
-              <p>{arrivalTime}</p>
+            <div className={`flex flex-col w-28 justify-between ${textColor}`}>
+              <p className="text-base md:text-2xl font-semibold">
+                {departureTime}
+              </p>
+              <p className="text-sm">{travelDuration}</p>
+              <p className="text-base md:text-2xl font-semibold">
+                {arrivalTime}
+              </p>
             </div>
 
             <div
@@ -131,7 +137,7 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
                 >
                   {data.departure_city}
                 </p>
-                <p className="font-semibold">{travelDuration}</p>
+                <p className="text-sm">{travelDistance}</p>
                 <p
                   className="text-lg md:text-xl sm:font-bold"
                   title={data.arrival_city}
@@ -148,6 +154,15 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
           departureLatitude={departureLatitude}
           departureLongitude={departureLongitude}
           departureCity={departureCity}
+          arrivalLatitude={arrivalLatitude}
+          arrivalLongitude={arrivalLongitude}
+          arrivalCity={arrivalCity}
+          onRouteData={({ distanceKm, durationMin }) => {
+            setTravelDuration(`${formatTravelDuration(durationMin)}`);
+            setTravelDistance(`${distanceKm.toFixed(1)} km`);
+            console.log(`Distance : ${distanceKm} km`);
+            console.log(`Durée : ${durationMin} min`);
+          }}
         />
       </div>
     </div>
