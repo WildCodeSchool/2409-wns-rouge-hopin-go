@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import useMapboxRoute from "../hooks/useMapboxRoute";
 
 interface MapProps {
   departureLatitude: number;
@@ -28,13 +29,16 @@ export default function Map({
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
 
-  const mapBoxToken =
-    "pk.eyJ1IjoiYWRyaWVuZGF2eSIsImEiOiJjbWQ0ODUzeTAwYmtlMm1xdTNmbGVhcTFnIn0.D9mVnHnsy9Z-2FX-hL2sJg";
+  const { route, loading } = useMapboxRoute({
+    departure: [departureLongitude, departureLatitude],
+    arrival: [arrivalLongitude, arrivalLatitude],
+  });
 
   useEffect(() => {
-    if (!mapContainerRef.current) return;
+    if (!mapContainerRef.current || !route) return;
 
-    mapboxgl.accessToken = mapBoxToken;
+    mapboxgl.accessToken =
+      "pk.eyJ1IjoiYWRyaWVuZGF2eSIsImEiOiJjbWQ0ODUzeTAwYmtlMm1xdTNmbGVhcTFnIn0.D9mVnHnsy9Z-2FX-hL2sJg";
 
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
@@ -56,44 +60,23 @@ export default function Map({
       .setPopup(new mapboxgl.Popup().setText(arrivalCity))
       .addTo(map);
 
-    const getRoute = async () => {
-      const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${departureLongitude},${departureLatitude};${arrivalLongitude},${arrivalLatitude}?geometries=geojson&access_token=${mapboxgl.accessToken}`;
-
-      const response = await fetch(url);
-      const json = await response.json();
-
-      const data = json.routes[0];
-      console.log("🚀 ~ getRoute ~ data:", data);
-
-      if (!json.routes || !json.routes[0]) {
-        console.error("❌ Aucune route trouvée :", json);
-        return;
-      }
-
-      const route = json.routes[0].geometry;
-      const geojson: GeoJSON.Feature<
-        GeoJSON.LineString,
-        GeoJSON.GeoJsonProperties
-      > = {
+    map.on("load", () => {
+      const geojson: GeoJSON.Feature<GeoJSON.LineString> = {
         type: "Feature",
         properties: {},
-        geometry: route,
+        geometry: route.geometry,
       };
 
-      const distanceKm = data.distance / 1000;
-      const durationMin = Math.ceil(data.duration / 60);
-      onRouteData?.({ distanceKm, durationMin });
-
-      // Centrer la carte sur la route
-      const bounds = route.coordinates.reduce(
-        (b: mapboxgl.LngLatBounds, coord: number[]) =>
-          b.extend(coord as [number, number]),
-        new mapboxgl.LngLatBounds(route.coordinates[0], route.coordinates[0])
+      const bounds = route.geometry.coordinates.reduce(
+        (b, coord) => b.extend(coord as [number, number]),
+        new mapboxgl.LngLatBounds(
+          [route.geometry.coordinates[0][0], route.geometry.coordinates[0][1]],
+          [route.geometry.coordinates[0][0], route.geometry.coordinates[0][1]]
+        )
       );
 
       map.fitBounds(bounds, { padding: 40 });
 
-      // Tracer la route
       if (map.getSource("route")) {
         (map.getSource("route") as mapboxgl.GeoJSONSource).setData(geojson);
       } else {
@@ -117,25 +100,35 @@ export default function Map({
           },
         });
       }
-    };
 
-    map.on("load", getRoute);
+      onRouteData?.({
+        distanceKm: route.distanceKm,
+        durationMin: route.durationMin,
+      });
+    });
 
     return () => {
       map.remove();
     };
   }, [
+    route,
     departureLatitude,
     departureLongitude,
+    departureCity,
     arrivalLatitude,
     arrivalLongitude,
-    departureCity,
     arrivalCity,
     zoomLevel,
-    mapBoxToken,
     onRouteData,
   ]);
 
+  if (loading) {
+    return (
+      <div className=" bg-gray-200 w-full h-[300px] flex justify-center items-center text-primary">
+        <p>Chargement de la carte...</p>
+      </div>
+    );
+  }
   return (
     <div
       ref={mapContainerRef}

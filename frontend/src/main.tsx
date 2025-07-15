@@ -17,9 +17,7 @@ import { AuthStates } from "./services/AuthStates.ts";
 import AuthenticationPage from "./pages/Authentication";
 import RideResults from "./pages/RideResults.tsx";
 import MyRides from "./pages/MyRides.tsx";
-import { ToastContainer } from "react-toastify";
-import "leaflet/dist/leaflet.css";
-// import RideResultTemp from "./pages/RideResultTemp";
+import { ToastContainer } from "react-toastify"; // import RideResultTemp from "./pages/RideResultTemp";
 
 const client = new ApolloClient({
   uri: "/api",
