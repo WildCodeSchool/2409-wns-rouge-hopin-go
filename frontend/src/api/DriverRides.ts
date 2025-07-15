@@ -23,6 +23,14 @@ export const queryDriverRides = gql(`
           createdAt
           role
         }
+         departure_location {
+          type
+          coordinates
+        }
+        arrival_location {
+          type
+          coordinates
+        }
         created_at
         departure_address
         departure_at

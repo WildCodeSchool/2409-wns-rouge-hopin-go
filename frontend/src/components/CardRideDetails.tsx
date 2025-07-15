@@ -86,11 +86,11 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
           </svg>
         </div>
         <h2 className={`text-2xl font-bold ${textColor}`}>{driverName}</h2>
-        <div className="flex w-full justify-start  gap-2">
+        <h2 className={`text-xl font-bold mb-2 ${textColor}`}>
+          Détails du trajet
+        </h2>
+        <div className="flex w-full justify-start  gap-10">
           <div>
-            <h2 className={`text-xl font-bold mb-2 ${textColor}`}>
-              Détails du trajet
-            </h2>
             <p className="text-sm md:text-base">{dateStr}</p>
             <p className="text-xl md:text-4xl font-semibold">
               {price.toFixed(2)}
