@@ -62,7 +62,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
       ? `${Math.floor(durationMin / 60)}h${durationMin % 60 || ""}`
       : `${durationMin}min`;
 
-  const availableSeats = data.max_passenger - (data.nb_passenger ?? 0);
+  // const availableSeats = data.max_passenger - (data.nb_passenger ?? 0);
   const driverName =
     data.driver_id?.firstName ?? `Conducteur #${data.driver_id?.id ?? "?"}`;
   const price = 10 + Math.random() * 15;
@@ -151,10 +151,12 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
         >
           {statusLabel === "" ? (
             <>
-              {availableSeats}
+              {data.available_seats}
               {is2xl &&
                 `${
-                  availableSeats > 1 ? " places restantes" : " place restante"
+                  data.available_seats > 1
+                    ? " places restantes"
+                    : " place restante"
                 }`}
               {!is2xl && (variant === "primary" || variant === "secondary") && (
                 <svg

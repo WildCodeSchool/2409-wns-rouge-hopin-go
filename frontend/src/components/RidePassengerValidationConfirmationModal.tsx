@@ -6,8 +6,6 @@ import { mutationUpdatePassengerRideStatus } from "../api/UpdatePassengerRideSta
 import { PassengerRideStatus } from "../gql/graphql";
 import { queryPassengersByRide } from "../api/PassengersByRide";
 import { queryDriverRides } from "../api/DriverRides";
-import { queryPassengerRides } from "../api/PassengerRides";
-import { querySearchRide } from "../api/SearchRide";
 
 type RidePassengerValidationConfirmationModalProps = {
   toggleModal: () => void;
@@ -46,12 +44,7 @@ const RidePassengerValidationConfirmationModal = ({
 
       await client.refetchQueries({
         // include: ["SearchRides", "PassengersByRide"],
-        include: [
-          queryDriverRides,
-          queryPassengerRides,
-          queryPassengersByRide,
-          querySearchRide,
-        ],
+        include: [queryDriverRides, queryPassengersByRide],
       });
 
       toggleModal();

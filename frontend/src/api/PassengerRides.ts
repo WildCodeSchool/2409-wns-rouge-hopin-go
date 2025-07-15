@@ -33,6 +33,7 @@ export const queryPassengerRides = gql(`
         is_canceled
         max_passenger
         nb_passenger
+        available_seats
         passenger_rides {
           user_id
           ride_id

@@ -72,6 +72,11 @@ export class Ride extends BaseEntity {
   @Field()
   nb_passenger!: number;
 
+  @Field(() => Number)
+  get available_seats(): number {
+    return this.max_passenger - this.nb_passenger;
+  }
+
   @Column({ type: "geography", spatialFeatureType: "Point", srid: 4326 })
   departure_location!: Point;
 
