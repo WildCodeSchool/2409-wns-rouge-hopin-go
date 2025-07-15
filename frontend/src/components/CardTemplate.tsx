@@ -3,17 +3,23 @@ import { VariantType } from "../types/variantTypes";
 import { variantConfigMap } from "../constants/variantConfig";
 import useWindowSize from "../utils/useWindowSize";
 import { formatDate, formatTime } from "../utils/formatDate";
-import { SearchRidesQuery } from "../gql/graphql";
+import {
+  DriverRidesQuery,
+  PassengerRidesQuery,
+  SearchRidesQuery,
+} from "../gql/graphql";
 import RegisterButton from "./RegisterButton";
 import PassengersButtonWithModal from "./PassengersButtonWithModal";
 import { useQuery } from "@apollo/client";
 import { queryWhoAmI } from "../api/WhoAmI";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
+type PassengerRide = PassengerRidesQuery["passengerRides"]["rides"][number];
+type DriverRide = DriverRidesQuery["driverRides"]["rides"][number];
 
 type CardTemplateProps = {
   variant: VariantType;
-  data: SearchRide;
+  data: DriverRide | PassengerRide | SearchRide;
   onClick?: () => void;
   onScroll?: (event: React.UIEvent<HTMLDivElement>) => void;
   isSelected?: boolean;
@@ -173,11 +179,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           )}
         </p>
         {driverUpcomingRides && (
-          <PassengersButtonWithModal
-            rideId={data.id}
-            variant={variant}
-            data={data}
-          />
+          <PassengersButtonWithModal variant={variant} data={data} />
         )}
         <p
           className={`absolute ${

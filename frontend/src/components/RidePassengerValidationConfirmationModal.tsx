@@ -4,8 +4,10 @@ import { useApolloClient, useMutation } from "@apollo/client";
 import { toast } from "react-toastify";
 import { mutationUpdatePassengerRideStatus } from "../api/UpdatePassengerRideStatus";
 import { PassengerRideStatus } from "../gql/graphql";
-import { querySearchRide } from "../api/SearchRide";
 import { queryPassengersByRide } from "../api/PassengersByRide";
+import { queryDriverRides } from "../api/DriverRides";
+import { queryPassengerRides } from "../api/PassengerRides";
+import { querySearchRide } from "../api/SearchRide";
 
 type RidePassengerValidationConfirmationModalProps = {
   toggleModal: () => void;
@@ -44,7 +46,12 @@ const RidePassengerValidationConfirmationModal = ({
 
       await client.refetchQueries({
         // include: ["SearchRides", "PassengersByRide"],
-        include: [querySearchRide, queryPassengersByRide],
+        include: [
+          queryDriverRides,
+          queryPassengerRides,
+          queryPassengersByRide,
+          querySearchRide,
+        ],
       });
 
       toggleModal();

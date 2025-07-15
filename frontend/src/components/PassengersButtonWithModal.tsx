@@ -5,21 +5,19 @@ import Button from "./Button";
 import { Eye } from "lucide-react";
 import useWindowSize from "../utils/useWindowSize";
 import { VariantType } from "../types/variantTypes";
-import { PassengerRideStatus, SearchRidesQuery } from "../gql/graphql";
+import { PassengerRidesQuery, PassengerRideStatus } from "../gql/graphql";
 import { useQuery } from "@apollo/client";
 import { queryPassengersByRide } from "../api/PassengersByRide";
 import { useState } from "react";
 
-type SearchRide = SearchRidesQuery["searchRide"][number];
+type PassengerRide = PassengerRidesQuery["passengerRides"]["rides"][number];
 
 type PassengersButtonWithModalProps = {
-  rideId: string;
   variant: VariantType;
-  data: SearchRide;
+  data: PassengerRide;
 };
 
 const PassengersButtonWithModal = ({
-  rideId,
   variant,
   data,
 }: PassengersButtonWithModalProps) => {
@@ -29,7 +27,8 @@ const PassengersButtonWithModal = ({
   const [info, setInfo] = useState(false);
 
   const { data: passengersData, loading } = useQuery(queryPassengersByRide, {
-    variables: { ride_id: rideId },
+    variables: { ride_id: data.id },
+    skip: !data.id,
   });
   console.log("data", passengersData);
 
@@ -98,7 +97,6 @@ const PassengersButtonWithModal = ({
         >
           {() => (
             <RideCardModal
-              rideId={rideId}
               variant={variant}
               toggleModal={toggleParentModal}
               data={data}

@@ -2,16 +2,15 @@ import Button from "./Button";
 import { X } from "lucide-react";
 import CardTemplate from "./CardTemplate";
 import { VariantType } from "../types/variantTypes";
-import { PassengersByRideQuery, SearchRidesQuery } from "../gql/graphql";
+import { PassengerRidesQuery, PassengersByRideQuery } from "../gql/graphql";
 import RidePassengerValidationButtons from "./RidePassengerValidationButtons";
 
-type SearchRide = SearchRidesQuery["searchRide"][number];
+type PassengerRide = PassengerRidesQuery["passengerRides"]["rides"][number];
 
 type RideCardModalProps = {
-  rideId: string;
   toggleModal: () => void;
   variant: VariantType;
-  data: SearchRide;
+  data: PassengerRide;
   waitingPassengers?: PassengersByRideQuery["passengersByRide"];
   acceptedPassengers?: PassengersByRideQuery["passengersByRide"];
 };
@@ -22,7 +21,6 @@ const RideCardModal = ({
   data,
   waitingPassengers,
   acceptedPassengers,
-  rideId,
 }: RideCardModalProps) => {
   console.log("waiting passengers:", waitingPassengers);
   console.log("accepted passengers:", acceptedPassengers);
@@ -57,7 +55,7 @@ const RideCardModal = ({
                   </p>
                   <div className="flex items-center">
                     <RidePassengerValidationButtons
-                      rideId={rideId}
+                      rideId={data.id}
                       passengerId={passenger.user.id}
                     />
                   </div>

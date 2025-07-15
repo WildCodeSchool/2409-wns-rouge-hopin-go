@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import CardTemplate from "./CardTemplate";
 import { VariantType } from "../types/variantTypes";
-import { SearchRidesQuery } from "../gql/graphql";
+import {
+  DriverRidesQuery,
+  PassengerRidesQuery,
+  SearchRidesQuery,
+} from "../gql/graphql";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Swiper as SwiperType } from "swiper";
 import "swiper/css";
@@ -18,10 +22,12 @@ import {
 } from "swiper/modules";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
+type PassengerRide = PassengerRidesQuery["passengerRides"]["rides"][number];
+type DriverRide = DriverRidesQuery["driverRides"]["rides"][number];
 
-interface ScrollableSnapListProps<T extends SearchRide> {
-  dataset: T[];
-  getVariant: (data: T) => VariantType;
+interface ScrollableSnapListProps {
+  dataset: (SearchRide | PassengerRide | DriverRide)[];
+  getVariant: (data: SearchRide | PassengerRide | DriverRide) => VariantType;
   onSelect: (index: number) => void;
   sliderDirection?: "vertical" | "horizontal";
   scaleEffect?: boolean;
@@ -33,7 +39,7 @@ interface ScrollableSnapListProps<T extends SearchRide> {
   showPagination?: boolean;
 }
 
-const ScrollableSnapList = <T extends SearchRide>({
+const ScrollableSnapList = ({
   dataset,
   getVariant,
   onSelect,
@@ -45,7 +51,7 @@ const ScrollableSnapList = <T extends SearchRide>({
   slidePerView = 3,
   navigationArrows,
   showPagination = false,
-}: ScrollableSnapListProps<T>) => {
+}: ScrollableSnapListProps) => {
   const swiperRef = useRef<SwiperType>();
   const [selectedIndex, setSelectedIndex] = useState(0);
 
