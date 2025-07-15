@@ -10,6 +10,7 @@ import RegisterButton from "./RegisterButton";
 import Map from "./Map";
 import { useState } from "react";
 import { formatTravelDuration } from "../utils/formatTravelDuration";
+import { calculateRidePrice } from "../utils/calculateRidePrice";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
 
@@ -43,7 +44,11 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
   const availableSeats = data.max_passenger - (data.nb_passenger ?? 0);
   const driverName =
     data.driver_id?.firstName ?? `Conducteur #${data.driver_id?.id ?? "?"}`;
-  const price = 10 + Math.random() * 15;
+  const price = calculateRidePrice(
+    parseFloat(travelDistance),
+    data.max_passenger,
+    data.nb_passenger
+  );
 
   return (
     <div className="relative z-0 flex justify-center w-full">
