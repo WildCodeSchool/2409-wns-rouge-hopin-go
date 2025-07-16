@@ -150,11 +150,13 @@ const SearchRide = ({ variant }: SearchRideProps) => {
   const props = {
     departureCity,
     setDepartureCity,
+    setDepartureCoords,
     departureRadius,
     setDepartureRadius,
     arrivalCity,
     setArrivalCity,
     arrivalRadius,
+    setArrivalCoords,
     setArrivalRadius,
     departureAt,
     setDepartureAt,

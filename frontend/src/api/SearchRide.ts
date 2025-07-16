@@ -1,3 +1,5 @@
+import { TypedDocumentNode } from "@apollo/client";
+import { SearchRidesQuery, SearchRidesQueryVariables } from "../gql/graphql";
 import { gql } from "../gql";
 
 export const querySearchRide = gql(`
@@ -6,9 +8,17 @@ export const querySearchRide = gql(`
       id
       created_at
       departure_city
-      departure_at
+      departure_at     
+      departure_location {
+        type
+        coordinates
+      }
       arrival_city
       arrival_at
+      arrival_location {
+        type
+        coordinates
+      }
       departure_address
       arrival_address
       max_passenger
@@ -30,4 +40,4 @@ export const querySearchRide = gql(`
       current_user_passenger_status
     }
   }
-`);
+`) as TypedDocumentNode<SearchRidesQuery, SearchRidesQueryVariables>;
