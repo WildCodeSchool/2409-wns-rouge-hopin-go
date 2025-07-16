@@ -20,7 +20,7 @@ import {
 import { validate } from "class-validator";
 import { endOfDay, startOfDay } from "date-fns";
 import { User } from "../entities/User";
-import { PassengerRide } from "../entities/PassengerRide";
+import { PassengerRide, PassengerRideStatus } from "../entities/PassengerRide";
 import { AuthContextType, ContextType } from "../auth";
 
 @Resolver(() => Ride)
@@ -209,10 +209,10 @@ export class RidesResolver {
   }
 
   @FieldResolver(() => String, { nullable: true })
-  async passenger_status(
+  async current_user_passenger_status(
     @Root() ride: Ride,
     @Ctx() ctx: ContextType
-  ): Promise<string | null> {
+  ): Promise<PassengerRideStatus | null> {
     const user = ctx.user as User;
     if (!user) return null;
 

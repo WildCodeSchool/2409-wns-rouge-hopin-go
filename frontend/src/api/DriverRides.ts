@@ -23,6 +23,7 @@ export const queryDriverRides = gql(`
           createdAt
           role
         }
+        current_user_passenger_status
         created_at
         departure_address
         departure_at

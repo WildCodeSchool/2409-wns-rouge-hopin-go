@@ -4,13 +4,8 @@ import { VariantType } from "../types/variantTypes";
 import useBreakpoints from "../utils/useWindowSize";
 import { useQuery } from "@apollo/client";
 import { queryDriverRides } from "../api/DriverRides";
-import {
-  DriverRidesQuery,
-  PassengerRidesQuery,
-  // PassengerRideStatus,
-} from "../gql/graphql";
+import { DriverRidesQuery } from "../gql/graphql";
 
-type PassengerRide = PassengerRidesQuery["passengerRides"]["rides"][number];
 type DriverRide = DriverRidesQuery["driverRides"]["rides"][number];
 const DriverRidesList = () => {
   const [, setSelectedIndex] = useState(0);
@@ -22,15 +17,9 @@ const DriverRidesList = () => {
 
   const { isSm, isMd, isLg, is2xl } = useBreakpoints();
 
-  const getVariant = (dataset: PassengerRide): VariantType => {
+  const getVariant = (dataset: DriverRide): VariantType => {
     if (dataset.is_canceled) return "cancel";
     if (dataset.nb_passenger === dataset.max_passenger) return "validation";
-    // if (dataset.passenger_rides?.status === PassengerRideStatus.Waiting)
-    //   return "pending";
-    // if (dataset.passenger_status === PassengerRideStatus.Approved)
-    //   return "validation";
-    // if (dataset.passenger_status === PassengerRideStatus.Refused)
-    //   return "refused";
     return "primary";
   };
 

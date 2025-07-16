@@ -27,7 +27,7 @@ export const querySearchRide = gql(`
         user_id
         status
       }
-      passenger_status
+      current_user_passenger_status
     }
   }
 `);

@@ -5,12 +5,9 @@ import { VariantType } from "../types/variantTypes";
 import { PassengersByRideQuery } from "../gql/graphql";
 import RidePassengerValidationButtons from "./RidePassengerValidationButtons";
 
-// type PassengerRide = PassengerRidesQuery["passengerRides"]["rides"][number];
-
 type RideCardModalProps = {
   toggleModal: () => void;
   variant: VariantType;
-  // data: PassengerRide;
   waitingPassengers?: PassengersByRideQuery["passengersByRide"];
   acceptedPassengers?: PassengersByRideQuery["passengersByRide"];
 };
@@ -18,13 +15,9 @@ type RideCardModalProps = {
 const RideCardModal = ({
   toggleModal,
   variant,
-  // data,
   waitingPassengers,
   acceptedPassengers,
 }: RideCardModalProps) => {
-  // const ride = useRide();
-  console.log("waiting passengers:", waitingPassengers);
-  console.log("accepted passengers:", acceptedPassengers);
   return (
     <div>
       <div className="relative flex flex-col md:items-center md:justify-center bg-gray-200 p-4 w-screen h-screen md:w-auto md:h-auto">
@@ -56,7 +49,6 @@ const RideCardModal = ({
                   </p>
                   <div className="flex items-center">
                     <RidePassengerValidationButtons
-                      // rideId={ride.id}
                       passengerId={passenger.user.id}
                     />
                   </div>

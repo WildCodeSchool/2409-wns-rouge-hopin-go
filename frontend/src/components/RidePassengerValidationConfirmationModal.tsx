@@ -11,14 +11,12 @@ import useRide from "../context/Rides/useRide";
 type RidePassengerValidationConfirmationModalProps = {
   toggleModal: () => void;
   actionType?: "accept" | "refuse" | null;
-  // rideId: string;
   passengerId?: string;
 };
 
 const RidePassengerValidationConfirmationModal = ({
   toggleModal,
   actionType,
-  // rideId,
   passengerId,
 }: RidePassengerValidationConfirmationModalProps) => {
   const ride = useRide();
@@ -29,7 +27,6 @@ const RidePassengerValidationConfirmationModal = ({
   );
 
   const handleConfirm = async () => {
-    // if (!rideId || !passengerId) return;
     if (!ride.id || !passengerId) return;
 
     try {
@@ -37,7 +34,6 @@ const RidePassengerValidationConfirmationModal = ({
         variables: {
           data: {
             user_id: passengerId,
-            // ride_id: rideId,
             ride_id: ride.id,
             status:
               actionType === "accept"
@@ -48,7 +44,6 @@ const RidePassengerValidationConfirmationModal = ({
       });
 
       await client.refetchQueries({
-        // include: ["SearchRides", "PassengersByRide"],
         include: [queryDriverRides, queryPassengersByRide],
       });
 

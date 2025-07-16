@@ -21,7 +21,7 @@ import {
 import { User } from "./User";
 import { IsFutureDate } from "../validators/IsFutureDate";
 import { IdInput } from "./Id";
-import { PassengerRide } from "./PassengerRide";
+import { PassengerRide, PassengerRideStatus } from "./PassengerRide";
 
 export type Point = {
   type: "Point";
@@ -95,8 +95,8 @@ export class Ride extends BaseEntity {
   @Field(() => [PassengerRide], { nullable: true })
   passenger_rides?: PassengerRide[];
 
-  // @Field(() => String, { nullable: true })
-  // passenger_status?: string;
+  @Field(() => PassengerRideStatus, { nullable: true })
+  current_user_passenger_status?: PassengerRideStatus;
 }
 
 @InputType()

@@ -7,12 +7,10 @@ import { useState } from "react";
 import useRide from "../context/Rides/useRide";
 
 export type RidePassengerValidationButtonsProps = {
-  // rideId: string;
   passengerId: string;
 };
 
 const RidePassengerValidationButtons = ({
-  // rideId,
   passengerId,
 }: RidePassengerValidationButtonsProps) => {
   const ride = useRide();
@@ -30,7 +28,6 @@ const RidePassengerValidationButtons = ({
           type="button"
           onClick={() => {
             setActionType("accept");
-            // toggleChildModal();
             confirm.openModal();
           }}
         />
@@ -54,8 +51,6 @@ const RidePassengerValidationButtons = ({
           <RidePassengerValidationConfirmationModal
             toggleModal={confirm.closeModal}
             actionType={actionType}
-            // rideId={rideId}
-            // rideId={ride.id}
             passengerId={passengerId}
           />
         )}
