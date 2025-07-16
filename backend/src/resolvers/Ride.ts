@@ -176,11 +176,6 @@ export class RidesResolver {
     }
     const newRide = new Ride();
     try {
-      console.log(
-        "🚀🚀 voici les coordonnées créées",
-        data.departure_lng,
-        data.departure_lat
-      );
       Object.assign(newRide, {
         ...data,
         departure_location: {

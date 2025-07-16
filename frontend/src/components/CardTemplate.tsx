@@ -72,6 +72,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
     data.max_passenger,
     data.nb_passenger
   );
+  const totalPriceRoute = route && route?.distanceKm * 0.14;
 
   return (
     <div
@@ -142,7 +143,12 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
               </div>
               <p className="text-xl lg:text-4xl font-semibold">
                 {price && price.toFixed(2)}
-                <span className=" font-sans text-sm lg:text-2xl">€</span>
+                <span className=" font-sans text-sm ">€/pp</span>
+              </p>
+              <p className=" font-semibold">
+                <span className=" font-sans text-sm ">Total trajet </span>
+                {totalPriceRoute && totalPriceRoute.toFixed(2)}
+                <span className=" font-sans text-sm ">€</span>
               </p>
             </div>
           )}
