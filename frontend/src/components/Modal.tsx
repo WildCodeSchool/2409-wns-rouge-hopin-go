@@ -27,18 +27,22 @@ const Modal: React.FC<ModalProps> = ({
 
   return createPortal(
     <>
-      {isOpen && <div className="fixed inset-0 bg-black/50 z-80" />}
-
       {isOpen && (
-        <div
-          ref={toggleModalRef}
-          className={`transition-200 fixed top-1/2 left-1/2 z-50 transform overflow-hidden rounded-2xl bg-white shadow-xl -translate-x-1/2 ${
-            visible
-              ? "opacity-100 -translate-y-1/2 pointer-events-auto"
-              : "opacity-0 -translate-y-[55%] pointer-events-none"
-          }`}
-        >
-          {children(toggleModal)}
+        <div ref={toggleModalRef} className="fixed inset-0 bg-black/50 z-[50]">
+          {isOpen && (
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+              className={`transition-200 fixed top-1/2 left-1/2 z-50 transform   bg-transparent -translate-x-1/2 ${
+                visible
+                  ? "opacity-100 -translate-y-1/2 pointer-events-auto"
+                  : "opacity-0 -translate-y-[55%] pointer-events-none"
+              }`}
+            >
+              {children(toggleModal)}
+            </div>
+          )}
         </div>
       )}
     </>,

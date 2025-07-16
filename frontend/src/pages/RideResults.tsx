@@ -116,10 +116,10 @@ const RideResults = () => {
         />
       </div>
       <div className="h-full flex md:w-1/2">
-        <CardRideDetails
+        {/* <CardRideDetails
           variant={getVariant(rides[selectedIndex])}
           data={rides[selectedIndex]}
-        />
+        /> */}
       </div>
     </div>
   );

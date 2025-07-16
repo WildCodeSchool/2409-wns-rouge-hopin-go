@@ -11,6 +11,10 @@ import { queryWhoAmI } from "../api/WhoAmI";
 import useMapboxRoute from "../hooks/useMapboxRoute";
 import { formatTravelDuration } from "../utils/formatTravelDuration";
 import { calculateRidePrice } from "../utils/calculateRidePrice";
+import { useModal } from "../hooks/useModal";
+import { X } from "lucide-react";
+import Modal from "./Modal";
+import Button from "./Button";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
 
@@ -40,6 +44,14 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
     statusLabel,
     icon: CardIcon,
   } = variantConfigMap[variant];
+
+  const { isOpen, visible, toggleModal } = useModal();
+
+  // <Button
+  // label=" Test pour ouvrir une modale"
+  // type="button"
+  // onClick={toggleModal}
+  // />
 
   const { route } = useMapboxRoute({
     departure: [
@@ -81,7 +93,10 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
       } select-none transition-200 min-h-[200px] w-full max-w-[500px] p-4 transition-transform ${
         onClick ? "cursor-pointer" : ""
       }`}
-      onClick={onClick}
+      onClick={() => {
+        onClick;
+        toggleModal();
+      }}
       onScroll={onScroll}
       role={onClick ? "button" : undefined}
       tabIndex={onClick ? 0 : undefined}
@@ -232,6 +247,29 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           <div className="bg-primary px-6 pt-2 rounded-b-3xl shadow-md w-[100%] h-14 pl-2"></div>
         )}
       </div>
+      <Modal isOpen={isOpen} visible={visible} toggleModal={toggleModal}>
+        {(toggleModal) => (
+          <div className="relative flex rounded-xl flex-col items-center justify-center h-full bg-purple-500 p-4">
+            <Button
+              icon={X}
+              iconSize={26}
+              type="button"
+              variant="refused"
+              isBgTransparent
+              onClick={toggleModal}
+              className="hover:!bg-primaryHover self-end mb-4"
+            />
+            <div className="flex flex-col items-center justify-center">
+              <h1 className="text-2xl font-bold">
+                Bienvenue sur notre plateforme de covoiturage !
+              </h1>
+              <p className="text-lg">
+                Connectez-vous pour profiter de toutes nos fonctionnalités.
+              </p>
+            </div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };
