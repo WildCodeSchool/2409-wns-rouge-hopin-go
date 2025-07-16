@@ -20,6 +20,7 @@ import {
   Pagination,
   Scrollbar,
 } from "swiper/modules";
+import RideProvider from "../context/Rides/rides.provider";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
 type PassengerRide = PassengerRidesQuery["passengerRides"]["rides"][number];
@@ -97,17 +98,18 @@ const ScrollableSnapList = ({
             flex justify-center items-center
             h-auto min-h-[200px] w-full`}
         >
-          <CardTemplate
-            variant={getVariant(data)}
-            data={data}
-            isSelected={index === selectedIndex}
-            driverUpcomingRides={driverUpcomingRides}
-            onClick={() => {
-              swiperRef.current?.slideTo(index);
-              setSelectedIndex(index);
-              onSelect(index);
-            }}
-          />
+          <RideProvider ride={data}>
+            <CardTemplate
+              variant={getVariant(data)}
+              isSelected={index === selectedIndex}
+              driverUpcomingRides={driverUpcomingRides}
+              onClick={() => {
+                swiperRef.current?.slideTo(index);
+                setSelectedIndex(index);
+                onSelect(index);
+              }}
+            />
+          </RideProvider>
         </SwiperSlide>
       ))}
     </Swiper>

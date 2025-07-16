@@ -4,7 +4,10 @@ import { VariantType } from "../types/variantTypes";
 import useBreakpoints from "../utils/useWindowSize";
 import { useQuery } from "@apollo/client";
 import { queryPassengerRides } from "../api/PassengerRides";
-import { PassengerRidesQuery, PassengerRideStatus } from "../gql/graphql";
+import {
+  PassengerRidesQuery,
+  PassengerRideStatus as GqlPassengerRideStatus,
+} from "../gql/graphql";
 
 type PassengerRide = PassengerRidesQuery["passengerRides"]["rides"][number];
 
@@ -21,14 +24,15 @@ const PassengerRidesList = () => {
   const getVariant = (dataset: PassengerRide): VariantType => {
     if (dataset.is_canceled) return "cancel";
     if (dataset.nb_passenger === dataset.max_passenger) return "full";
-    if (dataset.passenger_status === PassengerRideStatus.Waiting)
+    if (dataset.passenger_status === GqlPassengerRideStatus.Waiting)
       return "pending";
-    if (dataset.passenger_status === PassengerRideStatus.Approved)
+    if (dataset.passenger_status === GqlPassengerRideStatus.Approved)
       return "validation";
-    if (dataset.passenger_status === PassengerRideStatus.Refused)
+    if (dataset.passenger_status === GqlPassengerRideStatus.Refused)
       return "refused";
     return "primary";
   };
+  console.log("Upcoming List:", upcomingList);
 
   const { data: upcomingData } = useQuery(queryPassengerRides, {
     variables: { filter: "upcoming", limit, offset: upcomingOffset },

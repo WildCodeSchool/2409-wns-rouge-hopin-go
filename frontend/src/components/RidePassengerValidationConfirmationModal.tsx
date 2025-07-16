@@ -6,34 +6,39 @@ import { mutationUpdatePassengerRideStatus } from "../api/UpdatePassengerRideSta
 import { PassengerRideStatus } from "../gql/graphql";
 import { queryPassengersByRide } from "../api/PassengersByRide";
 import { queryDriverRides } from "../api/DriverRides";
+import useRide from "../context/Rides/useRide";
 
 type RidePassengerValidationConfirmationModalProps = {
   toggleModal: () => void;
   actionType?: "accept" | "refuse" | null;
-  rideId: string;
+  // rideId: string;
   passengerId?: string;
 };
 
 const RidePassengerValidationConfirmationModal = ({
   toggleModal,
   actionType,
-  rideId,
+  // rideId,
   passengerId,
 }: RidePassengerValidationConfirmationModalProps) => {
+  const ride = useRide();
+  console.log("Ride depuis context confirmation:", ride.id);
   const client = useApolloClient();
   const [updatePassengerRideStatus] = useMutation(
     mutationUpdatePassengerRideStatus
   );
 
   const handleConfirm = async () => {
-    if (!rideId || !passengerId) return;
+    // if (!rideId || !passengerId) return;
+    if (!ride.id || !passengerId) return;
 
     try {
       await updatePassengerRideStatus({
         variables: {
           data: {
             user_id: passengerId,
-            ride_id: rideId,
+            // ride_id: rideId,
+            ride_id: ride.id,
             status:
               actionType === "accept"
                 ? PassengerRideStatus.Approved

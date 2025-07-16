@@ -2,15 +2,15 @@ import Button from "./Button";
 import { X } from "lucide-react";
 import CardTemplate from "./CardTemplate";
 import { VariantType } from "../types/variantTypes";
-import { PassengerRidesQuery, PassengersByRideQuery } from "../gql/graphql";
+import { PassengersByRideQuery } from "../gql/graphql";
 import RidePassengerValidationButtons from "./RidePassengerValidationButtons";
 
-type PassengerRide = PassengerRidesQuery["passengerRides"]["rides"][number];
+// type PassengerRide = PassengerRidesQuery["passengerRides"]["rides"][number];
 
 type RideCardModalProps = {
   toggleModal: () => void;
   variant: VariantType;
-  data: PassengerRide;
+  // data: PassengerRide;
   waitingPassengers?: PassengersByRideQuery["passengersByRide"];
   acceptedPassengers?: PassengersByRideQuery["passengersByRide"];
 };
@@ -18,10 +18,11 @@ type RideCardModalProps = {
 const RideCardModal = ({
   toggleModal,
   variant,
-  data,
+  // data,
   waitingPassengers,
   acceptedPassengers,
 }: RideCardModalProps) => {
+  // const ride = useRide();
   console.log("waiting passengers:", waitingPassengers);
   console.log("accepted passengers:", acceptedPassengers);
   return (
@@ -38,7 +39,7 @@ const RideCardModal = ({
           onClick={toggleModal}
           className="hover:!bg-primaryHover self-end mb-4"
         />
-        <CardTemplate variant={variant} data={data} />
+        <CardTemplate variant={variant} />
         <div className="flex flex-col items-start justify-start w-full">
           <div className="mb-5 mt-5 w-full">
             <h2 className="text-xl font-bold text-primary">
@@ -55,7 +56,7 @@ const RideCardModal = ({
                   </p>
                   <div className="flex items-center">
                     <RidePassengerValidationButtons
-                      rideId={data.id}
+                      // rideId={ride.id}
                       passengerId={passenger.user.id}
                     />
                   </div>

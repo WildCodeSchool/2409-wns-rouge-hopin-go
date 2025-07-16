@@ -39,7 +39,6 @@ export const queryPassengerRides = gql(`
           ride_id
           status
         }
-        passenger_status
       }
     }
   }

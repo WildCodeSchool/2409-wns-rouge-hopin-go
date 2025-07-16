@@ -8,18 +8,21 @@ import { VariantType } from "../types/variantTypes";
 import { toast } from "react-toastify";
 import { querySearchRide } from "../api/SearchRide";
 import { useSearchParams } from "react-router-dom";
+import useRideOptional from "../context/Rides/useRideOptional";
 
 export default function RegisterButton({
-  rideId,
+  rideId: rideIdProp,
   size,
   variant,
   icon,
 }: {
-  rideId: string;
+  rideId?: string;
   size: "small" | "large";
   variant?: VariantType;
   icon?: React.ElementType;
 }) {
+  const rideContext = useRideOptional();
+
   const [searchParams] = useSearchParams();
   const departure_city = searchParams.get("departure_city")!;
   const arrival_city = searchParams.get("arrival_city")!;
@@ -55,6 +58,12 @@ export default function RegisterButton({
   // Si variant === validation : "Annuler/Gérer l'inscription" au lieu de "Réserver" et changer le comportement du bouton ? => handleCancelRegister
   const hasRegistered =
     variant === "pending" || variant === "validation" ? true : false;
+
+  const rideId = rideIdProp ? rideIdProp : rideContext?.id;
+  if (!rideId) {
+    console.error("No rideId provided or available in context.");
+    return null;
+  }
 
   const handleRegister = async () => {
     // implémenter une modale de confirmation ???

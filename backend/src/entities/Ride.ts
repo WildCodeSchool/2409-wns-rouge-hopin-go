@@ -95,8 +95,8 @@ export class Ride extends BaseEntity {
   @Field(() => [PassengerRide], { nullable: true })
   passenger_rides?: PassengerRide[];
 
-  @Field(() => String, { nullable: true })
-  passenger_status?: string;
+  // @Field(() => String, { nullable: true })
+  // passenger_status?: string;
 }
 
 @InputType()

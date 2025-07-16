@@ -3,23 +3,14 @@ import { VariantType } from "../types/variantTypes";
 import { variantConfigMap } from "../constants/variantConfig";
 import useWindowSize from "../utils/useWindowSize";
 import { formatDate, formatTime } from "../utils/formatDate";
-import {
-  DriverRidesQuery,
-  PassengerRidesQuery,
-  SearchRidesQuery,
-} from "../gql/graphql";
 import RegisterButton from "./RegisterButton";
 import PassengersButtonWithModal from "./PassengersButtonWithModal";
 import { useQuery } from "@apollo/client";
 import { queryWhoAmI } from "../api/WhoAmI";
-
-type SearchRide = SearchRidesQuery["searchRide"][number];
-type PassengerRide = PassengerRidesQuery["passengerRides"]["rides"][number];
-type DriverRide = DriverRidesQuery["driverRides"]["rides"][number];
+import useRide from "../context/Rides/useRide";
 
 type CardTemplateProps = {
   variant: VariantType;
-  data: DriverRide | PassengerRide | SearchRide;
   onClick?: () => void;
   onScroll?: (event: React.UIEvent<HTMLDivElement>) => void;
   isSelected?: boolean;
@@ -29,13 +20,14 @@ type CardTemplateProps = {
 
 const CardTemplate: React.FC<CardTemplateProps> = ({
   variant,
-  data,
   onClick,
   onScroll,
   isSelected = false,
   additionalClassName = "",
   driverUpcomingRides,
 }) => {
+  const ride = useRide();
+  console.log("Ride from context cardTemplate:", ride.id);
   const { isMd, isXl, is2xl, windowWidth } = useWindowSize();
   const {
     textColor,
@@ -47,12 +39,12 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const me = whoAmIData?.whoami;
 
-  const departureDate = new Date(data.departure_at);
-  const arrivalDate = new Date(data.arrival_at);
+  const departureDate = new Date(ride.departure_at);
+  const arrivalDate = new Date(ride.arrival_at);
   const departureTime = formatTime(departureDate);
   const arrivalTime = formatTime(arrivalDate);
   const dateStr = formatDate(departureDate);
-  const driver_id = data.driver_id?.id ?? "?";
+  const driver_id = ride.driver_id?.id ?? "?";
 
   const durationMin = Math.floor(
     (arrivalDate.getTime() - departureDate.getTime()) / 60000
@@ -62,9 +54,8 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
       ? `${Math.floor(durationMin / 60)}h${durationMin % 60 || ""}`
       : `${durationMin}min`;
 
-  // const availableSeats = data.max_passenger - (data.nb_passenger ?? 0);
   const driverName =
-    data.driver_id?.firstName ?? `Conducteur #${data.driver_id?.id ?? "?"}`;
+    ride.driver_id?.firstName ?? `Conducteur #${ride.driver_id?.id ?? "?"}`;
   const price = 10 + Math.random() * 15;
 
   return (
@@ -108,16 +99,16 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             />
             <p
               className="text-sm sm:text-xl lg:text-xl sm:font-bold md:font-normal lg:font-bold truncate"
-              title={data.departure_city}
+              title={ride.departure_city}
             >
-              {data.departure_city}
+              {ride.departure_city}
             </p>
             <p className="font-semibold">{travelDuration}</p>
             <p
               className="text-sm sm:text-xl lg:text-xl sm:font-bold md:font-normal lg:font-bold truncate"
-              title={data.arrival_city}
+              title={ride.arrival_city}
             >
-              {data.arrival_city}
+              {ride.arrival_city}
             </p>
           </div>
 
@@ -151,10 +142,10 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
         >
           {statusLabel === "" ? (
             <>
-              {data.available_seats}
+              {ride.available_seats}
               {is2xl &&
                 `${
-                  data.available_seats > 1
+                  ride.available_seats > 1
                     ? " places restantes"
                     : " place restante"
                 }`}
@@ -180,9 +171,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             statusLabel
           )}
         </p>
-        {driverUpcomingRides && (
-          <PassengersButtonWithModal variant={variant} data={data} />
-        )}
+        {driverUpcomingRides && <PassengersButtonWithModal variant={variant} />}
         <p
           className={`absolute ${
             me?.id === driver_id ? "right-0" : "right-16"
@@ -208,7 +197,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
               />
             </svg>
             <RegisterButton
-              rideId={data.id}
+              rideId={ride.id}
               size="small"
               variant={variant}
               icon={CardIcon}

@@ -7,7 +7,7 @@ import { queryDriverRides } from "../api/DriverRides";
 import {
   DriverRidesQuery,
   PassengerRidesQuery,
-  PassengerRideStatus,
+  // PassengerRideStatus,
 } from "../gql/graphql";
 
 type PassengerRide = PassengerRidesQuery["passengerRides"]["rides"][number];
@@ -25,12 +25,12 @@ const DriverRidesList = () => {
   const getVariant = (dataset: PassengerRide): VariantType => {
     if (dataset.is_canceled) return "cancel";
     if (dataset.nb_passenger === dataset.max_passenger) return "validation";
-    if (dataset.passenger_status === PassengerRideStatus.Waiting)
-      return "pending";
-    if (dataset.passenger_status === PassengerRideStatus.Approved)
-      return "validation";
-    if (dataset.passenger_status === PassengerRideStatus.Refused)
-      return "refused";
+    // if (dataset.passenger_rides?.status === PassengerRideStatus.Waiting)
+    //   return "pending";
+    // if (dataset.passenger_status === PassengerRideStatus.Approved)
+    //   return "validation";
+    // if (dataset.passenger_status === PassengerRideStatus.Refused)
+    //   return "refused";
     return "primary";
   };
 
