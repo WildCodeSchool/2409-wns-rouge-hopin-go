@@ -29,7 +29,6 @@ const PassengerRidesList = () => {
       return "refused";
     return "primary";
   };
-  console.log("Upcoming List:", upcomingList);
 
   const { data: upcomingData } = useQuery(queryPassengerRides, {
     variables: { filter: "upcoming", limit, offset: upcomingOffset },

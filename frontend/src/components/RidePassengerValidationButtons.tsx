@@ -4,7 +4,6 @@ import { Check, X } from "lucide-react";
 import Modal from "./Modal";
 import RidePassengerValidationConfirmationModal from "./RidePassengerValidationConfirmationModal";
 import { useState } from "react";
-import useRide from "../context/Rides/useRide";
 
 export type RidePassengerValidationButtonsProps = {
   passengerId: string;
@@ -13,8 +12,6 @@ export type RidePassengerValidationButtonsProps = {
 const RidePassengerValidationButtons = ({
   passengerId,
 }: RidePassengerValidationButtonsProps) => {
-  const ride = useRide();
-  console.log("Ride depuis context:", ride.id);
   const confirm = useModal();
   const [actionType, setActionType] = useState<"accept" | "refuse" | null>(
     null

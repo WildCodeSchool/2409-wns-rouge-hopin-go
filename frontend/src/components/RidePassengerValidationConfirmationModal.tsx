@@ -20,7 +20,6 @@ const RidePassengerValidationConfirmationModal = ({
   passengerId,
 }: RidePassengerValidationConfirmationModalProps) => {
   const ride = useRide();
-  console.log("Ride depuis context confirmation:", ride.id);
   const client = useApolloClient();
   const [updatePassengerRideStatus] = useMutation(
     mutationUpdatePassengerRideStatus

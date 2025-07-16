@@ -28,12 +28,10 @@ const PassengersButtonWithModal = ({
     variables: { ride_id: ride.id },
     skip: !ride.id,
   });
-  console.log("data", passengersData);
 
   if (loading) return <p>Chargement des passagers…</p>;
 
   const passengers = passengersData?.passengersByRide ?? [];
-  console.log("Passengers data:", passengers);
 
   const waitingPassengers = passengers?.filter(
     (passenger) => passenger.status === PassengerRideStatus.Waiting

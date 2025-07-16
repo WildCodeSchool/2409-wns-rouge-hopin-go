@@ -30,7 +30,6 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   driverUpcomingRides,
 }) => {
   const ride = useRide();
-  console.log("Ride from context cardTemplate:", ride.id);
   const { isMd, isXl, is2xl, windowWidth } = useWindowSize();
   const {
     textColor,
