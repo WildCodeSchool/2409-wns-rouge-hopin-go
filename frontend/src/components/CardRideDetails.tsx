@@ -40,7 +40,7 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
 
   return (
     <div className="relative z-0 flex justify-center w-full">
-      <div className="absolute z-0 top-[88px] hidden md:flex w-full max-w-[648px] ">
+      <div className="absolute top-[88px] hidden md:flex w-full max-w-[648px] ">
         <div className="bg-primary px-6 pt-2 pb-6 rounded-t-3xl shadow-md w-[85%]">
           <SearchRide variant="searchBarRide" />
         </div>
@@ -93,9 +93,8 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
           <p>
             {variant === "cancel" || variant === "full"
               ? "Non disponible"
-              : `${availableSeats} ${
-                  availableSeats > 1 ? "places restantes" : "place restante"
-                }`}
+              : `${availableSeats} ${availableSeats > 1 ? "places restantes" : "place restante"
+              }`}
           </p>
 
           <div className="flex justify-start h-40">
