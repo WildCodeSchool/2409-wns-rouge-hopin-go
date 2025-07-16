@@ -60,6 +60,8 @@ const RideResults = () => {
   }
 
   const rides = dataSearched?.searchRide ?? [];
+  console.log("🚀 ~ RideResults ~ rides:", rides);
+  console.log("🚀 ~ RideResults ~ dataSearched:", dataSearched?.searchRide);
 
   const getVariant = (ride: SearchRide): VariantType => {
     if (ride.is_canceled) return "cancel";
@@ -111,7 +113,7 @@ const RideResults = () => {
           sliderDirection="vertical"
           scaleEffect
           centerSlides={isMd ? true : false}
-          swiperClassName="h-full !py-20 w-full"
+          swiperClassName="h-full !pt-28 w-full"
           slidePerView={3}
         />
       </div>
