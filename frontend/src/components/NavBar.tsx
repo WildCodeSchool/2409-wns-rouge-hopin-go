@@ -135,6 +135,7 @@ const NavBar = () => {
               label="Rechercher"
               className="font-semibold"
               isHoverBgColor
+              icon={Search}
             />
             <Button
               isLink
@@ -143,6 +144,7 @@ const NavBar = () => {
               label="Proposer"
               className="font-semibold"
               isHoverBgColor
+              icon={CirclePlus}
             />
           </div>
           <div className="rounded-l-full rounded-br-full bg-gray-100 -ml-4 p-4 m-2 flex items-center justify-center">
