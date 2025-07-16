@@ -41,12 +41,12 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
 
   const { route } = useMapboxRoute({
     departure: [
-      data.departure_location.coordinates[1], // longitude
-      data.departure_location.coordinates[0], // latitude
+      ride.departure_location.coordinates[1], // longitude
+      ride.departure_location.coordinates[0], // latitude
     ],
     arrival: [
-      data.arrival_location.coordinates[1],
-      data.arrival_location.coordinates[0],
+      ride.arrival_location.coordinates[1],
+      ride.arrival_location.coordinates[0],
     ],
   });
 
@@ -63,11 +63,11 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   const travelDuration = formatTravelDuration(route?.durationMin ?? 0);
 
   const driverName =
-    data.driver_id?.firstName ?? `Conducteur #${data.driver_id?.id ?? "?"}`;
+    ride.driver_id?.firstName ?? `Conducteur #${ride.driver_id?.id ?? "?"}`;
   const price = calculateRidePrice(
     route?.distanceKm,
-    data.max_passenger,
-    data.nb_passenger
+    ride.max_passenger,
+    ride.nb_passenger
   );
   const totalPriceRoute = route && route?.distanceKm * 0.14;
 
