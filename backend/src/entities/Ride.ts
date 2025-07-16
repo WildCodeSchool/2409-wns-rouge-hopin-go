@@ -7,7 +7,7 @@ import {
   MinLength,
   Validate,
 } from "class-validator";
-import { Field, ID, InputType, ObjectType } from "type-graphql";
+import { Field, Float, ID, InputType, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
@@ -22,11 +22,13 @@ import { User } from "./User";
 import { IsFutureDate } from "../validators/IsFutureDate";
 import { IdInput } from "./Id";
 import { PassengerRide } from "./PassengerRide";
-
-export type Point = {
-  type: "Point";
-  coordinates: [number, number];
-};
+@ObjectType()
+export class Point {
+  @Field()
+  type!: "Point";
+  @Field(() => [Float])
+  coordinates!: [number, number];
+}
 
 @Entity()
 @ObjectType()
@@ -73,13 +75,15 @@ export class Ride extends BaseEntity {
   nb_passenger!: number;
 
   @Column({ type: "geography", spatialFeatureType: "Point", srid: 4326 })
+  @Field(() => Point)
   departure_location!: Point;
 
   @Column({ type: "geography", spatialFeatureType: "Point", srid: 4326 })
+  @Field(() => Point)
   arrival_location!: Point;
 
   @Column({ default: false })
-  @Field()
+  @Field(() => Boolean)
   is_canceled!: boolean;
 
   @CreateDateColumn()
