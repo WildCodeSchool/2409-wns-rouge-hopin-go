@@ -7,6 +7,10 @@ import SearchRide from "./SearchRide";
 import Button from "./Button";
 import { Search } from "lucide-react";
 import RegisterButton from "./RegisterButton";
+import Map from "./Map";
+import { useState } from "react";
+import { formatTravelDuration } from "../utils/formatTravelDuration";
+import { calculateRidePrice } from "../utils/calculateRidePrice";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
 
@@ -25,18 +29,26 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
   const arrivalTime = formatTime(arrivalDate);
   const dateStr = formatDate(departureDate);
 
-  const durationMin = Math.floor(
-    (arrivalDate.getTime() - departureDate.getTime()) / 60000
-  );
-  const travelDuration =
-    durationMin >= 60
-      ? `${Math.floor(durationMin / 60)}h${durationMin % 60 || ""}`
-      : `${durationMin}min`;
+  // ---------------------Map---------------------
+  const departureCity = data.departure_city;
+  const departureLatitude = data.departure_location.coordinates[0];
+  const departureLongitude = data.departure_location.coordinates[1];
+  const arrivalCity = data.arrival_city;
+  const arrivalLatitude = data.arrival_location.coordinates[0];
+  const arrivalLongitude = data.arrival_location.coordinates[1];
+  // ---------------------End Map---------------------
+
+  const [travelDuration, setTravelDuration] = useState<string>("");
+  const [travelDistance, setTravelDistance] = useState<string>("");
 
   const availableSeats = data.max_passenger - (data.nb_passenger ?? 0);
   const driverName =
     data.driver_id?.firstName ?? `Conducteur #${data.driver_id?.id ?? "?"}`;
-  const price = 10 + Math.random() * 15;
+  const price = calculateRidePrice(
+    parseFloat(travelDistance),
+    data.max_passenger,
+    data.nb_passenger
+  );
 
   return (
     <div className="relative z-0 flex justify-center w-full">
@@ -58,7 +70,7 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
         </div>
       </div>
       <div
-        className={`hidden relative z-10 md:block p-8 mt-40 mb-40 mr-8 rounded-3xl space-y-5 shadow-custom py-20 md:w-full border-4 border-primary ${textColor} bg-gray-100`}
+        className={`hidden relative z-10 md:block p-8 mt-40 mb-40 mr-8 rounded-3xl space-y-5 shadow-custom  md:w-full h-fit border-4 border-primary ${textColor} bg-gray-100`}
       >
         <div className="pointer-events-none absolute -left-full lg:translate-x-[3px] xl:translate-x-[1px] bg-gray-100 top-1/2 -translate-y-1/2 w-full flex justify-center">
           <svg
@@ -78,31 +90,36 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
             />
           </svg>
         </div>
-
-        <h2 className={`text-2xl font-bold mb-2 ${textColor}`}>{driverName}</h2>
+        <h2 className={`text-2xl font-bold ${textColor}`}>{driverName}</h2>
         <h2 className={`text-xl font-bold mb-2 ${textColor}`}>
           Détails du trajet
         </h2>
-        <p className="text-sm md:text-base">{dateStr}</p>
-        <p className="text-xl md:text-4xl font-semibold">
-          {price.toFixed(2)}
-          <span className="text-sm md:text-2xl"> €</span>
-        </p>
+        <div className="flex w-full justify-start  gap-10">
+          <div>
+            <p className="text-sm md:text-base">{dateStr}</p>
+            <p className="text-xl md:text-4xl font-semibold">
+              {price.toFixed(2)}
+              <span className="text-sm md:text-2xl"> €</span>
+            </p>
 
-        <div className="flex flex-col gap-2">
-          <p>
-            {variant === "cancel" || variant === "full"
-              ? "Non disponible"
-              : `${availableSeats} ${availableSeats > 1 ? "places restantes" : "place restante"
-              }`}
-          </p>
-
+            <div className="flex flex-col gap-2">
+              <p>
+                {variant === "cancel" || variant === "full"
+                  ? "Non disponible"
+                  : `${availableSeats} ${availableSeats > 1 ? "places restantes" : "place restante"
+                  }`}
+              </p>
+            </div>
+          </div>
           <div className="flex justify-start h-40">
-            <div
-              className={`flex flex-col w-28 justify-between ${textColor} text-base md:text-2xl font-semibold`}
-            >
-              <p>{departureTime}</p>
-              <p>{arrivalTime}</p>
+            <div className={`flex flex-col w-28 justify-between ${textColor}`}>
+              <p className="text-base md:text-2xl font-semibold">
+                {departureTime}
+              </p>
+              <p className="text-sm">{travelDuration}</p>
+              <p className="text-base md:text-2xl font-semibold">
+                {arrivalTime}
+              </p>
             </div>
 
             <div
@@ -124,7 +141,7 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
                 >
                   {data.departure_city}
                 </p>
-                <p className="font-semibold">{travelDuration}</p>
+                <p className="text-sm">{travelDistance}</p>
                 <p
                   className="text-lg md:text-xl sm:font-bold"
                   title={data.arrival_city}
@@ -136,6 +153,21 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
           </div>
         </div>
         <RegisterButton variant={variant} rideId={data.id} size="large" />
+        <Map
+          mapId={`map-${data.id}`}
+          departureLatitude={departureLatitude}
+          departureLongitude={departureLongitude}
+          departureCity={departureCity}
+          arrivalLatitude={arrivalLatitude}
+          arrivalLongitude={arrivalLongitude}
+          arrivalCity={arrivalCity}
+          onRouteData={({ distanceKm, durationMin }) => {
+            setTravelDuration(`${formatTravelDuration(durationMin)}`);
+            setTravelDistance(`${distanceKm.toFixed(1)} km`);
+            console.log(`Distance : ${distanceKm} km`);
+            console.log(`Durée : ${durationMin} min`);
+          }}
+        />
       </div>
     </div>
   );

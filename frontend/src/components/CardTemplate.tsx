@@ -8,6 +8,9 @@ import RegisterButton from "./RegisterButton";
 import PassengersButtonWithModal from "./PassengersButtonWithModal";
 import { useQuery } from "@apollo/client";
 import { queryWhoAmI } from "../api/WhoAmI";
+import useMapboxRoute from "../hooks/useMapboxRoute";
+import { formatTravelDuration } from "../utils/formatTravelDuration";
+import { calculateRidePrice } from "../utils/calculateRidePrice";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
 
@@ -38,6 +41,17 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
     icon: CardIcon,
   } = variantConfigMap[variant];
 
+  const { route } = useMapboxRoute({
+    departure: [
+      data.departure_location.coordinates[1], // longitude
+      data.departure_location.coordinates[0], // latitude
+    ],
+    arrival: [
+      data.arrival_location.coordinates[1],
+      data.arrival_location.coordinates[0],
+    ],
+  });
+
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const me = whoAmIData?.whoami;
 
@@ -48,18 +62,17 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   const dateStr = formatDate(departureDate);
   const driver_id = data.driver_id?.id ?? "?";
 
-  const durationMin = Math.floor(
-    (arrivalDate.getTime() - departureDate.getTime()) / 60000
-  );
-  const travelDuration =
-    durationMin >= 60
-      ? `${Math.floor(durationMin / 60)}h${durationMin % 60 || ""}`
-      : `${durationMin}min`;
+  const travelDuration = formatTravelDuration(route?.durationMin ?? 0);
 
   const availableSeats = data.max_passenger - (data.nb_passenger ?? 0);
   const driverName =
     data.driver_id?.firstName ?? `Conducteur #${data.driver_id?.id ?? "?"}`;
-  const price = 10 + Math.random() * 15;
+  const price = calculateRidePrice(
+    route?.distanceKm,
+    data.max_passenger,
+    data.nb_passenger
+  );
+  const totalPriceRoute = route && route?.distanceKm * 0.14;
 
   return (
     <div
@@ -106,7 +119,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             >
               {data.departure_city}
             </p>
-            <p className="font-semibold">{travelDuration}</p>
+            <p className="">{travelDuration}</p>
             <p
               className="text-sm sm:text-xl lg:text-xl sm:font-bold md:font-normal lg:font-bold truncate"
               title={data.arrival_city}
@@ -129,8 +142,13 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
                 </p>
               </div>
               <p className="text-xl lg:text-4xl font-semibold">
-                {price.toFixed(2)}{" "}
-                <span className="text-sm lg:text-2xl">€</span>
+                {price && price.toFixed(2)}
+                <span className=" font-sans text-sm ">€/pp</span>
+              </p>
+              <p className=" font-semibold">
+                <span className=" font-sans text-sm ">Total trajet </span>
+                {totalPriceRoute && totalPriceRoute.toFixed(2)}
+                <span className=" font-sans text-sm ">€</span>
               </p>
             </div>
           )}

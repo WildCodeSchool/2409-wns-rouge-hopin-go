@@ -88,7 +88,10 @@ export class RidesResolver {
         .andWhere("ride.nb_passenger < ride.max_passenger")
         .orderBy("ride.departure_at", "ASC")
         .getMany();
-      console.log("🚀 ~ RidesResolver ~ rides:", rides);
+      console.log(
+        "🚀 ~ RidesResolver ~ rides:",
+        rides.map((ride) => ride.departure_location.coordinates)
+      );
       return rides;
     } catch (error) {
       console.error("Une erreur est survenue lors de la recherche.", error);
@@ -173,11 +176,6 @@ export class RidesResolver {
     }
     const newRide = new Ride();
     try {
-      console.log(
-        "🚀🚀 voici les coordonnées créées",
-        data.departure_lng,
-        data.departure_lat
-      );
       Object.assign(newRide, {
         ...data,
         departure_location: {
