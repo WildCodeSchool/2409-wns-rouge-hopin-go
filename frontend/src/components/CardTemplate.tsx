@@ -142,7 +142,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
               </div>
               <p className="text-xl lg:text-4xl font-semibold">
                 {price && price.toFixed(2)}
-                <span className=" font-sans text-sm lg:text-2xl"> €</span>
+                <span className=" font-sans text-sm lg:text-2xl">€</span>
               </p>
             </div>
           )}
