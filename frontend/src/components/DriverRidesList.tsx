@@ -1,40 +1,37 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ScrollableSnapList from "./ScrollableSnapList";
 import { VariantType } from "../types/variantTypes";
 import useBreakpoints from "../utils/useWindowSize";
 import { useQuery } from "@apollo/client";
 import { queryDriverRides } from "../api/DriverRides";
-import { SearchRidesQuery } from "../gql/graphql";
+import { DriverRidesQuery } from "../gql/graphql";
 
-type SearchRide = SearchRidesQuery["searchRide"][number];
-
+type DriverRide = DriverRidesQuery["driverRides"]["rides"][number];
 const DriverRidesList = () => {
   const [, setSelectedIndex] = useState(0);
   const [upcomingOffset, setUpcomingOffset] = useState(0);
-  const [upcomingList, setUpcomingList] = useState<SearchRide[]>([]);
+  const [upcomingList, setUpcomingList] = useState<DriverRide[]>([]);
   const [archivedOffset, setArchivedOffset] = useState(0);
-  const [archivedList, setArchivedList] = useState<SearchRide[]>([]);
+  const [archivedList, setArchivedList] = useState<DriverRide[]>([]);
   const limit = 3;
 
   const { isSm, isMd, isLg, is2xl } = useBreakpoints();
 
-  const getVariant = (dataset: SearchRide): VariantType => {
+  const getVariant = (dataset: DriverRide): VariantType => {
     if (dataset.is_canceled) return "cancel";
     if (dataset.nb_passenger === dataset.max_passenger) return "validation";
-    if (dataset.passenger_status === "waiting") return "pending";
-    if (dataset.passenger_status === "approved") return "validation";
-    if (dataset.passenger_status === "refused") return "refused";
     return "primary";
   };
 
   // Upcoming
   const { data: upcomingRidesData } = useQuery(queryDriverRides, {
     variables: { filter: "upcoming", limit, offset: upcomingOffset },
-    onCompleted: (data) => {
-      const newRides = data?.driverRides?.rides || [];
-      setUpcomingList((prev) => [...prev, ...newRides]);
-    },
   });
+
+  useEffect(() => {
+    const rides = upcomingRidesData?.driverRides?.rides || [];
+    setUpcomingList(rides);
+  }, [upcomingRidesData]);
 
   const totalUpcoming = upcomingRidesData?.driverRides?.totalCount || 0;
 

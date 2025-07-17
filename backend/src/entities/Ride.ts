@@ -21,7 +21,8 @@ import {
 import { User } from "./User";
 import { IsFutureDate } from "../validators/IsFutureDate";
 import { IdInput } from "./Id";
-import { PassengerRide } from "./PassengerRide";
+import { PassengerRide, PassengerRideStatus } from "./PassengerRide";
+
 @ObjectType()
 export class Point {
   @Field()
@@ -29,7 +30,6 @@ export class Point {
   @Field(() => [Float])
   coordinates!: [number, number];
 }
-
 @Entity()
 @ObjectType()
 export class Ride extends BaseEntity {
@@ -74,6 +74,11 @@ export class Ride extends BaseEntity {
   @Field()
   nb_passenger!: number;
 
+  @Field(() => Number)
+  get available_seats(): number {
+    return this.max_passenger - this.nb_passenger;
+  }
+
   @Column({ type: "geography", spatialFeatureType: "Point", srid: 4326 })
   @Field(() => Point)
   departure_location!: Point;
@@ -94,8 +99,8 @@ export class Ride extends BaseEntity {
   @Field(() => [PassengerRide], { nullable: true })
   passenger_rides?: PassengerRide[];
 
-  @Field(() => String, { nullable: true })
-  passenger_status?: string;
+  @Field(() => PassengerRideStatus, { nullable: true })
+  current_user_passenger_status?: PassengerRideStatus;
 }
 
 @InputType()

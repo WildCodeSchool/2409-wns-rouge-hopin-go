@@ -8,6 +8,7 @@ type ModalProps = {
   isVisible: boolean;
   onClose: () => void;
   children: React.ReactNode;
+  zIndex?: number;
 };
 
 const Modal: React.FC<ModalProps> = ({
@@ -16,6 +17,7 @@ const Modal: React.FC<ModalProps> = ({
   isVisible,
   onClose,
   children,
+  zIndex,
 }) => {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -30,8 +32,13 @@ const Modal: React.FC<ModalProps> = ({
   return createPortal(
     <>
       {isOpen && (
-        <div className="fixed inset-0 bg-black/50 z-[50]" data-modal-overlay />
+        <div
+          className="fixed inset-0 bg-black/50"
+          data-modal-overlay
+          style={{ zIndex: zIndex || 50 }}
+        />
       )}
+
       {isOpen && (
         <div
           ref={ref}

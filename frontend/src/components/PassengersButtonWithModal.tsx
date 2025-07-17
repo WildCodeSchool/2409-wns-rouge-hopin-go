@@ -5,25 +5,20 @@ import Button from "./Button";
 import { Eye } from "lucide-react";
 import useWindowSize from "../utils/useWindowSize";
 import { VariantType } from "../types/variantTypes";
-import { SearchRidesQuery } from "../gql/graphql";
+import { PassengerRideStatus } from "../gql/graphql";
 import { useQuery } from "@apollo/client";
 import { queryPassengersByRide } from "../api/PassengersByRide";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import CardRideDetailsMobileModal from "./CardRideDetailsMobileModal";
-
-type SearchRide = SearchRidesQuery["searchRide"][number];
+import useRide from "../context/Rides/useRide";
 
 type PassengersButtonWithModalProps = {
-  rideId: string;
   variant: VariantType;
-  data: SearchRide;
 };
 
 const PassengersButtonWithModal = ({
-  rideId,
   variant,
-  data,
 }: PassengersButtonWithModalProps) => {
   const { isOpen, isVisible, openModal, closeModal } = useModal();
   const { isSm, isMd, isXl } = useWindowSize();
@@ -31,11 +26,13 @@ const PassengersButtonWithModal = ({
   const location = useLocation();
   const isMyRidesPage = location.pathname.includes("my-rides/driver");
   const isRidesResultsPage = location.pathname.includes("ride-results");
+  const ride = useRide();
 
   const [info, setInfo] = useState(false);
 
   const { data: passengersData, loading } = useQuery(queryPassengersByRide, {
-    variables: { ride_id: rideId },
+    variables: { ride_id: ride.id },
+    skip: !ride.id,
   });
 
   if (loading) return <p>Chargement des passagers…</p>;
@@ -43,11 +40,11 @@ const PassengersButtonWithModal = ({
   const passengers = passengersData?.passengersByRide ?? [];
 
   const waitingPassengers = passengers?.filter(
-    (passenger) => passenger.status === "waiting"
+    (passenger) => passenger.status === PassengerRideStatus.Waiting
   );
 
   const acceptedPassengers = passengers?.filter(
-    (passenger) => passenger.status === "validate"
+    (passenger) => passenger.status === PassengerRideStatus.Approved
   );
 
   const openAppropriateModal = () => {
@@ -132,10 +129,8 @@ const PassengersButtonWithModal = ({
           onClose={() => closeModal("RideCardModal")}
         >
           <RideCardModal
-            rideId={rideId}
             variant={variant}
             toggleModal={() => closeModal("RideCardModal")}
-            data={data}
             waitingPassengers={waitingPassengers}
             acceptedPassengers={acceptedPassengers}
           />
@@ -147,10 +142,8 @@ const PassengersButtonWithModal = ({
           onClose={() => closeModal("CardRideDetailsMobileModal")}
         >
           <CardRideDetailsMobileModal
-            rideId={rideId}
             variant={variant}
             toggleModal={() => closeModal("CardRideDetailsMobileModal")}
-            data={data}
             waitingPassengers={waitingPassengers}
             acceptedPassengers={acceptedPassengers}
           />

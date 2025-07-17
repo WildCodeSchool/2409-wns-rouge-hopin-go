@@ -2,15 +2,12 @@ import Button from "./Button";
 import { X } from "lucide-react";
 import CardTemplate from "./CardTemplate";
 import { VariantType } from "../types/variantTypes";
-import { PassengersByRideQuery, SearchRidesQuery } from "../gql/graphql";
-
-type SearchRide = SearchRidesQuery["searchRide"][number];
+import { PassengersByRideQuery } from "../gql/graphql";
+import RidePassengerValidationButtons from "./RidePassengerValidationButtons";
 
 type CardRideDetailsMobileModalProps = {
-  rideId: string;
   toggleModal: () => void;
   variant: VariantType;
-  data: SearchRide;
   waitingPassengers?: PassengersByRideQuery["passengersByRide"];
   acceptedPassengers?: PassengersByRideQuery["passengersByRide"];
 };
@@ -18,35 +15,44 @@ type CardRideDetailsMobileModalProps = {
 const CardRideDetailsMobileModal = ({
   toggleModal,
   variant,
-  data,
   waitingPassengers,
   acceptedPassengers,
 }: CardRideDetailsMobileModalProps) => {
-  console.log("waiting passengers:", waitingPassengers);
-  console.log("accepted passengers:", acceptedPassengers);
   return (
     <div>
-      <div className="relative flex flex-col items-center justify-center h-full bg-purple-500 p-4">
+      <div className="relative flex flex-col md:items-center md:justify-center bg-gray-200 p-4 w-screen h-screen md:w-auto md:h-auto">
         <Button
           icon={X}
+          iconColor="!text-black"
+          hoverIconColor="text-white"
           iconSize={26}
           type="button"
           variant="full"
           isBgTransparent
           onClick={toggleModal}
-          className="hover:!bg-primaryHover self-end mb-4"
+          className="group hover:!bg-primaryHover self-end mb-4"
         />
-        <CardTemplate variant={variant} data={data} />
-        <div className="flex flex-col items-start">
-          <div className="mb-5 mt-5">
-            <h2 className="text-xl font-semi-bold text-white ">
+        <CardTemplate variant={variant} />
+        <div className="flex flex-col items-start justify-start w-full">
+          <div className="mb-5 mt-5 w-full">
+            <h2 className="text-xl font-bold text-primary">
               Passagers à valider :
             </h2>
             {waitingPassengers && waitingPassengers.length > 0 ? (
               waitingPassengers.map((passenger) => (
-                <p key={passenger.user.id}>
-                  {passenger.user.firstName} {passenger.user.lastName}
-                </p>
+                <div
+                  className="flex items-center justify-between space-y-4"
+                  key={passenger.user.id}
+                >
+                  <p key={passenger.user.id}>
+                    {passenger.user.firstName} {passenger.user.lastName}
+                  </p>
+                  <div className="flex items-center">
+                    <RidePassengerValidationButtons
+                      passengerId={passenger.user.id}
+                    />
+                  </div>
+                </div>
               ))
             ) : (
               <p>
@@ -57,7 +63,7 @@ const CardRideDetailsMobileModal = ({
           </div>
 
           <div className="mb-12">
-            <h2 className="text-xl font-semi-bold text-white">
+            <h2 className="text-xl font-bold text-primary">
               Passagers acceptés :
             </h2>
             {acceptedPassengers && acceptedPassengers.length > 0 ? (

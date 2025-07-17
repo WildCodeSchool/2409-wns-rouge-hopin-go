@@ -2,21 +2,18 @@ import { CircleUserRound } from "lucide-react";
 import { VariantType } from "../types/variantTypes";
 import { variantConfigMap } from "../constants/variantConfig";
 import { formatDate, formatTime } from "../utils/formatDate";
-import { SearchRidesQuery } from "../gql/graphql";
 import RegisterButton from "./RegisterButton";
 import PassengersButtonWithModal from "./PassengersButtonWithModal";
 import { useQuery } from "@apollo/client";
 import { queryWhoAmI } from "../api/WhoAmI";
+import useRide from "../context/Rides/useRide";
 import useMapboxRoute from "../hooks/useMapboxRoute";
 import { formatTravelDuration } from "../utils/formatTravelDuration";
 import { calculateRidePrice } from "../utils/calculateRidePrice";
 import useBreakpoints from "../utils/useWindowSize";
 
-type SearchRide = SearchRidesQuery["searchRide"][number];
-
 type CardTemplateProps = {
   variant: VariantType;
-  data: SearchRide;
   onClick?: () => void;
   onScroll?: (event: React.UIEvent<HTMLDivElement>) => void;
   isSelected?: boolean;
@@ -26,12 +23,12 @@ type CardTemplateProps = {
 
 const CardTemplate: React.FC<CardTemplateProps> = ({
   variant,
-  data,
   onClick,
   onScroll,
   isSelected = false,
   additionalClassName = "",
 }) => {
+  const ride = useRide();
   const { isMd, isXl, is2xl, windowWidth } = useBreakpoints();
   const {
     textColor,
@@ -42,34 +39,33 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
 
   const { route } = useMapboxRoute({
     departure: [
-      data.departure_location.coordinates[1], // longitude
-      data.departure_location.coordinates[0], // latitude
+      ride.departure_location.coordinates[1], // longitude
+      ride.departure_location.coordinates[0], // latitude
     ],
     arrival: [
-      data.arrival_location.coordinates[1],
-      data.arrival_location.coordinates[0],
+      ride.arrival_location.coordinates[1],
+      ride.arrival_location.coordinates[0],
     ],
   });
 
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const me = whoAmIData?.whoami;
 
-  const departureDate = new Date(data.departure_at);
-  const arrivalDate = new Date(data.arrival_at);
+  const departureDate = new Date(ride.departure_at);
+  const arrivalDate = new Date(ride.arrival_at);
   const departureTime = formatTime(departureDate);
   const arrivalTime = formatTime(arrivalDate);
   const dateStr = formatDate(departureDate);
-  const driver_id = data.driver_id?.id ?? "?";
+  const driver_id = ride.driver_id?.id ?? "?";
 
   const travelDuration = formatTravelDuration(route?.durationMin ?? 0);
 
-  const availableSeats = data.max_passenger - (data.nb_passenger ?? 0);
   const driverName =
-    data.driver_id?.firstName ?? `Conducteur #${data.driver_id?.id ?? "?"}`;
+    ride.driver_id?.firstName ?? `Conducteur #${ride.driver_id?.id ?? "?"}`;
   const price = calculateRidePrice(
     route?.distanceKm,
-    data.max_passenger,
-    data.nb_passenger
+    ride.max_passenger,
+    ride.nb_passenger
   );
   const totalPriceRoute = route && route?.distanceKm * 0.14;
 
@@ -114,16 +110,16 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             />
             <p
               className="text-sm sm:text-xl lg:text-xl sm:font-bold md:font-normal lg:font-bold truncate"
-              title={data.departure_city}
+              title={ride.departure_city}
             >
-              {data.departure_city}
+              {ride.departure_city}
             </p>
             <p className="">{travelDuration}</p>
             <p
               className="text-sm sm:text-xl lg:text-xl sm:font-bold md:font-normal lg:font-bold truncate"
-              title={data.arrival_city}
+              title={ride.arrival_city}
             >
-              {data.arrival_city}
+              {ride.arrival_city}
             </p>
           </div>
 
@@ -162,10 +158,12 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
         >
           {statusLabel === "" ? (
             <>
-              {availableSeats}
+              {ride.available_seats}
               {is2xl &&
                 `${
-                  availableSeats > 1 ? " places restantes" : " place restante"
+                  ride.available_seats > 1
+                    ? " places restantes"
+                    : " place restante"
                 }`}
               {!is2xl && (variant === "primary" || variant === "secondary") && (
                 <svg
@@ -189,12 +187,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             statusLabel
           )}
         </p>
-        <PassengersButtonWithModal
-          rideId={data.id}
-          variant={variant}
-          data={data}
-        />
-
+        <PassengersButtonWithModal variant={variant} />
         <p
           className={`absolute ${
             me?.id === driver_id ? "right-0" : "right-16"
@@ -220,7 +213,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
               />
             </svg>
             <RegisterButton
-              rideId={data.id}
+              rideId={ride.id}
               size="small"
               variant={variant}
               icon={CardIcon}
