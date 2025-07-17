@@ -142,6 +142,10 @@ export class PassengerRideResolver {
     if (!passengerRide) {
       throw new Error("Passager non trouvé pour ce trajet");
     }
+    const driverId = passengerRide.ride.driver_id.id;
+    if (ctx.user?.id !== driverId) {
+      throw new Error("Seul le conducteur peut modifier le statut du passager");
+    }
     passengerRide.status = status;
     if (passengerRide.status === PassengerRideStatus.APPROVED) {
       const ride = await Ride.findOne({ where: { id: ride_id } });
