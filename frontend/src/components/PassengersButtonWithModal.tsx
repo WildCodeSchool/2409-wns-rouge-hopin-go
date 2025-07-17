@@ -22,7 +22,6 @@ const PassengersButtonWithModal = ({
   const ride = useRide();
   const { isOpen, visible, toggleModal: toggleParentModal } = useModal();
   const { isXl } = useWindowSize();
-  console.log("Ride at:", ride.departure_at);
 
   const departureDate = parseISO(ride.departure_at);
   const now = new Date();
@@ -87,13 +86,26 @@ const PassengersButtonWithModal = ({
                 </p>
               </div>
             )}
-          {info && waitingPassengers.length === 0 && isFuture && (
-            <div className="absolute bottom-full left-full bg-refused text-white overflow-hidden p-2 w-40 rounded-lg shadow-lg z-50">
-              <p className="text-xs flex items-center justify-center gap-1">
-                Aucun passager en attente
-              </p>
-            </div>
-          )}
+          {info &&
+            waitingPassengers.length === 0 &&
+            acceptedPassengers.length === 0 &&
+            isFuture && (
+              <div className="absolute bottom-full left-full bg-refused text-white overflow-hidden p-2 w-40 rounded-lg shadow-lg z-50">
+                <p className="text-xs flex items-center justify-center gap-1">
+                  Aucun passager en attente
+                </p>
+              </div>
+            )}
+          {info &&
+            ride.available_seats === 0 &&
+            acceptedPassengers.length > 0 &&
+            isFuture && (
+              <div className="absolute bottom-full left-full bg-refused text-white overflow-hidden p-2 w-40 rounded-lg shadow-lg z-50">
+                <p className="text-xs flex items-center justify-center gap-1">
+                  Trajet complet
+                </p>
+              </div>
+            )}
         </div>
         <Modal
           isOpen={isOpen}

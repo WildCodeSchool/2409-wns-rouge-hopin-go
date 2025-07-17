@@ -13,8 +13,8 @@ type UseMapboxRouteOptions = {
 
 const cache = new Map<string, RouteData>();
 
-const mapBoxToken =
-  "pk.eyJ1IjoiYWRyaWVuZGF2eSIsImEiOiJjbWQ0ODUzeTAwYmtlMm1xdTNmbGVhcTFnIn0.D9mVnHnsy9Z-2FX-hL2sJg";
+// const mapBoxToken =
+//   "pk.eyJ1IjoiYWRyaWVuZGF2eSIsImEiOiJjbWQ0ODUzeTAwYmtlMm1xdTNmbGVhcTFnIn0.D9mVnHnsy9Z-2FX-hL2sJg";
 
 export default function useMapboxRoute({
   departure,

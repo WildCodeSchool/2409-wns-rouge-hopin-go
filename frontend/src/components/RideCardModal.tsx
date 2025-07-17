@@ -81,10 +81,13 @@ const RideCardModal = ({
                 </p>
               ))
             ) : (
-              <p>
-                Vous n'avez pas acceptés de passager sur ce trajet pour le
-                moment.
-              </p>
+              <>
+                <p>
+                  {isFuture
+                    ? "Vous n'avez pas acceptés de passager sur ce trajet pour le moment."
+                    : "Ce trajet n'a pas de passagers."}
+                </p>
+              </>
             )}
           </div>
         </div>
