@@ -24,7 +24,9 @@ const PassengersButtonWithModal = ({
   const { isSm, isMd, isXl } = useWindowSize();
 
   const location = useLocation();
-  const isMyRidesPage = location.pathname.includes("my-rides/driver");
+  const isMyRidesDriverPage = location.pathname.includes("my-rides/driver");
+  const isMyRidesPassengerPage =
+    location.pathname.includes("my-rides/passenger");
   const isRidesResultsPage = location.pathname.includes("ride-results");
   const ride = useRide();
 
@@ -48,9 +50,9 @@ const PassengersButtonWithModal = ({
   );
 
   const openAppropriateModal = () => {
-    if (!isMd && isRidesResultsPage) {
+    if ((!isMd && isRidesResultsPage) || isMyRidesPassengerPage) {
       openModal("CardRideDetailsMobileModal");
-    } else if (isMyRidesPage) {
+    } else if (isMyRidesDriverPage) {
       openModal("RideCardModal");
     }
   };
@@ -59,7 +61,7 @@ const PassengersButtonWithModal = ({
     <div>
       <div className="absolute right-[170px] flex gap-2 items-center z-10 p-2 text-sm lg:text-base text-textLight font-semibold">
         <div className="relative">
-          {isMyRidesPage &&
+          {isMyRidesDriverPage &&
             waitingPassengers &&
             waitingPassengers?.length > 0 && (
               <>
@@ -73,7 +75,7 @@ const PassengersButtonWithModal = ({
                 ></span>
               </>
             )}
-          {isMyRidesPage && (
+          {isMyRidesDriverPage && (
             <Button
               onMouseEnter={() => {
                 setInfo(true);
@@ -103,7 +105,22 @@ const PassengersButtonWithModal = ({
               variant="secondary"
             />
           )}
-          {isMyRidesPage &&
+          {isMyRidesPassengerPage && (
+            <Button
+              onMouseEnter={() => {
+                setInfo(true);
+              }}
+              onMouseLeave={() => {
+                setInfo(false);
+              }}
+              icon={Eye}
+              type="button"
+              onClick={openAppropriateModal}
+              label={isSm ? "Détails" : ""}
+              variant="secondary"
+            />
+          )}
+          {isMyRidesDriverPage &&
             info &&
             waitingPassengers &&
             waitingPassengers.length > 0 && (
@@ -114,7 +131,7 @@ const PassengersButtonWithModal = ({
                 </p>
               </div>
             )}
-          {isMyRidesPage && info && waitingPassengers.length === 0 && (
+          {isMyRidesDriverPage && info && waitingPassengers.length === 0 && (
             <div className="absolute bottom-full left-full bg-refused text-white overflow-hidden p-2 w-40 rounded-lg shadow-lg z-50">
               <p className="text-xs flex items-center justify-center gap-1">
                 Aucun passager en attente
