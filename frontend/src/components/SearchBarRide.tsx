@@ -4,12 +4,16 @@ import { useSearchParams } from "react-router-dom";
 type SearchBarRideProps = {
   departureCity: string;
   setDepartureCity: React.Dispatch<React.SetStateAction<string>>;
-  setDepartureCoords: React.Dispatch<React.SetStateAction<{ lat: number; long: number }>>;
+  setDepartureCoords: React.Dispatch<
+    React.SetStateAction<{ lat: number; long: number }>
+  >;
   departureRadius: number;
   setDepartureRadius: React.Dispatch<React.SetStateAction<number>>;
   arrivalCity: string;
   setArrivalCity: React.Dispatch<React.SetStateAction<string>>;
-  setArrivalCoords: React.Dispatch<React.SetStateAction<{ lat: number; long: number }>>;
+  setArrivalCoords: React.Dispatch<
+    React.SetStateAction<{ lat: number; long: number }>
+  >;
   arrivalRadius: number;
   setArrivalRadius: React.Dispatch<React.SetStateAction<number>>;
   departureAt: string;
@@ -33,10 +37,7 @@ type SearchBarRideProps = {
   setLastModifiedField?: React.Dispatch<
     React.SetStateAction<"departure" | "arrival" | null>
   >;
-  handleSelect?: (
-    field: "departure" | "arrival",
-    value: string
-  ) => void;
+  handleSelect?: (field: "departure" | "arrival", value: string) => void;
 };
 
 const SearchBarRide = ({
@@ -56,12 +57,11 @@ const SearchBarRide = ({
   handleSubmit,
   suggestions = { departure: [], arrival: [] },
   showSuggestions = { departure: false, arrival: false },
-  setShowSuggestions = () => { },
-  setLastModifiedField = () => { },
-  handleSelect = () => { },
+  setShowSuggestions = () => {},
+  setLastModifiedField = () => {},
+  handleSelect = () => {},
 }: SearchBarRideProps) => {
   const [searchParams] = useSearchParams();
-  console.log("SearchBarRide data:", searchParams);
   const departureCityParam = searchParams.get("departure_city") || "";
   const arrivalCityParam = searchParams.get("arrival_city") || "";
   const departureAtParam = searchParams.get("departure_at") || "";
@@ -83,7 +83,21 @@ const SearchBarRide = ({
     setArrivalCoords(arrivalCoordsParams);
     setArrivalRadius(Number(arrivalRadiusParam));
     setDepartureAt(departureAtParam);
-  }, [departureCityParam, departureRadiusParam, arrivalCityParam, arrivalRadiusParam, departureAtParam, setDepartureCity, setDepartureRadius, setArrivalCity, setArrivalRadius, setDepartureAt, setDepartureCoords, setArrivalCoords, searchParams]);
+  }, [
+    departureCityParam,
+    departureRadiusParam,
+    arrivalCityParam,
+    arrivalRadiusParam,
+    departureAtParam,
+    setDepartureCity,
+    setDepartureRadius,
+    setArrivalCity,
+    setArrivalRadius,
+    setDepartureAt,
+    setDepartureCoords,
+    setArrivalCoords,
+    searchParams,
+  ]);
 
   const handleInputChange = (field: "departure" | "arrival", value: string) => {
     setLastModifiedField(field);
@@ -120,10 +134,11 @@ const SearchBarRide = ({
               type="text"
               id="departure-city"
               required
-              className={`${error.firstName?.length
-                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-                : "border-gray-300 bg-gray-50"
-                } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-1.5`}
+              className={`${
+                error.firstName?.length
+                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                  : "border-gray-300 bg-gray-50"
+              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-1.5`}
               placeholder="Paris"
               value={departureCity}
               onChange={(e) => handleInputChange("departure", e.target.value)}
@@ -156,10 +171,11 @@ const SearchBarRide = ({
               min="0"
               max="100"
               style={{ width: "52px" }}
-              className={`${error.departureRadius?.length
-                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-                : "border-gray-300 bg-gray-50"
-                } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-1.5`}
+              className={`${
+                error.departureRadius?.length
+                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                  : "border-gray-300 bg-gray-50"
+              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-1.5`}
               value={departureRadius}
               onChange={(e) => setDepartureRadius(Number(e.target.value))}
             />
@@ -175,10 +191,11 @@ const SearchBarRide = ({
             <input
               type="text"
               id="arrival-city"
-              className={`${error.arrivalCity?.length
-                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-                : "border-gray-300 bg-gray-50"
-                } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-1.5`}
+              className={`${
+                error.arrivalCity?.length
+                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                  : "border-gray-300 bg-gray-50"
+              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-1.5`}
               placeholder="Lyon"
               value={arrivalCity}
               onChange={(e) => handleInputChange("arrival", e.target.value)}
@@ -211,10 +228,11 @@ const SearchBarRide = ({
               min="0"
               max="100"
               style={{ width: "52px" }}
-              className={`${error.arrivalRadius?.length
-                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-                : "border-gray-300 bg-gray-50"
-                } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-1.5`}
+              className={`${
+                error.arrivalRadius?.length
+                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                  : "border-gray-300 bg-gray-50"
+              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-1.5`}
               value={arrivalRadius}
               onChange={(e) => setArrivalRadius(Number(e.target.value))}
             />
@@ -231,11 +249,13 @@ const SearchBarRide = ({
               type="date"
               id="departure-at"
               min={new Date().toISOString().split("T")[0]}
-              className={`${error.departureAt?.length
-                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-                : "border-gray-300 bg-gray-50"
-                } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-1.5 ${!departureAt ? "text-gray-400" : "text-black"
-                }`}
+              className={`${
+                error.departureAt?.length
+                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                  : "border-gray-300 bg-gray-50"
+              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-1.5 ${
+                !departureAt ? "text-gray-400" : "text-black"
+              }`}
               value={departureAt}
               onChange={(e) => setDepartureAt(e.target.value)}
             />

@@ -12,10 +12,18 @@ export type RidePassengerValidationButtonsProps = {
 const RidePassengerValidationButtons = ({
   passengerId,
 }: RidePassengerValidationButtonsProps) => {
-  const confirm = useModal();
+  const { isOpen, isVisible, openModal, closeModal } = useModal();
   const [actionType, setActionType] = useState<"accept" | "refuse" | null>(
     null
   );
+
+  const modalId = `passenger-confirmation-${passengerId}`;
+
+  const handleClick = (type: "accept" | "refuse") => {
+    setActionType(type);
+    openModal(modalId);
+  };
+
   return (
     <>
       <div className="flex flex-row gap-4 items-center justify-end">
@@ -23,34 +31,27 @@ const RidePassengerValidationButtons = ({
           variant="validation"
           icon={Check}
           type="button"
-          onClick={() => {
-            setActionType("accept");
-            confirm.openModal();
-          }}
+          onClick={() => handleClick("accept")}
         />
         <Button
           variant="refused"
           icon={X}
           type="button"
-          onClick={() => {
-            setActionType("refuse");
-            confirm.openModal();
-          }}
+          onClick={() => handleClick("refuse")}
         />
       </div>
 
       <Modal
-        isOpen={confirm.isOpen}
-        visible={confirm.visible}
-        toggleModal={confirm.closeModal}
+        id={modalId}
+        isOpen={isOpen(modalId)}
+        isVisible={isVisible(modalId)}
+        onClose={() => closeModal(modalId)}
       >
-        {() => (
-          <RidePassengerValidationConfirmationModal
-            toggleModal={confirm.closeModal}
-            actionType={actionType}
-            passengerId={passengerId}
-          />
-        )}
+        <RidePassengerValidationConfirmationModal
+          toggleModal={() => closeModal(modalId)}
+          actionType={actionType}
+          passengerId={passengerId}
+        />
       </Modal>
     </>
   );

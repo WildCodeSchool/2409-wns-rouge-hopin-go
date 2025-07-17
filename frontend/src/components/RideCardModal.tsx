@@ -26,7 +26,7 @@ const RideCardModal = ({
   const isFuture = isAfter(departureDate, now);
   return (
     <div>
-      <div className="relative flex flex-col md:items-center md:justify-center bg-gray-200 p-4 w-screen h-screen md:w-auto md:h-auto">
+      <div className="relative flex flex-col md:items-center md:justify-center rounded-2xl bg-gray-200 p-4 w-screen h-screen md:w-auto md:h-auto">
         <Button
           icon={X}
           iconColor="!text-black"
@@ -36,7 +36,7 @@ const RideCardModal = ({
           variant="full"
           isBgTransparent
           onClick={toggleModal}
-          className="hover:!bg-primaryHover self-end mb-4"
+          className="group hover:!bg-primaryHover self-end mb-4"
         />
         <CardTemplate variant={variant} />
         <div className="flex flex-col items-start justify-start w-full">
