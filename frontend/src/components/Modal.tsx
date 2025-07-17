@@ -1,26 +1,28 @@
 import { useRef } from "react";
-import { useOutsideClick } from "../hooks/useOutsideClick";
 import { createPortal } from "react-dom";
+import { useOutsideClick } from "../hooks/useOutsideClick";
 
 type ModalProps = {
+  id: string; // Optionnel mais utile pour devtools, debug, data-* attr
   isOpen: boolean;
-  visible: boolean;
-  toggleModal: () => void;
-  children: (toggleModal: () => void) => React.ReactNode;
+  isVisible: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
 };
 
 const Modal: React.FC<ModalProps> = ({
+  id,
   isOpen,
-  visible,
-  toggleModal,
+  isVisible,
+  onClose,
   children,
 }) => {
-  const toggleModalRef = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   useOutsideClick(
-    toggleModalRef,
+    ref,
     () => {
-      if (isOpen) toggleModal();
+      if (isOpen) onClose();
     },
     isOpen
   );
@@ -28,21 +30,21 @@ const Modal: React.FC<ModalProps> = ({
   return createPortal(
     <>
       {isOpen && (
-        <div ref={toggleModalRef} className="fixed inset-0 bg-black/50 z-[50]">
-          {isOpen && (
-            <div
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-              className={`transition-200 fixed top-1/2 left-1/2 z-50 transform   bg-transparent -translate-x-1/2 ${
-                visible
-                  ? "opacity-100 -translate-y-1/2 pointer-events-auto"
-                  : "opacity-0 -translate-y-[55%] pointer-events-none"
-              }`}
-            >
-              {children(toggleModal)}
-            </div>
-          )}
+        <div className="fixed inset-0 bg-black/50 z-[50]" data-modal-overlay />
+      )}
+      {isOpen && (
+        <div
+          ref={ref}
+          data-modal-id={id}
+          onClick={(e) => e.stopPropagation()}
+          className={`fixed top-1/2 left-1/2 z-50 transform transition-all duration-200 -translate-x-1/2
+            ${
+              isVisible
+                ? "opacity-100 -translate-y-1/2 pointer-events-auto"
+                : "opacity-0 -translate-y-[55%] pointer-events-none"
+            }`}
+        >
+          {children}
         </div>
       )}
     </>,
@@ -52,45 +54,40 @@ const Modal: React.FC<ModalProps> = ({
 
 export default Modal;
 
-// UTILISATION :
-
-// IMPORTEZ LE HOOK useModal DANS VOTRE COMPONENT --------------------------------------------------
+// UTILISATION DANS UN AUTRE COMPOSANT
 
 // import { useModal } from "../hooks/useModal";
-//  const { isOpen, visible, toggleModal } = useModal();
+// import Modal from "../components/Modal";
 
-// DEMONSTRATION D'UNE MODALE AVEC UN BOUTON DE FERMETURE ------------------------------------------
+// const MyComponent = () => {
+//   const { isOpen, isVisible, toggleModal, closeModal } = useModal();
 
-// import { X } from "react-feather";
+//   return (
+//     <>
+//       <button onClick={() => toggleModal("modalA")}>Ouvrir Modal A</button>
+//       <button onClick={() => toggleModal("modalB")}>Ouvrir Modal B</button>
 
-// <Modal isOpen={isOpen} visible={visible} toggleModal={toggleModal}>
-// {(toggleModal) => (
-//   <div className="relative flex flex-col items-center justify-center h-full bg-purple-500 p-4">
-//     <Button
-//       icon={X}
-//       iconSize={26}
-//       type="button"
-//       variant="error"
-//       isBgTransparent
-//       onClick={toggleModal}
-//       className="hover:!bg-primaryHover self-end mb-4"
-//     />
-//     <div className="flex flex-col items-center justify-center">
-//       <h1 className="text-2xl font-bold">
-//         Bienvenue sur notre plateforme de covoiturage !
-//       </h1>
-//       <p className="text-lg">
-//         Connectez-vous pour profiter de toutes nos fonctionnalités.
-//       </p>
-//     </div>
-//   </div>
-// )}
-// </Modal>
+//       <Modal
+//         id="modalA"
+//         isOpen={isOpen("modalA")}
+//         isVisible={isVisible("modalA")}
+//         onClose={() => closeModal("modalA")}
+//       >
+//         <div className="p-6 bg-white rounded shadow-lg">
+//           <p>Contenu Modal A</p>
+//         </div>
+//       </Modal>
 
-// EXEMPLE DE BOUTON POUR OUVRIR LA MODALE --------------------------------------------------
-
-// <Button
-// label=" Test pour ouvrir une modale"
-// type="button"
-// onClick={toggleModal}
-// />
+//       <Modal
+//         id="modalB"
+//         isOpen={isOpen("modalB")}
+//         isVisible={isVisible("modalB")}
+//         onClose={() => closeModal("modalB")}
+//       >
+//         <div className="p-6 bg-white rounded shadow-lg">
+//           <p>Contenu Modal B</p>
+//         </div>
+//       </Modal>
+//     </>
+//   );
+// };

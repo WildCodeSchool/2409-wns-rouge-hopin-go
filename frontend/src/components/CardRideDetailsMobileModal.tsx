@@ -6,7 +6,7 @@ import { PassengersByRideQuery, SearchRidesQuery } from "../gql/graphql";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
 
-type RideCardModalProps = {
+type CardRideDetailsMobileModalProps = {
   rideId: string;
   toggleModal: () => void;
   variant: VariantType;
@@ -15,32 +15,33 @@ type RideCardModalProps = {
   acceptedPassengers?: PassengersByRideQuery["passengersByRide"];
 };
 
-const RideCardModal = ({
+const CardRideDetailsMobileModal = ({
   toggleModal,
   variant,
   data,
   waitingPassengers,
   acceptedPassengers,
-}: RideCardModalProps) => {
+}: CardRideDetailsMobileModalProps) => {
   console.log("waiting passengers:", waitingPassengers);
   console.log("accepted passengers:", acceptedPassengers);
   return (
     <div>
-      <div className="relative flex flex-col items-center justify-center h-full rounded-2xl bg-gray-100 p-4">
+      <div className="relative flex flex-col items-center justify-center h-full bg-purple-500 p-4">
         <Button
           icon={X}
           iconSize={26}
-          iconColor="text-primary group-hover:text-white"
           type="button"
           variant="full"
           isBgTransparent
           onClick={toggleModal}
-          className="group hover:!bg-primaryHover self-end mb-4"
+          className="hover:!bg-primaryHover self-end mb-4"
         />
         <CardTemplate variant={variant} data={data} />
         <div className="flex flex-col items-start">
           <div className="mb-5 mt-5">
-            <h2 className="text-xl font-semi-bold ">Passagers à valider :</h2>
+            <h2 className="text-xl font-semi-bold text-white ">
+              Passagers à valider :
+            </h2>
             {waitingPassengers && waitingPassengers.length > 0 ? (
               waitingPassengers.map((passenger) => (
                 <p key={passenger.user.id}>
@@ -56,7 +57,9 @@ const RideCardModal = ({
           </div>
 
           <div className="mb-12">
-            <h2 className="text-xl font-semi-bold">Passagers acceptés :</h2>
+            <h2 className="text-xl font-semi-bold text-white">
+              Passagers acceptés :
+            </h2>
             {acceptedPassengers && acceptedPassengers.length > 0 ? (
               acceptedPassengers.map((passenger) => (
                 <p key={passenger.user.id}>
@@ -76,4 +79,4 @@ const RideCardModal = ({
   );
 };
 
-export default RideCardModal;
+export default CardRideDetailsMobileModal;

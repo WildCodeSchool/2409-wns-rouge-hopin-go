@@ -106,8 +106,9 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
               <p>
                 {variant === "cancel" || variant === "full"
                   ? "Non disponible"
-                  : `${availableSeats} ${availableSeats > 1 ? "places restantes" : "place restante"
-                  }`}
+                  : `${availableSeats} ${
+                      availableSeats > 1 ? "places restantes" : "place restante"
+                    }`}
               </p>
             </div>
           </div>
@@ -164,8 +165,6 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
           onRouteData={({ distanceKm, durationMin }) => {
             setTravelDuration(`${formatTravelDuration(durationMin)}`);
             setTravelDistance(`${distanceKm.toFixed(1)} km`);
-            console.log(`Distance : ${distanceKm} km`);
-            console.log(`Durée : ${durationMin} min`);
           }}
         />
       </div>
