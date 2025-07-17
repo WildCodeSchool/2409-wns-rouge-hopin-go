@@ -64,7 +64,7 @@ const RideResults = () => {
   console.log("🚀 ~ RideResults ~ dataSearched:", dataSearched?.searchRide);
 
   const getVariant = (ride: SearchRide): VariantType => {
-    if (ride.is_canceled) return "cancel";
+    if (ride.is_cancelled) return "cancel";
     if (ride.current_user_passenger_status === PassengerRideStatus.Waiting)
       return "pending";
     if (ride.current_user_passenger_status === PassengerRideStatus.Approved)

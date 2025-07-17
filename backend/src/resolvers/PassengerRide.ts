@@ -109,11 +109,11 @@ export class PassengerRideResolver {
 
     if (filter === "upcoming") {
       baseQuery.andWhere("ride.departure_at > :now", { now });
-      baseQuery.andWhere("ride.is_canceled = false");
+      baseQuery.andWhere("ride.is_cancelled = false");
     } else if (filter === "archived") {
       baseQuery.andWhere("ride.departure_at < :now", { now });
     } else if (filter === "canceled") {
-      baseQuery.andWhere("ride.is_canceled = true");
+      baseQuery.andWhere("ride.is_cancelled = true");
     } else if (filter && filter !== "all") {
       throw new Error("Invalid filter");
     }
