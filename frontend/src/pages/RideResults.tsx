@@ -6,7 +6,7 @@ import ScrollableSnapList from "../components/ScrollableSnapList";
 import CardRideDetails from "../components/CardRideDetails";
 import { VariantType } from "../types/variantTypes";
 import { querySearchRide } from "../api/SearchRide";
-import { SearchRidesQuery } from "../gql/graphql";
+import { PassengerRideStatus, SearchRidesQuery } from "../gql/graphql";
 import Button from "../components/Button";
 import { ArrowLeft } from "lucide-react";
 import useBreakpoints from "../utils/useWindowSize";
@@ -65,9 +65,12 @@ const RideResults = () => {
 
   const getVariant = (ride: SearchRide): VariantType => {
     if (ride.is_canceled) return "cancel";
-    if (ride.passenger_status === "waiting") return "pending";
-    if (ride.passenger_status === "approved") return "validation";
-    if (ride.passenger_status === "refused") return "refused";
+    if (ride.current_user_passenger_status === PassengerRideStatus.Waiting)
+      return "pending";
+    if (ride.current_user_passenger_status === PassengerRideStatus.Approved)
+      return "validation";
+    if (ride.current_user_passenger_status === PassengerRideStatus.Refused)
+      return "refused";
     const availableSeats = ride.max_passenger - (ride.nb_passenger ?? 0);
     if (availableSeats <= 0) return "full";
 

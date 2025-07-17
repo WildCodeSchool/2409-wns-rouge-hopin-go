@@ -24,6 +24,7 @@ export const querySearchRide = gql(`
       max_passenger
       nb_passenger
       is_canceled
+      available_seats
       driver_id {
         id
         firstName
@@ -36,7 +37,7 @@ export const querySearchRide = gql(`
         user_id
         status
       }
-      passenger_status
+      current_user_passenger_status
     }
   }
 `) as TypedDocumentNode<SearchRidesQuery, SearchRidesQueryVariables>;

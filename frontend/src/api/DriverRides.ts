@@ -23,6 +23,7 @@ export const queryDriverRides = gql(`
           createdAt
           role
         }
+        current_user_passenger_status
          departure_location {
           type
           coordinates
@@ -41,6 +42,7 @@ export const queryDriverRides = gql(`
         is_canceled
         max_passenger
         nb_passenger
+        available_seats
         passenger_rides {
           ride_id
           user_id

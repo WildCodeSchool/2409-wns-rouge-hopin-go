@@ -7,6 +7,7 @@ type ModalProps = {
   visible: boolean;
   toggleModal: () => void;
   children: (toggleModal: () => void) => React.ReactNode;
+  zIndex?: number;
 };
 
 const Modal: React.FC<ModalProps> = ({
@@ -14,6 +15,7 @@ const Modal: React.FC<ModalProps> = ({
   visible,
   toggleModal,
   children,
+  zIndex,
 }) => {
   const toggleModalRef = useRef<HTMLDivElement>(null);
 
@@ -27,7 +29,12 @@ const Modal: React.FC<ModalProps> = ({
 
   return createPortal(
     <>
-      {isOpen && <div className="fixed inset-0 bg-black/50 z-80" />}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/50"
+          style={{ zIndex: zIndex || 50 }}
+        />
+      )}
 
       {isOpen && (
         <div

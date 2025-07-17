@@ -1,4 +1,10 @@
-import { Field, ID, InputType, ObjectType } from "type-graphql";
+import {
+  Field,
+  ID,
+  InputType,
+  ObjectType,
+  registerEnumType,
+} from "type-graphql";
 import {
   BaseEntity,
   Column,
@@ -10,6 +16,17 @@ import {
 } from "typeorm";
 import { Ride } from "./Ride";
 import { User } from "./User";
+import { register } from "module";
+
+export enum PassengerRideStatus {
+  APPROVED = "approved",
+  REFUSED = "refused",
+  WAITING = "waiting",
+}
+
+registerEnumType(PassengerRideStatus, {
+  name: "PassengerRideStatus",
+});
 
 @Entity()
 @ObjectType()
@@ -22,9 +39,13 @@ export class PassengerRide extends BaseEntity {
   @PrimaryColumn()
   ride_id!: number;
 
-  @Column({ enum: ["approved", "refused", "waiting"], default: "waiting" })
-  @Field(() => String)
-  status!: string;
+  @Column({
+    type: "enum",
+    enum: PassengerRideStatus,
+    default: PassengerRideStatus.WAITING,
+  })
+  @Field(() => PassengerRideStatus)
+  status!: PassengerRideStatus;
 
   @ManyToOne(() => User, (user) => user.passenger_rides)
   @JoinColumn({ name: "user_id" })
@@ -33,6 +54,7 @@ export class PassengerRide extends BaseEntity {
 
   @ManyToOne(() => Ride, (ride) => ride.passenger_rides)
   @JoinColumn({ name: "ride_id" })
+  @Field(() => Ride)
   ride!: Ride;
 }
 
@@ -43,4 +65,16 @@ export class CreatePassengerRideInput {
 
   @Field(() => ID)
   ride_id!: number;
+}
+
+@InputType()
+export class UpdatePassengerRideStatusInput {
+  @Field(() => ID)
+  user_id!: number;
+
+  @Field(() => ID)
+  ride_id!: number;
+
+  @Field(() => PassengerRideStatus)
+  status!: PassengerRideStatus;
 }

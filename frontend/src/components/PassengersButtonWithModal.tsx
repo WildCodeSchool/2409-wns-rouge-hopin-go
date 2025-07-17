@@ -5,31 +5,28 @@ import Button from "./Button";
 import { Eye } from "lucide-react";
 import useWindowSize from "../utils/useWindowSize";
 import { VariantType } from "../types/variantTypes";
-import { SearchRidesQuery } from "../gql/graphql";
+import { PassengerRideStatus } from "../gql/graphql";
 import { useQuery } from "@apollo/client";
 import { queryPassengersByRide } from "../api/PassengersByRide";
 import { useState } from "react";
-
-type SearchRide = SearchRidesQuery["searchRide"][number];
+import useRide from "../context/Rides/useRide";
 
 type PassengersButtonWithModalProps = {
-  rideId: string;
   variant: VariantType;
-  data: SearchRide;
 };
 
 const PassengersButtonWithModal = ({
-  rideId,
   variant,
-  data,
 }: PassengersButtonWithModalProps) => {
-  const { isOpen, visible, toggleModal } = useModal();
+  const ride = useRide();
+  const { isOpen, visible, toggleModal: toggleParentModal } = useModal();
   const { isXl } = useWindowSize();
 
   const [info, setInfo] = useState(false);
 
   const { data: passengersData, loading } = useQuery(queryPassengersByRide, {
-    variables: { ride_id: rideId },
+    variables: { ride_id: ride.id },
+    skip: !ride.id,
   });
 
   if (loading) return <p>Chargement des passagers…</p>;
@@ -37,11 +34,11 @@ const PassengersButtonWithModal = ({
   const passengers = passengersData?.passengersByRide ?? [];
 
   const waitingPassengers = passengers?.filter(
-    (passenger) => passenger.status === "waiting"
+    (passenger) => passenger.status === PassengerRideStatus.Waiting
   );
 
   const acceptedPassengers = passengers?.filter(
-    (passenger) => passenger.status === "validate"
+    (passenger) => passenger.status === PassengerRideStatus.Approved
   );
 
   return (
@@ -69,7 +66,7 @@ const PassengersButtonWithModal = ({
             }}
             icon={Eye}
             type="button"
-            onClick={toggleModal}
+            onClick={toggleParentModal}
             label={isXl ? "Passagers" : ""}
             variant="secondary"
           />
@@ -89,13 +86,15 @@ const PassengersButtonWithModal = ({
             </div>
           )}
         </div>
-        <Modal isOpen={isOpen} visible={visible} toggleModal={toggleModal}>
+        <Modal
+          isOpen={isOpen}
+          visible={visible}
+          toggleModal={toggleParentModal}
+        >
           {() => (
             <RideCardModal
-              rideId={rideId}
               variant={variant}
-              toggleModal={toggleModal}
-              data={data}
+              toggleModal={toggleParentModal}
               waitingPassengers={waitingPassengers}
               acceptedPassengers={acceptedPassengers}
             />
