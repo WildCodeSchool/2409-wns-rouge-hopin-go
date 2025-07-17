@@ -144,8 +144,6 @@ const PassengersButtonWithModal = ({
           <CardRideDetailsMobileModal
             variant={variant}
             toggleModal={() => closeModal("CardRideDetailsMobileModal")}
-            waitingPassengers={waitingPassengers}
-            acceptedPassengers={acceptedPassengers}
           />
         </Modal>
       </div>
