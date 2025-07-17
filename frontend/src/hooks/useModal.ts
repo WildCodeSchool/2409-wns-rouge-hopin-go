@@ -13,13 +13,12 @@ export const useModal = () => {
       for (const key of Object.keys(prev)) {
         newState[key] = false;
       }
-      newState[id] = false;
+      setActiveModal(id);
       return newState;
     });
 
     // Ouvrir la nouvelle après l'animation de fermeture
     setTimeout(() => {
-      setActiveModal(id);
       setVisibleModals((prev) => ({ ...prev, [id]: true }));
     }, 200);
   }, []);

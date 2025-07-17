@@ -20,7 +20,7 @@ const RideCardModal = ({
 }: RideCardModalProps) => {
   return (
     <div>
-      <div className="relative flex flex-col md:items-center md:justify-center bg-gray-200 p-4 w-screen h-screen md:w-auto md:h-auto">
+      <div className="relative flex flex-col md:items-center md:justify-center rounded-2xl bg-gray-200 p-4 w-screen h-screen md:w-auto md:h-auto">
         <Button
           icon={X}
           iconColor="!text-black"
