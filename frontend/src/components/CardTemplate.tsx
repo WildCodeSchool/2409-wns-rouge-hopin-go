@@ -1,7 +1,6 @@
 import { CircleUserRound } from "lucide-react";
 import { VariantType } from "../types/variantTypes";
 import { variantConfigMap } from "../constants/variantConfig";
-import useWindowSize from "../utils/useWindowSize";
 import { formatDate, formatTime } from "../utils/formatDate";
 import RegisterButton from "./RegisterButton";
 import PassengersButtonWithModal from "./PassengersButtonWithModal";
@@ -11,6 +10,7 @@ import useRide from "../context/Rides/useRide";
 import useMapboxRoute from "../hooks/useMapboxRoute";
 import { formatTravelDuration } from "../utils/formatTravelDuration";
 import { calculateRidePrice } from "../utils/calculateRidePrice";
+import useBreakpoints from "../utils/useWindowSize";
 
 type CardTemplateProps = {
   variant: VariantType;
@@ -27,10 +27,9 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   onScroll,
   isSelected = false,
   additionalClassName = "",
-  driverUpcomingRides,
 }) => {
   const ride = useRide();
-  const { isMd, isXl, is2xl, windowWidth } = useWindowSize();
+  const { isMd, isXl, is2xl, windowWidth } = useBreakpoints();
   const {
     textColor,
     bgFill,
@@ -87,7 +86,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           me?.id !== driver_id ? "rounded-br-2xl" : ""
         } shadow-lg z-30`}
       >
-        <div className="grid grid-cols-3 w-full p-4 h-32 sm:h-40 md:h-36 lg:h-40 z-30">
+        <div className="grid grid-cols-3 w-full p-4 h-40 z-30">
           <div
             className={`flex flex-col justify-between ${textColor} text-base sm:text-2xl md:text-base lg:text-2xl font-semibold`}
           >
@@ -188,7 +187,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             statusLabel
           )}
         </p>
-        {driverUpcomingRides && <PassengersButtonWithModal variant={variant} />}
+        <PassengersButtonWithModal variant={variant} />
         <p
           className={`absolute ${
             me?.id === driver_id ? "right-0" : "right-16"

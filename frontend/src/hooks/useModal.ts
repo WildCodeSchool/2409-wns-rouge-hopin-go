@@ -1,33 +1,61 @@
 import { useState, useCallback } from "react";
 
-/**
- * Hook de gestion de modale avec support d'animation d'apparition/disparition
- */
 export const useModal = () => {
-  const [isOpen, setIsOpen] = useState(false); // Affichage DOM
-  const [visible, setVisible] = useState(false); // Classe d'animation
+  const [activeModal, setActiveModal] = useState<string | null>(null);
+  const [visibleModals, setVisibleModals] = useState<Record<string, boolean>>(
+    {}
+  );
 
-  const openModal = useCallback(() => {
-    setIsOpen(true);
-    setTimeout(() => setVisible(true), 10); // laisse le temps au DOM de s'afficher avant animation
+  const openModal = useCallback((id: string) => {
+    // Fermer toutes les autres modales (animation)
+    setVisibleModals((prev) => {
+      const newState: Record<string, boolean> = {};
+      for (const key of Object.keys(prev)) {
+        newState[key] = false;
+      }
+      setActiveModal(id);
+      return newState;
+    });
+
+    // Ouvrir la nouvelle après l'animation de fermeture
+    setTimeout(() => {
+      setVisibleModals((prev) => ({ ...prev, [id]: true }));
+    }, 200);
   }, []);
 
-  const closeModal = useCallback(() => {
-    setVisible(false);
-    setTimeout(() => setIsOpen(false), 200); // attend fin d'animation
-  }, []);
+  const closeModal = useCallback(
+    (id: string) => {
+      setVisibleModals((prev) => ({ ...prev, [id]: false }));
+      setTimeout(() => {
+        if (activeModal === id) {
+          setActiveModal(null);
+        }
+      }, 200);
+    },
+    [activeModal]
+  );
 
-  const toggleModal = useCallback(() => {
-    if (!isOpen) {
-      openModal();
-    } else {
-      closeModal();
-    }
-  }, [isOpen, openModal, closeModal]);
+  const toggleModal = useCallback(
+    (id: string) => {
+      if (activeModal === id) {
+        closeModal(id);
+      } else {
+        openModal(id);
+      }
+    },
+    [activeModal, openModal, closeModal]
+  );
+
+  const isOpen = useCallback((id: string) => activeModal === id, [activeModal]);
+  const isVisible = useCallback(
+    (id: string) => !!visibleModals[id],
+    [visibleModals]
+  );
 
   return {
+    activeModal,
     isOpen,
-    visible,
+    isVisible,
     openModal,
     closeModal,
     toggleModal,
