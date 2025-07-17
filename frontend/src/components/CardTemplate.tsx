@@ -220,7 +220,9 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             />
           </>
         ) : (
-          <div className="bg-primary px-6 pt-2 rounded-b-3xl shadow-md w-[100%] h-14 pl-2"></div>
+          <div
+            className={`${bgFill} px-6 pt-2 rounded-b-3xl shadow-md w-[100%] h-14 pl-2`}
+          ></div>
         )}
       </div>
     </div>

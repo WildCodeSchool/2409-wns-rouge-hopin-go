@@ -105,7 +105,8 @@ const PassengersButtonWithModal = ({
           {isMyRidesPage &&
             info &&
             waitingPassengers &&
-            waitingPassengers.length > 0 && (
+            waitingPassengers.length > 0 &&
+            isFuture && (
               <div className="absolute bottom-full left-full bg-refused text-white overflow-hidden p-2 w-40 rounded-lg shadow-lg z-50">
                 <p className="text-xs flex items-center justify-center gap-1">
                   {waitingPassengers.length} passager

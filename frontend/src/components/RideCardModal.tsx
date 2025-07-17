@@ -40,7 +40,7 @@ const RideCardModal = ({
         />
         <CardTemplate variant={variant} />
         <div className="flex flex-col items-start justify-start w-full">
-          {isFuture && (
+          {isFuture && ride.available_seats > 0 && (
             <div className="mb-5 mt-5 w-full">
               <h2 className="text-xl font-bold text-primary">
                 Passagers à valider :
