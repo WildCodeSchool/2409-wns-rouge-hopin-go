@@ -43,7 +43,7 @@ export default function Map({
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/streets-v12",
-      center: [departureLongitude, departureLatitude],
+      center: [departureLatitude, departureLongitude],
       zoom: zoomLevel,
     });
 
@@ -51,12 +51,12 @@ export default function Map({
 
     // Marqueurs
     new mapboxgl.Marker({ color: "#8E387C" })
-      .setLngLat([departureLongitude, departureLatitude])
+      .setLngLat([departureLatitude, departureLongitude])
       .setPopup(new mapboxgl.Popup().setText(departureCity))
       .addTo(map);
 
     new mapboxgl.Marker({ color: "#3887be" })
-      .setLngLat([arrivalLongitude, arrivalLatitude])
+      .setLngLat([arrivalLatitude, arrivalLongitude])
       .setPopup(new mapboxgl.Popup().setText(arrivalCity))
       .addTo(map);
 
