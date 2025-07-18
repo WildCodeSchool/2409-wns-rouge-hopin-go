@@ -43,7 +43,7 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
 
   const availableSeats = data.max_passenger - (data.nb_passenger ?? 0);
   const driverName =
-    data.driver_id?.firstName ?? `Conducteur #${data.driver_id?.id ?? "?"}`;
+    data.driver?.firstName ?? `Conducteur #${data.driver?.id ?? "?"}`;
   const price = calculateRidePrice(
     parseFloat(travelDistance),
     data.max_passenger,

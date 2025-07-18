@@ -66,9 +66,9 @@ export class Ride extends BaseEntity {
   max_passenger!: number;
 
   @ManyToOne(() => User)
-  @JoinColumn({ name: "driver_id" }) // this specifies the name of the column in the database
+  @JoinColumn({ name: "driver" }) // this specifies the name of the column in the database
   @Field(() => User)
-  driver_id!: User;
+  driver!: User;
 
   @Column({ default: 0 })
   @Field()
@@ -126,7 +126,7 @@ export class RideCreateInput {
   arrival_address!: string;
 
   @Field()
-  driver_id!: IdInput;
+  driver!: IdInput;
 
   @Field(() => Date)
   @IsDate()

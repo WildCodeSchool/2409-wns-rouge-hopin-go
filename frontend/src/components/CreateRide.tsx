@@ -198,7 +198,7 @@ const CreateRide = () => {
               departure_lat: departureCoords.lat,
               arrival_lng: arrivalCoords.long,
               arrival_lat: arrivalCoords.lat,
-              driver_id: { id: driver.id },
+              driver: { id: driver.id },
             },
           },
         });
