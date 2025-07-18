@@ -16,10 +16,10 @@ const SearchRide = ({ variant }: SearchRideProps) => {
   const navigate = useNavigate();
   // Attention, contrairement à createRide, ici c'est City et pas Address qui impacte les suggestions
   const [departureCity, setDepartureCity] = useState("");
-  const [departureCoords, setDepartureCoords] = useState({ lat: 0, long: 0 });
+  const [departureCoords, setDepartureCoords] = useState({ long: 0, lat: 0 });
   const [departureRadius, setDepartureRadius] = useState(10);
   const [arrivalCity, setArrivalCity] = useState("");
-  const [arrivalCoords, setArrivalCoords] = useState({ lat: 0, long: 0 });
+  const [arrivalCoords, setArrivalCoords] = useState({ long: 0, lat: 0 });
   const [arrivalRadius, setArrivalRadius] = useState(10);
   const [departureAt, setDepartureAt] = useState("");
   const [error, setError] = useState<Record<string, string[]>>({});
@@ -56,8 +56,8 @@ const SearchRide = ({ variant }: SearchRideProps) => {
           }));
           // setDepartureCity(data.features[0].properties.city);
           setDepartureCoords({
-            lat: data.features[0].geometry.coordinates[0],
-            long: data.features[0].geometry.coordinates[1],
+            long: data.features[0].geometry.coordinates[0],
+            lat: data.features[0].geometry.coordinates[1],
           });
           console.log("Suggestions mises à jour ! : ", data.features);
         } catch (err) {
@@ -79,8 +79,8 @@ const SearchRide = ({ variant }: SearchRideProps) => {
           }));
           // setArrivalCity(data.features[0].properties.city);
           setArrivalCoords({
-            lat: data.features[0].geometry.coordinates[0],
-            long: data.features[0].geometry.coordinates[1],
+            long: data.features[0].geometry.coordinates[0],
+            lat: data.features[0].geometry.coordinates[1],
           });
           console.log("Suggestions mises à jour ! : ", data.features);
         } catch (err) {
