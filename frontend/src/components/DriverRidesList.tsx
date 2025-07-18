@@ -18,7 +18,7 @@ const DriverRidesList = () => {
   const { isSm, isMd, isLg, is2xl } = useBreakpoints();
 
   const getVariant = (dataset: DriverRide): VariantType => {
-    if (dataset.is_canceled) return "cancel";
+    if (dataset.is_cancelled) return "cancel";
     if (dataset.nb_passenger === dataset.max_passenger) return "validation";
     return "primary";
   };

@@ -12,6 +12,7 @@ import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import CardRideDetailsMobileModal from "./CardRideDetailsMobileModal";
 import useRide from "../context/Rides/useRide";
+import { isAfter, parseISO } from "date-fns";
 
 type PassengersButtonWithModalProps = {
   variant: VariantType;
@@ -27,6 +28,10 @@ const PassengersButtonWithModal = ({
   const isMyRidesPage = location.pathname.includes("my-rides/driver");
   const isRidesResultsPage = location.pathname.includes("ride-results");
   const ride = useRide();
+
+  const departureDate = parseISO(ride.departure_at);
+  const now = new Date();
+  const isFuture = isAfter(departureDate, now);
 
   const [info, setInfo] = useState(false);
 
@@ -61,16 +66,10 @@ const PassengersButtonWithModal = ({
         <div className="relative">
           {isMyRidesPage &&
             waitingPassengers &&
-            waitingPassengers?.length > 0 && (
+            waitingPassengers?.length > 0 &&
+            isFuture && (
               <>
-                <span
-                  className="absolute rounded-full -right-[2px] -top-[2px] w-3 h-3 bg-refused animate-ping
-             "
-                ></span>
-                <span
-                  className="absolute rounded-full -right-[2px] -top-[2px] w-3 h-3 bg-refused
-             "
-                ></span>
+                <span className="absolute rounded-full -right-[2px] -top-[2px] w-3 h-3 bg-refused animate-ping"></span>
               </>
             )}
           {isMyRidesPage && (
@@ -106,7 +105,8 @@ const PassengersButtonWithModal = ({
           {isMyRidesPage &&
             info &&
             waitingPassengers &&
-            waitingPassengers.length > 0 && (
+            waitingPassengers.length > 0 &&
+            isFuture && (
               <div className="absolute bottom-full left-full bg-refused text-white overflow-hidden p-2 w-40 rounded-lg shadow-lg z-50">
                 <p className="text-xs flex items-center justify-center gap-1">
                   {waitingPassengers.length} passager
@@ -114,13 +114,28 @@ const PassengersButtonWithModal = ({
                 </p>
               </div>
             )}
-          {isMyRidesPage && info && waitingPassengers.length === 0 && (
-            <div className="absolute bottom-full left-full bg-refused text-white overflow-hidden p-2 w-40 rounded-lg shadow-lg z-50">
-              <p className="text-xs flex items-center justify-center gap-1">
-                Aucun passager en attente
-              </p>
-            </div>
-          )}
+          {isMyRidesPage &&
+            info &&
+            waitingPassengers.length === 0 &&
+            acceptedPassengers.length === 0 &&
+            isFuture && (
+              <div className="absolute bottom-full left-full bg-refused text-white overflow-hidden p-2 w-40 rounded-lg shadow-lg z-50">
+                <p className="text-xs flex items-center justify-center gap-1">
+                  Aucun passager en attente
+                </p>
+              </div>
+            )}
+          {isMyRidesPage &&
+            info &&
+            ride.available_seats === 0 &&
+            acceptedPassengers.length > 0 &&
+            isFuture && (
+              <div className="absolute bottom-full left-full bg-refused text-white overflow-hidden p-2 w-40 rounded-lg shadow-lg z-50">
+                <p className="text-xs flex items-center justify-center gap-1">
+                  Trajet complet
+                </p>
+              </div>
+            )}
         </div>
         <Modal
           id="RideCardModal"

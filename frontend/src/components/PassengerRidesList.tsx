@@ -19,7 +19,7 @@ const PassengerRidesList = () => {
   const { isSm, isMd, is2xl } = useBreakpoints();
 
   const getVariant = (dataset: PassengerRide): VariantType => {
-    if (dataset.is_canceled) return "cancel";
+    if (dataset.is_cancelled) return "cancel";
     if (dataset.nb_passenger === dataset.max_passenger) return "full";
     if (dataset.current_user_passenger_status === PassengerRideStatus.Waiting)
       return "pending";

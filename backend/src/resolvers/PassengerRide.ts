@@ -109,11 +109,11 @@ export class PassengerRideResolver {
 
     if (filter === "upcoming") {
       baseQuery.andWhere("ride.departure_at > :now", { now });
-      baseQuery.andWhere("ride.is_canceled = false");
+      baseQuery.andWhere("ride.is_cancelled = false");
     } else if (filter === "archived") {
       baseQuery.andWhere("ride.departure_at < :now", { now });
     } else if (filter === "canceled") {
-      baseQuery.andWhere("ride.is_canceled = true");
+      baseQuery.andWhere("ride.is_cancelled = true");
     } else if (filter && filter !== "all") {
       throw new Error("Invalid filter");
     }
@@ -134,26 +134,69 @@ export class PassengerRideResolver {
     @Arg("data") { ride_id, user_id, status }: UpdatePassengerRideStatusInput,
     @Ctx() ctx: AuthContextType
   ): Promise<PassengerRide> {
-    const passengerRide = await PassengerRide.findOne({
-      where: { user_id, ride_id },
-      relations: { user: true, ride: true },
-    });
+    return await datasource.transaction(async (manager) => {
+      const passengerRide = await PassengerRide.findOne({
+        where: { user_id, ride_id },
+        relations: { user: true, ride: { driver_id: true } },
+      });
 
-    if (!passengerRide) {
-      throw new Error("Passager non trouvé pour ce trajet");
-    }
-    passengerRide.status = status;
-    if (passengerRide.status === PassengerRideStatus.APPROVED) {
-      const ride = await Ride.findOne({ where: { id: ride_id } });
+      if (!passengerRide) {
+        throw new Error("Passager non trouvé pour ce trajet");
+      }
+
+      const driverId = passengerRide.ride.driver_id.id;
+      if (ctx.user?.id !== driverId) {
+        throw new Error(
+          "Seul le conducteur peut modifier le statut du passager"
+        );
+      }
+
+      if (
+        passengerRide.ride.max_passenger === passengerRide.ride.nb_passenger
+      ) {
+        throw new Error("Ce trajet est déjà complet");
+      }
+
+      const ride = await manager.findOne(Ride, {
+        where: { id: ride_id },
+        lock: { mode: "pessimistic_write" }, // s'assure qu'un seul utilisateur peut modifier le trajet à la fois
+      });
       if (!ride) {
         throw new Error("Trajet non trouvé");
       }
-      ride.nb_passenger += 1;
-      await ride.save();
-    }
 
-    await passengerRide?.save();
+      // si on essaie d'approuver un passager alors que le trajet est complet, on bloque l'opération
+      if (
+        status === PassengerRideStatus.APPROVED &&
+        ride.nb_passenger >= ride.max_passenger
+      ) {
+        throw new Error("Ce trajet est déjà complet");
+      }
 
-    return passengerRide;
+      // Mise à jour du statut du passager
+      passengerRide.status = status;
+      await manager.save(passengerRide);
+
+      // Si le passager est approuvé, on incrémente le nombre de passagers du trajet
+      if (status === PassengerRideStatus.APPROVED) {
+        ride.nb_passenger += 1;
+        await manager.save(ride);
+      }
+
+      // Si le passager est refusé, on met à jour son statut dans la table PassengerRide
+      if (ride.nb_passenger >= ride.max_passenger) {
+        await manager
+          .createQueryBuilder()
+          .update(PassengerRide)
+          .set({ status: PassengerRideStatus.REFUSED })
+          .where("ride_id = :rideId", { rideId: ride.id })
+          .andWhere("status = :waiting", {
+            waiting: PassengerRideStatus.WAITING,
+          })
+          .execute();
+      }
+
+      return passengerRide;
+    });
   }
 }
