@@ -30,7 +30,7 @@ const RideCardModal = ({
         <Button
           icon={X}
           iconColor="!text-black"
-          hoverIconColor="text-white"
+          hoverIconColor="!text-white"
           iconSize={26}
           type="button"
           variant="full"

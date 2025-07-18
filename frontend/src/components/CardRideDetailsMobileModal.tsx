@@ -52,12 +52,12 @@ const CardRideDetailsMobileModal = ({
     ride.nb_passenger
   );
   return (
-    <div className="relative z-0 flex flex-col  p-4 h-screen w-screen bg-slate-200">
+    <div className="relative z-0 flex flex-col  p-4 h-screen w-screen md:max-w-2xl md:h-fit md:rounded-2xl bg-gray-200">
       <header className="w-full flex justify-end">
         <Button
           icon={X}
-          iconColor="!text-black"
-          hoverIconColor="text-white"
+          iconColor={`${textColor}`}
+          hoverIconColor="!text-white"
           iconSize={26}
           type="button"
           variant="full"

@@ -25,7 +25,9 @@ const PassengersButtonWithModal = ({
   const { isSm, isMd, isXl } = useWindowSize();
 
   const location = useLocation();
-  const isMyRidesPage = location.pathname.includes("my-rides/driver");
+  const isMyRidesDriverPage = location.pathname.includes("my-rides/driver");
+  const isMyRidesPassengerPage =
+    location.pathname.includes("my-rides/passenger");
   const isRidesResultsPage = location.pathname.includes("ride-results");
   const ride = useRide();
 
@@ -53,18 +55,18 @@ const PassengersButtonWithModal = ({
   );
 
   const openAppropriateModal = () => {
-    if (!isMd && isRidesResultsPage) {
+    if ((!isMd && isRidesResultsPage) || isMyRidesPassengerPage) {
       openModal("CardRideDetailsMobileModal");
-    } else if (isMyRidesPage) {
+    } else if (isMyRidesDriverPage) {
       openModal("RideCardModal");
     }
   };
 
   return (
     <div>
-      <div className="absolute right-[170px] flex gap-2 items-center z-10 p-2 text-sm lg:text-base text-textLight font-semibold">
+      <div className="absolute right-1/2 md:right-[40%] lg:right-[35%]    flex gap-2 items-center z-10 p-2 text-sm lg:text-base text-textLight font-semibold">
         <div className="relative">
-          {isMyRidesPage &&
+          {isMyRidesDriverPage &&
             waitingPassengers &&
             waitingPassengers?.length > 0 &&
             isFuture && (
@@ -72,7 +74,7 @@ const PassengersButtonWithModal = ({
                 <span className="absolute rounded-full -right-[2px] -top-[2px] w-3 h-3 bg-refused animate-ping"></span>
               </>
             )}
-          {isMyRidesPage && (
+          {isMyRidesDriverPage && (
             <Button
               onMouseEnter={() => {
                 setInfo(true);
@@ -102,7 +104,23 @@ const PassengersButtonWithModal = ({
               variant="secondary"
             />
           )}
-          {isMyRidesPage &&
+          {isMyRidesPassengerPage && (
+            <Button
+              onMouseEnter={() => {
+                setInfo(true);
+              }}
+              onMouseLeave={() => {
+                setInfo(false);
+              }}
+              icon={Eye}
+              type="button"
+              onClick={openAppropriateModal}
+              label={isXl ? "Détails" : ""}
+              variant="secondary"
+              className=" !mr-5 sm:!mr-10"
+            />
+          )}
+          {isMyRidesDriverPage &&
             info &&
             waitingPassengers &&
             waitingPassengers.length > 0 &&
@@ -114,7 +132,7 @@ const PassengersButtonWithModal = ({
                 </p>
               </div>
             )}
-          {isMyRidesPage &&
+          {isMyRidesDriverPage &&
             info &&
             waitingPassengers.length === 0 &&
             acceptedPassengers.length === 0 &&
@@ -125,7 +143,7 @@ const PassengersButtonWithModal = ({
                 </p>
               </div>
             )}
-          {isMyRidesPage &&
+          {isMyRidesPassengerPage &&
             info &&
             ride.available_seats === 0 &&
             acceptedPassengers.length > 0 &&
