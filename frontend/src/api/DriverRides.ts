@@ -16,7 +16,7 @@ export const queryDriverRides = gql(`
       totalCount
       rides {
         id
-        driver_id {
+        driver {
           id
           firstName
           lastName

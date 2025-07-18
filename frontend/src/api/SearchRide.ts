@@ -25,7 +25,7 @@ export const querySearchRide = gql(`
       nb_passenger
       is_cancelled
       available_seats
-      driver_id {
+      driver {
         id
         firstName
         lastName

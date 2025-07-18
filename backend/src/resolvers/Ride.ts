@@ -35,7 +35,7 @@ export class RidesResolver {
       const endDay = endOfDay(data.departure_at);
 
       const rides = await Ride.createQueryBuilder("ride")
-        .innerJoinAndSelect("ride.driver_id", "driver")
+        .innerJoinAndSelect("ride.driver", "driver")
         .where(
           `
           ST_DWithin(
@@ -85,7 +85,7 @@ export class RidesResolver {
   @Query(() => [Ride])
   async rides(): Promise<Ride[] | null> {
     const rides = await Ride.find({
-      relations: ["driver_id"],
+      relations: ["driver"],
     });
     return rides;
   }
@@ -98,7 +98,7 @@ export class RidesResolver {
   ): Promise<Ride | null> {
     const ride = await Ride.findOne({
       where: { id },
-      relations: ["driver_id"],
+      relations: ["driver"],
     });
     if (ride) {
       return ride;
@@ -121,10 +121,10 @@ export class RidesResolver {
     const now = new Date();
 
     const baseQuery = Ride.createQueryBuilder("ride")
-      .leftJoinAndSelect("ride.driver_id", "driver")
+      .leftJoinAndSelect("ride.driver", "driver")
       .leftJoinAndSelect("ride.passenger_rides", "passengerRide")
       .leftJoinAndSelect("passengerRide.user", "passenger")
-      .where("ride.driver_id = :userId", { userId });
+      .where("ride.driver = :userId", { userId });
 
     if (filter === "upcoming") {
       baseQuery.andWhere("ride.departure_at > :now", { now });

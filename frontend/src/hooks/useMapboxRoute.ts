@@ -13,8 +13,8 @@ type UseMapboxRouteOptions = {
 
 const cache = new Map<string, RouteData>();
 
-const mapBoxToken =
-  "pk.eyJ1IjoiYWRyaWVuZGF2eSIsImEiOiJjbWQ0ODUzeTAwYmtlMm1xdTNmbGVhcTFnIn0.D9mVnHnsy9Z-2FX-hL2sJg";
+// const mapBoxToken =
+//   "pk.eyJ1IjoiYWRyaWVuZGF2eSIsImEiOiJjbWQ0ODUzeTAwYmtlMm1xdTNmbGVhcTFnIn0.D9mVnHnsy9Z-2FX-hL2sJg";
 
 export default function useMapboxRoute({
   departure,
@@ -35,7 +35,7 @@ export default function useMapboxRoute({
     const fetchRoute = async () => {
       setLoading(true);
       try {
-        const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${departure[0]},${departure[1]};${arrival[0]},${arrival[1]}?geometries=geojson&access_token=${mapBoxToken}`;
+        const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${departure[1]},${departure[0]};${arrival[1]},${arrival[0]}?geometries=geojson&access_token=${mapBoxToken}`;
 
         const response = await fetch(url);
         const json = await response.json();

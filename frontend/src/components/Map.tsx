@@ -37,13 +37,13 @@ export default function Map({
   useEffect(() => {
     if (!mapContainerRef.current || !route) return;
 
-    mapboxgl.accessToken =
-      "pk.eyJ1IjoiYWRyaWVuZGF2eSIsImEiOiJjbWQ0ODUzeTAwYmtlMm1xdTNmbGVhcTFnIn0.D9mVnHnsy9Z-2FX-hL2sJg";
+    // mapboxgl.accessToken =
+    //   "pk.eyJ1IjoiYWRyaWVuZGF2eSIsImEiOiJjbWQ0ODUzeTAwYmtlMm1xdTNmbGVhcTFnIn0.D9mVnHnsy9Z-2FX-hL2sJg";
 
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: "mapbox://styles/mapbox/streets-v12",
-      center: [departureLongitude, departureLatitude],
+      center: [departureLatitude, departureLongitude],
       zoom: zoomLevel,
     });
 
@@ -51,12 +51,12 @@ export default function Map({
 
     // Marqueurs
     new mapboxgl.Marker({ color: "#8E387C" })
-      .setLngLat([departureLongitude, departureLatitude])
+      .setLngLat([departureLatitude, departureLongitude])
       .setPopup(new mapboxgl.Popup().setText(departureCity))
       .addTo(map);
 
     new mapboxgl.Marker({ color: "#3887be" })
-      .setLngLat([arrivalLongitude, arrivalLatitude])
+      .setLngLat([arrivalLatitude, arrivalLongitude])
       .setPopup(new mapboxgl.Popup().setText(arrivalCity))
       .addTo(map);
 
