@@ -59,7 +59,7 @@ const PassengersButtonWithModal = ({
 
   return (
     <div>
-      <div className="absolute right-[170px] flex gap-2 items-center z-10 p-2 text-sm lg:text-base text-textLight font-semibold">
+      <div className="absolute right-[65%] lg:right-[40%]    flex gap-2 items-center z-10 p-2 text-sm lg:text-base text-textLight font-semibold">
         <div className="relative">
           {isMyRidesDriverPage &&
             waitingPassengers &&
@@ -116,7 +116,7 @@ const PassengersButtonWithModal = ({
               icon={Eye}
               type="button"
               onClick={openAppropriateModal}
-              label={isSm ? "Détails" : ""}
+              label={isXl ? "Détails" : ""}
               variant="secondary"
             />
           )}

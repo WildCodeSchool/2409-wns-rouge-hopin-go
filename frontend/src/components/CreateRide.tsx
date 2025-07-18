@@ -19,8 +19,8 @@ const CreateRide = () => {
   const [arrivalAddress, setArrivalAddress] = useState("");
   const [departureAt, setDepartureAt] = useState("");
   const [arrivalAt, setArrivalAt] = useState("");
-  const [departureCoords, setDepartureCoords] = useState({ lat: 0, long: 0 });
-  const [arrivalCoords, setArrivalCoords] = useState({ lat: 0, long: 0 });
+  const [departureCoords, setDepartureCoords] = useState({ long: 0, lat: 0 });
+  const [arrivalCoords, setArrivalCoords] = useState({ long: 0, lat: 0 });
   const [maxPassenger, setMaxPassenger] = useState(1);
 
   const [error, setError] = useState<Record<string, string[]>>({});
@@ -76,8 +76,8 @@ const CreateRide = () => {
 
           setDepartureCity(data.features[0].properties.city);
           setDepartureCoords({
-            lat: data.features[0].geometry.coordinates[0],
-            long: data.features[0].geometry.coordinates[1],
+            long: data.features[0].geometry.coordinates[0],
+            lat: data.features[0].geometry.coordinates[1],
           });
         } catch (error) {
           console.error("Erreur lors de la récupération des adresses :", error);
@@ -97,8 +97,8 @@ const CreateRide = () => {
           });
           setArrivalCity(data.features[0].properties.city);
           setArrivalCoords({
-            lat: data.features[0].geometry.coordinates[0],
-            long: data.features[0].geometry.coordinates[1],
+            long: data.features[0].geometry.coordinates[0],
+            lat: data.features[0].geometry.coordinates[1],
           });
         } catch (error) {
           console.error("Erreur lors de la récupération des adresses :", error);
@@ -193,10 +193,10 @@ const CreateRide = () => {
               departure_at: new Date(departureAt + ":00"),
               arrival_at: new Date(arrivalAt + ":00"),
               max_passenger: maxPassenger,
-              departure_lat: departureCoords.lat,
               departure_lng: departureCoords.long,
-              arrival_lat: arrivalCoords.lat,
+              departure_lat: departureCoords.lat,
               arrival_lng: arrivalCoords.long,
+              arrival_lat: arrivalCoords.lat,
               driver_id: { id: driver.id },
             },
           },

@@ -140,10 +140,12 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
                 {price && price.toFixed(2)}
                 <span className=" font-sans text-sm ">€/pp</span>
               </p>
-              <p className=" font-semibold">
-                <span className=" font-sans text-sm ">Total trajet </span>
+              <p className=" text-nowrap font-semibold">
+                <span className=" font-sans text-sm text-nowrap">
+                  Total trajet{" "}
+                </span>
                 {totalPriceRoute && totalPriceRoute.toFixed(2)}
-                <span className=" font-sans text-sm ">€</span>
+                <span className=" font-sans text-sm text-nowrap ">€</span>
               </p>
             </div>
           )}
