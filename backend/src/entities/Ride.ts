@@ -89,7 +89,7 @@ export class Ride extends BaseEntity {
 
   @Column({ default: false })
   @Field(() => Boolean)
-  is_canceled!: boolean;
+  is_cancelled!: boolean;
 
   @CreateDateColumn()
   @Field()
@@ -166,7 +166,7 @@ export class RideUpdateInput {
   max_passenger!: number;
 
   @Field()
-  is_canceled!: boolean;
+  is_cancelled!: boolean;
 }
 
 @InputType()

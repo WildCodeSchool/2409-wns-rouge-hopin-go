@@ -1,4 +1,9 @@
-import { useLazyQuery, useMutation, useQuery } from "@apollo/client";
+import {
+  useApolloClient,
+  useLazyQuery,
+  useMutation,
+  useQuery,
+} from "@apollo/client";
 import Button from "./Button";
 import { queryRide } from "../api/Ride";
 import useWindowSize from "../utils/useWindowSize";
@@ -7,7 +12,6 @@ import { mutationCreatePassengerRide } from "../api/CreatePassengerRide";
 import { VariantType } from "../types/variantTypes";
 import { toast } from "react-toastify";
 import { querySearchRide } from "../api/SearchRide";
-import { useSearchParams } from "react-router-dom";
 import useRideOptional from "../context/Rides/useRideOptional";
 
 export default function RegisterButton({
@@ -22,29 +26,11 @@ export default function RegisterButton({
   icon?: React.ElementType;
 }) {
   const rideContext = useRideOptional();
-
-  const [searchParams] = useSearchParams();
-  const departure_city = searchParams.get("departure_city")!;
-  const arrival_city = searchParams.get("arrival_city")!;
-  const departure_at = searchParams.get("departure_at")!;
+  const client = useApolloClient();
 
   const [getRide] = useLazyQuery(queryRide);
   const [doCreatePassengerRide, { loading }] = useMutation(
-    mutationCreatePassengerRide,
-    {
-      refetchQueries: [
-        {
-          query: querySearchRide,
-          variables: {
-            data: {
-              departure_city,
-              arrival_city,
-              departure_at: new Date(departure_at + ":00:00:00Z"),
-            },
-          },
-        },
-      ],
-    }
+    mutationCreatePassengerRide
   );
 
   const { data: whoAmIData } = useQuery(queryWhoAmI);
@@ -101,6 +87,9 @@ export default function RegisterButton({
         });
         // TO DO : ajouter un bouton "Voir mes trajets" dans le toast
         toast.success("Demande de réservation envoyée avec succès !");
+        await client.refetchQueries({
+          include: [querySearchRide],
+        });
       } else {
         toast.error("Ce trajet est complet.");
       }

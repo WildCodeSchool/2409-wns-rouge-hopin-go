@@ -56,8 +56,8 @@ const SearchRide = ({ variant }: SearchRideProps) => {
           }));
           // setDepartureCity(data.features[0].properties.city);
           setDepartureCoords({
-            lat: data.features[0].geometry.coordinates[0],
-            long: data.features[0].geometry.coordinates[1],
+            long: data.features[0].geometry.coordinates[0],
+            lat: data.features[0].geometry.coordinates[1],
           });
           console.log("Suggestions mises à jour ! : ", data.features);
         } catch (err) {

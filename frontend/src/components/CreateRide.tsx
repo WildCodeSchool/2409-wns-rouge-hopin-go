@@ -108,6 +108,7 @@ const CreateRide = () => {
 
     const timer = setTimeout(fetchCityAddress, 300); // Débounce la requête
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [departureAddress, arrivalAddress]);
 
   useEffect(() => {
