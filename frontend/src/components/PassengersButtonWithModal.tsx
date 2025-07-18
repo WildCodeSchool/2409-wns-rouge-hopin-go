@@ -64,7 +64,7 @@ const PassengersButtonWithModal = ({
 
   return (
     <div>
-      <div className="absolute right-[65%] lg:right-[40%]    flex gap-2 items-center z-10 p-2 text-sm lg:text-base text-textLight font-semibold">
+      <div className="absolute right-1/2 md:right-[40%] lg:right-[35%]    flex gap-2 items-center z-10 p-2 text-sm lg:text-base text-textLight font-semibold">
         <div className="relative">
           {isMyRidesDriverPage &&
             waitingPassengers &&
@@ -117,6 +117,7 @@ const PassengersButtonWithModal = ({
               onClick={openAppropriateModal}
               label={isXl ? "Détails" : ""}
               variant="secondary"
+              className=" !mr-5 sm:!mr-10"
             />
           )}
           {isMyRidesDriverPage &&

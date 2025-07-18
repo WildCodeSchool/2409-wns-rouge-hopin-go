@@ -73,7 +73,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
     <div
       className={`${
         isSelected && additionalClassName
-      } select-none transition-200 min-h-[200px] w-full max-w-[500px] p-4 transition-transform ${
+      } select-none transition-200  w-full max-w-[500px] p-4 transition-transform ${
         onClick ? "cursor-pointer" : ""
       }`}
       onClick={onClick}

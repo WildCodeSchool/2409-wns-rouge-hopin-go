@@ -56,8 +56,8 @@ const CardRideDetailsMobileModal = ({
       <header className="w-full flex justify-end">
         <Button
           icon={X}
-          iconColor="!text-black"
-          hoverIconColor="text-white"
+          iconColor={`${textColor}`}
+          hoverIconColor="!text-white"
           iconSize={26}
           type="button"
           variant="full"
