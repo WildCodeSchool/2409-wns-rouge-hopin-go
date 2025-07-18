@@ -37,8 +37,8 @@ export default function Map({
   useEffect(() => {
     if (!mapContainerRef.current || !route) return;
 
-    mapboxgl.accessToken =
-      "pk.eyJ1IjoiYWRyaWVuZGF2eSIsImEiOiJjbWQ0ODUzeTAwYmtlMm1xdTNmbGVhcTFnIn0.D9mVnHnsy9Z-2FX-hL2sJg";
+    // mapboxgl.accessToken =
+    //   "pk.eyJ1IjoiYWRyaWVuZGF2eSIsImEiOiJjbWQ0ODUzeTAwYmtlMm1xdTNmbGVhcTFnIn0.D9mVnHnsy9Z-2FX-hL2sJg";
 
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,

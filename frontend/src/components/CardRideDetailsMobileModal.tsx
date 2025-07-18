@@ -45,7 +45,7 @@ const CardRideDetailsMobileModal = ({
 
   const availableSeats = ride.max_passenger - (ride.nb_passenger ?? 0);
   const driverName =
-    ride.driver_id?.firstName ?? `Conducteur #${ride.driver_id?.id ?? "?"}`;
+    ride.driver?.firstName ?? `Conducteur #${ride.driver?.id ?? "?"}`;
   const price = calculateRidePrice(
     parseFloat(travelDistance),
     ride.max_passenger,

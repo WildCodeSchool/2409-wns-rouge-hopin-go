@@ -14,7 +14,7 @@ export const queryRide = gql(`
         type
         coordinates
       }
-      driver_id {
+      driver {
         id
       }
       passenger_rides{

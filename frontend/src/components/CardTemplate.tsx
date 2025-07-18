@@ -56,12 +56,12 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   const departureTime = formatTime(departureDate);
   const arrivalTime = formatTime(arrivalDate);
   const dateStr = formatDate(departureDate);
-  const driver_id = ride.driver_id?.id ?? "?";
+  const driver = ride.driver?.id ?? "?";
 
   const travelDuration = formatTravelDuration(route?.durationMin ?? 0);
 
   const driverName =
-    ride.driver_id?.firstName ?? `Conducteur #${ride.driver_id?.id ?? "?"}`;
+    ride.driver?.firstName ?? `Conducteur #${ride.driver?.id ?? "?"}`;
   const price = calculateRidePrice(
     route?.distanceKm,
     ride.max_passenger,
@@ -83,7 +83,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
     >
       <div
         className={`flex flex-col items-center justify-center bg-textLight border border-primary rounded-t-2xl ${
-          me?.id !== driver_id ? "rounded-br-2xl" : ""
+          me?.id !== driver ? "rounded-br-2xl" : ""
         } shadow-lg z-30`}
       >
         <div className="grid grid-cols-3 w-full p-4 h-40 z-30">
@@ -153,7 +153,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
       <div className="relative w-full flex justify-between z-30">
         <p
           className={`absolute left-0 flex gap-2 items-center z-10 p-4 text-sm lg:text-base text-textLight ${
-            me?.id === driver_id ? "ml-3" : ""
+            me?.id === driver ? "ml-3" : ""
           }`}
         >
           {statusLabel === "" ? (
@@ -190,13 +190,13 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
         <PassengersButtonWithModal variant={variant} />
         <p
           className={`absolute ${
-            me?.id === driver_id ? "right-0" : "right-16"
+            me?.id === driver ? "right-0" : "right-16"
           }   z-10 p-4 text-sm lg:text-base text-textLight`}
         >
           {dateStr}
         </p>
 
-        {me?.id !== driver_id ? (
+        {me?.id !== driver ? (
           <>
             <svg
               xmlns="http://www.w3.org/2000/svg"
