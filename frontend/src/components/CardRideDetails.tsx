@@ -124,7 +124,7 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
             </div>
 
             <div
-              className={`relative flex flex-col justify-between ${textColor}`}
+              className={`relative flex flex-col ml-4 justify-between ${textColor}`}
             >
               <div
                 className={`dot absolute h-3 w-3 rounded-full ${bgFill} top-2 left-0 -translate-x-7`}
@@ -135,21 +135,21 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
               <div
                 className={`dot absolute h-3 w-3 rounded-full ${bgFill} bottom-2 left-0 -translate-x-7`}
               />
-              <div className="flex flex-col ml-2 justify-between h-full text-left">
-                <p
-                  className="text-lg md:text-xl sm:font-bold"
-                  title={data.departure_city}
-                >
-                  {data.departure_city}
-                </p>
-                <p className="text-sm">{travelDistance}</p>
-                <p
-                  className="text-lg md:text-xl sm:font-bold"
-                  title={data.arrival_city}
-                >
-                  {data.arrival_city}
-                </p>
-              </div>
+            </div>
+            <div className="flex flex-col ml-2 justify-between h-full text-left md:w-24 lg:w-48">
+              <p
+                className="text-lg md:text-xl sm:font-bold truncate"
+                title={data.departure_city}
+              >
+                {data.departure_city}
+              </p>
+              <p className="text-sm">{travelDistance}</p>
+              <p
+                className="text-lg md:text-xl sm:font-bold truncate"
+                title={data.arrival_city}
+              >
+                {data.arrival_city}
+              </p>
             </div>
           </div>
         </div>
