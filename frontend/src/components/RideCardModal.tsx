@@ -6,6 +6,7 @@ import { PassengersByRideQuery } from "../gql/graphql";
 import RidePassengerValidationButtons from "./RidePassengerValidationButtons";
 import { isAfter, parseISO } from "date-fns";
 import useRide from "../context/Rides/useRide";
+import CancelledRideByDriverButton from "./CancelledRideByDriverButton";
 
 type RideCardModalProps = {
   toggleModal: () => void;
@@ -91,6 +92,11 @@ const RideCardModal = ({
             )}
           </div>
         </div>
+        {isFuture && ride.is_cancelled === false && (
+          <div className="flex justify-end items-center">
+            <CancelledRideByDriverButton />
+          </div>
+        )}
       </div>
     </div>
   );
