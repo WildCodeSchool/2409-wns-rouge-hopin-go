@@ -11,6 +11,8 @@ import Map from "./Map";
 import { useState } from "react";
 import { formatTravelDuration } from "../utils/formatTravelDuration";
 import { calculateRidePrice } from "../utils/calculateRidePrice";
+import { queryWhoAmI } from "../api/WhoAmI";
+import { useQuery } from "@apollo/client";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
 
@@ -22,6 +24,9 @@ type CardRideDetailsProps = {
 const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
   const { textColor, bgFill } = variantConfigMap[variant];
   const { isMd, isLg, isXl } = useBreakpoints();
+
+  const { data: whoAmIData } = useQuery(queryWhoAmI);
+  const me = whoAmIData?.whoami;
 
   const departureDate = new Date(data.departure_at);
   const arrivalDate = new Date(data.arrival_at);
@@ -124,7 +129,7 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
             </div>
 
             <div
-              className={`relative flex flex-col justify-between ${textColor}`}
+              className={`relative flex flex-col ml-4 justify-between ${textColor}`}
             >
               <div
                 className={`dot absolute h-3 w-3 rounded-full ${bgFill} top-2 left-0 -translate-x-7`}
@@ -135,25 +140,29 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
               <div
                 className={`dot absolute h-3 w-3 rounded-full ${bgFill} bottom-2 left-0 -translate-x-7`}
               />
-              <div className="flex flex-col ml-2 justify-between h-full text-left">
-                <p
-                  className="text-lg md:text-xl sm:font-bold"
-                  title={data.departure_city}
-                >
-                  {data.departure_city}
-                </p>
-                <p className="text-sm">{travelDistance}</p>
-                <p
-                  className="text-lg md:text-xl sm:font-bold"
-                  title={data.arrival_city}
-                >
-                  {data.arrival_city}
-                </p>
-              </div>
+            </div>
+            <div className="flex flex-col ml-2 justify-between h-full text-left md:w-24 lg:w-48">
+              <p
+                className="text-lg md:text-xl sm:font-bold truncate"
+                title={data.departure_city}
+              >
+                {data.departure_city}
+              </p>
+              <p className="text-sm">{travelDistance}</p>
+              <p
+                className="text-lg md:text-xl sm:font-bold truncate"
+                title={data.arrival_city}
+              >
+                {data.arrival_city}
+              </p>
             </div>
           </div>
         </div>
-        <RegisterButton variant={variant} rideId={data.id} size="large" />
+        {me?.id === data.driver.id ? (
+          <div>Votre trajet</div>
+        ) : (
+          <RegisterButton variant={variant} rideId={data.id} size="large" />
+        )}
         <Map
           mapId={`map-${data.id}`}
           departureLatitude={departureLatitude}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ScrollableSnapList from "./ScrollableSnapList";
 import { VariantType } from "../types/variantTypes";
 import useBreakpoints from "../utils/useWindowSize";
@@ -26,12 +26,11 @@ const DriverRidesList = () => {
   // Upcoming
   const { data: upcomingRidesData } = useQuery(queryDriverRides, {
     variables: { filter: "upcoming", limit, offset: upcomingOffset },
+    onCompleted: (data) => {
+      const newRides = data?.driverRides?.rides || [];
+      setUpcomingList((prev) => [...prev, ...newRides]);
+    },
   });
-
-  useEffect(() => {
-    const rides = upcomingRidesData?.driverRides?.rides || [];
-    setUpcomingList(rides);
-  }, [upcomingRidesData]);
 
   const totalUpcoming = upcomingRidesData?.driverRides?.totalCount || 0;
 

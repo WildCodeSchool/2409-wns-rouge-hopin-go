@@ -29,7 +29,7 @@ const Button: React.FC<ButtonProps> = ({
   icon: Icon,
   iconSize = 18,
   iconColor = "text-current",
-  hoverIconColor = "hover:text-current",
+  hoverIconColor = "text-current",
   iconRotate = false,
   isFlexCol = false,
   className = "",

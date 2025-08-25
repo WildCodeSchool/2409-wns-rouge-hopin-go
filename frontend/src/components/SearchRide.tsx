@@ -126,12 +126,12 @@ const SearchRide = ({ variant }: SearchRideProps) => {
 
     const params = new URLSearchParams();
     params.append("departure_city", departureCity);
-    params.append("departure_lat", departureCoords.lat.toString());
     params.append("departure_lng", departureCoords.long.toString());
+    params.append("departure_lat", departureCoords.lat.toString());
     params.append("departure_radius", departureRadius.toString());
     params.append("arrival_city", arrivalCity);
-    params.append("arrival_lat", arrivalCoords.lat.toString());
     params.append("arrival_lng", arrivalCoords.long.toString());
+    params.append("arrival_lat", arrivalCoords.lat.toString());
     params.append("arrival_radius", arrivalRadius.toString());
     params.append("departure_at", departureAt);
 

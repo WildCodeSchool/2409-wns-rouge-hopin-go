@@ -73,7 +73,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
     <div
       className={`${
         isSelected && additionalClassName
-      } select-none transition-200 min-h-[200px] w-full max-w-[500px] p-4 transition-transform ${
+      } select-none transition-200  w-full max-w-[500px] p-4 transition-transform ${
         onClick ? "cursor-pointer" : ""
       }`}
       onClick={onClick}
@@ -140,10 +140,12 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
                 {price && price.toFixed(2)}
                 <span className=" font-sans text-sm ">€/pp</span>
               </p>
-              <p className=" font-semibold">
-                <span className=" font-sans text-sm ">Total trajet </span>
+              <p className=" text-nowrap font-semibold">
+                <span className=" font-sans text-sm text-nowrap">
+                  Total trajet{" "}
+                </span>
                 {totalPriceRoute && totalPriceRoute.toFixed(2)}
-                <span className=" font-sans text-sm ">€</span>
+                <span className=" font-sans text-sm text-nowrap ">€</span>
               </p>
             </div>
           )}
