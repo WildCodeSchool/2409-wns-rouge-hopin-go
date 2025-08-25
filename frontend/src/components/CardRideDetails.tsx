@@ -11,6 +11,8 @@ import Map from "./Map";
 import { useState } from "react";
 import { formatTravelDuration } from "../utils/formatTravelDuration";
 import { calculateRidePrice } from "../utils/calculateRidePrice";
+import { queryWhoAmI } from "../api/WhoAmI";
+import { useQuery } from "@apollo/client";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
 
@@ -22,6 +24,9 @@ type CardRideDetailsProps = {
 const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
   const { textColor, bgFill } = variantConfigMap[variant];
   const { isMd, isLg, isXl } = useBreakpoints();
+
+  const { data: whoAmIData } = useQuery(queryWhoAmI);
+  const me = whoAmIData?.whoami;
 
   const departureDate = new Date(data.departure_at);
   const arrivalDate = new Date(data.arrival_at);
@@ -153,7 +158,11 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
             </div>
           </div>
         </div>
-        <RegisterButton variant={variant} rideId={data.id} size="large" />
+        {me?.id === data.driver.id ? (
+          <div>Votre trajet</div>
+        ) : (
+          <RegisterButton variant={variant} rideId={data.id} size="large" />
+        )}
         <Map
           mapId={`map-${data.id}`}
           departureLatitude={departureLatitude}
