@@ -33,11 +33,11 @@ const CardRideDetailsMobileModal = ({
 
   // ---------------------Map---------------------
   const departureCity = ride.departure_city;
-  const departureLatitude = ride.departure_location.coordinates[0];
-  const departureLongitude = ride.departure_location.coordinates[1];
+  const departureLongitude = ride.departure_location.coordinates[0];
+  const departureLatitude = ride.departure_location.coordinates[1];
   const arrivalCity = ride.arrival_city;
-  const arrivalLatitude = ride.arrival_location.coordinates[0];
-  const arrivalLongitude = ride.arrival_location.coordinates[1];
+  const arrivalLongitude = ride.arrival_location.coordinates[0];
+  const arrivalLatitude = ride.arrival_location.coordinates[1];
   // ---------------------End Map---------------------
 
   const [travelDuration, setTravelDuration] = useState<string>("");

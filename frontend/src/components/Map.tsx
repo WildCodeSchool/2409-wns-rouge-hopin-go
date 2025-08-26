@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
 import useMapboxRoute from "../hooks/useMapboxRoute";
@@ -26,112 +26,141 @@ export default function Map({
   mapId,
   onRouteData,
 }: MapProps) {
-  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
 
+  // 🔒 ne pas remettre onRouteData dans les deps
+  const onRouteDataRef = useRef(onRouteData);
+  useEffect(() => {
+    onRouteDataRef.current = onRouteData;
+  }, [onRouteData]);
+
+  // ✅ hook avec cache persistant que tu viens d’installer
+  const dep = useMemo(
+    () => [departureLongitude, departureLatitude] as [number, number],
+    [departureLongitude, departureLatitude]
+  );
+  const arr = useMemo(
+    () => [arrivalLongitude, arrivalLatitude] as [number, number],
+    [arrivalLongitude, arrivalLatitude]
+  );
   const { route, loading } = useMapboxRoute({
-    departure: [departureLongitude, departureLatitude],
-    arrival: [arrivalLongitude, arrivalLatitude],
+    departure: dep,
+    arrival: arr,
+    strategy: "cache-first",
   });
 
+  // Helper de destruction safe (évite double remove)
+  const destroyMap = () => {
+    const m = mapRef.current;
+    if (m) {
+      try {
+        m.remove();
+      } catch (e) {
+        // En dev/StrictMode, ignorer les erreurs de double remove
+        console.warn("map.remove() ignoré:", e);
+      } finally {
+        mapRef.current = null;
+      }
+    }
+  };
+
   useEffect(() => {
-    if (!mapContainerRef.current || !route) return;
+    if (!containerRef.current || !route) return;
+
+    // 🔄 Nettoyage de toute instance précédente avant de créer la nouvelle
+    destroyMap();
 
     mapboxgl.accessToken =
-      "pk.eyJ1IjoiYWRyaWVuZGF2eSIsImEiOiJjbWQ0ODUzeTAwYmtlMm1xdTNmbGVhcTFnIn0.D9mVnHnsy9Z-2FX-hL2sJg";
+      "pk.eyJ1IjoiYWRyaWVuZGF2eSIsImEiOiJjbWQ0cXB4M2cwNTB2MmpzYTBheTNkeW1sIn0.mvTc3Mh3ihV-5ngyPkcdCQ";
 
     const map = new mapboxgl.Map({
-      container: mapContainerRef.current,
+      container: containerRef.current,
       style: "mapbox://styles/mapbox/streets-v12",
-      center: [departureLatitude, departureLongitude],
+      center: [departureLongitude, departureLatitude], // ✅ [lng, lat]
       zoom: zoomLevel,
     });
-
     mapRef.current = map;
 
-    // Marqueurs
-    new mapboxgl.Marker({ color: "#8E387C" })
-      .setLngLat([departureLatitude, departureLongitude])
-      .setPopup(new mapboxgl.Popup().setText(departureCity))
-      .addTo(map);
+    const dep: [number, number] = [departureLongitude, departureLatitude];
+    const arr: [number, number] = [arrivalLongitude, arrivalLatitude];
 
-    new mapboxgl.Marker({ color: "#3887be" })
-      .setLngLat([arrivalLatitude, arrivalLongitude])
-      .setPopup(new mapboxgl.Popup().setText(arrivalCity))
-      .addTo(map);
+    map.once("load", () => {
+      // Marqueurs
+      new mapboxgl.Marker({ color: "#8E387C" })
+        .setLngLat(dep)
+        .setPopup(new mapboxgl.Popup().setText(departureCity))
+        .addTo(map);
 
-    map.on("load", () => {
+      new mapboxgl.Marker({ color: "#3887be" })
+        .setLngLat(arr)
+        .setPopup(new mapboxgl.Popup().setText(arrivalCity))
+        .addTo(map);
+
+      // Route
       const geojson: GeoJSON.Feature<GeoJSON.LineString> = {
         type: "Feature",
         properties: {},
         geometry: route.geometry,
       };
 
-      const bounds = route.geometry.coordinates.reduce(
-        (b, coord) => b.extend(coord as [number, number]),
-        new mapboxgl.LngLatBounds(
-          [route.geometry.coordinates[0][0], route.geometry.coordinates[0][1]],
-          [route.geometry.coordinates[0][0], route.geometry.coordinates[0][1]]
-        )
+      const coords = route.geometry.coordinates as [number, number][];
+      const bounds = coords.reduce(
+        (b, c) => b.extend(c),
+        new mapboxgl.LngLatBounds(coords[0], coords[0])
       );
+
+      map.addSource("route", { type: "geojson", data: geojson });
+      map.addLayer({
+        id: "route",
+        type: "line",
+        source: "route",
+        layout: { "line-join": "round", "line-cap": "round" },
+        paint: {
+          "line-color": "#3887be",
+          "line-width": 5,
+          "line-opacity": 0.75,
+        },
+      });
 
       map.fitBounds(bounds, { padding: 40 });
 
-      if (map.getSource("route")) {
-        (map.getSource("route") as mapboxgl.GeoJSONSource).setData(geojson);
-      } else {
-        map.addSource("route", {
-          type: "geojson",
-          data: geojson,
-        });
-
-        map.addLayer({
-          id: "route",
-          type: "line",
-          source: "route",
-          layout: {
-            "line-join": "round",
-            "line-cap": "round",
-          },
-          paint: {
-            "line-color": "#3887be",
-            "line-width": 5,
-            "line-opacity": 0.75,
-          },
-        });
-      }
-
-      onRouteData?.({
+      // Données vers le parent (sans casser les deps)
+      onRouteDataRef.current?.({
         distanceKm: route.distanceKm,
         durationMin: route.durationMin,
       });
+
+      // Modal fraîchement ouverte → s'assure du bon sizing
+      requestAnimationFrame(() => map.resize());
     });
 
     return () => {
-      map.remove();
+      destroyMap();
     };
+    // ❗ Pas de city/onRouteData dans les deps
   }, [
-    route,
-    departureLatitude,
-    departureLongitude,
-    departureCity,
+    arrivalCity,
     arrivalLatitude,
     arrivalLongitude,
-    arrivalCity,
+    departureCity,
+    departureLatitude,
+    departureLongitude,
+    route,
     zoomLevel,
-    onRouteData,
   ]);
 
   if (loading) {
     return (
-      <div className=" bg-gray-200 w-full h-[300px] flex justify-center items-center text-primary">
+      <div className="bg-gray-200 w-full h-[300px] flex justify-center items-center text-primary">
         <p>Chargement de la carte...</p>
       </div>
     );
   }
+
   return (
     <div
-      ref={mapContainerRef}
+      ref={containerRef}
       id={mapId}
       style={{ width: "100%", height: "300px", borderRadius: "8px" }}
       className="map-container"

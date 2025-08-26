@@ -14,6 +14,9 @@ import { calculateRidePrice } from "../utils/calculateRidePrice";
 import { queryWhoAmI } from "../api/WhoAmI";
 import { useQuery } from "@apollo/client";
 import StaticMap from "./StaticMap";
+import { useModal } from "../hooks/useModal";
+import DynamicMapModal from "./DynamicMapModal";
+import Modal from "./Modal";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
 
@@ -25,6 +28,7 @@ type CardRideDetailsProps = {
 const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
   const { textColor, bgFill } = variantConfigMap[variant];
   const { isMd, isLg, isXl } = useBreakpoints();
+  const { isOpen, isVisible, toggleModal, closeModal } = useModal();
 
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const me = whoAmIData?.whoami;
@@ -184,20 +188,44 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
             setTravelDistance(`${distanceKm.toFixed(1)} km`);
           }}
         /> */}
-        <StaticMap
-          mapId={`map-${data.id}`}
-          departureLatitude={departureLatitude}
-          departureLongitude={departureLongitude}
-          departureCity={departureCity}
-          arrivalLatitude={arrivalLatitude}
-          arrivalLongitude={arrivalLongitude}
-          arrivalCity={arrivalCity}
-          fitPaddingPct={0.12}
-          onRouteData={({ distanceKm, durationMin }) => {
-            setTravelDuration(formatTravelDuration(durationMin));
-            setTravelDistance(`${distanceKm.toFixed(1)} km`);
-          }}
-        />
+        <button
+          onClick={() => toggleModal("DynamicMapModal")}
+          className="w-full"
+        >
+          <StaticMap
+            mapId={`map-${data.id}`}
+            departureLatitude={departureLatitude}
+            departureLongitude={departureLongitude}
+            departureCity={departureCity}
+            arrivalLatitude={arrivalLatitude}
+            arrivalLongitude={arrivalLongitude}
+            arrivalCity={arrivalCity}
+            fitPaddingPct={0.24}
+            onRouteData={({ distanceKm, durationMin }) => {
+              setTravelDuration(formatTravelDuration(durationMin));
+              setTravelDistance(`${distanceKm.toFixed(1)} km`);
+            }}
+          />
+        </button>
+        <Modal
+          id="DynamicMapModal"
+          isOpen={isOpen("DynamicMapModal")}
+          isVisible={isVisible("DynamicMapModal")}
+          onClose={() => closeModal("DynamicMapModal")}
+        >
+          <DynamicMapModal
+            toggleModal={() => closeModal("DynamicMapModal")}
+            dataId={data.id}
+            departureCity={departureCity}
+            departureLongitude={departureLongitude}
+            departureLatitude={departureLatitude}
+            arrivalCity={arrivalCity}
+            arrivalLongitude={arrivalLongitude}
+            arrivalLatitude={arrivalLatitude}
+            setTravelDuration={setTravelDuration}
+            setTravelDistance={setTravelDistance}
+          />
+        </Modal>
       </div>
     </div>
   );

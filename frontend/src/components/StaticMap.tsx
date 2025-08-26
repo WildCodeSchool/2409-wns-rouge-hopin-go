@@ -3,6 +3,7 @@ import { buildStaticRouteUrl } from "../utils/buildStaticRouteUrl";
 import useMapboxRoute from "../hooks/useMapboxRoute";
 import { useStaticRouteImage } from "../hooks/useStaticRouteImage";
 import { fitLineStringToSize } from "../utils/fitStaticViewport";
+import streetMap from "../assets/street_map.svg";
 
 interface Props {
   departureLatitude: number;
@@ -40,8 +41,8 @@ export default function StaticMap({
   onRouteData,
 }: Props) {
   const { route, loading } = useMapboxRoute({
-    departure: [departureLatitude, departureLongitude],
-    arrival: [arrivalLatitude, arrivalLongitude],
+    departure: [departureLongitude, departureLatitude],
+    arrival: [arrivalLongitude, arrivalLatitude],
   });
 
   useEffect(() => {
@@ -114,7 +115,10 @@ export default function StaticMap({
 
   if (loading || imgLoading || !src) {
     return (
-      <div className="bg-gray-200 w-full h-[300px] flex justify-center items-center text-primary rounded-md">
+      <div
+        className="bg-gray-200 w-full h-[300px] flex justify-center items-center text-primary rounded-md animate-pulse"
+        style={{ backgroundImage: `url(${streetMap})` }}
+      >
         <p>Chargement de la carte...</p>
       </div>
     );
