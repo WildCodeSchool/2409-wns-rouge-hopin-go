@@ -6,8 +6,8 @@ import { variantConfigMap } from "../constants/variantConfig";
 import useRide from "../context/Rides/useRide";
 import { formatDate, formatTime } from "../utils/formatDate";
 import { calculateRidePrice } from "../utils/calculateRidePrice";
-import Map from "./MapInteractive";
 import RegisterButton from "./RegisterButton";
+import MapInteractive from "./MapInteractive";
 
 type CardRideDetailsMobileModalProps = {
   toggleModal: () => void;
@@ -45,7 +45,7 @@ const CardRideDetailsMobileModal = ({
   const driverName =
     ride.driver?.firstName ?? `Conducteur #${ride.driver?.id ?? "?"}`;
   const price = calculateRidePrice(
-    durationMin ?? undefined,
+    distanceKm ?? undefined,
     ride.max_passenger,
     ride.nb_passenger
   );
@@ -65,13 +65,13 @@ const CardRideDetailsMobileModal = ({
         />
       </header>
       <main
-        className={`relative flex flex-col gap-4 justify-between ${textColor}`}
+        className={`relative h-full flex flex-col gap-4 justify-between ${textColor}`}
       >
         <h2 className={`text-2xl font-bold ${textColor}`}>{driverName}</h2>
         <h2 className={`text-xl font-bold mb-2 ${textColor}`}>
           Détails du trajet
         </h2>
-        <div className="flex flex-col w-full justify-start  gap-10">
+        <div className="flex flex-col w-full h-1/2 justify-start gap-10">
           <div>
             <p className="text-sm md:text-base">{dateStr}</p>
             <p className="text-xl md:text-4xl font-semibold">
@@ -115,34 +115,36 @@ const CardRideDetailsMobileModal = ({
               <div className="flex flex-col ml-2 justify-between h-full text-left">
                 <p
                   className="text-lg md:text-xl sm:font-bold"
-                  title={ride.departure_city}
+                  title={departureCity}
                 >
-                  {ride.departure_city}
+                  {departureCity}
                 </p>
                 <p className="text-sm">{distanceKm}</p>
                 <p
                   className="text-lg md:text-xl sm:font-bold"
-                  title={ride.arrival_city}
+                  title={arrivalCity}
                 >
-                  {ride.arrival_city}
+                  {arrivalCity}
                 </p>
               </div>
             </div>
           </div>
         </div>
         <RegisterButton variant={variant} rideId={ride.id} size="large" />
-        <Map
-          mapId={`dynamic-map-${ride.id}`}
-          departureLatitude={departureLatitude}
-          departureLongitude={departureLongitude}
-          departureCity={departureCity}
-          arrivalLatitude={arrivalLatitude}
-          arrivalLongitude={arrivalLongitude}
-          arrivalCity={arrivalCity}
-          routePolyline5={routePolyline5 ?? undefined} // ✅ évite Directions
-          distanceKm={distanceKm ?? undefined} // ✅ meta backend
-          durationMin={durationMin ?? undefined}
-        />
+        <div className="w-full h-1/2">
+          <MapInteractive
+            mapId={`dynamic-map-${ride.id}`}
+            departureLatitude={departureLatitude}
+            departureLongitude={departureLongitude}
+            departureCity={departureCity}
+            arrivalLatitude={arrivalLatitude}
+            arrivalLongitude={arrivalLongitude}
+            arrivalCity={arrivalCity}
+            routePolyline5={routePolyline5 ?? undefined} // ✅ évite Directions
+            distanceKm={distanceKm ?? undefined} // ✅ meta backend
+            durationMin={durationMin ?? undefined}
+          />
+        </div>
       </main>
     </div>
   );
