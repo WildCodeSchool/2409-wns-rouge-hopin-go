@@ -7,12 +7,13 @@ import SearchRide from "./SearchRide";
 import Button from "./Button";
 import { Search } from "lucide-react";
 import RegisterButton from "./RegisterButton";
-import Map from "./Map";
+// import Map from "./Map";
 import { useState } from "react";
 import { formatTravelDuration } from "../utils/formatTravelDuration";
 import { calculateRidePrice } from "../utils/calculateRidePrice";
 import { queryWhoAmI } from "../api/WhoAmI";
 import { useQuery } from "@apollo/client";
+import StaticMap from "./StaticMap";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
 
@@ -35,12 +36,19 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
   const dateStr = formatDate(departureDate);
 
   // ---------------------Map---------------------
+  // const departureCity = data.departure_city;
+  // const departureLatitude = data.departure_location.coordinates[0];
+  // const departureLongitude = data.departure_location.coordinates[1];
+  // const arrivalCity = data.arrival_city;
+  // const arrivalLatitude = data.arrival_location.coordinates[0];
+  // const arrivalLongitude = data.arrival_location.coordinates[1];
+
   const departureCity = data.departure_city;
-  const departureLatitude = data.departure_location.coordinates[0];
-  const departureLongitude = data.departure_location.coordinates[1];
+  const departureLongitude = data.departure_location.coordinates[0]; // lon
+  const departureLatitude = data.departure_location.coordinates[1]; // lat
   const arrivalCity = data.arrival_city;
-  const arrivalLatitude = data.arrival_location.coordinates[0];
-  const arrivalLongitude = data.arrival_location.coordinates[1];
+  const arrivalLongitude = data.arrival_location.coordinates[0]; // lon
+  const arrivalLatitude = data.arrival_location.coordinates[1];
   // ---------------------End Map---------------------
 
   const [travelDuration, setTravelDuration] = useState<string>("");
@@ -163,7 +171,7 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
         ) : (
           <RegisterButton variant={variant} rideId={data.id} size="large" />
         )}
-        <Map
+        {/* <Map
           mapId={`map-${data.id}`}
           departureLatitude={departureLatitude}
           departureLongitude={departureLongitude}
@@ -173,6 +181,20 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
           arrivalCity={arrivalCity}
           onRouteData={({ distanceKm, durationMin }) => {
             setTravelDuration(`${formatTravelDuration(durationMin)}`);
+            setTravelDistance(`${distanceKm.toFixed(1)} km`);
+          }}
+        /> */}
+        <StaticMap
+          mapId={`map-${data.id}`}
+          departureLatitude={departureLatitude}
+          departureLongitude={departureLongitude}
+          departureCity={departureCity}
+          arrivalLatitude={arrivalLatitude}
+          arrivalLongitude={arrivalLongitude}
+          arrivalCity={arrivalCity}
+          fitPaddingPct={0.12}
+          onRouteData={({ distanceKm, durationMin }) => {
+            setTravelDuration(formatTravelDuration(durationMin));
             setTravelDistance(`${distanceKm.toFixed(1)} km`);
           }}
         />
