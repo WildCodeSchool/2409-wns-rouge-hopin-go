@@ -30,7 +30,7 @@ const ConfirmModal = ({
         />
         <h2 className="text-xl font-bold text-primary mb-4">Confirmation</h2>
 
-        <p>{message}</p>
+        <p className="whitespace-pre-line">{message}</p>
         <div className="flex gap-4 items-center justify-end my-6">
           <Button
             label="Annuler"

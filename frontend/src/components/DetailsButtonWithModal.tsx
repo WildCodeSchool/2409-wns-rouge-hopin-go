@@ -16,10 +16,12 @@ import { isAfter, parseISO } from "date-fns";
 
 type PassengersButtonWithModalProps = {
   variant: VariantType;
+  isModal?: boolean;
 };
 
 const PassengersButtonWithModal = ({
   variant,
+  isModal = false,
 }: PassengersButtonWithModalProps) => {
   const { isOpen, isVisible, openModal, closeModal } = useModal();
   const { isSm, isMd, isXl } = useWindowSize();
@@ -64,6 +66,7 @@ const PassengersButtonWithModal = ({
     }
   };
 
+  if (isModal) return null;
   return (
     <div>
       <div className="absolute right-1/2 md:right-[40%] lg:right-[35%]    flex gap-2 items-center z-10 p-2 text-sm lg:text-base text-textLight font-semibold">
@@ -71,7 +74,8 @@ const PassengersButtonWithModal = ({
           {isMyRidesDriverPage &&
             waitingPassengers &&
             waitingPassengers?.length > 0 &&
-            isFuture && (
+            isFuture &&
+            !rideCancelled && (
               <>
                 <span className="absolute rounded-full -right-[2px] -top-[2px] w-3 h-3 bg-refused animate-ping"></span>
               </>
@@ -169,6 +173,7 @@ const PassengersButtonWithModal = ({
           <RideCardModal
             variant={variant}
             toggleModal={() => closeModal("RideCardModal")}
+            onClose={() => closeModal("RideCardModal")}
             waitingPassengers={waitingPassengers}
             acceptedPassengers={acceptedPassengers}
           />
