@@ -22,13 +22,13 @@ const CancelledRideByDriverButton = ({
     mutationCancelledRideByDriver,
     {
       onCompleted: async () => {
-        await client.refetchQueries({
-          include: [queryDriverRides],
-        });
         closeModal(modalId);
         if (onCloseParentModal) {
           onCloseParentModal();
         }
+        await client.refetchQueries({
+          include: [queryDriverRides],
+        });
         toast.success("Le trajet a été annulé avec succès");
       },
     }
