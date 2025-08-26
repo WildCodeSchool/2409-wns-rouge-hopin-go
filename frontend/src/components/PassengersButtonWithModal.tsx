@@ -54,6 +54,8 @@ const PassengersButtonWithModal = ({
     (passenger) => passenger.status === PassengerRideStatus.Approved
   );
 
+  const rideCancelled = ride.is_cancelled;
+
   const openAppropriateModal = () => {
     if ((!isMd && isRidesResultsPage) || isMyRidesPassengerPage) {
       openModal("CardRideDetailsMobileModal");
@@ -85,7 +87,7 @@ const PassengersButtonWithModal = ({
               icon={Eye}
               type="button"
               onClick={openAppropriateModal}
-              label={isXl ? "Passagers" : ""}
+              label={isXl ? "Détails" : ""}
               variant="secondary"
             />
           )}
@@ -124,7 +126,8 @@ const PassengersButtonWithModal = ({
             info &&
             waitingPassengers &&
             waitingPassengers.length > 0 &&
-            isFuture && (
+            isFuture &&
+            !rideCancelled && (
               <div className="absolute bottom-full left-full bg-refused text-white overflow-hidden p-2 w-40 rounded-lg shadow-lg z-50">
                 <p className="text-xs flex items-center justify-center gap-1">
                   {waitingPassengers.length} passager
@@ -136,7 +139,8 @@ const PassengersButtonWithModal = ({
             info &&
             waitingPassengers.length === 0 &&
             acceptedPassengers.length === 0 &&
-            isFuture && (
+            isFuture &&
+            !rideCancelled && (
               <div className="absolute bottom-full left-full bg-refused text-white overflow-hidden p-2 w-40 rounded-lg shadow-lg z-50">
                 <p className="text-xs flex items-center justify-center gap-1">
                   Aucun passager en attente
@@ -147,7 +151,8 @@ const PassengersButtonWithModal = ({
             info &&
             ride.available_seats === 0 &&
             acceptedPassengers.length > 0 &&
-            isFuture && (
+            isFuture &&
+            !rideCancelled && (
               <div className="absolute bottom-full left-full bg-refused text-white overflow-hidden p-2 w-40 rounded-lg shadow-lg z-50">
                 <p className="text-xs flex items-center justify-center gap-1">
                   Trajet complet
