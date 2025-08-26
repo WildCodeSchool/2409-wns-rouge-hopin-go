@@ -5,7 +5,7 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import polyline from "@mapbox/polyline";
 import useMapboxRoute from "../hooks/useMapboxRoute";
 
-interface MapProps {
+interface MapInteractiveProps {
   departureLatitude: number; // lat
   departureLongitude: number; // lng
   departureCity: string;
@@ -26,7 +26,7 @@ interface MapProps {
   styleUrl?: string; // override du style si besoin
 }
 
-export default function Map({
+export default function MapInteractive({
   departureLatitude,
   departureLongitude,
   departureCity,
@@ -41,7 +41,7 @@ export default function Map({
   durationMin,
   visible = true,
   styleUrl = "mapbox://styles/mapbox/streets-v12",
-}: MapProps) {
+}: MapInteractiveProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
 

@@ -1,6 +1,6 @@
 import { X } from "lucide-react";
 import Button from "./Button";
-import Map from "./Map";
+import MapInteractive from "./MapInteractive";
 
 interface DynamicMapModalProps {
   toggleModal: () => void;
@@ -48,20 +48,7 @@ const DynamicMapModal = ({
         />
       </header>
       <main className="relative w-full h-full flex flex-col gap-4 justify-between">
-        {/* <Map
-          mapId={`dynamic-map-${dataId}`}
-          departureLatitude={departureLatitude}
-          departureLongitude={departureLongitude}
-          departureCity={departureCity}
-          arrivalLatitude={arrivalLatitude}
-          arrivalLongitude={arrivalLongitude}
-          arrivalCity={arrivalCity}
-          onRouteData={({ distanceKm, durationMin }) => {
-            setTravelDuration(`${formatTravelDuration(durationMin)}`);
-            setTravelDistance(`${distanceKm.toFixed(1)} km`);
-          }}
-        /> */}
-        <Map
+        <MapInteractive
           mapId={`dynamic-map-${dataId}`}
           departureLatitude={departureLatitude}
           departureLongitude={departureLongitude}

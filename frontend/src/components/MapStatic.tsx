@@ -5,7 +5,7 @@ import { shrinkPolyline5ForStatic } from "../utils/shrinkPolyline";
 import streetMap from "../assets/street_map.svg";
 import useMapboxRoute from "../hooks/useMapboxRoute";
 
-interface Props {
+interface MapStaticProps {
   departureLatitude: number;
   departureLongitude: number;
   departureCity: string;
@@ -28,7 +28,7 @@ interface Props {
   durationMin?: number | null;
 }
 
-export default function StaticMap({
+export default function MapStatic({
   departureLatitude,
   departureLongitude,
   departureCity,
@@ -47,7 +47,7 @@ export default function StaticMap({
   routePolyline5,
   distanceKm,
   durationMin,
-}: Props) {
+}: MapStaticProps) {
   const token =
     "pk.eyJ1IjoiYWRyaWVuZGF2eSIsImEiOiJjbWQ0cXB4M2cwNTB2MmpzYTBheTNkeW1sIn0.mvTc3Mh3ihV-5ngyPkcdCQ";
 

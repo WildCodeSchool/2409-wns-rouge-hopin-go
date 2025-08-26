@@ -7,16 +7,15 @@ import SearchRide from "./SearchRide";
 import Button from "./Button";
 import { Search } from "lucide-react";
 import RegisterButton from "./RegisterButton";
-// import Map from "./Map";
 import { useState } from "react";
 import { formatTravelDuration } from "../utils/formatTravelDuration";
 import { calculateRidePrice } from "../utils/calculateRidePrice";
 import { queryWhoAmI } from "../api/WhoAmI";
 import { useQuery } from "@apollo/client";
-import StaticMap from "./StaticMap";
 import { useModal } from "../hooks/useModal";
 import DynamicMapModal from "./DynamicMapModal";
 import Modal from "./Modal";
+import MapStatic from "./MapStatic";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
 
@@ -40,12 +39,6 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
   const dateStr = formatDate(departureDate);
 
   // ---------------------Map---------------------
-  // const departureCity = data.departure_city;
-  // const departureLatitude = data.departure_location.coordinates[0];
-  // const departureLongitude = data.departure_location.coordinates[1];
-  // const arrivalCity = data.arrival_city;
-  // const arrivalLatitude = data.arrival_location.coordinates[0];
-  // const arrivalLongitude = data.arrival_location.coordinates[1];
 
   const departureCity = data.departure_city;
   const departureLongitude = data.departure_location.coordinates[0]; // lon
@@ -182,25 +175,13 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
         ) : (
           <RegisterButton variant={variant} rideId={data.id} size="large" />
         )}
-        {/* <Map
-          mapId={`map-${data.id}`}
-          departureLatitude={departureLatitude}
-          departureLongitude={departureLongitude}
-          departureCity={departureCity}
-          arrivalLatitude={arrivalLatitude}
-          arrivalLongitude={arrivalLongitude}
-          arrivalCity={arrivalCity}
-          onRouteData={({ distanceKm, durationMin }) => {
-            setTravelDuration(`${formatTravelDuration(durationMin)}`);
-            setTravelDistance(`${distanceKm.toFixed(1)} km`);
-          }}
-        /> */}
+
         <button
           onClick={() => toggleModal("DynamicMapModal")}
           className="w-full"
           title="Cliquer pour voir la carte"
         >
-          <StaticMap
+          <MapStatic
             mapId={`map-${data.id}`}
             departureLatitude={departureLatitude}
             departureLongitude={departureLongitude}

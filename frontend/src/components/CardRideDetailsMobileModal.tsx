@@ -6,7 +6,7 @@ import { variantConfigMap } from "../constants/variantConfig";
 import useRide from "../context/Rides/useRide";
 import { formatDate, formatTime } from "../utils/formatDate";
 import { calculateRidePrice } from "../utils/calculateRidePrice";
-import Map from "./Map";
+import Map from "./MapInteractive";
 import RegisterButton from "./RegisterButton";
 
 type CardRideDetailsMobileModalProps = {
