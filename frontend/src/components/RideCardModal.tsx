@@ -91,7 +91,7 @@ const RideCardModal = ({
           )}
         </div>
         {isFuture && ride.is_cancelled === false && (
-          <div className="flex justify-end items-center">
+          <div className="flex justify-end w-full">
             <CancelledRideByDriverButton />
           </div>
         )}
