@@ -131,7 +131,12 @@ export class RidesResolver {
       baseQuery.andWhere("ride.departure_at > :now", { now });
       baseQuery.andWhere("ride.is_cancelled = false");
     } else if (filter === "archived") {
-      baseQuery.andWhere("ride.departure_at < :now", { now });
+      baseQuery.andWhere(
+        "(ride.departure_at < :now OR ride.is_cancelled = true)",
+        {
+          now,
+        }
+      );
     } else if (filter === "canceled") {
       baseQuery.andWhere("ride.is_cancelled = true");
     } else if (filter && filter !== "all") {
@@ -139,7 +144,8 @@ export class RidesResolver {
     }
 
     // Tri secondaire
-    baseQuery.addOrderBy("ride.departure_at", sort);
+    const order = filter === "archived" ? "DESC" : "ASC";
+    baseQuery.orderBy("ride.departure_at", order);
 
     const [rides, totalCount] = await baseQuery
       .take(limit)
