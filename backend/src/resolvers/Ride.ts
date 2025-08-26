@@ -72,8 +72,12 @@ export class RidesResolver {
         .orderBy("ride.departure_at", "ASC")
         .getMany();
       console.log(
-        "🚀 ~ RidesResolver ~ rides:",
+        "🚀 ~ RidesResolver ~ ride.departure_location.coordinates:",
         rides.map((ride) => ride.departure_location.coordinates)
+      );
+      console.log(
+        "🚀 ~ RidesResolver ~ ride.arrival_location.coordinates:",
+        rides.map((ride) => ride.arrival_location.coordinates)
       );
       return rides;
     } catch (error) {
