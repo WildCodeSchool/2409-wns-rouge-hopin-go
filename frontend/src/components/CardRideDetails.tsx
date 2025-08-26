@@ -53,16 +53,23 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
   const arrivalCity = data.arrival_city;
   const arrivalLongitude = data.arrival_location.coordinates[0]; // lon
   const arrivalLatitude = data.arrival_location.coordinates[1];
+  const routePolyline5 = data.route_polyline5;
+  const distanceKm = data.distance_km;
+  const durationMin = data.duration_min;
   // ---------------------End Map---------------------
 
-  const [travelDuration, setTravelDuration] = useState<string>("");
-  const [travelDistance, setTravelDistance] = useState<string>("");
+  const [travelDuration, setTravelDuration] = useState<string>(
+    formatTravelDuration(durationMin ?? 0)
+  );
+  const [travelDistance, setTravelDistance] = useState<string>(
+    `${(distanceKm ?? 0).toFixed(1)} km`
+  );
 
   const availableSeats = data.max_passenger - (data.nb_passenger ?? 0);
   const driverName =
     data.driver?.firstName ?? `Conducteur #${data.driver?.id ?? "?"}`;
   const price = calculateRidePrice(
-    parseFloat(travelDistance),
+    distanceKm ?? undefined,
     data.max_passenger,
     data.nb_passenger
   );
@@ -191,6 +198,7 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
         <button
           onClick={() => toggleModal("DynamicMapModal")}
           className="w-full"
+          title="Cliquer pour voir la carte"
         >
           <StaticMap
             mapId={`map-${data.id}`}
@@ -200,10 +208,13 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
             arrivalLatitude={arrivalLatitude}
             arrivalLongitude={arrivalLongitude}
             arrivalCity={arrivalCity}
+            routePolyline5={routePolyline5} // ✅ évite Directions
+            distanceKm={distanceKm} // ✅ meta backend
+            durationMin={durationMin}
             fitPaddingPct={0.24}
             onRouteData={({ distanceKm, durationMin }) => {
-              setTravelDuration(formatTravelDuration(durationMin));
-              setTravelDistance(`${distanceKm.toFixed(1)} km`);
+              setTravelDuration(formatTravelDuration(durationMin ?? 0));
+              setTravelDistance(`${(distanceKm ?? 0).toFixed(1)} km`);
             }}
           />
         </button>
@@ -222,8 +233,9 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
             arrivalCity={arrivalCity}
             arrivalLongitude={arrivalLongitude}
             arrivalLatitude={arrivalLatitude}
-            setTravelDuration={setTravelDuration}
-            setTravelDistance={setTravelDistance}
+            routePolyline5={routePolyline5} // ✅ évite Directions
+            distanceKm={distanceKm} // ✅ meta backend
+            durationMin={durationMin}
           />
         </Modal>
       </div>

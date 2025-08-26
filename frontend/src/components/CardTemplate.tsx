@@ -7,7 +7,6 @@ import PassengersButtonWithModal from "./PassengersButtonWithModal";
 import { useQuery } from "@apollo/client";
 import { queryWhoAmI } from "../api/WhoAmI";
 import useRide from "../context/Rides/useRide";
-import useMapboxRoute from "../hooks/useMapboxRoute";
 import { formatTravelDuration } from "../utils/formatTravelDuration";
 import { calculateRidePrice } from "../utils/calculateRidePrice";
 import useBreakpoints from "../utils/useWindowSize";
@@ -37,17 +36,6 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
     icon: CardIcon,
   } = variantConfigMap[variant];
 
-  const { route } = useMapboxRoute({
-    departure: [
-      ride.departure_location.coordinates[1], // longitude
-      ride.departure_location.coordinates[0], // latitude
-    ],
-    arrival: [
-      ride.arrival_location.coordinates[1],
-      ride.arrival_location.coordinates[0],
-    ],
-  });
-
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const me = whoAmIData?.whoami;
 
@@ -58,16 +46,16 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   const dateStr = formatDate(departureDate);
   const driver = ride.driver?.id ?? "?";
 
-  const travelDuration = formatTravelDuration(route?.durationMin ?? 0);
+  const travelDuration = formatTravelDuration(ride.duration_min ?? 0);
 
   const driverName =
     ride.driver?.firstName ?? `Conducteur #${ride.driver?.id ?? "?"}`;
   const price = calculateRidePrice(
-    route?.distanceKm,
+    ride.distance_km ?? undefined,
     ride.max_passenger,
     ride.nb_passenger
   );
-  const totalPriceRoute = route && route?.distanceKm * 0.14;
+  const totalPriceRoute = (ride.distance_km ?? 0) * 0.14;
 
   return (
     <div

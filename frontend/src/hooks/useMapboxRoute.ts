@@ -1,6 +1,5 @@
 // hooks/useMapboxRoute.ts
 import { useEffect, useState } from "react";
-import { formatTravelDuration } from "../utils/formatTravelDuration";
 
 type RouteData = {
   distanceKm: number;
@@ -18,8 +17,7 @@ type Strategy =
 type UseMapboxRouteOptions = {
   departure: [number, number]; // [lng, lat]
   arrival: [number, number]; // [lng, lat]
-  // profile?: "driving" | "walking" | "cycling";
-  profile?: "driving";
+  profile?: "driving" | "walking" | "cycling";
   ttlMs?: number;
   maxEntries?: number;
   strategy?: Strategy;
@@ -49,7 +47,7 @@ const pruneLRU = (obj: Record<string, CacheEntry>, max: number) => {
     .forEach((k) => delete obj[k]);
   return obj;
 };
-const norm = (n: number) => Number(n.toFixed(5)); // ~1 m
+const norm = (n: number) => Number(n.toFixed(5));
 const keyFor = (
   profile: string,
   dlng: number,
@@ -73,7 +71,6 @@ export default function useMapboxRoute({
   const [route, setRoute] = useState<RouteData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // 🔹 Déstructure en *scalaires* pour des deps stables
   const dLng = departure[0],
     dLat = departure[1];
   const aLng = arrival[0],
@@ -107,11 +104,10 @@ export default function useMapboxRoute({
     if ((strategy === "cache-first" || strategy === "swr") && fresh) {
       serve(hit);
       setLoading(strategy === "swr");
-      if (strategy === "cache-first") return; // ✅ aucun fetch si hit
+      if (strategy === "cache-first") return;
     }
 
     const ctrl = new AbortController();
-
     const fetchRoute = async () => {
       try {
         const url =
@@ -126,7 +122,7 @@ export default function useMapboxRoute({
 
         const routeData: RouteData = {
           distanceKm: data.distance / 1000,
-          durationMin: Number(formatTravelDuration(data.duration)),
+          durationMin: Math.ceil(data.duration / 60), // ✅ minutes entières
           geometry: data.geometry,
         };
 
@@ -141,7 +137,7 @@ export default function useMapboxRoute({
         setRoute(routeData);
       } catch (err: unknown) {
         if (strategy === "network-first" && hit) {
-          serve(hit); // fallback cache si réseau KO
+          serve(hit);
         } else if (
           typeof err === "object" &&
           err !== null &&
@@ -155,15 +151,12 @@ export default function useMapboxRoute({
       }
     };
 
-    // network paths
     if (strategy !== "cache-first" || !fresh) {
       fetchRoute();
       return () => ctrl.abort();
     } else {
-      // cache-first + fresh served → pas d'appel, pas de cleanup
       setLoading(false);
     }
-    // 👇 deps *scalaires*, pas les tableaux
   }, [dLng, dLat, aLng, aLat, profile, ttlMs, maxEntries, strategy]);
 
   return { route, loading };

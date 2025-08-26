@@ -43,6 +43,9 @@ export const queryPassengerRides = gql(`
         nb_passenger
         available_seats
         current_user_passenger_status
+        distance_km
+        duration_min
+        route_polyline5
         passenger_rides {
           user_id
           ride_id

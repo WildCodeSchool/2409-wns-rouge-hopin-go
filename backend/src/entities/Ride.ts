@@ -7,7 +7,7 @@ import {
   MinLength,
   Validate,
 } from "class-validator";
-import { Field, Float, ID, InputType, ObjectType } from "type-graphql";
+import { Field, Float, ID, InputType, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
   Column,
@@ -73,6 +73,19 @@ export class Ride extends BaseEntity {
   @Column({ default: 0 })
   @Field()
   nb_passenger!: number;
+
+  @Column({ type: "double precision", nullable: true })
+  @Field(() => Float, { nullable: true })
+  distance_km?: number;
+
+  @Column({ type: "integer", nullable: true })
+  @Field(() => Int, { nullable: true })
+  duration_min?: number;
+
+  // Polyline précision 5 (compatible Static Images)
+  @Column({ type: "text", nullable: true })
+  @Field({ nullable: true })
+  route_polyline5?: string;
 
   @Field(() => Number)
   get available_seats(): number {

@@ -1,7 +1,6 @@
 import { X } from "lucide-react";
 import Button from "./Button";
 import Map from "./Map";
-import { formatTravelDuration } from "../utils/formatTravelDuration";
 
 interface DynamicMapModalProps {
   toggleModal: () => void;
@@ -12,8 +11,9 @@ interface DynamicMapModalProps {
   arrivalCity: string;
   arrivalLongitude: number;
   arrivalLatitude: number;
-  setTravelDuration: (duration: string) => void;
-  setTravelDistance: (distance: string) => void;
+  routePolyline5: string | null | undefined;
+  distanceKm: number | null | undefined;
+  durationMin: number | null | undefined;
 }
 
 const DynamicMapModal = ({
@@ -25,13 +25,14 @@ const DynamicMapModal = ({
   arrivalCity,
   arrivalLongitude,
   arrivalLatitude,
-  setTravelDuration,
-  setTravelDistance,
+  routePolyline5,
+  distanceKm,
+  durationMin,
 }: DynamicMapModalProps) => {
   return (
     <div
       id="DynamicMapModal"
-      className="relative z-0 flex flex-col  p-4 h-screen w-screen md:max-w-2xl md:h-fit md:rounded-2xl bg-gray-200"
+      className="relative z-0 flex flex-col  p-4 h-[calc(100vh-8rem)] w-screen md:max-w-4xl md:rounded-2xl bg-gray-200"
     >
       <header className="w-full flex justify-end">
         <Button
@@ -46,8 +47,8 @@ const DynamicMapModal = ({
           className="group hover:!bg-primaryHover self-end"
         />
       </header>
-      <main className="relative flex flex-col gap-4 justify-between">
-        <Map
+      <main className="relative w-full h-full flex flex-col gap-4 justify-between">
+        {/* <Map
           mapId={`dynamic-map-${dataId}`}
           departureLatitude={departureLatitude}
           departureLongitude={departureLongitude}
@@ -59,6 +60,18 @@ const DynamicMapModal = ({
             setTravelDuration(`${formatTravelDuration(durationMin)}`);
             setTravelDistance(`${distanceKm.toFixed(1)} km`);
           }}
+        /> */}
+        <Map
+          mapId={`dynamic-map-${dataId}`}
+          departureLatitude={departureLatitude}
+          departureLongitude={departureLongitude}
+          departureCity={departureCity}
+          arrivalLatitude={arrivalLatitude}
+          arrivalLongitude={arrivalLongitude}
+          arrivalCity={arrivalCity}
+          routePolyline5={routePolyline5 ?? undefined} // ✅ évite Directions
+          distanceKm={distanceKm ?? undefined} // ✅ meta backend
+          durationMin={durationMin ?? undefined}
         />
       </main>
     </div>

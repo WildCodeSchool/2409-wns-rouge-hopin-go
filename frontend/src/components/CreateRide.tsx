@@ -10,6 +10,7 @@ import {
   validateDepartureAt,
 } from "../utils/createRideValidator";
 import { queryWhoAmI } from "../api/WhoAmI";
+import { toast } from "react-toastify";
 
 const CreateRide = () => {
   // TO DO => if user is not connected, the form should not be accessible
@@ -202,11 +203,12 @@ const CreateRide = () => {
             },
           },
         });
-      // implement toast
+      toast.success("Trajet créé avec succès !");
       setError({});
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       console.error(e);
+      toast.error("Une erreur est survenue lors de l'inscription.");
       setError({
         form: [
           "Une erreur est survenue lors de la création du trajet. Réessayez.",

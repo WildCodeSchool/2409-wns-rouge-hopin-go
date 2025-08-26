@@ -22,6 +22,7 @@ import { endOfDay, startOfDay } from "date-fns";
 import { User } from "../entities/User";
 import { PassengerRide, PassengerRideStatus } from "../entities/PassengerRide";
 import { AuthContextType, ContextType } from "../auth";
+import { fetchRouteFromMapbox } from "../utils/fetchRouteFromMapBox";
 
 @Resolver(() => Ride)
 export class RidesResolver {
@@ -161,25 +162,45 @@ export class RidesResolver {
     if (errors.length > 0) {
       throw new Error(`Validation error: ${JSON.stringify(errors)}`);
     }
-    const newRide = new Ride();
+
+    // 1) Calcul de la route côté serveur
+    let distance_km: number | undefined;
+    let duration_min: number | undefined;
+    let route_polyline5: string | undefined;
     try {
-      Object.assign(newRide, {
-        ...data,
-        departure_location: {
-          type: "Point",
-          coordinates: [data.departure_lng, data.departure_lat],
-        },
-        arrival_location: {
-          type: "Point",
-          coordinates: [data.arrival_lng, data.arrival_lat],
-        },
-      });
-      await newRide.save();
-      return newRide;
-    } catch (error) {
-      console.error(error);
-      throw new Error("unable to create ride");
+      const r = await fetchRouteFromMapbox(
+        data.departure_lng,
+        data.departure_lat,
+        data.arrival_lng,
+        data.arrival_lat
+      );
+      distance_km = r.distanceKm;
+      duration_min = r.durationMin;
+      route_polyline5 = r.polyline5;
+    } catch (e) {
+      console.error("Mapbox directions failed, will save without route.", e);
+      // Option: fallback Haversine ici si tu veux garantir des valeurs
     }
+
+    const newRide = new Ride();
+    Object.assign(newRide, {
+      ...data,
+      departure_location: {
+        type: "Point",
+        coordinates: [data.departure_lng, data.departure_lat],
+      },
+      arrival_location: {
+        type: "Point",
+        coordinates: [data.arrival_lng, data.arrival_lat],
+      },
+      distance_km,
+      duration_min,
+      route_polyline5,
+    });
+    console.log("Creating ride:", newRide);
+
+    await newRide.save();
+    return newRide;
   }
 
   // Need a Middleware to verify if the user is logged in and is the user that created the ride

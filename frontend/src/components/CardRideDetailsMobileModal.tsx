@@ -4,10 +4,8 @@ import { VariantType } from "../types/variantTypes";
 import { PassengersByRideQuery } from "../gql/graphql";
 import { variantConfigMap } from "../constants/variantConfig";
 import useRide from "../context/Rides/useRide";
-import { formatTravelDuration } from "../utils/formatTravelDuration";
 import { formatDate, formatTime } from "../utils/formatDate";
 import { calculateRidePrice } from "../utils/calculateRidePrice";
-import { useState } from "react";
 import Map from "./Map";
 import RegisterButton from "./RegisterButton";
 
@@ -33,21 +31,21 @@ const CardRideDetailsMobileModal = ({
 
   // ---------------------Map---------------------
   const departureCity = ride.departure_city;
-  const departureLongitude = ride.departure_location.coordinates[0];
-  const departureLatitude = ride.departure_location.coordinates[1];
+  const departureLongitude = ride.departure_location.coordinates[0]; // lon
+  const departureLatitude = ride.departure_location.coordinates[1]; // lat
   const arrivalCity = ride.arrival_city;
-  const arrivalLongitude = ride.arrival_location.coordinates[0];
+  const arrivalLongitude = ride.arrival_location.coordinates[0]; // lon
   const arrivalLatitude = ride.arrival_location.coordinates[1];
+  const routePolyline5 = ride.route_polyline5;
+  const distanceKm = ride.distance_km;
+  const durationMin = ride.duration_min;
   // ---------------------End Map---------------------
-
-  const [travelDuration, setTravelDuration] = useState<string>("");
-  const [travelDistance, setTravelDistance] = useState<string>("");
 
   const availableSeats = ride.max_passenger - (ride.nb_passenger ?? 0);
   const driverName =
     ride.driver?.firstName ?? `Conducteur #${ride.driver?.id ?? "?"}`;
   const price = calculateRidePrice(
-    parseFloat(travelDistance),
+    durationMin ?? undefined,
     ride.max_passenger,
     ride.nb_passenger
   );
@@ -96,7 +94,7 @@ const CardRideDetailsMobileModal = ({
               <p className="text-base md:text-2xl font-semibold">
                 {departureTime}
               </p>
-              <p className="text-sm">{travelDuration}</p>
+              <p className="text-sm">{durationMin}</p>
               <p className="text-base md:text-2xl font-semibold">
                 {arrivalTime}
               </p>
@@ -121,7 +119,7 @@ const CardRideDetailsMobileModal = ({
                 >
                   {ride.departure_city}
                 </p>
-                <p className="text-sm">{travelDistance}</p>
+                <p className="text-sm">{distanceKm}</p>
                 <p
                   className="text-lg md:text-xl sm:font-bold"
                   title={ride.arrival_city}
@@ -134,17 +132,16 @@ const CardRideDetailsMobileModal = ({
         </div>
         <RegisterButton variant={variant} rideId={ride.id} size="large" />
         <Map
-          mapId={`map-${ride.id}`}
+          mapId={`dynamic-map-${ride.id}`}
           departureLatitude={departureLatitude}
           departureLongitude={departureLongitude}
           departureCity={departureCity}
           arrivalLatitude={arrivalLatitude}
           arrivalLongitude={arrivalLongitude}
           arrivalCity={arrivalCity}
-          onRouteData={({ distanceKm, durationMin }) => {
-            setTravelDuration(`${formatTravelDuration(durationMin)}`);
-            setTravelDistance(`${distanceKm.toFixed(1)} km`);
-          }}
+          routePolyline5={routePolyline5 ?? undefined} // ✅ évite Directions
+          distanceKm={distanceKm ?? undefined} // ✅ meta backend
+          durationMin={durationMin ?? undefined}
         />
       </main>
     </div>
