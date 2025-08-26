@@ -26,6 +26,7 @@ h1 {
 .button-flex {
   @apply rounded-lg gap-2 flex items-center justify-center font-montserrat text-sm;
 }
+
 .button-col {
   @apply rounded-lg px-4 py-2 gap-2 flex flex-col items-center justify-center;
 }
@@ -53,6 +54,7 @@ h1 {
 .button-full {
   @apply bg-full text-textLight transition-200;
 }
+
 .button-cancel {
   @apply bg-cancel text-textLight transition-200;
 }
@@ -106,6 +108,7 @@ h1 {
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -124,6 +127,7 @@ h1 {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
@@ -149,7 +153,7 @@ h1 {
 
 .swiper-button-prev,
 .swiper-button-next {
-  @apply !text-primary transition-200 absolute top-1/2 -translate-y-1/2 z-10  flex items-center justify-center;
+  @apply !text-primary transition-200 absolute top-1/2 -translate-y-1/2 z-10 flex items-center justify-center;
 }
 
 .swiper-button-next:hover,
@@ -165,12 +169,29 @@ h1 {
 .swiper-pagination-bullet {
   @apply !bg-primary;
 }
+
 .swiper-pagination-bullet-active {
   @apply !bg-primaryHover;
 }
+
 .swiper-pagination-bullet:hover {
   @apply !bg-primaryHover;
 }
+
 .swiper-pagination-bullet-active:hover {
   @apply !bg-primary;
+}
+
+/* -----------------------------SCROLLBAR---------------------------- */
+
+/* Hide scrollbar for Chrome, Safari and Edge */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  /* IE et Edge Legacy */
+  scrollbar-width: none;
+  /* Firefox */
 }

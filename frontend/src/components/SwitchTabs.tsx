@@ -5,6 +5,7 @@ type SwitchTabsProps = {
   tabs: Tab[];
   tabParams?: string;
   classContainer?: string;
+  proposeRef?: React.RefObject<HTMLButtonElement>;
 };
 
 export type Tab = {
@@ -13,7 +14,7 @@ export type Tab = {
   path: string;
 };
 
-const SwitchTabs = ({ tabs, tabParams, classContainer }: SwitchTabsProps) => {
+const SwitchTabs = ({ tabs, tabParams, classContainer, proposeRef }: SwitchTabsProps) => {
   const navigate = useNavigate();
   const currentTab = tabs.find((tab) => {
     const lastSegment = tab.path.split("/").pop();
@@ -39,12 +40,12 @@ const SwitchTabs = ({ tabs, tabParams, classContainer }: SwitchTabsProps) => {
         {tabs.map((tab, index) => (
           <button
             key={index}
-            className={`flex-1 py-4 font-semibold transition-200 ${
-              activeTab === index
+            className={`flex-1 py-4 font-semibold transition-200 ${activeTab === index
                 ? "bg-primary text-white"
                 : "bg-gray-100 text-primary"
-            } `}
+              } `}
             onClick={() => handleTabClick(index)}
+            ref={index === 1 && proposeRef ? proposeRef : null}
           >
             {tab.label}
           </button>
