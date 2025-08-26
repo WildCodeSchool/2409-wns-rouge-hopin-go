@@ -9,7 +9,6 @@ import { Search } from "lucide-react";
 import RegisterButton from "./RegisterButton";
 import { useState } from "react";
 import { formatTravelDuration } from "../utils/formatTravelDuration";
-import { calculateRidePrice } from "../utils/calculateRidePrice";
 import { queryWhoAmI } from "../api/WhoAmI";
 import { useQuery } from "@apollo/client";
 import { useModal } from "../hooks/useModal";
@@ -47,25 +46,21 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
   const arrivalLongitude = data.arrival_location.coordinates[0]; // lon
   const arrivalLatitude = data.arrival_location.coordinates[1];
   const routePolyline5 = data.route_polyline5;
-  const distanceKm = data.distance_km;
-  const durationMin = data.duration_min;
+  const distanceKm = data.distance_km ?? 0;
+  const durationMin = data.duration_min ?? 0;
+  const pricePerPassenger = data.price_per_passenger ?? 0;
+  const availableSeats = data.available_seats ?? 0;
   // ---------------------End Map---------------------
 
   const [travelDuration, setTravelDuration] = useState<string>(
-    formatTravelDuration(durationMin ?? 0)
+    formatTravelDuration(durationMin)
   );
   const [travelDistance, setTravelDistance] = useState<string>(
-    `${(distanceKm ?? 0).toFixed(1)} km`
+    `${distanceKm} km`
   );
 
-  const availableSeats = data.max_passenger - (data.nb_passenger ?? 0);
   const driverName =
     data.driver?.firstName ?? `Conducteur #${data.driver?.id ?? "?"}`;
-  const price = calculateRidePrice(
-    distanceKm ?? undefined,
-    data.max_passenger,
-    data.nb_passenger
-  );
 
   return (
     <div className="relative z-0 flex justify-center w-full">
@@ -115,7 +110,7 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
           <div>
             <p className="text-sm md:text-base">{dateStr}</p>
             <p className="text-xl md:text-4xl font-semibold">
-              {price.toFixed(2)}
+              {pricePerPassenger}
               <span className="text-sm md:text-2xl"> €</span>
             </p>
 
@@ -134,7 +129,9 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
               <p className="text-base md:text-2xl font-semibold">
                 {departureTime}
               </p>
-              <p className="text-sm">{travelDuration}</p>
+              <p className="text-sm">
+                <p>{travelDuration}</p>
+              </p>
               <p className="text-base md:text-2xl font-semibold">
                 {arrivalTime}
               </p>
@@ -156,16 +153,16 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
             <div className="flex flex-col ml-2 justify-between h-full text-left md:w-24 lg:w-48">
               <p
                 className="text-lg md:text-xl sm:font-bold truncate"
-                title={data.departure_city}
+                title={departureCity}
               >
-                {data.departure_city}
+                {departureCity}
               </p>
               <p className="text-sm">{travelDistance}</p>
               <p
                 className="text-lg md:text-xl sm:font-bold truncate"
-                title={data.arrival_city}
+                title={arrivalCity}
               >
-                {data.arrival_city}
+                {arrivalCity}
               </p>
             </div>
           </div>

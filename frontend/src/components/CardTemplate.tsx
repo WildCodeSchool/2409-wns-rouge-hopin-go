@@ -8,7 +8,6 @@ import { useQuery } from "@apollo/client";
 import { queryWhoAmI } from "../api/WhoAmI";
 import useRide from "../context/Rides/useRide";
 import { formatTravelDuration } from "../utils/formatTravelDuration";
-import { calculateRidePrice } from "../utils/calculateRidePrice";
 import useBreakpoints from "../utils/useWindowSize";
 
 type CardTemplateProps = {
@@ -45,17 +44,14 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   const arrivalTime = formatTime(arrivalDate);
   const dateStr = formatDate(departureDate);
   const driver = ride.driver?.id ?? "?";
+  const pricePerPassenger = ride.price_per_passenger;
+  const totalPriceRide = ride.total_route_price;
+  console.log("🚀 ~ CardTemplate ~ ride:", ride);
 
-  const travelDuration = formatTravelDuration(ride.duration_min ?? 0);
+  const travelDuration = ride.duration_min ?? 0;
 
   const driverName =
     ride.driver?.firstName ?? `Conducteur #${ride.driver?.id ?? "?"}`;
-  const price = calculateRidePrice(
-    ride.distance_km ?? undefined,
-    ride.max_passenger,
-    ride.nb_passenger
-  );
-  const totalPriceRoute = (ride.distance_km ?? 0) * 0.14;
 
   return (
     <div
@@ -102,7 +98,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             >
               {ride.departure_city}
             </p>
-            <p className="">{travelDuration}</p>
+            <p>{formatTravelDuration(travelDuration)}</p>
             <p
               className="text-sm sm:text-xl lg:text-xl sm:font-bold md:font-normal lg:font-bold truncate"
               title={ride.arrival_city}
@@ -125,14 +121,14 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
                 </p>
               </div>
               <p className="text-xl lg:text-4xl font-semibold">
-                {price && price.toFixed(2)}
+                {(pricePerPassenger ?? 0).toFixed(2)}
                 <span className=" font-sans text-sm ">€/pp</span>
               </p>
               <p className=" text-nowrap font-semibold">
                 <span className=" font-sans text-sm text-nowrap">
                   Total trajet{" "}
                 </span>
-                {totalPriceRoute && totalPriceRoute.toFixed(2)}
+                {(totalPriceRide ?? 0).toFixed(2)}
                 <span className=" font-sans text-sm text-nowrap ">€</span>
               </p>
             </div>

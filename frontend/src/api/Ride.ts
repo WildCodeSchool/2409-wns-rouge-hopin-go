@@ -8,7 +8,7 @@ export const queryRide = gql(`
       max_passenger
       distance_km
       duration_min
-      route_polyline5
+      route_polyline5      
       departure_location {
         type
         coordinates

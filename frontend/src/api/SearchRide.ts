@@ -12,6 +12,8 @@ export const querySearchRide = gql(`
       distance_km
       duration_min
       route_polyline5
+      total_route_price
+      price_per_passenger
       departure_location {
         type
         coordinates

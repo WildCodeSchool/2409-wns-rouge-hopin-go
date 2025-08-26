@@ -5,9 +5,9 @@ import { PassengersByRideQuery } from "../gql/graphql";
 import { variantConfigMap } from "../constants/variantConfig";
 import useRide from "../context/Rides/useRide";
 import { formatDate, formatTime } from "../utils/formatDate";
-import { calculateRidePrice } from "../utils/calculateRidePrice";
 import RegisterButton from "./RegisterButton";
 import MapInteractive from "./MapInteractive";
+import { formatTravelDuration } from "../utils/formatTravelDuration";
 
 type CardRideDetailsMobileModalProps = {
   toggleModal: () => void;
@@ -38,17 +38,15 @@ const CardRideDetailsMobileModal = ({
   const arrivalLatitude = ride.arrival_location.coordinates[1];
   const routePolyline5 = ride.route_polyline5;
   const distanceKm = ride.distance_km;
-  const durationMin = ride.duration_min;
+  const durationMin = ride.duration_min ?? 0;
+  const pricePerPassenger = ride.price_per_passenger ?? 0;
+  const nbPassenger = ride.available_seats;
+  // const totalPriceRoute = ride.total_route_price;
   // ---------------------End Map---------------------
 
-  const availableSeats = ride.max_passenger - (ride.nb_passenger ?? 0);
   const driverName =
     ride.driver?.firstName ?? `Conducteur #${ride.driver?.id ?? "?"}`;
-  const price = calculateRidePrice(
-    distanceKm ?? undefined,
-    ride.max_passenger,
-    ride.nb_passenger
-  );
+
   return (
     <div className="relative z-0 flex flex-col  p-4 h-screen w-screen md:max-w-2xl md:h-fit md:rounded-2xl bg-gray-200">
       <header className="w-full flex justify-end">
@@ -75,7 +73,7 @@ const CardRideDetailsMobileModal = ({
           <div>
             <p className="text-sm md:text-base">{dateStr}</p>
             <p className="text-xl md:text-4xl font-semibold">
-              {price.toFixed(2)}
+              {pricePerPassenger}
               <span className="text-sm md:text-2xl"> €</span>
             </p>
 
@@ -83,8 +81,8 @@ const CardRideDetailsMobileModal = ({
               <p>
                 {variant === "cancel" || variant === "full"
                   ? "Non disponible"
-                  : `${availableSeats} ${
-                      availableSeats > 1 ? "places restantes" : "place restante"
+                  : `${nbPassenger} ${
+                      nbPassenger > 1 ? "places restantes" : "place restante"
                     }`}
               </p>
             </div>
@@ -94,7 +92,7 @@ const CardRideDetailsMobileModal = ({
               <p className="text-base md:text-2xl font-semibold">
                 {departureTime}
               </p>
-              <p className="text-sm">{durationMin}</p>
+              <p className="text-sm">{formatTravelDuration(durationMin)}</p>
               <p className="text-base md:text-2xl font-semibold">
                 {arrivalTime}
               </p>
@@ -119,7 +117,7 @@ const CardRideDetailsMobileModal = ({
                 >
                   {departureCity}
                 </p>
-                <p className="text-sm">{distanceKm}</p>
+                <p className="text-sm">{distanceKm?.toFixed(1)} km</p>
                 <p
                   className="text-lg md:text-xl sm:font-bold"
                   title={arrivalCity}

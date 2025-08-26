@@ -114,6 +114,13 @@ export class Ride extends BaseEntity {
 
   @Field(() => PassengerRideStatus, { nullable: true })
   current_user_passenger_status?: PassengerRideStatus;
+
+  // ↙️ Champs calculés (pas de @Column)
+  @Field(() => Float, { nullable: true })
+  total_route_price?: number;
+
+  @Field(() => Float, { nullable: true })
+  price_per_passenger?: number;
 }
 
 @InputType()

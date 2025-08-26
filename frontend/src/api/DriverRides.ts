@@ -46,6 +46,8 @@ export const queryDriverRides = gql(`
         distance_km
         duration_min
         route_polyline5
+        total_route_price
+        price_per_passenger
         passenger_rides {
           ride_id
           user_id

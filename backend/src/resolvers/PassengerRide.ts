@@ -20,6 +20,10 @@ import { LessThan, MoreThan } from "typeorm";
 import { AuthContextType } from "../auth";
 import { datasource } from "../datasource";
 import { ContextType } from "../auth";
+import {
+  attachPricingSelects,
+  hydratePricingFromRaw,
+} from "../utils/attachPricingSelects";
 
 @Resolver()
 export class PassengerRideResolver {
@@ -120,10 +124,22 @@ export class PassengerRideResolver {
 
     baseQuery.addOrderBy("ride.departure_at", sort);
 
-    const [rides, totalCount] = await baseQuery
-      .take(limit)
-      .skip(offset)
-      .getManyAndCount();
+    // 👇 injecte les sélections de prix
+    attachPricingSelects(baseQuery, {
+      perKm: 0.14,
+      minFare: 2.5,
+      minFareKm: 10,
+      roundTo: 2,
+    });
+
+    const [rides, totalCount, raw] = await Promise.all([
+      baseQuery.take(limit).skip(offset).getMany(),
+      baseQuery.getCount(),
+      baseQuery.getRawMany(),
+    ]);
+
+    // recoller les valeurs calculées dans les entités
+    hydratePricingFromRaw(rides, raw);
 
     return { rides, totalCount };
   }
