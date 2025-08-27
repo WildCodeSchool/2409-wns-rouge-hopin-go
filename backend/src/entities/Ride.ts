@@ -37,31 +37,31 @@ export class Ride extends BaseEntity {
   @Field(() => ID)
   id!: number;
 
-  @Column()
+  @Column({ type: "varchar", length: 100, nullable: false })
   @Field()
   departure_city!: string;
 
-  @Column()
+  @Column({ type: "varchar", length: 100, nullable: false })
   @Field()
   arrival_city!: string;
 
-  @Column()
+  @Column({ type: "varchar", length: 255, nullable: false })
   @Field()
   departure_address!: string;
 
-  @Column()
+  @Column({ type: "varchar", length: 255, nullable: false })
   @Field()
   arrival_address!: string;
 
   @Field(() => Date)
-  @Column({ type: "timestamp" })
+  @Column({ type: "timestamp", nullable: false })
   departure_at!: Date;
 
   @Field(() => Date)
-  @Column({ type: "timestamp" })
+  @Column({ type: "timestamp", nullable: false })
   arrival_at!: Date;
 
-  @Column()
+  @Column({ type: "smallint", nullable: false })
   @Field()
   max_passenger!: number;
 
@@ -70,7 +70,7 @@ export class Ride extends BaseEntity {
   @Field(() => User)
   driver!: User;
 
-  @Column({ default: 0 })
+  @Column({ type: "smallint", default: 0, nullable: false })
   @Field()
   nb_passenger!: number;
 
@@ -79,19 +79,33 @@ export class Ride extends BaseEntity {
     return this.max_passenger - this.nb_passenger;
   }
 
-  @Column({ type: "geography", spatialFeatureType: "Point", srid: 4326 })
+  @Column({
+    type: "geography",
+    spatialFeatureType: "Point",
+    srid: 4326,
+    nullable: false,
+  })
   @Field(() => Point)
   departure_location!: Point;
 
-  @Column({ type: "geography", spatialFeatureType: "Point", srid: 4326 })
+  @Column({
+    type: "geography",
+    spatialFeatureType: "Point",
+    srid: 4326,
+    nullable: false,
+  })
   @Field(() => Point)
   arrival_location!: Point;
 
-  @Column({ default: false })
+  @Column({ type: "boolean", default: false, nullable: false })
   @Field(() => Boolean)
   is_cancelled!: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    type: "timestamp",
+    name: "created_at",
+    default: () => "now()",
+  })
   @Field()
   created_at!: Date;
 

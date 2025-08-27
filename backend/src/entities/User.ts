@@ -39,29 +39,44 @@ export class User extends BaseEntity {
   @Field(() => ID)
   id!: number;
 
-  @Column()
+  @Column({ type: "varchar", length: 50, nullable: false })
   @Field()
   firstName!: string;
 
-  @Column()
+  @Column({ type: "varchar", length: 100, nullable: false })
   @Field()
   lastName!: string;
 
-  @Column({ unique: true })
+  // email unique insensible à la casse (citext)
+  @Column({ type: "citext", unique: true, nullable: false })
   @IsEmail({}, { message: "Invalid email" })
   @Field({ nullable: true }) // this should be nullable because only admins + self user may see this, null otherwise
   @UseMiddleware(IsUser)
   email!: string;
 
-  @Column({ enum: ["user", "admin"], default: "user" })
+  @Column({
+    type: "enum",
+    enum: ["user", "admin"],
+    enumName: "userRole",
+    default: "user",
+  })
   @Field()
   role!: string;
 
-  @Column()
+  @Column({
+    name: "hashedPassword",
+    type: "varchar",
+    length: 255,
+    nullable: false,
+  })
   // @Field()
   hashedPassword!: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    type: "timestamp",
+    name: "createdAt",
+    default: () => "now()",
+  })
   @Field()
   createdAt!: Date;
 

@@ -22,7 +22,6 @@ import { User } from "../entities/User";
 import { PassengerRide, PassengerRideStatus } from "../entities/PassengerRide";
 import { AuthContextType, ContextType } from "../auth";
 import { datasource } from "../datasource";
-import { stat } from "fs";
 
 @Resolver(() => Ride)
 export class RidesResolver {
