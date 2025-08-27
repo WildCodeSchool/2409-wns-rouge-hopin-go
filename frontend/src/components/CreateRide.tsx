@@ -10,11 +10,8 @@ import {
   validateDepartureAt,
 } from "../utils/createRideValidator";
 import { queryWhoAmI } from "../api/WhoAmI";
-<<<<<<< HEAD
 import { toast } from "react-toastify";
-=======
 import { queryDriverRides } from "../api/DriverRides";
->>>>>>> dev
 
 const CreateRide = () => {
   // TO DO => if user is not connected, the form should not be accessible
@@ -132,6 +129,7 @@ const CreateRide = () => {
     if (arrivalAt) {
       validateArrivalAt(arrivalAt, departureAt);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [departureAddress, arrivalAddress, selected, departureAt, arrivalAt]);
 
   const validateAddress = (value: string, key: "departure" | "arrival") => {
