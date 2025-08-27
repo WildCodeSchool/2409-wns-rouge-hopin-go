@@ -6,9 +6,11 @@ import { PassengersByRideQuery } from "../gql/graphql";
 import RidePassengerValidationButtons from "./RidePassengerValidationButtons";
 import { isAfter, parseISO } from "date-fns";
 import useRide from "../context/Rides/useRide";
+import CancelledRideByDriverButton from "./CancelledRideByDriverButton";
 
 type RideCardModalProps = {
   toggleModal: () => void;
+  onClose: () => void;
   variant: VariantType;
   waitingPassengers?: PassengersByRideQuery["passengersByRide"];
   acceptedPassengers?: PassengersByRideQuery["passengersByRide"];
@@ -16,6 +18,7 @@ type RideCardModalProps = {
 
 const RideCardModal = ({
   toggleModal,
+  onClose,
   variant,
   waitingPassengers,
   acceptedPassengers,
@@ -37,9 +40,14 @@ const RideCardModal = ({
         onClick={toggleModal}
         className="group hover:!bg-primaryHover self-end mb-4"
       />
-      <CardTemplate variant={variant} />
+      <CardTemplate variant={variant} isModal={true} />
       <div className="flex flex-col items-start justify-start w-full">
-        {isFuture && ride.available_seats > 0 && (
+        {ride.is_cancelled && (
+          <h2 className="text-xl m-auto font-bold text-primary">
+            Trajet annulé
+          </h2>
+        )}
+        {isFuture && ride.available_seats > 0 && !ride.is_cancelled && (
           <div className="mb-5 mt-5 w-full">
             <h2 className="text-xl font-bold text-primary">
               Passagers à valider :
@@ -68,27 +76,33 @@ const RideCardModal = ({
             )}
           </div>
         )}
-
-        <div className="mb-12">
-          <h2 className="text-xl font-bold text-primary">
-            {isFuture ? "Passagers acceptés :" : "Passagers :"}
-          </h2>
-          {acceptedPassengers && acceptedPassengers.length > 0 ? (
-            acceptedPassengers.map((passenger) => (
-              <p key={passenger.user.id}>
-                {passenger.user.firstName} {passenger.user.lastName}
-              </p>
-            ))
-          ) : (
-            <>
-              <p>
-                {isFuture
-                  ? "Vous n'avez pas acceptés de passager sur ce trajet pour le moment."
-                  : "Ce trajet n'a pas de passagers."}
-              </p>
-            </>
-          )}
-        </div>
+        {ride.is_cancelled === false && (
+          <div className="mb-12">
+            <h2 className="text-xl font-bold text-primary">
+              {isFuture ? "Passagers acceptés :" : "Passagers :"}
+            </h2>
+            {acceptedPassengers && acceptedPassengers.length > 0 ? (
+              acceptedPassengers.map((passenger) => (
+                <p key={passenger.user.id}>
+                  {passenger.user.firstName} {passenger.user.lastName}
+                </p>
+              ))
+            ) : (
+              <>
+                <p>
+                  {isFuture
+                    ? "Vous n'avez pas acceptés de passager sur ce trajet pour le moment."
+                    : "Ce trajet n'a pas de passagers."}
+                </p>
+              </>
+            )}
+          </div>
+        )}
+        {isFuture && ride.is_cancelled === false && (
+          <div className="flex justify-end w-full">
+            <CancelledRideByDriverButton onCloseParentModal={onClose} />
+          </div>
+        )}
       </div>
     </div>
   );

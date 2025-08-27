@@ -3,7 +3,6 @@ import { VariantType } from "../types/variantTypes";
 import { variantConfigMap } from "../constants/variantConfig";
 import { formatDate, formatTime } from "../utils/formatDate";
 import RegisterButton from "./RegisterButton";
-import PassengersButtonWithModal from "./PassengersButtonWithModal";
 import { useQuery } from "@apollo/client";
 import { queryWhoAmI } from "../api/WhoAmI";
 import useRide from "../context/Rides/useRide";
@@ -11,6 +10,7 @@ import useMapboxRoute from "../hooks/useMapboxRoute";
 import { formatTravelDuration } from "../utils/formatTravelDuration";
 import { calculateRidePrice } from "../utils/calculateRidePrice";
 import useBreakpoints from "../utils/useWindowSize";
+import DetailsButtonWithModal from "./DetailsButtonWithModal";
 
 type CardTemplateProps = {
   variant: VariantType;
@@ -19,16 +19,19 @@ type CardTemplateProps = {
   isSelected?: boolean;
   additionalClassName?: string;
   driverUpcomingRides?: boolean;
+  isModal?: boolean;
 };
 
 const CardTemplate: React.FC<CardTemplateProps> = ({
   variant,
   onClick,
   onScroll,
+  isModal = false,
   isSelected = false,
   additionalClassName = "",
 }) => {
   const ride = useRide();
+  console.log("ride in CardTemplate:", ride);
   const { isMd, isXl, is2xl, windowWidth } = useBreakpoints();
   const {
     textColor,
@@ -189,7 +192,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             statusLabel
           )}
         </p>
-        <PassengersButtonWithModal variant={variant} />
+        <DetailsButtonWithModal variant={variant} isModal={isModal} />
         <p
           className={`absolute ${
             me?.id === driver ? "right-0" : "right-16"
