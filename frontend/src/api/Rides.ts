@@ -27,6 +27,9 @@ query Rides {
     is_cancelled
     max_passenger
     nb_passenger
+    distance_km
+    duration_min
+    route_polyline5
   }
 }
 `);
