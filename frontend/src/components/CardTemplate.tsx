@@ -31,6 +31,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   additionalClassName = "",
 }) => {
   const ride = useRide();
+  console.log("ride in CardTemplate:", ride);
   const { isMd, isXl, is2xl, windowWidth } = useBreakpoints();
   const {
     textColor,

@@ -18,21 +18,18 @@ const CancelledRideByDriverButton = ({
   const ride = useRide();
   const { isOpen, isVisible, toggleModal, closeModal } = useModal();
   const modalId = "modal-cancel-ride";
-  const [cancelRide, { loading, error }] = useMutation(
-    mutationCancelledRideByDriver,
-    {
-      onCompleted: async () => {
-        closeModal(modalId);
-        if (onCloseParentModal) {
-          onCloseParentModal();
-        }
-        await client.refetchQueries({
-          include: [queryDriverRides],
-        });
-        toast.success("Le trajet a été annulé avec succès");
-      },
-    }
-  );
+  const [cancelRide, { error }] = useMutation(mutationCancelledRideByDriver, {
+    onCompleted: async () => {
+      closeModal(modalId);
+      if (onCloseParentModal) {
+        onCloseParentModal();
+      }
+      await client.refetchQueries({
+        include: [queryDriverRides],
+      });
+      toast.success("Le trajet a été annulé avec succès");
+    },
+  });
 
   const handleCancel = async () => {
     try {
@@ -45,7 +42,6 @@ const CancelledRideByDriverButton = ({
     }
   };
 
-  if (loading) return <span>Annulation en cours...</span>;
   if (error) return <span>Erreur lors de l'annulation</span>;
 
   return (
