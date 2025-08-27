@@ -14,7 +14,6 @@ import {
   PaginatedRides,
   Ride,
   RideCreateInput,
-  RideUpdateInput,
   SearchRideInput,
 } from "../entities/Ride";
 import { validate } from "class-validator";
@@ -27,6 +26,7 @@ import {
   attachPricingSelects,
   hydratePricingFromRaw,
 } from "../utils/attachPricingSelects";
+import { datasource } from "../datasource";
 
 @Resolver(() => Ride)
 export class RidesResolver {
@@ -90,8 +90,8 @@ export class RidesResolver {
 
       return rides;
     } catch (error) {
-      console.error("Une erreur est survenue lors de la recherche.", error);
-      throw new Error("Une erreur est survenue lors de la recherche.");
+      console.error("An error occurred during the search.", error);
+      throw new Error("An error occurred during the search.");
     }
   }
 
@@ -143,7 +143,12 @@ export class RidesResolver {
       baseQuery.andWhere("ride.departure_at > :now", { now });
       baseQuery.andWhere("ride.is_cancelled = false");
     } else if (filter === "archived") {
-      baseQuery.andWhere("ride.departure_at < :now", { now });
+      baseQuery.andWhere(
+        "(ride.departure_at < :now OR ride.is_cancelled = true)",
+        {
+          now,
+        }
+      );
     } else if (filter === "canceled") {
       baseQuery.andWhere("ride.is_cancelled = true");
     } else if (filter && filter !== "all") {
@@ -151,7 +156,8 @@ export class RidesResolver {
     }
 
     // Tri secondaire
-    baseQuery.addOrderBy("ride.departure_at", sort);
+    const order = filter === "archived" ? "DESC" : "ASC";
+    baseQuery.orderBy("ride.departure_at", order);
 
     // 👇 injecte les sélections de prix
     attachPricingSelects(baseQuery, {
@@ -224,21 +230,7 @@ export class RidesResolver {
   }
 
   // Need a Middleware to verify if the user is logged in and is the user that created the ride
-  @Mutation(() => Ride, { nullable: true })
-  async updateRide(
-    @Arg("id", () => ID) id: number,
-    @Arg("data", () => RideUpdateInput) data: RideUpdateInput
-  ): Promise<Ride | null> {
-    const ride = await Ride.findOneBy({ id });
-    if (ride !== null) {
-      await ride.save();
-      return ride;
-    } else {
-      return null;
-    }
-  }
-
-  // Need a Middleware to verify if the user is logged in and is the user that created the ride
+  @Authorized("user")
   @Mutation(() => Ride, { nullable: true })
   async deleteRide(@Arg("id", () => ID) id: number): Promise<Ride | null> {
     const ride = await Ride.findOneBy({ id });
@@ -249,6 +241,51 @@ export class RidesResolver {
     } else {
       return null;
     }
+  }
+
+  @Authorized("user")
+  @Mutation(() => Ride)
+  async cancelRide(
+    @Arg("id", () => ID) id: number,
+    @Ctx() ctx: AuthContextType
+  ): Promise<Ride> {
+    return await datasource.transaction(async (manager) => {
+      const ride = await manager.findOne(Ride, {
+        where: { id },
+        lock: { mode: "pessimistic_write" },
+      });
+
+      if (!ride) throw new Error("Ride not found");
+
+      const rideWithDriver = await manager.findOne(Ride, {
+        where: { id },
+        relations: ["driver"],
+      });
+
+      if (ctx.user?.id !== rideWithDriver!.driver.id) {
+        throw new Error("Only the driver can cancel a ride.");
+      }
+      const now = new Date();
+      if (ride.departure_at < now) {
+        throw new Error("Cannot cancel a ride that has already passed.");
+      }
+
+      if (ride.is_cancelled) return rideWithDriver!;
+
+      ride.is_cancelled = true;
+      await manager.save(ride);
+
+      await manager
+        .createQueryBuilder()
+        .update(PassengerRide)
+        .set({ status: PassengerRideStatus.CANCELLED_BY_DRIVER })
+        .where("ride_id = :id", { id: ride.id })
+        .andWhere("status IN (:...active)", {
+          active: [PassengerRideStatus.WAITING, PassengerRideStatus.APPROVED],
+        })
+        .execute();
+      return rideWithDriver!;
+    });
   }
 
   @FieldResolver(() => String, { nullable: true })

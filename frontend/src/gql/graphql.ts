@@ -29,6 +29,7 @@ export type IdInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  cancelRide: Ride;
   createPassengerRide: PassengerRide;
   createRide: Ride;
   createUser: User;
@@ -37,7 +38,11 @@ export type Mutation = {
   signin?: Maybe<User>;
   signout: Scalars['Boolean']['output'];
   updatePassengerRideStatus: PassengerRide;
-  updateRide?: Maybe<Ride>;
+};
+
+
+export type MutationCancelRideArgs = {
+  id: Scalars['ID']['input'];
 };
 
 
@@ -76,12 +81,6 @@ export type MutationUpdatePassengerRideStatusArgs = {
   data: UpdatePassengerRideStatusInput;
 };
 
-
-export type MutationUpdateRideArgs = {
-  data: RideUpdateInput;
-  id: Scalars['ID']['input'];
-};
-
 export type PaginatedRides = {
   __typename?: 'PaginatedRides';
   rides: Array<Ride>;
@@ -99,6 +98,8 @@ export type PassengerRide = {
 
 export enum PassengerRideStatus {
   Approved = 'APPROVED',
+  CancelledByDriver = 'CANCELLED_BY_DRIVER',
+  CancelledByPassenger = 'CANCELLED_BY_PASSENGER',
   Refused = 'REFUSED',
   Waiting = 'WAITING'
 }
@@ -196,13 +197,6 @@ export type RideCreateInput = {
   departure_lat: Scalars['Float']['input'];
   departure_lng: Scalars['Float']['input'];
   driver: IdInput;
-  max_passenger: Scalars['Float']['input'];
-};
-
-export type RideUpdateInput = {
-  arrival_at: Scalars['String']['input'];
-  departure_at: Scalars['String']['input'];
-  is_cancelled: Scalars['Boolean']['input'];
   max_passenger: Scalars['Float']['input'];
 };
 

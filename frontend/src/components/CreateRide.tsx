@@ -10,7 +10,11 @@ import {
   validateDepartureAt,
 } from "../utils/createRideValidator";
 import { queryWhoAmI } from "../api/WhoAmI";
+<<<<<<< HEAD
 import { toast } from "react-toastify";
+=======
+import { queryDriverRides } from "../api/DriverRides";
+>>>>>>> dev
 
 const CreateRide = () => {
   // TO DO => if user is not connected, the form should not be accessible
@@ -40,7 +44,9 @@ const CreateRide = () => {
     "departure" | "arrival" | null
   >(null);
 
-  const [doCreateRide] = useMutation(mutationCreateRide);
+  const [doCreateRide] = useMutation(mutationCreateRide, {
+    refetchQueries: [queryDriverRides],
+  });
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const driver = whoAmIData?.whoami;
   console.log("driver => ", driver);

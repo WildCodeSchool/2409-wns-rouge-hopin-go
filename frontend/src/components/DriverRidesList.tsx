@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ScrollableSnapList from "./ScrollableSnapList";
 import { VariantType } from "../types/variantTypes";
 import useBreakpoints from "../utils/useWindowSize";
@@ -26,22 +26,34 @@ const DriverRidesList = () => {
   // Upcoming
   const { data: upcomingRidesData } = useQuery(queryDriverRides, {
     variables: { filter: "upcoming", limit, offset: upcomingOffset },
-    onCompleted: (data) => {
-      const newRides = data?.driverRides?.rides || [];
-      setUpcomingList((prev) => [...prev, ...newRides]);
-    },
+    fetchPolicy: "cache-and-network",
   });
+
+  useEffect(() => {
+    const newRides = upcomingRidesData?.driverRides?.rides || [];
+    setUpcomingList((prev) => {
+      if (upcomingOffset === 0) return newRides;
+      const before = prev.slice(0, upcomingOffset);
+      return [...before, ...newRides];
+    });
+  }, [upcomingRidesData, upcomingOffset]);
 
   const totalUpcoming = upcomingRidesData?.driverRides?.totalCount || 0;
 
   // Archived
   const { data: archivedRidesData } = useQuery(queryDriverRides, {
     variables: { filter: "archived", limit, offset: archivedOffset },
-    onCompleted: (data) => {
-      const newRides = data?.driverRides?.rides || [];
-      setArchivedList((prev) => [...prev, ...newRides]);
-    },
+    fetchPolicy: "cache-and-network",
   });
+
+  useEffect(() => {
+    const newRides = archivedRidesData?.driverRides?.rides || [];
+    setArchivedList((prev) => {
+      if (archivedOffset === 0) return newRides;
+      const before = prev.slice(0, archivedOffset);
+      return [...before, ...newRides];
+    });
+  }, [archivedRidesData, archivedOffset]);
 
   const totalArchived = archivedRidesData?.driverRides?.totalCount || 0;
 
