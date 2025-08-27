@@ -155,21 +155,6 @@ export class RideCreateInput {
 }
 
 @InputType()
-export class RideUpdateInput {
-  @Field()
-  departure_at!: string;
-
-  @Field()
-  arrival_at!: string;
-
-  @Field()
-  max_passenger!: number;
-
-  @Field()
-  is_cancelled!: boolean;
-}
-
-@InputType()
 export class SearchRideInput {
   @Field()
   @MinLength(2, { message: "City must be at least 2 characters long" })

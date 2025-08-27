@@ -10,6 +10,7 @@ import {
   validateDepartureAt,
 } from "../utils/createRideValidator";
 import { queryWhoAmI } from "../api/WhoAmI";
+import { queryDriverRides } from "../api/DriverRides";
 
 const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElement> }) => {
   // TO DO => if user is not connected, the form should not be accessible
@@ -39,7 +40,9 @@ const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElem
     "departure" | "arrival" | null
   >(null);
 
-  const [doCreateRide] = useMutation(mutationCreateRide);
+  const [doCreateRide] = useMutation(mutationCreateRide, {
+    refetchQueries: [queryDriverRides],
+  });
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const driver = whoAmIData?.whoami;
 
