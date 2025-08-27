@@ -10,6 +10,7 @@ import {
 import { Field, Float, ID, InputType, ObjectType } from "type-graphql";
 import {
   BaseEntity,
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -32,6 +33,10 @@ export class Point {
 }
 @Entity()
 @ObjectType()
+@Check(`max_passenger BETWEEN 1 AND 4`)
+@Check(`nb_passenger >= 0`)
+@Check(`nb_passenger <= max_passenger`)
+@Check(`arrival_at > departure_at`)
 export class Ride extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => ID)
@@ -65,8 +70,8 @@ export class Ride extends BaseEntity {
   @Field()
   max_passenger!: number;
 
-  @ManyToOne(() => User)
-  @JoinColumn({ name: "driver" }) // this specifies the name of the column in the database
+  @ManyToOne(() => User, { nullable: false })
+  @JoinColumn({ name: "driver_id" }) // this specifies the name of the column in the database
   @Field(() => User)
   driver!: User;
 
