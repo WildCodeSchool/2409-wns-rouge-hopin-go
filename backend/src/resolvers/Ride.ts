@@ -21,47 +21,52 @@ import { endOfDay, startOfDay } from "date-fns";
 import { User } from "../entities/User";
 import { PassengerRide, PassengerRideStatus } from "../entities/PassengerRide";
 import { AuthContextType, ContextType } from "../auth";
+import { fetchRouteFromMapbox } from "../utils/fetchRouteFromMapBox";
+import {
+  attachPricingSelects,
+  hydratePricingFromRaw,
+} from "../utils/attachPricingSelects";
 import { datasource } from "../datasource";
-import { stat } from "fs";
 
 @Resolver(() => Ride)
 export class RidesResolver {
   @Query(() => [Ride])
   async searchRide(
-    @Arg("data", () => SearchRideInput)
-    data: SearchRideInput
+    @Arg("data", () => SearchRideInput) data: SearchRideInput
   ): Promise<Ride[]> {
     try {
       const startDay = startOfDay(data.departure_at);
       const endDay = endOfDay(data.departure_at);
 
-      const rides = await Ride.createQueryBuilder("ride")
+      // ---- Query --------------------------------------------------------------
+      const qb = Ride.createQueryBuilder("ride")
         .innerJoinAndSelect("ride.driver", "driver")
         .where(
           `
-          ST_DWithin(
-            ride.departure_location,
-            ST_SetSRID(ST_MakePoint(:d_lng, :d_lat), 4326)::geography,
-            :d_radius
-          )
-        `,
+        ST_DWithin(
+          ride.departure_location,
+          ST_SetSRID(ST_MakePoint(:d_lng, :d_lat), 4326)::geography,
+          :d_radius
+        )
+      `,
           {
             d_lng: data.departure_lng,
             d_lat: data.departure_lat,
-            d_radius: data.departure_radius * 1000, // en mètres
+            d_radius: data.departure_radius * 1000, // m
           }
         )
         .andWhere(
-          `ST_DWithin(
-            ride.arrival_location,
-            ST_SetSRID(ST_MakePoint(:a_lng, :a_lat), 4326)::geography,
-            :a_radius
-          )
-        `,
+          `
+        ST_DWithin(
+          ride.arrival_location,
+          ST_SetSRID(ST_MakePoint(:a_lng, :a_lat), 4326)::geography,
+          :a_radius
+        )
+      `,
           {
             a_lng: data.arrival_lng,
             a_lat: data.arrival_lat,
-            a_radius: data.arrival_radius * 1000, // en mètres
+            a_radius: data.arrival_radius * 1000, // m
           }
         )
         .andWhere("ride.departure_at BETWEEN :start AND :end", {
@@ -70,12 +75,19 @@ export class RidesResolver {
         })
         .andWhere("ride.is_cancelled = false")
         .andWhere("ride.nb_passenger < ride.max_passenger")
-        .orderBy("ride.departure_at", "ASC")
-        .getMany();
-      console.log(
-        "🚀 ~ RidesResolver ~ rides:",
-        rides.map((ride) => ride.departure_location.coordinates)
-      );
+        .orderBy("ride.departure_at", "ASC");
+
+      attachPricingSelects(qb, {
+        perKm: 0.14,
+        minFare: 2.5,
+        minFareKm: 10,
+        roundTo: 2,
+      });
+
+      const { entities: rides, raw } = await qb.getRawAndEntities();
+
+      hydratePricingFromRaw(rides, raw);
+
       return rides;
     } catch (error) {
       console.error("An error occurred during the search.", error);
@@ -147,10 +159,22 @@ export class RidesResolver {
     const order = filter === "archived" ? "DESC" : "ASC";
     baseQuery.orderBy("ride.departure_at", order);
 
-    const [rides, totalCount] = await baseQuery
-      .take(limit)
-      .skip(offset)
-      .getManyAndCount();
+    // 👇 injecte les sélections de prix
+    attachPricingSelects(baseQuery, {
+      perKm: 0.13,
+      minFare: 2.5,
+      minFareKm: 10,
+      roundTo: 2,
+    });
+
+    const [rides, totalCount, raw] = await Promise.all([
+      baseQuery.take(limit).skip(offset).getMany(),
+      baseQuery.getCount(),
+      baseQuery.getRawMany(),
+    ]);
+
+    // recoller les valeurs calculées dans les entités
+    hydratePricingFromRaw(rides, raw);
 
     return { rides, totalCount };
   }
@@ -164,25 +188,45 @@ export class RidesResolver {
     if (errors.length > 0) {
       throw new Error(`Validation error: ${JSON.stringify(errors)}`);
     }
-    const newRide = new Ride();
+
+    // 1) Calcul de la route côté serveur
+    let distance_km: number | undefined;
+    let duration_min: number | undefined;
+    let route_polyline5: string | undefined;
     try {
-      Object.assign(newRide, {
-        ...data,
-        departure_location: {
-          type: "Point",
-          coordinates: [data.departure_lng, data.departure_lat],
-        },
-        arrival_location: {
-          type: "Point",
-          coordinates: [data.arrival_lng, data.arrival_lat],
-        },
-      });
-      await newRide.save();
-      return newRide;
-    } catch (error) {
-      console.error(error);
-      throw new Error("unable to create ride");
+      const r = await fetchRouteFromMapbox(
+        data.departure_lng,
+        data.departure_lat,
+        data.arrival_lng,
+        data.arrival_lat
+      );
+      distance_km = r.distanceKm;
+      duration_min = r.durationMin;
+      route_polyline5 = r.polyline5;
+    } catch (e) {
+      console.error("Mapbox directions failed, will save without route.", e);
+      // Option: fallback Haversine ici si tu veux garantir des valeurs
     }
+
+    const newRide = new Ride();
+    Object.assign(newRide, {
+      ...data,
+      departure_location: {
+        type: "Point",
+        coordinates: [data.departure_lng, data.departure_lat],
+      },
+      arrival_location: {
+        type: "Point",
+        coordinates: [data.arrival_lng, data.arrival_lat],
+      },
+      distance_km,
+      duration_min,
+      route_polyline5,
+    });
+    console.log("Creating ride:", newRide);
+
+    await newRide.save();
+    return newRide;
   }
 
   // Need a Middleware to verify if the user is logged in and is the user that created the ride

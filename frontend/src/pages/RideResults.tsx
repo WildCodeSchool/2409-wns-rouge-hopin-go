@@ -106,7 +106,7 @@ const RideResults = () => {
 
   return (
     <div className="flex items-center h-screen justify-center max-w-7xl m-auto bg-gray-100">
-      <div className="flex h-full w-full z-20 md:w-1/2 md:mr-10 overflow-hidden">
+      <div className="flex h-full w-full z-20 md:w-1/2  overflow-hidden">
         <ScrollableSnapList
           dataset={rides}
           getVariant={getVariant}

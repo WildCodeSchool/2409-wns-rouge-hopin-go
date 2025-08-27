@@ -14,5 +14,8 @@ mutation CreateRide($data: RideCreateInput!) {
       departure_at
       arrival_at
       max_passenger
+      distance_km
+      duration_min
+      route_polyline5
     }
   }`);

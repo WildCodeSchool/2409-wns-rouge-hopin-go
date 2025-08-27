@@ -15,6 +15,7 @@
   "dependencies": {
     "@apollo/client": "^3.11.10",
     "@lucide/lab": "^0.1.2",
+    "@mapbox/polyline": "^1.2.1",
     "concurrently": "^9.1.2",
     "date-fns": "^4.1.0",
     "graphql": "^16.9.0",
@@ -34,6 +35,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^14.6.1",
+    "@types/mapbox__polyline": "^1.0.5",
     "@types/node": "^22.10.7",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",

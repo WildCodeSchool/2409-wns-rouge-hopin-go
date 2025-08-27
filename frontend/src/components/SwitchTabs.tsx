@@ -14,7 +14,12 @@ export type Tab = {
   path: string;
 };
 
-const SwitchTabs = ({ tabs, tabParams, classContainer, proposeRef }: SwitchTabsProps) => {
+const SwitchTabs = ({
+  tabs,
+  tabParams,
+  classContainer,
+  proposeRef,
+}: SwitchTabsProps) => {
   const navigate = useNavigate();
   const currentTab = tabs.find((tab) => {
     const lastSegment = tab.path.split("/").pop();
@@ -40,10 +45,11 @@ const SwitchTabs = ({ tabs, tabParams, classContainer, proposeRef }: SwitchTabsP
         {tabs.map((tab, index) => (
           <button
             key={index}
-            className={`flex-1 py-4 font-semibold transition-200 ${activeTab === index
-                ? "bg-primary text-white"
-                : "bg-gray-100 text-primary"
-              } `}
+            className={`flex-1 py-4 font-semibold transition-200 ${
+              activeTab === index
+                ? "bg-gray-100 text-primary underline"
+                : "bg-gray-200 text-primary/50 hover:text-primary"
+            } `}
             onClick={() => handleTabClick(index)}
             ref={index === 1 && proposeRef ? proposeRef : null}
           >
