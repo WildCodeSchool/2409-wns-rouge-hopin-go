@@ -243,8 +243,35 @@ const CreateRide = () => {
         doSubmit();
       }}
     >
-      <div className="flex w-full flex-col  md:flex-row justify-center gap-8 mb-4">
-        <div className="flex flex-col md:w-3/4 justify-between  gap-8 mb-4">
+      <div className="flex w-full flex-col justify-center gap-8 mb-4">
+        {/* DepartureTime */}
+        <div className="flex flex-col w-full">
+          <label
+            htmlFor="departureAt"
+            className="block mb-2 text-sm font-medium text-textLight"
+          >
+            Horaire de départ
+          </label>
+          <input
+            type="datetime-local"
+            id="departureAt"
+            className={`${
+              error.departure_at?.length
+                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                : "border-gray-300 bg-gray-50"
+            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+            placeholder="Horaire de départ"
+            value={departureAt}
+            onChange={(e) => setDepartureAt(e.target.value)}
+            autoComplete="none"
+          />
+          {error.departure_at && (
+            <p className="text-red-500 text-sm">
+              {formatErrors(error.departure_at)}
+            </p>
+          )}
+        </div>
+        <div className="flex flex-col w-full justify-between  gap-8 mb-4">
           {/* DepartureCity */}
           <div className="flex-col w-full">
             <label
@@ -326,36 +353,6 @@ const CreateRide = () => {
             {error.arrival_address && (
               <p className="text-red-500 text-sm">
                 {formatErrors(error.arrival_address)}
-              </p>
-            )}
-          </div>
-        </div>
-
-        <div className="flex md:flex-col flex-wrap sm:flex-nowrap  md:w-1/4 w-full gap-4 md:gap-0 justify-between mb-4">
-          {/* DepartureTime */}
-          <div className="flex flex-col w-full">
-            <label
-              htmlFor="departureAt"
-              className="block mb-2 text-sm font-medium text-textLight"
-            >
-              Horaire de départ
-            </label>
-            <input
-              type="datetime-local"
-              id="departureAt"
-              className={`${
-                error.departure_at?.length
-                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-                  : "border-gray-300 bg-gray-50"
-              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
-              placeholder="Horaire de départ"
-              value={departureAt}
-              onChange={(e) => setDepartureAt(e.target.value)}
-              autoComplete="none"
-            />
-            {error.departure_at && (
-              <p className="text-red-500 text-sm">
-                {formatErrors(error.departure_at)}
               </p>
             )}
           </div>

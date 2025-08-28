@@ -20,7 +20,7 @@ const App = () => {
             {me && (
               <span
                 className="flex items-center gap-2 text-sm  py-2 px-4 rounded-full text-white bg-primary"
-                title="Vous êtes connecté"
+                title="Vous êtes connecté(e)"
               >
                 {me?.email}
                 <CheckCircle className="text-validation" />
