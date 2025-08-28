@@ -12,7 +12,7 @@ const App = () => {
   return (
     <>
       <div>
-        <header className="z-50">
+        <header className="z-50 fixed">
           <div className="flex items-center gap-4  invisible md:visible">
             <Link to="/">
               <img src={Logo} alt="Logo" className="w-16 h-16 m-2" />
@@ -29,7 +29,7 @@ const App = () => {
           </div>
           <NavBar />
         </header>
-        <main className="">
+        <main>
           <Outlet />
         </main>
       </div>
