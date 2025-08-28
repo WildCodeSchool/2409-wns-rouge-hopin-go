@@ -14,7 +14,7 @@ const ConfirmModal = ({
   return (
     <div>
       <div
-        className="relative flex flex-col md:items-center md:justify-center bg-gray-200 p-6 max-w-md w-full"
+        className="relative flex flex-col md:items-center md:justify-center rounded-xl bg-gray-200 p-6 max-w-md w-full"
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()} // Prevent closing modal on button click
       >

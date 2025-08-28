@@ -229,10 +229,17 @@ export class RidesResolver {
       );
     }
 
-    // 3) Sauvegarde
+    // 3) arrival_at = departure_at + durée
+    const departureAt = new Date(data.departure_at);
+    const arrival_at = new Date(
+      departureAt.getTime() + (duration_min ?? 0) * 60_000
+    );
+
+    // 4) Sauvegarde
     const newRide = new Ride();
     Object.assign(newRide, {
       ...data,
+      arrival_at,
       departure_location: {
         type: "Point",
         coordinates: [data.departure_lng, data.departure_lat],
@@ -245,10 +252,15 @@ export class RidesResolver {
       duration_min,
       route_polyline5,
     });
+    console.log("[createRide] ▶️ saving:", {
+      distance_km,
+      duration_min,
+      arrival_at: arrival_at.toISOString(),
+    });
     console.log("🗺️ ROUTE SOURCE :", source);
 
     await newRide.save();
-
+    console.log("[createRide] ✅ saved ride id:", newRide.id);
     return newRide;
   }
 

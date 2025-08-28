@@ -187,7 +187,6 @@ export type Ride = {
 
 export type RideCreateInput = {
   arrival_address: Scalars['String']['input'];
-  arrival_at: Scalars['DateTimeISO']['input'];
   arrival_city: Scalars['String']['input'];
   arrival_lat: Scalars['Float']['input'];
   arrival_lng: Scalars['Float']['input'];

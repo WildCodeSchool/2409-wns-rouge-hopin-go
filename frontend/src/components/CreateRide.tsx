@@ -6,7 +6,6 @@ import Button from "./Button";
 import { formatErrors } from "../utils/formatErrors";
 import {
   validateAddressUtils,
-  validateArrivalAt,
   validateDepartureAt,
 } from "../utils/createRideValidator";
 import { queryWhoAmI } from "../api/WhoAmI";
@@ -20,7 +19,6 @@ const CreateRide = () => {
   const [departureAddress, setDepartureAddress] = useState("");
   const [arrivalAddress, setArrivalAddress] = useState("");
   const [departureAt, setDepartureAt] = useState("");
-  const [arrivalAt, setArrivalAt] = useState("");
   const [departureCoords, setDepartureCoords] = useState({ long: 0, lat: 0 });
   const [arrivalCoords, setArrivalCoords] = useState({ long: 0, lat: 0 });
   const [maxPassenger, setMaxPassenger] = useState(1);
@@ -126,11 +124,9 @@ const CreateRide = () => {
     if (departureAt) {
       validateDepartureAt(departureAt);
     }
-    if (arrivalAt) {
-      validateArrivalAt(arrivalAt, departureAt);
-    }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [departureAddress, arrivalAddress, selected, departureAt, arrivalAt]);
+  }, [departureAddress, arrivalAddress, selected, departureAt]);
 
   const validateAddress = (value: string, key: "departure" | "arrival") => {
     if (key === "departure") {
@@ -156,13 +152,10 @@ const CreateRide = () => {
     validateAddress(departureAddress, "departure");
     validateAddress(arrivalAddress, "arrival");
     const departure_at = validateDepartureAt(departureAt);
-    const arrival_at = validateArrivalAt(arrivalAt, departureAt);
     console.log("departureAtErrors", departure_at);
-    console.log("arrivalAtErrors", arrival_at);
     setError((prev) => ({
       ...prev,
       departure_at,
-      arrival_at,
     }));
 
     return (
@@ -180,7 +173,6 @@ const CreateRide = () => {
       departureCity,
       arrivalCity,
       departureAt,
-      arrivalAt,
       maxPassenger,
       departureCoords.lat,
       arrivalCoords.lat,
@@ -197,7 +189,6 @@ const CreateRide = () => {
               departure_address: departureAddress,
               arrival_address: arrivalAddress,
               departure_at: new Date(departureAt + ":00").toISOString(),
-              arrival_at: new Date(arrivalAt + ":00").toISOString(),
               max_passenger: maxPassenger,
               departure_lng: departureCoords.long,
               departure_lat: departureCoords.lat,
@@ -365,34 +356,6 @@ const CreateRide = () => {
             {error.departure_at && (
               <p className="text-red-500 text-sm">
                 {formatErrors(error.departure_at)}
-              </p>
-            )}
-          </div>
-
-          {/* ArrivalTime */}
-          <div className="flex flex-col w-full">
-            <label
-              htmlFor="arrivalAt"
-              className="block mb-2 text-sm font-medium text-textLight"
-            >
-              Horaire d'arrivée
-            </label>
-            <input
-              type="datetime-local"
-              id="arrivalAt"
-              className={`${
-                error.arrival_at?.length
-                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-                  : "border-gray-300 bg-gray-50"
-              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
-              placeholder="Horaire d'arrivée"
-              value={arrivalAt}
-              onChange={(e) => setArrivalAt(e.target.value)}
-              autoComplete="none"
-            />
-            {error.arrival_at && (
-              <p className="text-red-500 text-sm">
-                {formatErrors(error.arrival_at)}
               </p>
             )}
           </div>

@@ -2,9 +2,10 @@
 import { Ride } from "../entities/Ride";
 
 /**
- * Tente de réutiliser une route déjà calculée pour un A→B quasi identique.
- * On matche via ST_DWithin (tolérance en mètres) sur départ ET arrivée.
- * Ne renvoie que si distance/durée/polyline sont présentes.
+ * Retourne un A→B déjà calculé et très proche géographiquement.
+ * - On matche via ST_DWithin (tolérance en mètres) sur départ ET arrivée.
+ * - On trie par “somme des distances” aux 2 points (plus pertinent que created_at).
+ * - Ne renvoie que si distance/durée/polyline existent.
  */
 export async function findSimilarRouteFromDB(
   depLng: number,
@@ -13,6 +14,7 @@ export async function findSimilarRouteFromDB(
   arrLat: number,
   tolMeters = 500
 ): Promise<{
+  id: number;
   distance_km: number;
   duration_min: number;
   route_polyline5: string;
@@ -41,7 +43,20 @@ export async function findSimilarRouteFromDB(
     .andWhere("ride.distance_km IS NOT NULL")
     .andWhere("ride.duration_min IS NOT NULL")
     .andWhere("ride.route_polyline5 IS NOT NULL")
-    .orderBy("ride.created_at", "DESC")
+    // ➜ ordonner par proximité aux 2 points (en mètres)
+    .orderBy(
+      `
+      ST_Distance(
+        ride.departure_location,
+        ST_SetSRID(ST_MakePoint(:d_lng, :d_lat), 4326)::geography
+      ) +
+      ST_Distance(
+        ride.arrival_location,
+        ST_SetSRID(ST_MakePoint(:a_lng, :a_lat), 4326)::geography
+      )
+      `,
+      "ASC"
+    )
     .limit(1);
 
   const hit = await qb.getOne();
@@ -55,6 +70,7 @@ export async function findSimilarRouteFromDB(
   }
 
   return {
+    id: hit.id,
     distance_km: hit.distance_km,
     duration_min: hit.duration_min,
     route_polyline5: hit.route_polyline5,
