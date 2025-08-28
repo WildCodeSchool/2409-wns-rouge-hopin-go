@@ -5,6 +5,7 @@ type SwitchTabsProps = {
   tabs: Tab[];
   tabParams?: string;
   classContainer?: string;
+  proposeRef?: React.RefObject<HTMLButtonElement>;
 };
 
 export type Tab = {
@@ -13,7 +14,12 @@ export type Tab = {
   path: string;
 };
 
-const SwitchTabs = ({ tabs, tabParams, classContainer }: SwitchTabsProps) => {
+const SwitchTabs = ({
+  tabs,
+  tabParams,
+  classContainer,
+  proposeRef,
+}: SwitchTabsProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const isMyRidesPage = location.pathname.includes("/my-rides");
@@ -51,6 +57,7 @@ const SwitchTabs = ({ tabs, tabParams, classContainer }: SwitchTabsProps) => {
                 : "bg-gray-200 text-primary/50 hover:text-primary"
             } `}
             onClick={() => handleTabClick(index)}
+            ref={index === 1 && proposeRef ? proposeRef : null}
           >
             {tab.label}
           </button>
