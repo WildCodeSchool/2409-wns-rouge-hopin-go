@@ -11,9 +11,9 @@ const App = () => {
   const me = whoAmIData?.whoami;
   return (
     <>
-      <div className="flex flex-col min-h-screen">
-        <header className="z-50 invisible md:visible">
-          <div className="flex items-center gap-4">
+      <div>
+        <header className="z-50">
+          <div className="flex items-center gap-4  invisible md:visible">
             <Link to="/">
               <img src={Logo} alt="Logo" className="w-16 h-16 m-2" />
             </Link>
@@ -29,7 +29,7 @@ const App = () => {
           </div>
           <NavBar />
         </header>
-        <main className="h-screen">
+        <main className="">
           <Outlet />
         </main>
       </div>
