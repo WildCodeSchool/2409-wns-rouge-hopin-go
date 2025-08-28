@@ -70,12 +70,12 @@ const SearchBarRide = ({
   const arrivalRadiusParam = searchParams.get("arrival_radius") || "0";
   useEffect(() => {
     const departureCoordsParams = {
-      lat: Number(searchParams.get("departure_lat")) || 0,
       long: Number(searchParams.get("departure_lng")) || 0,
+      lat: Number(searchParams.get("departure_lat")) || 0,
     };
     const arrivalCoordsParams = {
-      lat: Number(searchParams.get("arrival_lat")) || 0,
       long: Number(searchParams.get("arrival_lng")) || 0,
+      lat: Number(searchParams.get("arrival_lat")) || 0,
     };
     setDepartureCity(departureCityParam);
     setDepartureCoords(departureCoordsParams);

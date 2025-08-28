@@ -4,7 +4,7 @@ export const queryRides = gql(`
 query Rides {
   rides {
     id
-    driver_id {
+    driver {
       id
       firstName
       lastName
@@ -27,6 +27,9 @@ query Rides {
     is_cancelled
     max_passenger
     nb_passenger
+    distance_km
+    duration_min
+    route_polyline5
   }
 }
 `);

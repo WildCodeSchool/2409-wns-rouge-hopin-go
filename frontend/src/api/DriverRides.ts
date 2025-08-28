@@ -16,7 +16,7 @@ export const queryDriverRides = gql(`
       totalCount
       rides {
         id
-        driver_id {
+        driver {
           id
           firstName
           lastName
@@ -43,6 +43,11 @@ export const queryDriverRides = gql(`
         max_passenger
         nb_passenger
         available_seats
+        distance_km
+        duration_min
+        route_polyline5
+        total_route_price
+        price_per_passenger
         passenger_rides {
           ride_id
           user_id

@@ -3,14 +3,12 @@ import { VariantType } from "../types/variantTypes";
 import { variantConfigMap } from "../constants/variantConfig";
 import { formatDate, formatTime } from "../utils/formatDate";
 import RegisterButton from "./RegisterButton";
-import PassengersButtonWithModal from "./PassengersButtonWithModal";
 import { useQuery } from "@apollo/client";
 import { queryWhoAmI } from "../api/WhoAmI";
 import useRide from "../context/Rides/useRide";
-import useMapboxRoute from "../hooks/useMapboxRoute";
 import { formatTravelDuration } from "../utils/formatTravelDuration";
-import { calculateRidePrice } from "../utils/calculateRidePrice";
 import useBreakpoints from "../utils/useWindowSize";
+import DetailsButtonWithModal from "./DetailsButtonWithModal";
 
 type CardTemplateProps = {
   variant: VariantType;
@@ -19,16 +17,19 @@ type CardTemplateProps = {
   isSelected?: boolean;
   additionalClassName?: string;
   driverUpcomingRides?: boolean;
+  isModal?: boolean;
 };
 
 const CardTemplate: React.FC<CardTemplateProps> = ({
   variant,
   onClick,
   onScroll,
+  isModal = false,
   isSelected = false,
   additionalClassName = "",
 }) => {
   const ride = useRide();
+  console.log("ride in CardTemplate:", ride);
   const { isMd, isXl, is2xl, windowWidth } = useBreakpoints();
   const {
     textColor,
@@ -36,17 +37,6 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
     statusLabel,
     icon: CardIcon,
   } = variantConfigMap[variant];
-
-  const { route } = useMapboxRoute({
-    departure: [
-      ride.departure_location.coordinates[1], // longitude
-      ride.departure_location.coordinates[0], // latitude
-    ],
-    arrival: [
-      ride.arrival_location.coordinates[1],
-      ride.arrival_location.coordinates[0],
-    ],
-  });
 
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const me = whoAmIData?.whoami;
@@ -56,24 +46,21 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   const departureTime = formatTime(departureDate);
   const arrivalTime = formatTime(arrivalDate);
   const dateStr = formatDate(departureDate);
-  const driver_id = ride.driver_id?.id ?? "?";
+  const driver = ride.driver?.id ?? "?";
+  const pricePerPassenger = ride.price_per_passenger;
+  const totalPriceRide = ride.total_route_price;
+  console.log("🚀 ~ CardTemplate ~ ride:", ride);
 
-  const travelDuration = formatTravelDuration(route?.durationMin ?? 0);
+  const travelDuration = ride.duration_min ?? 0;
 
   const driverName =
-    ride.driver_id?.firstName ?? `Conducteur #${ride.driver_id?.id ?? "?"}`;
-  const price = calculateRidePrice(
-    route?.distanceKm,
-    ride.max_passenger,
-    ride.nb_passenger
-  );
-  const totalPriceRoute = route && route?.distanceKm * 0.14;
+    ride.driver?.firstName ?? `Conducteur #${ride.driver?.id ?? "?"}`;
 
   return (
     <div
       className={`${
         isSelected && additionalClassName
-      } select-none transition-200 min-h-[200px] w-full max-w-[500px] p-4 transition-transform ${
+      } select-none transition-200  w-full max-w-[500px] p-4 transition-transform ${
         onClick ? "cursor-pointer" : ""
       }`}
       onClick={onClick}
@@ -83,7 +70,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
     >
       <div
         className={`flex flex-col items-center justify-center bg-textLight border border-primary rounded-t-2xl ${
-          me?.id !== driver_id ? "rounded-br-2xl" : ""
+          me?.id !== driver ? "rounded-br-2xl" : ""
         } shadow-lg z-30`}
       >
         <div className="grid grid-cols-3 w-full p-4 h-40 z-30">
@@ -114,7 +101,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             >
               {ride.departure_city}
             </p>
-            <p className="">{travelDuration}</p>
+            <p>{formatTravelDuration(travelDuration)}</p>
             <p
               className="text-sm sm:text-xl lg:text-xl sm:font-bold md:font-normal lg:font-bold truncate"
               title={ride.arrival_city}
@@ -137,13 +124,15 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
                 </p>
               </div>
               <p className="text-xl lg:text-4xl font-semibold">
-                {price && price.toFixed(2)}
+                {(pricePerPassenger ?? 0).toFixed(2)}
                 <span className=" font-sans text-sm ">€/pp</span>
               </p>
-              <p className=" font-semibold">
-                <span className=" font-sans text-sm ">Total trajet </span>
-                {totalPriceRoute && totalPriceRoute.toFixed(2)}
-                <span className=" font-sans text-sm ">€</span>
+              <p className=" text-nowrap font-semibold">
+                <span className=" font-sans text-sm text-nowrap">
+                  Total trajet{" "}
+                </span>
+                {(totalPriceRide ?? 0).toFixed(2)}
+                <span className=" font-sans text-sm text-nowrap ">€</span>
               </p>
             </div>
           )}
@@ -153,7 +142,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
       <div className="relative w-full flex justify-between z-30">
         <p
           className={`absolute left-0 flex gap-2 items-center z-10 p-4 text-sm lg:text-base text-textLight ${
-            me?.id === driver_id ? "ml-3" : ""
+            me?.id === driver ? "ml-3" : ""
           }`}
         >
           {statusLabel === "" ? (
@@ -187,16 +176,16 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             statusLabel
           )}
         </p>
-        <PassengersButtonWithModal variant={variant} />
+        <DetailsButtonWithModal variant={variant} isModal={isModal} />
         <p
           className={`absolute ${
-            me?.id === driver_id ? "right-0" : "right-16"
+            me?.id === driver ? "right-0" : "right-16"
           }   z-10 p-4 text-sm lg:text-base text-textLight`}
         >
           {dateStr}
         </p>
 
-        {me?.id !== driver_id ? (
+        {me?.id !== driver ? (
           <>
             <svg
               xmlns="http://www.w3.org/2000/svg"

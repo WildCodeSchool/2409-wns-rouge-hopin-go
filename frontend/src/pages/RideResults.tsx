@@ -106,7 +106,7 @@ const RideResults = () => {
 
   return (
     <div className="flex items-center h-screen justify-center max-w-7xl m-auto bg-gray-100">
-      <div className="flex h-full z-20 md:mr-10 overflow-hidden">
+      <div className="flex h-full w-full z-20 md:w-1/2  overflow-hidden">
         <ScrollableSnapList
           dataset={rides}
           getVariant={getVariant}
@@ -114,7 +114,7 @@ const RideResults = () => {
           sliderDirection="vertical"
           scaleEffect
           centerSlides={isMd ? true : false}
-          swiperClassName="h-full !pt-28 w-full"
+          swiperClassName="h-full !pt-32 w-full"
           slidePerView={3}
         />
       </div>

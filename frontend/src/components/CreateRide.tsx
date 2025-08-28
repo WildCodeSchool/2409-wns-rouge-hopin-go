@@ -10,6 +10,8 @@ import {
   validateDepartureAt,
 } from "../utils/createRideValidator";
 import { queryWhoAmI } from "../api/WhoAmI";
+import { toast } from "react-toastify";
+import { queryDriverRides } from "../api/DriverRides";
 import { useOutsideClick } from "../hooks/useOutsideClick";
 
 const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElement> }) => {
@@ -40,7 +42,9 @@ const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElem
     "departure" | "arrival" | null
   >(null);
 
-  const [doCreateRide] = useMutation(mutationCreateRide);
+  const [doCreateRide] = useMutation(mutationCreateRide, {
+    refetchQueries: [queryDriverRides],
+  });
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const driver = whoAmIData?.whoami;
 
@@ -137,6 +141,7 @@ const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElem
     if (arrivalAt) {
       validateArrivalAt(arrivalAt, departureAt);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [departureAddress, arrivalAddress, selected, departureAt, arrivalAt]);
 
   const validateAddress = (value: string, key: "departure" | "arrival") => {
@@ -204,19 +209,20 @@ const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElem
               departure_at: new Date(departureAt + ":00"),
               arrival_at: new Date(arrivalAt + ":00"),
               max_passenger: maxPassenger,
-              departure_lat: departureCoords.lat,
               departure_lng: departureCoords.long,
-              arrival_lat: arrivalCoords.lat,
+              departure_lat: departureCoords.lat,
               arrival_lng: arrivalCoords.long,
-              driver_id: { id: driver.id },
+              arrival_lat: arrivalCoords.lat,
+              driver: { id: driver.id },
             },
           },
         });
-      // implement toast
+      toast.success("Trajet créé avec succès !");
       setError({});
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       console.error(e);
+      toast.error("Une erreur est survenue lors de l'inscription.");
       setError({
         form: [
           "Une erreur est survenue lors de la création du trajet. Réessayez.",

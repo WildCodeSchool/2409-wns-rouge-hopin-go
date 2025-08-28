@@ -8,7 +8,12 @@ export const querySearchRide = gql(`
       id
       created_at
       departure_city
-      departure_at     
+      departure_at
+      distance_km
+      duration_min
+      route_polyline5
+      total_route_price
+      price_per_passenger
       departure_location {
         type
         coordinates
@@ -25,7 +30,7 @@ export const querySearchRide = gql(`
       nb_passenger
       is_cancelled
       available_seats
-      driver_id {
+      driver {
         id
         firstName
         lastName

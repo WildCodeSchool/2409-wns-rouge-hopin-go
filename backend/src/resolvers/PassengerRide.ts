@@ -20,6 +20,10 @@ import { LessThan, MoreThan } from "typeorm";
 import { AuthContextType } from "../auth";
 import { datasource } from "../datasource";
 import { ContextType } from "../auth";
+import {
+  attachPricingSelects,
+  hydratePricingFromRaw,
+} from "../utils/attachPricingSelects";
 
 @Resolver()
 export class PassengerRideResolver {
@@ -64,12 +68,12 @@ export class PassengerRideResolver {
 
       const rideWithDriver = await manager.findOne(Ride, {
         where: { id: data.ride_id },
-        relations: ["driver_id"],
+        relations: ["driver"],
       });
 
       if (!rideWithDriver) throw new Error("Conducteur introuvable");
 
-      if (rideWithDriver.driver_id.id === user!.id) {
+      if (rideWithDriver.driver.id === user!.id) {
         throw new Error("Vous ne pouvez pas réserver votre propre trajet");
       }
 
@@ -103,7 +107,7 @@ export class PassengerRideResolver {
       .innerJoin("ride.passenger_rides", "pr", "pr.user_id = :userId", {
         userId,
       })
-      .leftJoinAndSelect("ride.driver_id", "driver")
+      .leftJoinAndSelect("ride.driver", "driver")
       .leftJoinAndSelect("ride.passenger_rides", "passengerRide")
       .leftJoinAndSelect("passengerRide.user", "passenger");
 
@@ -120,10 +124,22 @@ export class PassengerRideResolver {
 
     baseQuery.addOrderBy("ride.departure_at", sort);
 
-    const [rides, totalCount] = await baseQuery
-      .take(limit)
-      .skip(offset)
-      .getManyAndCount();
+    // 👇 injecte les sélections de prix
+    attachPricingSelects(baseQuery, {
+      perKm: 0.14,
+      minFare: 2.5,
+      minFareKm: 10,
+      roundTo: 2,
+    });
+
+    const [rides, totalCount, raw] = await Promise.all([
+      baseQuery.take(limit).skip(offset).getMany(),
+      baseQuery.getCount(),
+      baseQuery.getRawMany(),
+    ]);
+
+    // recoller les valeurs calculées dans les entités
+    hydratePricingFromRaw(rides, raw);
 
     return { rides, totalCount };
   }
@@ -137,14 +153,14 @@ export class PassengerRideResolver {
     return await datasource.transaction(async (manager) => {
       const passengerRide = await PassengerRide.findOne({
         where: { user_id, ride_id },
-        relations: { user: true, ride: { driver_id: true } },
+        relations: { user: true, ride: { driver: true } },
       });
 
       if (!passengerRide) {
         throw new Error("Passager non trouvé pour ce trajet");
       }
 
-      const driverId = passengerRide.ride.driver_id.id;
+      const driverId = passengerRide.ride.driver.id;
       if (ctx.user?.id !== driverId) {
         throw new Error(
           "Seul le conducteur peut modifier le statut du passager"

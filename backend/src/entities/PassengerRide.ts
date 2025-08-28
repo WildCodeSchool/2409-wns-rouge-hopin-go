@@ -22,6 +22,8 @@ export enum PassengerRideStatus {
   APPROVED = "approved",
   REFUSED = "refused",
   WAITING = "waiting",
+  CANCELLED_BY_PASSENGER = "cancelled_by_passenger",
+  CANCELLED_BY_DRIVER = "cancelled_by_driver",
 }
 
 registerEnumType(PassengerRideStatus, {
