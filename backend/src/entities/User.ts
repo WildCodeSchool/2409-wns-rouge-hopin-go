@@ -9,6 +9,7 @@ import {
 } from "type-graphql";
 import {
   BaseEntity,
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -34,16 +35,18 @@ export const IsUser: MiddlewareFn<ContextType> = async (
 
 @Entity()
 @ObjectType()
+@Check("char_length(first_name) >= 2")
+@Check("char_length(last_name) >= 2")
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => ID)
   id!: number;
 
-  @Column({ type: "varchar", length: 50, nullable: false })
+  @Column({ name: "first_name", type: "varchar", length: 50, nullable: false })
   @Field()
   firstName!: string;
 
-  @Column({ type: "varchar", length: 100, nullable: false })
+  @Column({ name: "last_name", type: "varchar", length: 100, nullable: false })
   @Field()
   lastName!: string;
 
@@ -64,7 +67,7 @@ export class User extends BaseEntity {
   role!: string;
 
   @Column({
-    name: "hashedPassword",
+    name: "hashed_password",
     type: "varchar",
     length: 255,
     nullable: false,
@@ -73,8 +76,8 @@ export class User extends BaseEntity {
   hashedPassword!: string;
 
   @CreateDateColumn({
-    type: "timestamp",
-    name: "createdAt",
+    type: "timestamptz",
+    name: "created_at",
     default: () => "now()",
   })
   @Field()

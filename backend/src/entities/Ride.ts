@@ -33,10 +33,10 @@ export class Point {
 }
 @Entity()
 @ObjectType()
-@Check(`max_passenger BETWEEN 1 AND 4`)
-@Check(`nb_passenger >= 0`)
-@Check(`nb_passenger <= max_passenger`)
-@Check(`arrival_at > departure_at`)
+@Check("max_passenger BETWEEN 1 AND 4")
+@Check("nb_passenger >= 0")
+@Check("nb_passenger <= max_passenger")
+@Check("arrival_at > departure_at")
 export class Ride extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => ID)
@@ -59,11 +59,11 @@ export class Ride extends BaseEntity {
   arrival_address!: string;
 
   @Field(() => Date)
-  @Column({ type: "timestamp", nullable: false })
+  @Column({ type: "timestamptz", nullable: false })
   departure_at!: Date;
 
   @Field(() => Date)
-  @Column({ type: "timestamp", nullable: false })
+  @Column({ type: "timestamptz", nullable: false })
   arrival_at!: Date;
 
   @Column({ type: "smallint", nullable: false })
@@ -107,7 +107,7 @@ export class Ride extends BaseEntity {
   is_cancelled!: boolean;
 
   @CreateDateColumn({
-    type: "timestamp",
+    type: "timestamptz",
     name: "created_at",
     default: () => "now()",
   })
