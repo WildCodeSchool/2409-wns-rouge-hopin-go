@@ -27,6 +27,7 @@ import {
   hydratePricingFromRaw,
 } from "../utils/attachPricingSelects";
 import { datasource } from "../datasource";
+import { findSimilarRouteFromDB } from "../utils/findSimilarRouteFromDB";
 
 @Resolver(() => Ride)
 export class RidesResolver {
@@ -189,25 +190,46 @@ export class RidesResolver {
       throw new Error(`Validation error: ${JSON.stringify(errors)}`);
     }
 
-    // 1) Calcul de la route côté serveur
+    // 1) Essayer de réutiliser une route quasi identique
     let distance_km: number | undefined;
     let duration_min: number | undefined;
     let route_polyline5: string | undefined;
+    let source: "DB" | "MAPBOX" | "NONE" = "NONE";
+
     try {
-      const r = await fetchRouteFromMapbox(
+      const cached = await findSimilarRouteFromDB(
         data.departure_lng,
         data.departure_lat,
         data.arrival_lng,
-        data.arrival_lat
+        data.arrival_lat,
+        500 // tolérance 500 m (ajuste selon ton besoin)
       );
-      distance_km = r.distanceKm;
-      duration_min = r.durationMin;
-      route_polyline5 = r.polyline5;
+
+      if (cached) {
+        ({ distance_km, duration_min, route_polyline5 } = cached);
+        source = "DB";
+      } else {
+        // 2) Sinon → Mapbox en dernier recours
+        const r = await fetchRouteFromMapbox(
+          data.departure_lng,
+          data.departure_lat,
+          data.arrival_lng,
+          data.arrival_lat
+        );
+        distance_km = r.distanceKm;
+        duration_min = r.durationMin;
+        route_polyline5 = r.polyline5;
+        source = "MAPBOX";
+      }
     } catch (e) {
-      console.error("Mapbox directions failed, will save without route.", e);
-      // Option: fallback Haversine ici si tu veux garantir des valeurs
+      source = "NONE";
+      console.error(
+        "[createRide] route lookup/fetch failed, saving without route.",
+        e
+      );
     }
 
+    // 3) Sauvegarde
     const newRide = new Ride();
     Object.assign(newRide, {
       ...data,
@@ -223,9 +245,9 @@ export class RidesResolver {
       duration_min,
       route_polyline5,
     });
-    console.log("Creating ride:", newRide);
 
     await newRide.save();
+
     return newRide;
   }
 
