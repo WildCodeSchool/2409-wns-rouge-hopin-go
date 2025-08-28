@@ -12,6 +12,7 @@ import {
   validateConfirmPassword as validateConfirmPasswordUtils,
 } from "../utils/validators";
 import { formatErrors } from "../utils/formatErrors";
+import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
   const [firstName, setFirstName] = useState("");
@@ -23,6 +24,7 @@ export default function Signup() {
   const [revealPassword, setRevealPassword] = useState(false);
 
   const [doCreateUser, { data }] = useMutation(mutationCreateUser);
+  const navigate = useNavigate();
 
   const validateCreateForm = (): boolean => {
     const firstNameErrors = validateFirstNameUtils(firstName);
@@ -80,12 +82,7 @@ export default function Signup() {
   }
 
   if (data) {
-    return (
-      <div>
-        <h1>Inscription réussie !</h1>
-        <p>Ton compte a été créé !! 🎉</p>
-      </div>
-    );
+    navigate("/auth/signin");
   }
 
   return (

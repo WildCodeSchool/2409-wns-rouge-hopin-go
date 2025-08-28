@@ -245,6 +245,7 @@ export class RidesResolver {
       duration_min,
       route_polyline5,
     });
+    console.log("🗺️ ROUTE SOURCE :", source);
 
     await newRide.save();
 
