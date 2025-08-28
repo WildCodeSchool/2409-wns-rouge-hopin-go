@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import Logo from "../public/logo.png";
 import { useQuery } from "@apollo/client";
 import { queryWhoAmI } from "./api/WhoAmI";
+import { CheckCircle } from "lucide-react";
 
 const App = () => {
   const { data: whoAmIData } = useQuery(queryWhoAmI);
@@ -11,16 +12,20 @@ const App = () => {
   return (
     <>
       <div className="flex flex-col min-h-screen">
-        <header>
-          <div className="flex flex-row">
+        <header className="z-50 invisible md:visible">
+          <div className="flex items-center gap-4">
             <Link to="/">
-              <img
-                src={Logo}
-                alt="Logo"
-                className="invisible sm:visible absolute top-0 left-0 w-16 h-16 m-2"
-              />
+              <img src={Logo} alt="Logo" className="w-16 h-16 m-2" />
             </Link>
-            <p className="absolute top-5 left-24">{me?.email}</p>
+            {me && (
+              <span
+                className="flex items-center gap-2 text-sm  py-2 px-4 rounded-full text-white bg-primary"
+                title="Vous êtes connecté"
+              >
+                {me?.email}
+                <CheckCircle className="text-validation" />
+              </span>
+            )}
           </div>
           <NavBar />
         </header>
