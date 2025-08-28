@@ -17,7 +17,7 @@ const Home = () => {
   const tabs: Tab[] = [
     {
       label: "Rechercher",
-      content: <SearchRide variant="searchFormRide" />,
+      content: <SearchRide variant="searchFormRide" proposeRef={proposeRef} />,
       path: "/research",
     },
     ...(me

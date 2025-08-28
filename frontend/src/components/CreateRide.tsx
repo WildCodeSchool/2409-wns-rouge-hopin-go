@@ -10,6 +10,7 @@ import {
   validateDepartureAt,
 } from "../utils/createRideValidator";
 import { queryWhoAmI } from "../api/WhoAmI";
+import { useOutsideClick } from "../hooks/useOutsideClick";
 
 const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElement> }) => {
   // TO DO => if user is not connected, the form should not be accessible
@@ -48,6 +49,12 @@ const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElem
   const arrivalRef = useRef<HTMLInputElement>(null);
   const arrivalSuggestionsRef = useRef<HTMLLIElement[]>([]);
   const departureTimeRef = useRef<HTMLInputElement>(null);
+
+  // hides suggestions when clicking outside
+  const departureUlRef = useRef<HTMLUListElement>(null);
+  const arrivalUlRef = useRef<HTMLUListElement>(null);
+  useOutsideClick(departureUlRef, () => setShowDepartureSuggestions(false), showDepartureSuggestions);
+  useOutsideClick(arrivalUlRef, () => setShowArrivalSuggestions(false), showArrivalSuggestions);
 
   type Suggestion = {
     properties: {
@@ -310,9 +317,17 @@ const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElem
       e.preventDefault();
       handleSelect(address);
       if (li === "departure") {
-        arrivalRef.current?.focus();
+        if (keyState.shift) {
+          departureRef.current?.focus();
+        } else {
+          arrivalRef.current?.focus();
+        }
       } else {
-        departureTimeRef.current?.focus();
+        if (keyState.shift) {
+          arrivalRef.current?.focus();
+        } else {
+          departureTimeRef.current?.focus();
+        }
       }
     } else if (e.key === "Escape") {
       if (li === "departure") {
@@ -320,6 +335,9 @@ const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElem
       } else {
         setShowArrivalSuggestions(false);
       }
+    } else if (e.key === "Shift") {
+      e.preventDefault();
+      keyState.shift = true;
     }
   };
 
@@ -359,7 +377,9 @@ const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElem
               maxLength={255}
             />
             {suggestions.departure.length > 0 && showDepartureSuggestions && (
-              <ul className="absolute bg-white border mt-1 max-h-60 w-fit overflow-auto shadow-lg no-scrollbar">
+              <ul className="absolute bg-white border mt-1 max-h-60 w-fit overflow-auto shadow-lg no-scrollbar"
+                ref={departureUlRef}
+              >
                 {suggestions.departure.map((address, index) => (
                   <li
                     key={index}
@@ -406,7 +426,9 @@ const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElem
               maxLength={255}
             />
             {suggestions.arrival.length > 0 && showArrivalSuggestions && (
-              <ul className="absolute bg-white border mt-1 max-h-60 overflow-auto no-scrollbar">
+              <ul className="absolute bg-white border mt-1 max-h-60 overflow-auto no-scrollbar"
+                ref={arrivalUlRef}
+              >
                 {suggestions.arrival.map((address, index) => (
                   <li
                     key={index}
