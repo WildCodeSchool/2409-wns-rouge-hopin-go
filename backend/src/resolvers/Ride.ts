@@ -160,21 +160,25 @@ export class RidesResolver {
     const order = filter === "archived" ? "DESC" : "ASC";
     baseQuery.orderBy("ride.departure_at", order);
 
+    // 🔹 Clone pour le COUNT (⚠️ pas de selects pricing ici)
+    const countQB = baseQuery.clone();
+    const totalCount = await countQB.getCount();
+
+    // 🔹 Clone pour DATA + pricing
+    const dataQB = baseQuery.clone();
+
     // 👇 injecte les sélections de prix
-    attachPricingSelects(baseQuery, {
+    attachPricingSelects(dataQB, {
       perKm: 0.13,
       minFare: 2.5,
       minFareKm: 10,
       roundTo: 2,
     });
+    dataQB.take(limit).skip(offset);
+    // Un seul aller/retour : raw + entities alignés en interne
+    const { entities: rides, raw } = await dataQB.getRawAndEntities();
 
-    const [rides, totalCount, raw] = await Promise.all([
-      baseQuery.take(limit).skip(offset).getMany(),
-      baseQuery.getCount(),
-      baseQuery.getRawMany(),
-    ]);
-
-    // recoller les valeurs calculées dans les entités
+    // Hydrate via ride_id (indépendant des duplications dues aux LEFT JOINs)
     hydratePricingFromRaw(rides, raw);
 
     return { rides, totalCount };
