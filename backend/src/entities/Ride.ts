@@ -10,6 +10,7 @@ import {
 import { Field, Float, ID, InputType, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -32,45 +33,49 @@ export class Point {
 }
 @Entity()
 @ObjectType()
+@Check("max_passenger BETWEEN 1 AND 4")
+@Check("nb_passenger >= 0")
+@Check("nb_passenger <= max_passenger")
+@Check("arrival_at > departure_at")
 export class Ride extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => ID)
   id!: number;
 
-  @Column()
+  @Column({ type: "varchar", length: 100, nullable: false })
   @Field()
   departure_city!: string;
 
-  @Column()
+  @Column({ type: "varchar", length: 100, nullable: false })
   @Field()
   arrival_city!: string;
 
-  @Column()
+  @Column({ type: "varchar", length: 255, nullable: false })
   @Field()
   departure_address!: string;
 
-  @Column()
+  @Column({ type: "varchar", length: 255, nullable: false })
   @Field()
   arrival_address!: string;
 
   @Field(() => Date)
-  @Column({ type: "timestamp" })
+  @Column({ type: "timestamptz", nullable: false })
   departure_at!: Date;
 
   @Field(() => Date)
-  @Column({ type: "timestamp" })
+  @Column({ type: "timestamptz", nullable: false })
   arrival_at!: Date;
 
-  @Column()
+  @Column({ type: "smallint", nullable: false })
   @Field()
   max_passenger!: number;
 
-  @ManyToOne(() => User)
-  @JoinColumn({ name: "driver" }) // this specifies the name of the column in the database
+  @ManyToOne(() => User, { nullable: false })
+  @JoinColumn({ name: "driver_id" }) // this specifies the name of the column in the database
   @Field(() => User)
   driver!: User;
 
-  @Column({ default: 0 })
+  @Column({ type: "smallint", default: 0, nullable: false })
   @Field()
   nb_passenger!: number;
 
@@ -92,19 +97,33 @@ export class Ride extends BaseEntity {
     return this.max_passenger - this.nb_passenger;
   }
 
-  @Column({ type: "geography", spatialFeatureType: "Point", srid: 4326 })
+  @Column({
+    type: "geography",
+    spatialFeatureType: "Point",
+    srid: 4326,
+    nullable: false,
+  })
   @Field(() => Point)
   departure_location!: Point;
 
-  @Column({ type: "geography", spatialFeatureType: "Point", srid: 4326 })
+  @Column({
+    type: "geography",
+    spatialFeatureType: "Point",
+    srid: 4326,
+    nullable: false,
+  })
   @Field(() => Point)
   arrival_location!: Point;
 
-  @Column({ default: false })
+  @Column({ type: "boolean", default: false, nullable: false })
   @Field(() => Boolean)
   is_cancelled!: boolean;
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    type: "timestamptz",
+    name: "created_at",
+    default: () => "now()",
+  })
   @Field()
   created_at!: Date;
 

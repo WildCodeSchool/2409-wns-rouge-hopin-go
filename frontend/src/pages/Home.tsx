@@ -6,11 +6,13 @@ import { useQuery } from "@apollo/client";
 import { queryWhoAmI } from "../api/WhoAmI";
 import CreateRide from "../components/CreateRide";
 import InformationMessage from "../components/InformationMessage";
+import { useRef } from "react";
 
 const Home = () => {
   const { tab } = useParams();
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const me = whoAmIData?.whoami;
+  const proposeRef = useRef<HTMLButtonElement>(null);
 
   const tabs: Tab[] = [
     {
@@ -19,14 +21,14 @@ const Home = () => {
       path: "/research",
     },
     ...(me
-      ? [{ label: "Proposer", content: <CreateRide />, path: "/propose" }]
+      ? [{ label: "Proposer", content: <CreateRide proposeRef={proposeRef} />, path: "/propose" }]
       : [
-          {
-            label: "Proposer",
-            content: <InformationMessage />,
-            path: "/propose",
-          },
-        ]),
+        {
+          label: "Proposer",
+          content: <InformationMessage />,
+          path: "/propose",
+        },
+      ]),
   ];
   return (
     <>
@@ -35,6 +37,7 @@ const Home = () => {
           classContainer="bg-primary px-4"
           tabs={tabs}
           tabParams={tab}
+          proposeRef={proposeRef}
         />
       </div>
     </>
