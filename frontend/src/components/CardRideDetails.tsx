@@ -7,12 +7,14 @@ import SearchRide from "./SearchRide";
 import Button from "./Button";
 import { Search } from "lucide-react";
 import RegisterButton from "./RegisterButton";
-import Map from "./Map";
 import { useState } from "react";
 import { formatTravelDuration } from "../utils/formatTravelDuration";
-import { calculateRidePrice } from "../utils/calculateRidePrice";
 import { queryWhoAmI } from "../api/WhoAmI";
 import { useQuery } from "@apollo/client";
+import { useModal } from "../hooks/useModal";
+import DynamicMapModal from "./DynamicMapModal";
+import Modal from "./Modal";
+import MapStatic from "./MapStatic";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
 
@@ -24,6 +26,7 @@ type CardRideDetailsProps = {
 const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
   const { textColor, bgFill } = variantConfigMap[variant];
   const { isMd, isLg, isXl } = useBreakpoints();
+  const { isOpen, isVisible, toggleModal, closeModal } = useModal();
 
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const me = whoAmIData?.whoami;
@@ -35,25 +38,29 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
   const dateStr = formatDate(departureDate);
 
   // ---------------------Map---------------------
+
   const departureCity = data.departure_city;
-  const departureLatitude = data.departure_location.coordinates[0];
-  const departureLongitude = data.departure_location.coordinates[1];
+  const departureLongitude = data.departure_location.coordinates[0]; // lon
+  const departureLatitude = data.departure_location.coordinates[1]; // lat
   const arrivalCity = data.arrival_city;
-  const arrivalLatitude = data.arrival_location.coordinates[0];
-  const arrivalLongitude = data.arrival_location.coordinates[1];
+  const arrivalLongitude = data.arrival_location.coordinates[0]; // lon
+  const arrivalLatitude = data.arrival_location.coordinates[1];
+  const routePolyline5 = data.route_polyline5;
+  const distanceKm = data.distance_km ?? 0;
+  const durationMin = data.duration_min ?? 0;
+  const pricePerPassenger = data.price_per_passenger ?? 0;
+  const availableSeats = data.available_seats ?? 0;
   // ---------------------End Map---------------------
 
-  const [travelDuration, setTravelDuration] = useState<string>("");
-  const [travelDistance, setTravelDistance] = useState<string>("");
+  const [travelDuration, setTravelDuration] = useState<string>(
+    formatTravelDuration(durationMin)
+  );
+  const [travelDistance, setTravelDistance] = useState<string>(
+    `${distanceKm} km`
+  );
 
-  const availableSeats = data.max_passenger - (data.nb_passenger ?? 0);
   const driverName =
     data.driver?.firstName ?? `Conducteur #${data.driver?.id ?? "?"}`;
-  const price = calculateRidePrice(
-    parseFloat(travelDistance),
-    data.max_passenger,
-    data.nb_passenger
-  );
 
   return (
     <div className="relative z-0 flex justify-center w-full">
@@ -103,7 +110,7 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
           <div>
             <p className="text-sm md:text-base">{dateStr}</p>
             <p className="text-xl md:text-4xl font-semibold">
-              {price.toFixed(2)}
+              {pricePerPassenger}
               <span className="text-sm md:text-2xl"> €</span>
             </p>
 
@@ -122,7 +129,9 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
               <p className="text-base md:text-2xl font-semibold">
                 {departureTime}
               </p>
-              <p className="text-sm">{travelDuration}</p>
+              <p className="text-sm">
+                <p>{travelDuration}</p>
+              </p>
               <p className="text-base md:text-2xl font-semibold">
                 {arrivalTime}
               </p>
@@ -144,16 +153,16 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
             <div className="flex flex-col ml-2 justify-between h-full text-left md:w-24 lg:w-48">
               <p
                 className="text-lg md:text-xl sm:font-bold truncate"
-                title={data.departure_city}
+                title={departureCity}
               >
-                {data.departure_city}
+                {departureCity}
               </p>
               <p className="text-sm">{travelDistance}</p>
               <p
                 className="text-lg md:text-xl sm:font-bold truncate"
-                title={data.arrival_city}
+                title={arrivalCity}
               >
-                {data.arrival_city}
+                {arrivalCity}
               </p>
             </div>
           </div>
@@ -163,19 +172,50 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
         ) : (
           <RegisterButton variant={variant} rideId={data.id} size="large" />
         )}
-        <Map
-          mapId={`map-${data.id}`}
-          departureLatitude={departureLatitude}
-          departureLongitude={departureLongitude}
-          departureCity={departureCity}
-          arrivalLatitude={arrivalLatitude}
-          arrivalLongitude={arrivalLongitude}
-          arrivalCity={arrivalCity}
-          onRouteData={({ distanceKm, durationMin }) => {
-            setTravelDuration(`${formatTravelDuration(durationMin)}`);
-            setTravelDistance(`${distanceKm.toFixed(1)} km`);
-          }}
-        />
+
+        <button
+          onClick={() => toggleModal("DynamicMapModal")}
+          className="w-full"
+          title="Cliquer pour voir la carte"
+        >
+          <MapStatic
+            mapId={`map-${data.id}`}
+            departureLatitude={departureLatitude}
+            departureLongitude={departureLongitude}
+            departureCity={departureCity}
+            arrivalLatitude={arrivalLatitude}
+            arrivalLongitude={arrivalLongitude}
+            arrivalCity={arrivalCity}
+            routePolyline5={routePolyline5} // ✅ évite Directions
+            distanceKm={distanceKm} // ✅ meta backend
+            durationMin={durationMin}
+            fitPaddingPct={0.24}
+            onRouteData={({ distanceKm, durationMin }) => {
+              setTravelDuration(formatTravelDuration(durationMin ?? 0));
+              setTravelDistance(`${(distanceKm ?? 0).toFixed(1)} km`);
+            }}
+          />
+        </button>
+        <Modal
+          id="DynamicMapModal"
+          isOpen={isOpen("DynamicMapModal")}
+          isVisible={isVisible("DynamicMapModal")}
+          onClose={() => closeModal("DynamicMapModal")}
+        >
+          <DynamicMapModal
+            toggleModal={() => closeModal("DynamicMapModal")}
+            dataId={data.id}
+            departureCity={departureCity}
+            departureLongitude={departureLongitude}
+            departureLatitude={departureLatitude}
+            arrivalCity={arrivalCity}
+            arrivalLongitude={arrivalLongitude}
+            arrivalLatitude={arrivalLatitude}
+            routePolyline5={routePolyline5} // ✅ évite Directions
+            distanceKm={distanceKm} // ✅ meta backend
+            durationMin={durationMin}
+          />
+        </Modal>
       </div>
     </div>
   );

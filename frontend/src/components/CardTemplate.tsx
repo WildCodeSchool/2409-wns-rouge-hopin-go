@@ -6,9 +6,7 @@ import RegisterButton from "./RegisterButton";
 import { useQuery } from "@apollo/client";
 import { queryWhoAmI } from "../api/WhoAmI";
 import useRide from "../context/Rides/useRide";
-import useMapboxRoute from "../hooks/useMapboxRoute";
 import { formatTravelDuration } from "../utils/formatTravelDuration";
-import { calculateRidePrice } from "../utils/calculateRidePrice";
 import useBreakpoints from "../utils/useWindowSize";
 import DetailsButtonWithModal from "./DetailsButtonWithModal";
 
@@ -40,17 +38,6 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
     icon: CardIcon,
   } = variantConfigMap[variant];
 
-  const { route } = useMapboxRoute({
-    departure: [
-      ride.departure_location.coordinates[1], // longitude
-      ride.departure_location.coordinates[0], // latitude
-    ],
-    arrival: [
-      ride.arrival_location.coordinates[1],
-      ride.arrival_location.coordinates[0],
-    ],
-  });
-
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const me = whoAmIData?.whoami;
 
@@ -60,17 +47,14 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   const arrivalTime = formatTime(arrivalDate);
   const dateStr = formatDate(departureDate);
   const driver = ride.driver?.id ?? "?";
+  const pricePerPassenger = ride.price_per_passenger;
+  const totalPriceRide = ride.total_route_price;
+  console.log("🚀 ~ CardTemplate ~ ride:", ride);
 
-  const travelDuration = formatTravelDuration(route?.durationMin ?? 0);
+  const travelDuration = ride.duration_min ?? 0;
 
   const driverName =
     ride.driver?.firstName ?? `Conducteur #${ride.driver?.id ?? "?"}`;
-  const price = calculateRidePrice(
-    route?.distanceKm,
-    ride.max_passenger,
-    ride.nb_passenger
-  );
-  const totalPriceRoute = route && route?.distanceKm * 0.14;
 
   return (
     <div
@@ -117,7 +101,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             >
               {ride.departure_city}
             </p>
-            <p className="">{travelDuration}</p>
+            <p>{formatTravelDuration(travelDuration)}</p>
             <p
               className="text-sm sm:text-xl lg:text-xl sm:font-bold md:font-normal lg:font-bold truncate"
               title={ride.arrival_city}
@@ -140,14 +124,14 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
                 </p>
               </div>
               <p className="text-xl lg:text-4xl font-semibold">
-                {price && price.toFixed(2)}
+                {(pricePerPassenger ?? 0).toFixed(2)}
                 <span className=" font-sans text-sm ">€/pp</span>
               </p>
               <p className=" text-nowrap font-semibold">
                 <span className=" font-sans text-sm text-nowrap">
                   Total trajet{" "}
                 </span>
-                {totalPriceRoute && totalPriceRoute.toFixed(2)}
+                {(totalPriceRide ?? 0).toFixed(2)}
                 <span className=" font-sans text-sm text-nowrap ">€</span>
               </p>
             </div>
