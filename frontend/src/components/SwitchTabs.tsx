@@ -14,7 +14,12 @@ export type Tab = {
   path: string;
 };
 
-const SwitchTabs = ({ tabs, tabParams, classContainer, proposeRef }: SwitchTabsProps) => {
+const SwitchTabs = ({
+  tabs,
+  tabParams,
+  classContainer,
+  proposeRef,
+}: SwitchTabsProps) => {
   const navigate = useNavigate();
   const currentTab = tabs.find((tab) => {
     const lastSegment = tab.path.split("/").pop();

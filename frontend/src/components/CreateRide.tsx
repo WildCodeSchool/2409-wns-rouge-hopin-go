@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { mutationCreateRide } from "../api/CreateRide";
 import { useNavigate } from "react-router-dom";
 import Button from "./Button";
@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 import { queryDriverRides } from "../api/DriverRides";
 import { useOutsideClick } from "../hooks/useOutsideClick";
 
-const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElement> }) => {
+const CreateRide = () => {
   // TO DO => if user is not connected, the form should not be accessible
   const [departureCity, setDepartureCity] = useState("");
   const [arrivalCity, setArrivalCity] = useState("");
@@ -169,6 +169,8 @@ const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElem
     validateAddress(arrivalAddress, "arrival");
     const departure_at = validateDepartureAt(departureAt);
     const arrival_at = validateArrivalAt(arrivalAt, departureAt);
+    console.log("departureAtErrors", departure_at);
+    console.log("arrivalAtErrors", arrival_at);
     setError((prev) => ({
       ...prev,
       departure_at,
@@ -206,8 +208,8 @@ const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElem
               arrival_city: arrivalCity,
               departure_address: departureAddress,
               arrival_address: arrivalAddress,
-              departure_at: new Date(departureAt + ":00"),
-              arrival_at: new Date(arrivalAt + ":00"),
+              departure_at: new Date(departureAt + ":00").toISOString(),
+              arrival_at: new Date(arrivalAt + ":00").toISOString(),
               max_passenger: maxPassenger,
               departure_lng: departureCoords.long,
               departure_lat: departureCoords.lat,
@@ -233,6 +235,7 @@ const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElem
   }
 
   const handleSelect = async (address: string) => {
+    console.log("handleSelect is triggered : ", address);
     if (lastModifiedCity === "departure") {
       setShowDepartureSuggestions(false);
       setSelected({ ...selected, departure: address });
@@ -247,10 +250,8 @@ const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElem
   const handleChange = (address: string, key: "departure" | "arrival") => {
     setLastModifiedCity(key);
     if (key === "departure") {
-      setShowDepartureSuggestions(true);
       setDepartureAddress(address);
     } else {
-      setShowArrivalSuggestions(true);
       setArrivalAddress(address);
     }
   };
@@ -369,17 +370,14 @@ const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElem
               type="text"
               id="departureAddress"
               className={`${error.departure_city?.length
-                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-                : "border-gray-300 bg-gray-50"
+                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                  : "border-gray-300 bg-gray-50"
                 } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
               placeholder="ex. Marseille"
               value={departureAddress}
-              ref={departureRef}
               onChange={(e) => handleChange(e.target.value, "departure")}
-              onFocus={() => { setShowArrivalSuggestions(false); setLastModifiedCity("departure"); setShowDepartureSuggestions(true) }}
-              onKeyDown={(e) => handleInputKeyDown(e, "departure")}
-              onKeyUp={() => keyState.shift = false}
-              autoComplete="off"
+              onKeyDown={() => setShowDepartureSuggestions(true)}
+              autoComplete="none"
               maxLength={255}
             />
             {suggestions.departure.length > 0 && showDepartureSuggestions && (
@@ -389,11 +387,8 @@ const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElem
                 {suggestions.departure.map((address, index) => (
                   <li
                     key={index}
-                    tabIndex={0}
-                    ref={(el) => departureSuggestionsRef.current[index] = el!}
                     onClick={() => handleSelect(address)}
-                    onKeyDown={(e) => handleLiKeyDown(e, address, "departure")}
-                    className="p-2 cursor-pointer hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
+                    className="p-2 cursor-pointer hover:bg-gray-200"
                   >
                     {address}
                   </li>
@@ -418,17 +413,14 @@ const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElem
               type="text"
               id="arrivalAddress"
               className={`${error.arrival_city?.length
-                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-                : "border-gray-300 bg-gray-50"
+                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                  : "border-gray-300 bg-gray-50"
                 } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
               placeholder="ex. Lyon"
               value={arrivalAddress}
-              ref={arrivalRef}
               onChange={(e) => handleChange(e.target.value, "arrival")}
-              onFocus={() => { setShowDepartureSuggestions(false); setLastModifiedCity("arrival"); setShowArrivalSuggestions(true) }}
-              onKeyDown={(e) => handleInputKeyDown(e, "arrival")}
-              onKeyUp={() => keyState.shift = false}
-              autoComplete="off"
+              onKeyDown={() => setShowArrivalSuggestions(true)}
+              autoComplete="none"
               maxLength={255}
             />
             {suggestions.arrival.length > 0 && showArrivalSuggestions && (
@@ -438,11 +430,8 @@ const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElem
                 {suggestions.arrival.map((address, index) => (
                   <li
                     key={index}
-                    tabIndex={0}
-                    ref={(el) => arrivalSuggestionsRef.current[index] = el!}
-                    onKeyDown={(e) => handleLiKeyDown(e, address, "arrival")}
                     onClick={() => handleSelect(address)}
-                    className="p-2 cursor-pointer hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
+                    className="p-2 cursor-pointer hover:bg-gray-200"
                   >
                     {address}
                   </li>
@@ -470,14 +459,12 @@ const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElem
               type="datetime-local"
               id="departureAt"
               className={`${error.departure_at?.length
-                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-                : "border-gray-300 bg-gray-50"
+                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                  : "border-gray-300 bg-gray-50"
                 } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
               placeholder="Horaire de départ"
               value={departureAt}
-              ref={departureTimeRef}
               onChange={(e) => setDepartureAt(e.target.value)}
-              onFocus={() => setShowArrivalSuggestions(false)}
               autoComplete="none"
             />
             {error.departure_at && (
@@ -499,8 +486,8 @@ const CreateRide = ({ proposeRef }: { proposeRef: React.RefObject<HTMLButtonElem
               type="datetime-local"
               id="arrivalAt"
               className={`${error.arrival_at?.length
-                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-                : "border-gray-300 bg-gray-50"
+                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                  : "border-gray-300 bg-gray-50"
                 } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
               placeholder="Horaire d'arrivée"
               value={arrivalAt}
