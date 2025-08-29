@@ -12,7 +12,6 @@ import {
   validateConfirmPassword as validateConfirmPasswordUtils,
 } from "../utils/validators";
 import { formatErrors } from "../utils/formatErrors";
-import { useNavigate } from "react-router-dom";
 
 export default function Signup() {
   const [firstName, setFirstName] = useState("");
@@ -24,7 +23,6 @@ export default function Signup() {
   const [revealPassword, setRevealPassword] = useState(false);
 
   const [doCreateUser] = useMutation(mutationCreateUser);
-  const navigate = useNavigate();
 
   const validateCreateForm = (): boolean => {
     const firstNameErrors = validateFirstNameUtils(firstName);
@@ -71,8 +69,12 @@ export default function Signup() {
           },
         },
       });
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
       toast.success("Inscription réussie !");
-      navigate("/auth/signin");
       setError({});
     } catch (e: unknown) {
       console.error(e);
