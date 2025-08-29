@@ -23,7 +23,7 @@ export default function Signup() {
   const [error, setError] = useState<Record<string, string[]>>({});
   const [revealPassword, setRevealPassword] = useState(false);
 
-  const [doCreateUser, { data }] = useMutation(mutationCreateUser);
+  const [doCreateUser] = useMutation(mutationCreateUser);
   const navigate = useNavigate();
 
   const validateCreateForm = (): boolean => {
@@ -72,6 +72,7 @@ export default function Signup() {
         },
       });
       toast.success("Inscription réussie !");
+      navigate("/auth/signin");
       setError({});
     } catch (e: unknown) {
       console.error(e);
@@ -79,10 +80,6 @@ export default function Signup() {
         form: ["Une erreur est survenue lors de l'inscription. Réessayez."],
       });
     }
-  }
-
-  if (data) {
-    navigate("/auth/signin");
   }
 
   return (
