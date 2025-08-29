@@ -250,7 +250,7 @@ const CreateRide = () => {
             htmlFor="departureAt"
             className="block mb-2 text-sm font-medium text-textLight"
           >
-            Horaire de départ
+            Date et horaire de départ
           </label>
           <input
             type="datetime-local"
@@ -260,7 +260,7 @@ const CreateRide = () => {
                 ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
                 : "border-gray-300 bg-gray-50"
             } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
-            placeholder="Horaire de départ"
+            placeholder="Date et horaire de départ"
             value={departureAt}
             onChange={(e) => setDepartureAt(e.target.value)}
             autoComplete="none"
