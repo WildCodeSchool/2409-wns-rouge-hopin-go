@@ -24,6 +24,8 @@ import {
   attachPricingSelects,
   hydratePricingFromRaw,
 } from "../utils/attachPricingSelects";
+import { notifyDriverNewPassenger } from "../mail/rideEmails";
+import { User } from "../entities/User";
 
 @Resolver()
 export class PassengerRideResolver {
@@ -86,6 +88,14 @@ export class PassengerRideResolver {
       const newPassengerRide = manager.create(PassengerRide, data);
       await manager.save(newPassengerRide);
 
+      // Notification par email au conducteur
+      const driver = await manager.findOneByOrFail(User, {
+        id: rideWithDriver.driver.id,
+      });
+      const passenger = await manager.findOneByOrFail(User, {
+        id: data.user_id,
+      });
+      await notifyDriverNewPassenger(driver, passenger, ride);
       return newPassengerRide;
     });
   }

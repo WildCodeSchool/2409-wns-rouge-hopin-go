@@ -27,6 +27,7 @@ import {
   hydratePricingFromRaw,
 } from "../utils/attachPricingSelects";
 import { datasource } from "../datasource";
+import { notifyDriverNewPassenger } from "../mail/rideEmails";
 
 @Resolver(() => Ride)
 export class RidesResolver {
@@ -223,7 +224,6 @@ export class RidesResolver {
       duration_min,
       route_polyline5,
     });
-    console.log("Creating ride:", newRide);
 
     await newRide.save();
     return newRide;
