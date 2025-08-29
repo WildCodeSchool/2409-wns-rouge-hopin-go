@@ -12,7 +12,7 @@ import {
   CreatePassengerRideInput,
   PassengerRide,
   PassengerRideStatus,
-  UpdatePassengerRideStatusInput,
+  DriverSetPassengerRideStatusInput,
 } from "../entities/PassengerRide";
 import { validate } from "class-validator";
 import { PaginatedRides, Ride } from "../entities/Ride";
@@ -24,7 +24,7 @@ import {
   attachPricingSelects,
   hydratePricingFromRaw,
 } from "../utils/attachPricingSelects";
-import { notifyDriverNewPassenger } from "../mail/rideEmails";
+import { notifyDriverNewPassenger, notifyUserRideValidation } from "../mail/rideEmails";
 import { User } from "../entities/User";
 
 @Resolver()
@@ -156,8 +156,9 @@ export class PassengerRideResolver {
 
   @Authorized("user")
   @Mutation(() => PassengerRide)
-  async updatePassengerRideStatus(
-    @Arg("data") { ride_id, user_id, status }: UpdatePassengerRideStatusInput,
+  async driverSetPassengerRideStatus(
+    @Arg("data")
+    { ride_id, user_id, status }: DriverSetPassengerRideStatusInput,
     @Ctx() ctx: AuthContextType
   ): Promise<PassengerRide> {
     return await datasource.transaction(async (manager) => {
@@ -167,28 +168,28 @@ export class PassengerRideResolver {
       });
 
       if (!passengerRide) {
-        throw new Error("Passager non trouvé pour ce trajet");
+        throw new Error("Passenger ride not found");
       }
 
       const driverId = passengerRide.ride.driver.id;
       if (ctx.user?.id !== driverId) {
         throw new Error(
-          "Seul le conducteur peut modifier le statut du passager"
+          "Only the driver of the ride can update the passenger status"
         );
       }
 
       if (
         passengerRide.ride.max_passenger === passengerRide.ride.nb_passenger
       ) {
-        throw new Error("Ce trajet est déjà complet");
+        throw new Error("The ride is already full");
       }
 
       const ride = await manager.findOne(Ride, {
         where: { id: ride_id },
-        lock: { mode: "pessimistic_write" }, // s'assure qu'un seul utilisateur peut modifier le trajet à la fois
+        lock: { mode: "pessimistic_write" }, // s'assure qu'un seul utilisateur peut valider ou refuser un passager à la fois
       });
       if (!ride) {
-        throw new Error("Trajet non trouvé");
+        throw new Error("Ride not found");
       }
 
       // si on essaie d'approuver un passager alors que le trajet est complet, on bloque l'opération
@@ -196,12 +197,18 @@ export class PassengerRideResolver {
         status === PassengerRideStatus.APPROVED &&
         ride.nb_passenger >= ride.max_passenger
       ) {
-        throw new Error("Ce trajet est déjà complet");
+        throw new Error("This ride is already full");
       }
 
-      // Mise à jour du statut du passager
+      // Mise à jour du statut du passager (approuvé ou refusé)
       passengerRide.status = status;
       await manager.save(passengerRide);
+
+      // Notification par e-mail au passager
+      if (status === PassengerRideStatus.APPROVED) {
+        await notifyUserRideValidation(passengerRide.user, ride);
+      } else if (status === PassengerRideStatus.REFUSED) {
+        await notifyUserRideValidation(passengerRide.user, ride);
 
       // Si le passager est approuvé, on incrémente le nombre de passagers du trajet
       if (status === PassengerRideStatus.APPROVED) {
@@ -209,7 +216,8 @@ export class PassengerRideResolver {
         await manager.save(ride);
       }
 
-      // Si le passager est refusé, on met à jour son statut dans la table PassengerRide
+      // Si le trajet est complet, on met à jour le statut de tous les passagers restants en attente à "refusé"
+      // pour éviter les overbooking
       if (ride.nb_passenger >= ride.max_passenger) {
         await manager
           .createQueryBuilder()
