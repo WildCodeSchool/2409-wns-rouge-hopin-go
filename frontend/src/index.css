@@ -93,7 +93,7 @@ h1 {
 
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: #fff;
+    background: #dedede;
     cursor: -webkit-grabbing;
     border-radius: 0.5rem;
     transition: all 350ms ease;

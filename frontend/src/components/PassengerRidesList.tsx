@@ -50,95 +50,92 @@ const PassengerRidesList = () => {
   const totalArchived = archivedData?.passengerRides?.totalCount ?? 0;
 
   return (
-    <div className="h-full w-full pt-4 pb-32 sm:pb-16 overflow-auto bg-gray-100">
-      {/* Trajets à venir */}
-      {upcomingList.length > 0 ? (
-        <>
-          <span className="flex items-center w-fit gap-2 ml-4 cursor-pointer">
-            Trajets à venir
-          </span>
+    <div className="h-full w-full flex flex-col sm:pb-16 overflow-auto bg-gray-100">
+      <div className=" h-full flex flex-col my-2 gap-4 sm:gap-0">
+        <span className="ml-4">Trajets à venir</span>
+        {upcomingList.length > 0 ? (
+          <>
+            <ScrollableSnapList
+              dataset={upcomingList}
+              getVariant={getVariant}
+              onSelect={setSelectedIndex}
+              sliderDirection={isMd ? "horizontal" : "vertical"}
+              slidePerView={is2xl ? 3 : isSm ? 2 : 3}
+              swiperClassName={!isMd ? "h-full w-full" : ""}
+              navigationArrows={isMd ? true : false}
+              showPagination={isMd ? true : false}
+              spaceBetween={isMd ? 0 : 50}
+            />
 
-          <ScrollableSnapList
-            dataset={upcomingList}
-            getVariant={getVariant}
-            onSelect={setSelectedIndex}
-            sliderDirection={isMd ? "horizontal" : "vertical"}
-            slidePerView={is2xl ? 3 : isSm ? 2 : 3}
-            swiperClassName={!isMd ? "h-full w-full" : ""}
-            navigationArrows
-            showPagination
-          />
+            {totalUpcoming > upcomingList.length ? (
+              <div className="mr-4 mt-2 flex justify-end">
+                <button
+                  onClick={() => setUpcomingOffset((prev) => prev + limit)}
+                  className="text-primary underline"
+                >
+                  Voir plus
+                </button>
+              </div>
+            ) : upcomingList.length > limit ? (
+              <div className="mr-4 mt-2 flex justify-end">
+                <button
+                  onClick={() => {
+                    setUpcomingList([]);
+                    setUpcomingOffset(0);
+                  }}
+                  className="text-primary underline"
+                >
+                  Voir moins
+                </button>
+              </div>
+            ) : null}
+          </>
+        ) : (
+          <div className="text-center w-full mt-10">Aucun trajet à venir.</div>
+        )}
+      </div>
+      <div className=" h-full flex flex-col my-20 sm:my-0 gap-4 sm:gap-0">
+        <span className="ml-4">Trajets archivés</span>
+        {archivedList.length > 0 ? (
+          <>
+            <ScrollableSnapList
+              dataset={archivedList}
+              getVariant={getVariant}
+              onSelect={setSelectedIndex}
+              sliderDirection={isMd ? "horizontal" : "vertical"}
+              slidePerView={is2xl ? 3 : isSm ? 2 : 3}
+              swiperClassName={!isMd ? "h-full w-full" : ""}
+              navigationArrows
+              showPagination
+            />
 
-          {totalUpcoming > upcomingList.length ? (
-            <div className="mr-4 mt-2 flex justify-end">
-              <button
-                onClick={() => setUpcomingOffset((prev) => prev + limit)}
-                className="text-primary underline"
-              >
-                Voir plus
-              </button>
-            </div>
-          ) : upcomingList.length > limit ? (
-            <div className="mr-4 mt-2 flex justify-end">
-              <button
-                onClick={() => {
-                  setUpcomingList([]);
-                  setUpcomingOffset(0);
-                }}
-                className="text-primary underline"
-              >
-                Voir moins
-              </button>
-            </div>
-          ) : null}
-        </>
-      ) : (
-        <div className="text-center w-full mt-10">Aucun trajet à venir.</div>
-      )}
-
-      {/* Trajets archivés */}
-      <span className="flex items-center w-fit gap-2 ml-4 cursor-pointer mt-6">
-        Trajets archivés
-      </span>
-      {archivedList.length > 0 ? (
-        <>
-          <ScrollableSnapList
-            dataset={archivedList}
-            getVariant={getVariant}
-            onSelect={setSelectedIndex}
-            sliderDirection={isMd ? "horizontal" : "vertical"}
-            slidePerView={is2xl ? 3 : isSm ? 2 : 3}
-            swiperClassName={!isMd ? "h-full w-full" : ""}
-            navigationArrows
-            showPagination
-          />
-
-          {totalArchived > archivedList.length ? (
-            <div className="mr-4 mt-2 flex justify-end">
-              <button
-                onClick={() => setArchivedOffset((prev) => prev + limit)}
-                className="text-primary underline"
-              >
-                Voir plus
-              </button>
-            </div>
-          ) : archivedList.length > limit ? (
-            <div className="mr-4 mt-2 flex justify-end">
-              <button
-                onClick={() => {
-                  setArchivedList([]);
-                  setArchivedOffset(0);
-                }}
-                className="text-primary underline"
-              >
-                Voir moins
-              </button>
-            </div>
-          ) : null}
-        </>
-      ) : (
-        <div className="text-center w-full mt-10">Aucun trajet archivé.</div>
-      )}
+            {totalArchived > archivedList.length ? (
+              <div className="mr-4 mt-2 flex justify-end">
+                <button
+                  onClick={() => setArchivedOffset((prev) => prev + limit)}
+                  className="text-primary underline"
+                >
+                  Voir plus
+                </button>
+              </div>
+            ) : archivedList.length > limit ? (
+              <div className="mr-4 mt-2 flex justify-end">
+                <button
+                  onClick={() => {
+                    setArchivedList([]);
+                    setArchivedOffset(0);
+                  }}
+                  className="text-primary underline"
+                >
+                  Voir moins
+                </button>
+              </div>
+            ) : null}
+          </>
+        ) : (
+          <div className="text-center w-full mt-10">Aucun trajet archivé.</div>
+        )}
+      </div>
     </div>
   );
 };

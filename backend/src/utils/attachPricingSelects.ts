@@ -3,10 +3,10 @@ import { SelectQueryBuilder } from "typeorm";
 import { Ride } from "../entities/Ride";
 
 export type PricingParams = {
-  perKm: number; // ex: 0.14
-  minFare: number; // ex: 2.5
-  minFareKm: number; // ex: 10
-  roundTo: number; // ex: 2
+  perKm: number; // e.g. 0.14
+  minFare: number; // e.g. 2.5
+  minFareKm: number; // e.g. 10
+  roundTo: number; // e.g. 2
 };
 
 export function attachPricingSelects(
@@ -34,18 +34,41 @@ export function attachPricingSelects(
   const totalRoundedExpr = `ROUND((${totalAfterBonusExpr})::numeric, :roundTo::int)::float8`;
   const perPassengerExpr = `ROUND(((${totalAfterBonusExpr}) / GREATEST(1, ${filledExpr}))::numeric, :roundTo::int)::float8`;
 
-  return qb
-    .addSelect(distExpr, "dist_km_calc")
-    .addSelect(totalRoundedExpr, "total_route_price")
-    .addSelect(perPassengerExpr, "price_per_passenger")
-    .setParameters({ perKm, minFare, minFareKm, roundTo });
+  return (
+    qb
+      // 🔑 assure qu’on a l’ID dans le raw pour mapper
+      .addSelect(distExpr, "dist_km_calc")
+      .addSelect(totalRoundedExpr, "total_route_price")
+      .addSelect(perPassengerExpr, "price_per_passenger")
+      .setParameters({ perKm, minFare, minFareKm, roundTo })
+  );
 }
 
-// util à appeler après .getRawAndEntities()
+// Hydrate en mappant par ride_id (et pas par index)
 export function hydratePricingFromRaw(rides: Ride[], raw: any[]) {
-  rides.forEach((ride, i) => {
-    (ride as any).distance_km = ride.distance_km ?? Number(raw[i].dist_km_calc);
-    (ride as any).total_route_price = Number(raw[i].total_route_price);
-    (ride as any).price_per_passenger = Number(raw[i].price_per_passenger);
-  });
+  const byId = new Map<
+    number,
+    { dist?: number; total?: number; per?: number }
+  >();
+  for (const r of raw) {
+    const id = Number(r.ride_id ?? r.id);
+    if (!byId.has(id)) {
+      byId.set(id, {
+        dist: r.dist_km_calc != null ? Number(r.dist_km_calc) : undefined,
+        total:
+          r.total_route_price != null ? Number(r.total_route_price) : undefined,
+        per:
+          r.price_per_passenger != null
+            ? Number(r.price_per_passenger)
+            : undefined,
+      });
+    }
+  }
+  for (const ride of rides) {
+    const v = byId.get(ride.id);
+    if (!v) continue;
+    (ride as any).distance_km = ride.distance_km ?? v.dist;
+    (ride as any).total_route_price = v.total;
+    (ride as any).price_per_passenger = v.per;
+  }
 }

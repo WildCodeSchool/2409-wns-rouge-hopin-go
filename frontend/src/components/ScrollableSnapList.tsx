@@ -30,6 +30,7 @@ interface ScrollableSnapListProps {
   dataset: (SearchRide | PassengerRide | DriverRide)[];
   getVariant: (data: SearchRide | PassengerRide | DriverRide) => VariantType;
   onSelect: (index: number) => void;
+  spaceBetween?: number;
   sliderDirection?: "vertical" | "horizontal";
   scaleEffect?: boolean;
   driverUpcomingRides?: boolean;
@@ -44,6 +45,7 @@ const ScrollableSnapList = ({
   dataset,
   getVariant,
   onSelect,
+  spaceBetween = 0,
   sliderDirection = "horizontal",
   scaleEffect = false,
   driverUpcomingRides,
@@ -74,7 +76,7 @@ const ScrollableSnapList = ({
       }}
       direction={sliderDirection}
       centeredSlides={centerSlides}
-      spaceBetween={0}
+      spaceBetween={spaceBetween}
       grabCursor={true}
       mousewheel={true}
       rewind={true}
