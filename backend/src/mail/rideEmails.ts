@@ -57,7 +57,42 @@ L'équipe Hopin'Go`,
 
     html: `<p>Bonjour ${passenger.firstName},</p>
 
-<p>Votre trajet de <strong>${ride.departure_city}</strong> à <strong>${ride.arrival_city}</strong> a été validé.</p>
+<p>Votre trajet de <strong>${ride.departure_city}</strong> à <strong>${
+      ride.arrival_city
+    }</strong> le ${ride.departure_at.toLocaleString()} a été validé.</p>
+
+<p>Nous vous souhaitons un bon voyage !</p>
+
+<p>Cordialement,<br/>
+
+L'équipe Hopin'Go</p>`,
+  });
+}
+
+// Notification au passager du refus de son trajet
+export async function notifyUserRideRefused(passenger: User, ride: Ride) {
+  return sendEmail({
+    toEmail: passenger.email,
+    toName: passenger.firstName,
+    subject: "Invalidation de votre trajet",
+    text: `Bonjour ${passenger.firstName},
+
+Nous sommes désolés de vous informer que votre trajet de ${
+      ride.departure_city
+    } à ${
+      ride.arrival_city
+    } le ${ride.departure_at.toLocaleString()} n'a pas été validé. Nous vous invitons à rechercher un autre trajet.
+
+Cordialement,
+L'équipe Hopin'Go`,
+
+    html: `<p>Bonjour ${passenger.firstName},</p>
+
+<p>Nous sommes désolés de vous informer que votre trajet de <strong>${
+      ride.departure_city
+    }</strong> à <strong>${
+      ride.arrival_city
+    }</strong> le <strong>${ride.departure_at.toLocaleString()}</strong> n'a pas été validé. Nous vous invitons à rechercher un autre trajet ici <a href="http://localhost:8080/research"> ici</a>.</p>
 
 <p>Cordialement,<br/>
 L'équipe Hopin'Go</p>`,
@@ -65,23 +100,30 @@ L'équipe Hopin'Go</p>`,
 }
 
 // Notification au passager de l'annulation de son trajet
-export async function notifyUserRideRefused(passenger: User, ride: Ride) {
+export async function notifyUserRideCancelled(passenger: User, ride: Ride) {
   return sendEmail({
     toEmail: passenger.email,
     toName: passenger.firstName,
     subject: "Annulation de votre trajet",
     text: `Bonjour ${passenger.firstName},
 
-Votre trajet de ${ride.departure_city} à ${
+V
+Nous sommes désolés de vous informer que votre trajet de ${
+      ride.departure_city
+    } à ${
       ride.arrival_city
-    } le ${ride.departure_at.toLocaleString()} a été annulé.
+    } le ${ride.departure_at.toLocaleString()} a été annulé. Nous vous invitons à rechercher un autre trajet.
 
 Cordialement,
 L'équipe Hopin'Go`,
 
     html: `<p>Bonjour ${passenger.firstName},</p>
 
-<p>Votre trajet de <strong>${ride.departure_city}</strong> à <strong>${ride.arrival_city}</strong> a été annulé.</p>
+<p>Nous sommes désolés de vous informer que votre trajet de <strong>${
+      ride.departure_city
+    }</strong> à <strong>${
+      ride.arrival_city
+    }</strong> le <strong>${ride.departure_at.toLocaleString()}</strong> a été annulé. Nous vous invitons à rechercher un autre trajet ici <a href="http://localhost:8080/research"> ici</a>.</p>
 
 <p>Cordialement,<br/>
 L'équipe Hopin'Go</p>`,

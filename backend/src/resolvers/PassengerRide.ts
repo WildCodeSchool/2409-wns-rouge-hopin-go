@@ -24,7 +24,11 @@ import {
   attachPricingSelects,
   hydratePricingFromRaw,
 } from "../utils/attachPricingSelects";
-import { notifyDriverNewPassenger, notifyUserRideValidation } from "../mail/rideEmails";
+import {
+  notifyDriverNewPassenger,
+  notifyUserRideRefused,
+  notifyUserRideValidation,
+} from "../mail/rideEmails";
 import { User } from "../entities/User";
 
 @Resolver()
@@ -204,11 +208,12 @@ export class PassengerRideResolver {
       passengerRide.status = status;
       await manager.save(passengerRide);
 
-      // Notification par e-mail au passager
+      // Notification par e-mail au passager de la validation ou du refus de son trajet
       if (status === PassengerRideStatus.APPROVED) {
         await notifyUserRideValidation(passengerRide.user, ride);
       } else if (status === PassengerRideStatus.REFUSED) {
-        await notifyUserRideValidation(passengerRide.user, ride);
+        await notifyUserRideRefused(passengerRide.user, ride);
+      }
 
       // Si le passager est approuvé, on incrémente le nombre de passagers du trajet
       if (status === PassengerRideStatus.APPROVED) {

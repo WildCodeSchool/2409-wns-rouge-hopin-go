@@ -10,7 +10,7 @@ import { queryPassengersByRide } from "../api/PassengersByRide";
 import { queryDriverRides } from "../api/DriverRides";
 import { toast } from "react-toastify";
 import ConfirmModal from "./ConfirmModal";
-import { mutationDriverSetPassengerRideStatus } from "../api/UpdatePassengerRideStatus";
+import { mutationDriverSetPassengerRideStatus } from "../api/DriverSetPassengerRideStatus";
 
 export type RidePassengerValidationButtonsProps = {
   passengerId: string;
