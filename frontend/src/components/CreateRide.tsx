@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@apollo/client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { mutationCreateRide } from "../api/CreateRide";
 import { useNavigate } from "react-router-dom";
 import Button from "./Button";
@@ -11,6 +11,7 @@ import {
 import { queryWhoAmI } from "../api/WhoAmI";
 import { toast } from "react-toastify";
 import { queryDriverRides } from "../api/DriverRides";
+import { useOutsideClick } from "../hooks/useOutsideClick";
 
 const CreateRide = () => {
   // TO DO => if user is not connected, the form should not be accessible
@@ -44,7 +45,19 @@ const CreateRide = () => {
   });
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const driver = whoAmIData?.whoami;
-  console.log("driver => ", driver);
+
+  const departureTimeRef = useRef<HTMLInputElement>(null);
+  const departureRef = useRef<HTMLInputElement>(null);
+  const departureSuggestionsRef = useRef<HTMLLIElement[]>([]);
+  const arrivalRef = useRef<HTMLInputElement>(null);
+  const arrivalSuggestionsRef = useRef<HTMLLIElement[]>([]);
+  const passenger1Ref = useRef<HTMLButtonElement>(null);
+
+  // hides suggestions when clicking outside
+  const departureUlRef = useRef<HTMLUListElement>(null);
+  const arrivalUlRef = useRef<HTMLUListElement>(null);
+  useOutsideClick(departureUlRef, () => setShowDepartureSuggestions(false), showDepartureSuggestions);
+  useOutsideClick(arrivalUlRef, () => setShowArrivalSuggestions(false), showArrivalSuggestions);
 
   type Suggestion = {
     properties: {
@@ -214,7 +227,6 @@ const CreateRide = () => {
   }
 
   const handleSelect = async (address: string) => {
-    console.log("handleSelect is triggered : ", address);
     if (lastModifiedCity === "departure") {
       setShowDepartureSuggestions(false);
       setSelected({ ...selected, departure: address });
@@ -229,9 +241,104 @@ const CreateRide = () => {
   const handleChange = (address: string, key: "departure" | "arrival") => {
     setLastModifiedCity(key);
     if (key === "departure") {
+      setShowDepartureSuggestions(true);
       setDepartureAddress(address);
     } else {
+      setShowArrivalSuggestions(true);
       setArrivalAddress(address);
+    }
+  };
+
+  // Allows tracking if a key is pressed
+  const keyState = {
+    shift: false,
+  };
+
+  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, input: "departure" | "arrival") => {
+    console.log("passenger1Ref:", passenger1Ref);
+    if (e.key === "Escape") {
+      if (input === "departure") {
+        setShowDepartureSuggestions(false);
+        departureRef.current?.blur();
+      } else {
+        setShowArrivalSuggestions(false);
+        arrivalRef.current?.blur();
+      }
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (input === "departure") {
+        departureSuggestionsRef.current[0]?.focus();
+      } else {
+        arrivalSuggestionsRef.current[0]?.focus();
+      }
+    } else if (e.key === "Tab") {
+      e.preventDefault();
+      if (input === "departure") {
+        if (keyState.shift) {
+          departureTimeRef.current?.focus();
+        } else {
+          arrivalRef.current?.focus();
+        }
+      } else {
+        if (keyState.shift) {
+          departureRef.current?.focus();
+        } else {
+          passenger1Ref.current?.focus();
+        }
+      }
+    } else if (e.key === "Shift") {
+      e.preventDefault();
+      keyState.shift = true;
+    }
+  };
+
+  const handleLiKeyDown = (e: React.KeyboardEvent<HTMLLIElement>, address: string, li: "departure" | "arrival") => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleSelect(address);
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      if (li === "departure") {
+        const nextIndex = departureSuggestionsRef.current.indexOf(e.currentTarget) + 1;
+        departureSuggestionsRef.current[nextIndex]?.focus();
+      } else {
+        const nextIndex = arrivalSuggestionsRef.current.indexOf(e.currentTarget) + 1;
+        arrivalSuggestionsRef.current[nextIndex]?.focus();
+      }
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      if (li === "departure") {
+        const prevIndex = departureSuggestionsRef.current.indexOf(e.currentTarget) - 1;
+        departureSuggestionsRef.current[prevIndex]?.focus();
+      } else {
+        const prevIndex = arrivalSuggestionsRef.current.indexOf(e.currentTarget) - 1;
+        arrivalSuggestionsRef.current[prevIndex]?.focus();
+      }
+    } else if (e.key === "Tab") {
+      e.preventDefault();
+      handleSelect(address);
+      if (li === "departure") {
+        if (keyState.shift) {
+          departureRef.current?.focus();
+        } else {
+          arrivalRef.current?.focus();
+        }
+      } else {
+        if (keyState.shift) {
+          arrivalRef.current?.focus();
+        } else {
+          passenger1Ref.current?.focus();
+        }
+      }
+    } else if (e.key === "Escape") {
+      if (li === "departure") {
+        setShowDepartureSuggestions(false);
+      } else {
+        setShowArrivalSuggestions(false);
+      }
+    } else if (e.key === "Shift") {
+      e.preventDefault();
+      keyState.shift = true;
     }
   };
 
@@ -255,13 +362,13 @@ const CreateRide = () => {
           <input
             type="datetime-local"
             id="departureAt"
-            className={`${
-              error.departure_at?.length
-                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-                : "border-gray-300 bg-gray-50"
-            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+            className={`${error.departure_at?.length
+              ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+              : "border-gray-300 bg-gray-50"
+              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
             placeholder="Date et horaire de départ"
             value={departureAt}
+            ref={departureTimeRef}
             onChange={(e) => setDepartureAt(e.target.value)}
             autoComplete="none"
           />
@@ -283,25 +390,32 @@ const CreateRide = () => {
             <input
               type="text"
               id="departureAddress"
-              className={`${
-                error.departure_city?.length
-                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-                  : "border-gray-300 bg-gray-50"
-              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+              className={`${error.departure_city?.length
+                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                : "border-gray-300 bg-gray-50"
+                } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
               placeholder="ex. Marseille"
               value={departureAddress}
+              ref={departureRef}
               onChange={(e) => handleChange(e.target.value, "departure")}
-              onKeyDown={() => setShowDepartureSuggestions(true)}
-              autoComplete="none"
+              onFocus={() => { setShowArrivalSuggestions(false); setLastModifiedCity("departure"); setShowDepartureSuggestions(true) }}
+              onKeyDown={(e) => handleInputKeyDown(e, "departure")}
+              onKeyUp={() => keyState.shift = false}
+              autoComplete="off"
               maxLength={255}
             />
             {suggestions.departure.length > 0 && showDepartureSuggestions && (
-              <ul className="absolute bg-white border mt-1 max-h-60 w-fit overflow-y-auto shadow-lg">
+              <ul className="absolute bg-white border mt-1 max-h-60 w-fit overflow-auto shadow-lg no-scrollbar"
+                ref={departureUlRef}
+              >
                 {suggestions.departure.map((address, index) => (
                   <li
                     key={index}
+                    tabIndex={0}
+                    ref={(el) => departureSuggestionsRef.current[index] = el!}
                     onClick={() => handleSelect(address)}
-                    className="p-2 cursor-pointer hover:bg-gray-200"
+                    onKeyDown={(e) => handleLiKeyDown(e, address, "departure")}
+                    className="p-2 cursor-pointer hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
                   >
                     {address}
                   </li>
@@ -325,25 +439,32 @@ const CreateRide = () => {
             <input
               type="text"
               id="arrivalAddress"
-              className={`${
-                error.arrival_city?.length
-                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-                  : "border-gray-300 bg-gray-50"
-              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+              className={`${error.arrival_city?.length
+                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                : "border-gray-300 bg-gray-50"
+                } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
               placeholder="ex. Lyon"
               value={arrivalAddress}
+              ref={arrivalRef}
               onChange={(e) => handleChange(e.target.value, "arrival")}
-              onKeyDown={() => setShowArrivalSuggestions(true)}
-              autoComplete="none"
+              onFocus={() => { setShowDepartureSuggestions(false); setLastModifiedCity("arrival"); setShowArrivalSuggestions(true) }}
+              onKeyDown={(e) => handleInputKeyDown(e, "arrival")}
+              onKeyUp={() => keyState.shift = false}
+              autoComplete="off"
               maxLength={255}
             />
             {suggestions.arrival.length > 0 && showArrivalSuggestions && (
-              <ul className="absolute bg-white border mt-1 max-h-60 overflow-y-auto shadow-lg">
+              <ul className="absolute bg-white border mt-1 max-h-60 overflow-auto no-scrollbar"
+                ref={arrivalUlRef}
+              >
                 {suggestions.arrival.map((address, index) => (
                   <li
                     key={index}
+                    tabIndex={0}
+                    ref={(el) => arrivalSuggestionsRef.current[index] = el!}
+                    onKeyDown={(e) => handleLiKeyDown(e, address, "arrival")}
                     onClick={() => handleSelect(address)}
-                    className="p-2 cursor-pointer hover:bg-gray-200"
+                    className="p-2 cursor-pointer hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
                   >
                     {address}
                   </li>
@@ -369,7 +490,9 @@ const CreateRide = () => {
         <div className="flex justify-between">
           <Button
             onClick={() => setMaxPassenger(1)}
+            onFocus={() => setShowArrivalSuggestions(false)}
             variant={`${maxPassenger === 1 ? "validation" : "pending"}`}
+            ref={passenger1Ref}
             type="button"
             label="1"
           />

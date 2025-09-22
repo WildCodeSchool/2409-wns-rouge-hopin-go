@@ -17,11 +17,11 @@ const Home = () => {
   const tabs: Tab[] = [
     {
       label: "Rechercher",
-      content: <SearchRide variant="searchFormRide" />,
+      content: <SearchRide variant="searchFormRide" proposeRef={proposeRef} />,
       path: "/research",
     },
     ...(me
-      ? [{ label: "Proposer", content: <CreateRide proposeRef={proposeRef} />, path: "/propose" }]
+      ? [{ label: "Proposer", content: <CreateRide />, path: "/propose" }]
       : [
         {
           label: "Proposer",
