@@ -171,9 +171,9 @@ export class RideCreateInput {
   @IsDate()
   departure_at!: Date;
 
-  @Field(() => Date)
-  @IsDate()
-  arrival_at!: Date;
+  // @Field(() => Date, { nullable: true })
+  // @IsDate()
+  // arrival_at?: Date;
 
   @Field()
   departure_lng!: number;

@@ -20,6 +20,7 @@ type ButtonProps = {
   onClick?: () => void;
   isLink?: boolean;
   to?: string;
+  ref?: React.RefObject<HTMLButtonElement>;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 const Button: React.FC<ButtonProps> = ({
@@ -39,6 +40,7 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
   isLink = false,
   to = "/",
+  ref,
   ...rest
 }) => {
   const config = variantConfigMap[variant];
@@ -81,9 +83,8 @@ const Button: React.FC<ButtonProps> = ({
       <NavLink
         to={to}
         className={({ isActive, isPending }) =>
-          `${finalButtonClass} ${
-            isPending ? "opacity-50" : isActive ? "underline" : ""
-          }`.trim()
+          `${finalButtonClass} ${isPending ? "opacity-50" : isActive ? "underline" : ""
+            }`.trim()
         }
         aria-label={label || "link button"}
       >
@@ -94,6 +95,7 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
+      ref={ref}
       type={type}
       onClick={onClick}
       disabled={isDisabled}

@@ -115,6 +115,7 @@ const RideResults = () => {
           scaleEffect
           centerSlides={isMd ? true : false}
           swiperClassName="h-full !pt-32 w-full"
+          spaceBetween={isMd ? 50 : 0}
           slidePerView={3}
         />
       </div>

@@ -22,7 +22,7 @@ export default function Signup() {
   const [error, setError] = useState<Record<string, string[]>>({});
   const [revealPassword, setRevealPassword] = useState(false);
 
-  const [doCreateUser, { data }] = useMutation(mutationCreateUser);
+  const [doCreateUser] = useMutation(mutationCreateUser);
 
   const validateCreateForm = (): boolean => {
     const firstNameErrors = validateFirstNameUtils(firstName);
@@ -69,6 +69,11 @@ export default function Signup() {
           },
         },
       });
+      setFirstName("");
+      setLastName("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
       toast.success("Inscription réussie !");
       setError({});
     } catch (e: unknown) {
@@ -77,15 +82,6 @@ export default function Signup() {
         form: ["Une erreur est survenue lors de l'inscription. Réessayez."],
       });
     }
-  }
-
-  if (data) {
-    return (
-      <div>
-        <h1>Inscription réussie !</h1>
-        <p>Ton compte a été créé !! 🎉</p>
-      </div>
-    );
   }
 
   return (

@@ -21,7 +21,7 @@ const Home = () => {
       path: "/research",
     },
     ...(me
-      ? [{ label: "Proposer", content: <CreateRide proposeRef={proposeRef} />, path: "/propose" }]
+      ? [{ label: "Proposer", content: <CreateRide />, path: "/propose" }]
       : [
         {
           label: "Proposer",

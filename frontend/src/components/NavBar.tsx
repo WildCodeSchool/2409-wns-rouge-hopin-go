@@ -147,7 +147,7 @@ const NavBar = () => {
               icon={CirclePlus}
             />
           </div>
-          <div className="rounded-l-full rounded-br-full bg-gray-100 -ml-4 p-4 m-2 flex items-center justify-center">
+          <div className="relative rounded-l-full rounded-br-full bg-gray-100 -ml-4 p-4 m-2 flex flex-col items-center justify-center">
             <button onClick={() => setIsOpen(!isOpen)}>
               <img src={maleUser} alt="profile" width={80} />
             </button>
