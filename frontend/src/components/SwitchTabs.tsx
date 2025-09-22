@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 type SwitchTabsProps = {
   tabs: Tab[];
@@ -21,6 +21,8 @@ const SwitchTabs = ({
   proposeRef,
 }: SwitchTabsProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const isMyRidesPage = location.pathname.includes("/my-rides");
   const currentTab = tabs.find((tab) => {
     const lastSegment = tab.path.split("/").pop();
     return lastSegment?.toLowerCase() === tabParams?.toLowerCase();
@@ -46,8 +48,12 @@ const SwitchTabs = ({
           <button
             key={index}
             className={`flex-1 py-4 font-semibold transition-200 ${
-              activeTab === index
-                ? "bg-gray-100 text-primary underline"
+              isMyRidesPage
+                ? activeTab === index
+                  ? "bg-gray-100 text-primary underline"
+                  : "bg-gray-200 text-primary/50 hover:text-primary"
+                : activeTab === index
+                ? "bg-primary text-white underline"
                 : "bg-gray-200 text-primary/50 hover:text-primary"
             } `}
             onClick={() => handleTabClick(index)}

@@ -28,6 +28,7 @@ import {
 } from "../utils/attachPricingSelects";
 import { datasource } from "../datasource";
 import { notifyUserRideCancelled } from "../mail/rideEmails";
+import { findSimilarRouteFromDB } from "../utils/findSimilarRouteFromDB";
 
 @Resolver(() => Ride)
 export class RidesResolver {
@@ -160,21 +161,25 @@ export class RidesResolver {
     const order = filter === "archived" ? "DESC" : "ASC";
     baseQuery.orderBy("ride.departure_at", order);
 
+    // 🔹 Clone pour le COUNT (⚠️ pas de selects pricing ici)
+    const countQB = baseQuery.clone();
+    const totalCount = await countQB.getCount();
+
+    // 🔹 Clone pour DATA + pricing
+    const dataQB = baseQuery.clone();
+
     // 👇 injecte les sélections de prix
-    attachPricingSelects(baseQuery, {
+    attachPricingSelects(dataQB, {
       perKm: 0.13,
       minFare: 2.5,
       minFareKm: 10,
       roundTo: 2,
     });
+    dataQB.take(limit).skip(offset);
+    // Un seul aller/retour : raw + entities alignés en interne
+    const { entities: rides, raw } = await dataQB.getRawAndEntities();
 
-    const [rides, totalCount, raw] = await Promise.all([
-      baseQuery.take(limit).skip(offset).getMany(),
-      baseQuery.getCount(),
-      baseQuery.getRawMany(),
-    ]);
-
-    // recoller les valeurs calculées dans les entités
+    // Hydrate via ride_id (indépendant des duplications dues aux LEFT JOINs)
     hydratePricingFromRaw(rides, raw);
 
     return { rides, totalCount };
@@ -190,28 +195,56 @@ export class RidesResolver {
       throw new Error(`Validation error: ${JSON.stringify(errors)}`);
     }
 
-    // 1) Calcul de la route côté serveur
+    // 1) Essayer de réutiliser une route quasi identique
     let distance_km: number | undefined;
     let duration_min: number | undefined;
     let route_polyline5: string | undefined;
+    let source: "DB" | "MAPBOX" | "NONE" = "NONE";
+
     try {
-      const r = await fetchRouteFromMapbox(
+      const cached = await findSimilarRouteFromDB(
         data.departure_lng,
         data.departure_lat,
         data.arrival_lng,
-        data.arrival_lat
+        data.arrival_lat,
+        500 // tolérance 500 m (ajuste selon ton besoin)
       );
-      distance_km = r.distanceKm;
-      duration_min = r.durationMin;
-      route_polyline5 = r.polyline5;
+
+      if (cached) {
+        ({ distance_km, duration_min, route_polyline5 } = cached);
+        source = "DB";
+      } else {
+        // 2) Sinon → Mapbox en dernier recours
+        const r = await fetchRouteFromMapbox(
+          data.departure_lng,
+          data.departure_lat,
+          data.arrival_lng,
+          data.arrival_lat
+        );
+        distance_km = r.distanceKm;
+        duration_min = r.durationMin;
+        route_polyline5 = r.polyline5;
+        source = "MAPBOX";
+      }
     } catch (e) {
-      console.error("Mapbox directions failed, will save without route.", e);
-      // Option: fallback Haversine ici si tu veux garantir des valeurs
+      source = "NONE";
+      console.error(
+        "[createRide] route lookup/fetch failed, saving without route.",
+        e
+      );
     }
 
+    // 3) arrival_at = departure_at + durée
+    const departureAt = new Date(data.departure_at);
+    const arrival_at = new Date(
+      departureAt.getTime() + (duration_min ?? 0) * 60_000
+    );
+
+    // 4) Sauvegarde
     const newRide = new Ride();
     Object.assign(newRide, {
       ...data,
+      arrival_at,
       departure_location: {
         type: "Point",
         coordinates: [data.departure_lng, data.departure_lat],
@@ -224,8 +257,15 @@ export class RidesResolver {
       duration_min,
       route_polyline5,
     });
+    console.log("[createRide] ▶️ saving:", {
+      distance_km,
+      duration_min,
+      arrival_at: arrival_at.toISOString(),
+    });
+    console.log("🗺️ ROUTE SOURCE :", source);
 
     await newRide.save();
+    console.log("[createRide] ✅ saved ride id:", newRide.id);
     return newRide;
   }
 

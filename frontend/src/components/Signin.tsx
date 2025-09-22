@@ -10,6 +10,7 @@ import {
 } from "../utils/validators";
 import Button from "./Button";
 import { formatErrors } from "../utils/formatErrors";
+import { toast } from "react-toastify";
 
 const Signin = () => {
   const [email, setEmail] = useState("");
@@ -50,7 +51,7 @@ const Signin = () => {
       });
       setError({});
       if (data?.signin) {
-        // connected
+        toast.success("Connexion réussie !");
         navigate(`/`, { replace: true });
       } else {
         setError((prev) => ({
