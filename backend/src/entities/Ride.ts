@@ -79,8 +79,8 @@ export class Ride extends BaseEntity {
   @Field()
   nb_passenger!: number;
 
-  @Column({ type: "double precision", nullable: true })
-  @Field(() => Float, { nullable: true })
+  @Column({ type: "smallint", nullable: true })
+  @Field(() => Int, { nullable: true })
   distance_km?: number;
 
   @Column({ type: "integer", nullable: true })

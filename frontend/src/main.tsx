@@ -32,7 +32,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Navigate to="/rechercher" replace />,
+        element: <Navigate to="/research" replace />,
       },
       {
         path: "/:tab",

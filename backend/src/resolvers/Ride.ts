@@ -253,19 +253,13 @@ export class RidesResolver {
         type: "Point",
         coordinates: [data.arrival_lng, data.arrival_lat],
       },
-      distance_km,
+      distance_km: distance_km && distance_km.toFixed(0),
       duration_min,
       route_polyline5,
     });
-    console.log("[createRide] ▶️ saving:", {
-      distance_km,
-      duration_min,
-      arrival_at: arrival_at.toISOString(),
-    });
-    console.log("🗺️ ROUTE SOURCE :", source);
 
     await newRide.save();
-    console.log("[createRide] ✅ saved ride id:", newRide.id);
+
     return newRide;
   }
 

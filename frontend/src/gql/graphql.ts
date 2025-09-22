@@ -178,7 +178,7 @@ export type Ride = {
   departure_at: Scalars['DateTimeISO']['output'];
   departure_city: Scalars['String']['output'];
   departure_location: Point;
-  distance_km?: Maybe<Scalars['Float']['output']>;
+  distance_km?: Maybe<Scalars['Int']['output']>;
   driver: User;
   duration_min?: Maybe<Scalars['Int']['output']>;
   id: Scalars['ID']['output'];
