@@ -27,10 +27,7 @@ import {
   hydratePricingFromRaw,
 } from "../utils/attachPricingSelects";
 import { datasource } from "../datasource";
-import {
-  notifyDriverNewPassenger,
-  notifyUserRideCancelled,
-} from "../mail/rideEmails";
+import { notifyUserRideCancelled } from "../mail/rideEmails";
 
 @Resolver(() => Ride)
 export class RidesResolver {
@@ -278,15 +275,15 @@ export class RidesResolver {
       ride.is_cancelled = true;
       await manager.save(ride);
 
-      // Notification par e-mail aux passagers de l'annulation du trajet
+      // Email notification to passengers of trip cancellation
       const toNotify =
         ride.passenger_rides
           ?.filter(
-            (pr) =>
-              pr.status === PassengerRideStatus.APPROVED ||
-              pr.status === PassengerRideStatus.WAITING
+            (passenger) =>
+              passenger.status === PassengerRideStatus.APPROVED ||
+              passenger.status === PassengerRideStatus.WAITING
           )
-          .map((pr) => pr.user) ?? [];
+          .map((passenger) => passenger.user) ?? [];
 
       for (const user of toNotify) {
         await notifyUserRideCancelled(user, ride);

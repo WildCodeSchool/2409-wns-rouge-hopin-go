@@ -2,7 +2,7 @@ import { Ride } from "../entities/Ride";
 import { User } from "../entities/User";
 import { sendEmail } from "./sendMail";
 
-// Notification au conducteur d'un nouveau passager à valider
+// Notification to the driver of a new passenger to be validated
 export async function notifyDriverNewPassenger(
   driver: User,
   passenger: User,
@@ -40,7 +40,7 @@ L'équipe Hopin'Go</p>`,
   });
 }
 
-// Notification au passager de la validation de son trajet
+// Notification to the passenger of the validation of his trip
 export async function notifyUserRideValidation(passenger: User, ride: Ride) {
   return sendEmail({
     toEmail: passenger.email,
@@ -69,7 +69,7 @@ L'équipe Hopin'Go</p>`,
   });
 }
 
-// Notification au passager du refus de son trajet
+// Notification to the passenger of the refusal of his trip
 export async function notifyUserRideRefused(passenger: User, ride: Ride) {
   return sendEmail({
     toEmail: passenger.email,
@@ -99,7 +99,7 @@ L'équipe Hopin'Go</p>`,
   });
 }
 
-// Notification au passager de l'annulation de son trajet
+// Notification to the passenger of the cancellation of his trip
 export async function notifyUserRideCancelled(passenger: User, ride: Ride) {
   return sendEmail({
     toEmail: passenger.email,
