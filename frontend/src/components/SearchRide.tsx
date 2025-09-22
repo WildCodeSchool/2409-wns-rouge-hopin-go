@@ -10,9 +10,10 @@ import SearchBarRide from "./SearchBarRide";
 
 type SearchRideProps = {
   variant: "searchFormRide" | "searchBarRide";
+  proposeRef?: React.RefObject<HTMLButtonElement>;
 };
 
-const SearchRide = ({ variant }: SearchRideProps) => {
+const SearchRide = ({ variant, proposeRef }: SearchRideProps) => {
   const navigate = useNavigate();
   // Attention, contrairement à createRide, ici c'est City et pas Address qui impacte les suggestions
   const [departureCity, setDepartureCity] = useState("");
@@ -169,6 +170,7 @@ const SearchRide = ({ variant }: SearchRideProps) => {
     setShowSuggestions,
     setLastModifiedField,
     handleSelect,
+    proposeRef,
   };
 
   return variant === "searchFormRide" ? (
