@@ -263,7 +263,7 @@ const SearchFormRide = ({
           </ul>
         )}
         {error.departureCity && (
-          <p className="text-red-400 text-sm">
+          <p id="departure-city-error" className="text-red-400 text-sm">
             {formatErrors(error.departureCity)}
           </p>
         )}
@@ -318,9 +318,13 @@ const SearchFormRide = ({
           onFocus={() =>
             setShowSuggestions((prev) => ({ ...prev, arrival: false }))
           }
+          required
+          aria-describedby={
+            error.departureAt ? "departure-at-error" : undefined
+          }
         />
         {error.departureAt && (
-          <p className="text-red-400 text-sm">
+          <p id="departure-at-error" className="text-red-400 text-sm">
             {formatErrors(error.departureAt)}
           </p>
         )}
@@ -338,6 +342,7 @@ const SearchFormRide = ({
           autoComplete="off"
           type="text"
           id="arrival-city"
+          required
           className={`${
             error.arrivalCity?.length
               ? "border-error border-2 bg-red-50"
@@ -385,7 +390,7 @@ const SearchFormRide = ({
           </ul>
         )}
         {error.arrivalCity && (
-          <p className="text-red-400 text-sm">
+          <p id="arrival-city-error" className="text-red-400 text-sm">
             {formatErrors(error.arrivalCity)}
           </p>
         )}

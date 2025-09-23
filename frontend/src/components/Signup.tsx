@@ -108,9 +108,10 @@ export default function Signup() {
           placeholder="Jean"
           value={firstName}
           onChange={(e) => setFirstName(e.target.value)}
+          aria-describedby={error.firstName ? "first-name-error" : undefined}
         />
         {error.firstName && (
-          <p className="text-red-400 text-sm">
+          <p id="first-name-error" className="text-red-400 text-sm">
             {formatErrors(error.firstName)}
           </p>
         )}
@@ -139,9 +140,12 @@ export default function Signup() {
           placeholder="Dupont"
           value={lastName}
           onChange={(e) => setLastName(e.target.value)}
+          aria-describedby={error.lastName ? "last-name-error" : undefined}
         />
         {error.lastName && (
-          <p className="text-red-400 text-sm">{formatErrors(error.lastName)}</p>
+          <p id="last-name-error" className="text-red-400 text-sm">
+            {formatErrors(error.lastName)}
+          </p>
         )}
       </div>
       {/* Email */}
@@ -164,9 +168,13 @@ export default function Signup() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           autoComplete="none"
+          required
+          aria-describedby={error.email ? "email-error" : undefined}
         />
         {error.email && (
-          <p className="text-red-400 text-sm">{formatErrors(error.email)}</p>
+          <p id="email-error" className="text-red-400 text-sm">
+            {formatErrors(error.email)}
+          </p>
         )}
       </div>
 
@@ -189,12 +197,19 @@ export default function Signup() {
             } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
+            aria-describedby={error.password ? "password-error" : undefined}
           />
 
           <button
             type="button"
             className=" -ml-8"
             onClick={() => setRevealPassword(!revealPassword)}
+            aria-label={
+              revealPassword
+                ? "Masquer le mot de passe"
+                : "Afficher le mot de passe"
+            }
           >
             {revealPassword ? (
               <Eye size={16} className=" text-primary" />
@@ -204,7 +219,9 @@ export default function Signup() {
           </button>
         </div>
         {error.password && (
-          <p className="text-red-400 text-sm">{formatErrors(error.password)}</p>
+          <p id="password-error" className="text-red-400 text-sm">
+            {formatErrors(error.password)}
+          </p>
         )}
       </div>
 
@@ -227,6 +244,15 @@ export default function Signup() {
             } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+            aria-describedby={
+              error.confirmPassword ? "confirm-password-error" : undefined
+            }
+            aria-label={
+              revealPassword
+                ? "Masquer le mot de passe"
+                : "Afficher le mot de passe"
+            }
           />
           <button
             type="button"
@@ -241,7 +267,11 @@ export default function Signup() {
           </button>
         </div>
         {error.confirmPassword && (
-          <p className="text-red-400 text-sm">
+          <p
+            role="alert"
+            id="confirm-password-error"
+            className="text-red-400 text-sm"
+          >
             {formatErrors(error.confirmPassword)}
           </p>
         )}

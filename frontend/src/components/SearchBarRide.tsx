@@ -275,9 +275,6 @@ const SearchBarRide = ({
               aria-autocomplete="list"
               aria-expanded={showSuggestions.departure}
               aria-controls="departure-city-suggestions-list"
-              aria-describedby={
-                error.departureCity ? "departure-city-error" : undefined
-              }
             />
             {showSuggestions.departure && suggestions.departure.length > 0 && (
               <ul
@@ -343,6 +340,7 @@ const SearchBarRide = ({
             <input
               type="text"
               id="arrival-city"
+              required
               className={`${
                 error.arrivalCity?.length
                   ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
@@ -362,9 +360,6 @@ const SearchBarRide = ({
               aria-autocomplete="list"
               aria-expanded={showSuggestions.arrival}
               aria-controls="arrival-city-suggestions-list"
-              aria-describedby={
-                error.arrivalCity ? "arrival-city-error" : undefined
-              }
             />
             {showSuggestions.arrival && suggestions.arrival.length > 0 && (
               <ul
@@ -428,6 +423,7 @@ const SearchBarRide = ({
             <input
               type="date"
               id="departure-at"
+              required
               min={new Date().toISOString().split("T")[0]}
               className={`${
                 error.departureAt?.length
