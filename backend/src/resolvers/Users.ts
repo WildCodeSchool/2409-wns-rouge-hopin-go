@@ -70,7 +70,7 @@ export class UsersResolver {
           const cookies = new Cookies(context.req, context.res);
 
           cookies.set("token", token, {
-            secure: false,
+            secure: process.env.NODE_ENV === "production",
             sameSite: "strict",
             httpOnly: true,
             maxAge: 1000 * 60 * 60 * 72, // 72 hours
