@@ -33,16 +33,18 @@ export async function sendEmail({
     ],
   };
   try {
-    const result: LibraryResponse<SendEmailV3_1.Response> = await mailjet
+    const result: LibraryResponse<SendEmailV3_1.Response> | null = await mailjet
       .post("send", { version: "v3.1" })
       .request(data);
 
-    console.log(
-      "✅ Mail envoyé à",
-      toEmail,
-      "status:",
-      result.body.Messages[0].Status
-    );
+    if (result) {
+      console.log(
+        "✅ Mail envoyé à",
+        toEmail,
+        "status:",
+        result.body.Messages[0].Status
+      );
+    }
     return true;
   } catch (err: any) {
     console.error("❌ Erreur Mailjet :", err.statusCode || err);

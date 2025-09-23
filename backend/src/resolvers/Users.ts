@@ -71,6 +71,7 @@ export class UsersResolver {
 
           cookies.set("token", token, {
             secure: false,
+            sameSite: "strict",
             httpOnly: true,
             maxAge: 1000 * 60 * 60 * 72, // 72 hours
           });
