@@ -255,7 +255,6 @@ const CreateRide = () => {
   };
 
   const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, input: "departure" | "arrival") => {
-    console.log("passenger1Ref:", passenger1Ref);
     if (e.key === "Escape") {
       if (input === "departure") {
         setShowDepartureSuggestions(false);
