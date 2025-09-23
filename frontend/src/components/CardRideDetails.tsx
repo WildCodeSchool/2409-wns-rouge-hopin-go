@@ -129,9 +129,7 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
               <p className="text-base md:text-2xl font-semibold">
                 {departureTime}
               </p>
-              <p className="text-sm">
-                <p>{travelDuration}</p>
-              </p>
+              <p className="text-sm">{travelDuration}</p>
               <p className="text-base md:text-2xl font-semibold">
                 {arrivalTime}
               </p>

@@ -210,6 +210,7 @@ export class RidesResolver {
       if (cached) {
         ({ distance_km, duration_min, route_polyline5 } = cached);
         source = "DB";
+        console.log("🚀 ~ RidesResolver ~ createRide ~ source:", source);
       } else {
         // 2) Sinon → Mapbox en dernier recours
         const r = await fetchRouteFromMapbox(
@@ -222,6 +223,7 @@ export class RidesResolver {
         duration_min = r.durationMin;
         route_polyline5 = r.polyline5;
         source = "MAPBOX";
+        console.log("🚀 ~ RidesResolver ~ createRide ~ source:", source);
       }
     } catch (e) {
       source = "NONE";
