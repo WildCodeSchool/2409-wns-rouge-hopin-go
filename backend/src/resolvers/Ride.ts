@@ -105,12 +105,8 @@ export class RidesResolver {
     return rides;
   }
 
-  // @Authorized()
   @Query(() => Ride)
-  async ride(
-    @Arg("id", () => ID) id: number
-    // @Ctx() context: ContextType
-  ): Promise<Ride | null> {
+  async ride(@Arg("id", () => ID) id: number): Promise<Ride | null> {
     const ride = await Ride.findOne({
       where: { id },
       relations: ["driver"],
@@ -122,6 +118,7 @@ export class RidesResolver {
     }
   }
 
+  @Authorized("user")
   @Query(() => PaginatedRides)
   async driverRides(
     @Ctx() ctx: AuthContextType,
@@ -253,7 +250,7 @@ export class RidesResolver {
         type: "Point",
         coordinates: [data.arrival_lng, data.arrival_lat],
       },
-      distance_km: distance_km && distance_km.toFixed(0),
+      distance_km,
       duration_min,
       route_polyline5,
     });
@@ -337,6 +334,7 @@ export class RidesResolver {
     });
   }
 
+  @Authorized("user")
   @FieldResolver(() => String, { nullable: true })
   async current_user_passenger_status(
     @Root() ride: Ride,

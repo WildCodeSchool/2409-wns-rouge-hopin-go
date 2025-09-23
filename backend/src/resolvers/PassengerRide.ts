@@ -16,7 +16,6 @@ import {
 } from "../entities/PassengerRide";
 import { validate } from "class-validator";
 import { PaginatedRides, Ride } from "../entities/Ride";
-import { LessThan, MoreThan } from "typeorm";
 import { AuthContextType } from "../auth";
 import { datasource } from "../datasource";
 import { ContextType } from "../auth";
@@ -33,7 +32,7 @@ import { User } from "../entities/User";
 
 @Resolver()
 export class PassengerRideResolver {
-  // @Authorized()
+  @Authorized("user")
   @Query(() => [PassengerRide])
   async passengersByRide(
     @Arg("ride_id", () => ID) ride_id: number
@@ -104,6 +103,7 @@ export class PassengerRideResolver {
     });
   }
 
+  @Authorized("user")
   @Query(() => PaginatedRides)
   async passengerRides(
     @Ctx() ctx: AuthContextType,

@@ -17,7 +17,7 @@ import { ContextType, getUserFromContext } from "../auth";
 
 @Resolver()
 export class UsersResolver {
-  @Authorized()
+  @Authorized("admin")
   @Query(() => [User])
   async users(@Ctx() context: ContextType): Promise<User[] | null> {
     const users = await User.find();
@@ -28,19 +28,19 @@ export class UsersResolver {
     }
   }
 
-  @Authorized()
-  @Query(() => User)
-  async user(
-    @Arg("id", () => ID) id: number,
-    @Ctx() context: ContextType
-  ): Promise<User | null> {
-    const user = await User.findOneBy({ id: context.user?.id });
-    if (user) {
-      return user;
-    } else {
-      return null;
-    }
-  }
+  // @Authorized()
+  // @Query(() => User)
+  // async user(
+  //   @Arg("id", () => ID) id: number,
+  //   @Ctx() context: ContextType
+  // ): Promise<User | null> {
+  //   const user = await User.findOneBy({ id: context.user?.id });
+  //   if (user) {
+  //     return user;
+  //   } else {
+  //     return null;
+  //   }
+  // }
 
   @Mutation(() => User, { nullable: true })
   async signin(
@@ -59,13 +59,6 @@ export class UsersResolver {
             },
             process.env.JWT_SECRET_KEY || ""
           );
-          // try {
-          //     verify(token, process.env.JWT_SECRET_KEY);
-          //     console.log("token verified");
-          // }
-          // catch (error) {
-          //     console.error("Error verifying token:", error);
-          // }
 
           const cookies = new Cookies(context.req, context.res);
 
@@ -124,6 +117,7 @@ export class UsersResolver {
   //     }
   // }
 
+  @Authorized("user")
   @Mutation(() => User, { nullable: true })
   async deleteUser(@Arg("id", () => ID) id: number): Promise<User | null> {
     const user = await User.findOneBy({ id });
@@ -136,12 +130,13 @@ export class UsersResolver {
     }
   }
 
-  // @Authorized()
+  // Pas de décorateur ici, c'est intentionnel
   @Query(() => User, { nullable: true })
   async whoami(@Ctx() context: ContextType): Promise<User | null> {
     return getUserFromContext(context);
   }
 
+  @Authorized("user")
   @Mutation(() => Boolean)
   async signout(@Ctx() context: ContextType): Promise<boolean> {
     const cookies = new Cookies(context.req, context.res);
