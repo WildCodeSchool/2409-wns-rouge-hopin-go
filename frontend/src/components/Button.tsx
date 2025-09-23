@@ -1,4 +1,4 @@
-import React, { ButtonHTMLAttributes } from "react";
+import React, { ButtonHTMLAttributes, forwardRef } from "react";
 import { NavLink } from "react-router-dom";
 import { VariantType } from "../types/variantTypes";
 import { variantConfigMap } from "../constants/variantConfig";
@@ -23,7 +23,10 @@ type ButtonProps = {
   ref?: React.RefObject<HTMLButtonElement>;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
-const Button: React.FC<ButtonProps> = ({
+const Button = forwardRef<
+  HTMLButtonElement,
+  ButtonProps
+>(({
   label,
   type = "button",
   variant = "primary",
@@ -40,9 +43,8 @@ const Button: React.FC<ButtonProps> = ({
   onClick,
   isLink = false,
   to = "/",
-  ref,
   ...rest
-}) => {
+}, ref) => {
   const config = variantConfigMap[variant];
 
   const baseClass = isFlexCol ? "button-col" : "button-flex";
@@ -106,6 +108,7 @@ const Button: React.FC<ButtonProps> = ({
       {content}
     </button>
   );
-};
+}
+);
 
 export default Button;
