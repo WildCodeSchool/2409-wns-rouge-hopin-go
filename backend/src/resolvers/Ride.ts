@@ -27,6 +27,7 @@ import {
   hydratePricingFromRaw,
 } from "../utils/attachPricingSelects";
 import { datasource } from "../datasource";
+import { notifyUserRideCancelled } from "../mail/rideEmails";
 import { findSimilarRouteFromDB } from "../utils/findSimilarRouteFromDB";
 
 @Resolver(() => Ride)
@@ -252,19 +253,13 @@ export class RidesResolver {
         type: "Point",
         coordinates: [data.arrival_lng, data.arrival_lat],
       },
-      distance_km,
+      distance_km: distance_km && distance_km.toFixed(0),
       duration_min,
       route_polyline5,
     });
-    console.log("[createRide] ▶️ saving:", {
-      distance_km,
-      duration_min,
-      arrival_at: arrival_at.toISOString(),
-    });
-    console.log("🗺️ ROUTE SOURCE :", source);
 
     await newRide.save();
-    console.log("[createRide] ✅ saved ride id:", newRide.id);
+
     return newRide;
   }
 
@@ -314,6 +309,21 @@ export class RidesResolver {
       ride.is_cancelled = true;
       await manager.save(ride);
 
+      // Email notification to passengers of trip cancellation
+      const toNotify =
+        ride.passenger_rides
+          ?.filter(
+            (passenger) =>
+              passenger.status === PassengerRideStatus.APPROVED ||
+              passenger.status === PassengerRideStatus.WAITING
+          )
+          .map((passenger) => passenger.user) ?? [];
+
+      for (const user of toNotify) {
+        await notifyUserRideCancelled(user, ride);
+      }
+
+      // Met à jour le statut de tous les passagers du trajet à "annulé par le conducteur"
       await manager
         .createQueryBuilder()
         .update(PassengerRide)

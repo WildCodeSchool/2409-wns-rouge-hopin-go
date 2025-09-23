@@ -70,7 +70,7 @@ export class CreatePassengerRideInput {
 }
 
 @InputType()
-export class UpdatePassengerRideStatusInput {
+export class DriverSetPassengerRideStatusInput {
   @Field(() => ID)
   user_id!: number;
 
