@@ -186,7 +186,7 @@ const SearchFormRide = ({
     <form
       noValidate
       onSubmit={handleSubmit}
-      className="flex flex-col items-center justify-center h-full max-w-sm mx-auto"
+      className="flex flex-col items-center justify-center h-fit max-w-sm mx-auto"
     >
       {/* Ville de départ */}
       <div className="mb-5 w-full relative">

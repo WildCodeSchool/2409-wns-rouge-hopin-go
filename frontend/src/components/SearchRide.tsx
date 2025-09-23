@@ -13,6 +13,17 @@ type SearchRideProps = {
   proposeRef?: React.RefObject<HTMLButtonElement>;
 };
 
+export type HistorySearch = {
+  departureCity: string;
+  departureCoords: { lat: number; long: number };
+  departureRadius: number;
+  arrivalCity: string;
+  arrivalCoords: { lat: number; long: number };
+  arrivalRadius: number;
+  departureAt: string;
+  searchedAt: string;
+}
+
 const SearchRide = ({ variant, proposeRef }: SearchRideProps) => {
   const navigate = useNavigate();
   // Attention, contrairement à createRide, ici c'est City et pas Address qui impacte les suggestions
@@ -119,6 +130,34 @@ const SearchRide = ({ variant, proposeRef }: SearchRideProps) => {
     );
   };
 
+  function addToSearchHistory(newSearch: HistorySearch) {
+    const key = "searchHistory";
+    const raw = localStorage.getItem(key);
+    let history = [];
+
+    try {
+      history = raw ? JSON.parse(raw) : [];
+    } catch {
+      console.warn("Historique corrompu, on le réinitialise.");
+    }
+
+    // Supprimer les doublons
+    history = history.filter(
+      (search: HistorySearch) =>
+        search.departureCity !== newSearch.departureCity ||
+        search.arrivalCity !== newSearch.arrivalCity ||
+        search.departureAt !== newSearch.departureAt
+    );
+
+    // Ajouter la dernière recherche en tête de liste
+    history.unshift(newSearch);
+
+    // Ne garder que les 3 dernières recherches
+    history = history.slice(0, 3);
+
+    localStorage.setItem(key, JSON.stringify(history));
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateCreateForm()) {
@@ -135,6 +174,17 @@ const SearchRide = ({ variant, proposeRef }: SearchRideProps) => {
     params.append("arrival_lat", arrivalCoords.lat.toString());
     params.append("arrival_radius", arrivalRadius.toString());
     params.append("departure_at", departureAt);
+
+    addToSearchHistory({
+      departureCity,
+      departureCoords,
+      departureRadius,
+      arrivalCity,
+      arrivalCoords,
+      arrivalRadius,
+      departureAt,
+      searchedAt: new Date().toISOString(),
+    });
 
     navigate(`/ride-results?${params.toString()}`);
   };
