@@ -1,61 +1,136 @@
 # 2409-wns-rouge-hopin-go
 
-## Présentation
+## Table of Contents
 
-Ce projet est une application développée dans le cadre de la Wild Code School. Il s'agit d'un projet nommé "Hopin Go", qui est une application de covoiturage permettant aux automobilistes de proposer des trajets et aux passagers de rechercher et réserver un covoiturage en fonction de leur ville de départ, de leur destination et de la date souhaitée.
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Running the Project](#running-the-project)
+- [Usage](#usage)
+- [Example Commands](#example-commands)
+- [Api Gateway](#api-gateway)
 
-## Fonctionnalités principales
+## Prerequisites
 
-- [Fonctionnalité 1 : Réservation de covoiturage]
+Before you begin, ensure you have met the following requirements:
 
-  - Permet aux passagers de rechercher des trajets disponibles en fonction de leur ville de départ, de leur destination et de la date souhaitée.
+- **Node.js** and **npm** installed on your machine. You can download them from [here](https://nodejs.org/).
+- **Docker** and **Docker Compose** installed on your machine. You can download Docker from [here](https://www.docker.com/get-started).
 
-- [Fonctionnalité 1 : Proposition de trajets]
+Verify the installations by running:
 
-  - Permet aux automobilistes de créer des offres de covoiturage en spécifiant les détails du trajet (ville de départ, destination, date, etc.).
-
-- [Fonctionnalité 2 : Gestion des utilisateurs]
-  - Inscription et authentification des utilisateurs (conducteurs et passagers).
+```bash
+node -v
+npm -v
+docker --version
+docker-compose --version
+```
 
 ## Installation
 
-1. Cloner le dépôt :
+### 1. Clone the Repository
+
+Clone this repository to your local machine using Git:
 
 ```bash
-git clone https://github.com/WildCodeSchool/2409-wns-rouge-hopin-go.git
+git clone https://github.com/your-username/your-repository.git
+cd your-repository
 ```
 
-2. Renseigner les variables d'environnement dans un fichier `.env` dans le dossier frontend et `backend.env` et `database.env` à la racine du projet (voir `backend.env.sample` et `database.env.sample` pour les variables nécessaires).
-   Pour les tests, renseigner la variable d'environnement `.env.test` dans le dossier backend (voir `.env.test.example` pour les variables nécessaires).
-
-3. Lancer l'application(à la racine du projet) :
+### 2. Install Dependencies
 
 ```bash
-docker compose up --build
+cd frontend
+npm install
+cd ..
+cd backend
+npm install
 ```
 
-## Technologies utilisées
+## Running the Project
 
-- backend :
-  apollo-server,
-  graphql,
-  type-graphql,
-  typeorm,
-  jsonwebtoken,
-  node-mailjet,
-  graphql-scalars,
-  jest,
-  typescript
+This project uses Docker Compose for containerization. Follow the steps below to run it:
 
-- frontend :
-  react,
-  apollo-client,
-  graphql,
-  react-router-dom,
-  tailwindcss,
-  react-toastify,
-  typescript,,
-  codegen,
-  mapbox-gl,
-  vite,
-  vitest
+### 1. Build and Start the Containers
+
+Use Docker Compose to build the Docker images and start the containers:
+
+```bash
+docker compose up -d
+```
+
+The -d flag runs the containers in detached mode.
+
+### 2. Verify the Containers are Running
+
+To check the status of your containers, use:
+
+```bash
+docker compose ps
+```
+
+### 3. On Windows: launch codegen
+
+To update typescript types, use:
+
+```bash
+cd frontend
+npx graphql-codegen --watch
+```
+
+## Usage
+
+Once the project is running, access it by navigating to http://localhost:8080 in your web browser for the frontend.
+To see Appollo Studio in the backend, access it by navigating to http://localhost:8080/api.
+
+## Example Commands
+
+- **Rebuild**
+  To rebuild if if you added dependencies, modified the dockerfile or compose.yml:
+
+```bash
+docker compose up --build -d
+```
+
+- **View Logs**
+
+To view the logs of your Docker containers:
+
+```bash
+docker compose logs -f
+```
+
+- **Stop the Containers**
+
+To stop the running containers:
+
+```bash
+docker compose stop
+```
+
+- **Remove the Containers**
+
+```bash
+docker compose down
+```
+
+## Continue delivery
+
+- **Connect on server**
+
+```bash
+ssh wns_student@092024-rouge-5.wns.wilders.dev -p 2269
+```
+
+- **View Logs**
+
+To view the logs of your Docker containers:
+
+```bash
+# webhook
+journalctl -u webhook -f
+
+# Nginx
+tail -f apps/production/logs/access.log
+# or
+tail -f apps/production/logs/error.log
+```
