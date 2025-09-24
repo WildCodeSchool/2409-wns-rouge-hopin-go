@@ -32,10 +32,10 @@ export const getVariantDetails = (variant: VariantType) => {
         status: "En attente",
         icon: History,
       };
-    case "error":
+    case "full":
       return {
-        text: "text-error",
-        background: "fill-error bg-error",
+        text: "text-full",
+        background: "fill-full bg-full",
         status: "Complet",
         icon: TicketX,
       };
@@ -44,6 +44,13 @@ export const getVariantDetails = (variant: VariantType) => {
         text: "text-cancel",
         background: "fill-cancel bg-cancel",
         status: "Annulé",
+        icon: TicketX,
+      };
+    case "refused":
+      return {
+        text: "text-refused",
+        background: "fill-refused bg-refused",
+        status: "Refusé",
         icon: TicketX,
       };
     default:

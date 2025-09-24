@@ -25,7 +25,6 @@ docker --version
 docker-compose --version
 ```
 
-
 ## Installation
 
 ### 1. Clone the Repository
@@ -37,7 +36,6 @@ git clone https://github.com/your-username/your-repository.git
 cd your-repository
 ```
 
-
 ### 2. Install Dependencies
 
 ```bash
@@ -47,7 +45,6 @@ cd ..
 cd backend
 npm install
 ```
-
 
 ## Running the Project
 
@@ -60,7 +57,6 @@ Use Docker Compose to build the Docker images and start the containers:
 ```bash
 docker compose up -d
 ```
-
 
 The -d flag runs the containers in detached mode.
 
@@ -81,21 +77,19 @@ cd frontend
 npx graphql-codegen --watch
 ```
 
-
 ## Usage
 
-Once the project is running, access it by navigating to http://localhost:8080 in your web browser for the frontend. 
+Once the project is running, access it by navigating to http://localhost:8080 in your web browser for the frontend.
 To see Appollo Studio in the backend, access it by navigating to http://localhost:8080/api.
 
 ## Example Commands
 
 - **Rebuild**
-To rebuild if if you added dependencies, modified the dockerfile or compose.yml:
+  To rebuild if if you added dependencies, modified the dockerfile or compose.yml:
 
 ```bash
 docker compose up --build -d
 ```
-
 
 - **View Logs**
 
@@ -105,7 +99,6 @@ To view the logs of your Docker containers:
 docker compose logs -f
 ```
 
-
 - **Stop the Containers**
 
 To stop the running containers:
@@ -114,23 +107,21 @@ To stop the running containers:
 docker compose stop
 ```
 
-
 - **Remove the Containers**
 
- ```bash
- docker compose down
- ```
+```bash
+docker compose down
+```
 
+## Continue delivery
 
- ## Continue delivery
-
-  - **Connect on server**
+- **Connect on server**
 
 ```bash
 ssh wns_student@092024-rouge-5.wns.wilders.dev -p 2269
 ```
 
- - **View Logs**
+- **View Logs**
 
 To view the logs of your Docker containers:
 
@@ -143,4 +134,3 @@ tail -f apps/production/logs/access.log
 # or
 tail -f apps/production/logs/error.log
 ```
-

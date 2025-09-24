@@ -1,7 +1,11 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+} from "react-router-dom";
 import Home from "./pages/Home.tsx";
 import About from "./pages/About.tsx";
 import Page404 from "./pages/Page404.tsx";
@@ -12,8 +16,8 @@ import BadURLRedirect from "./components/BadURLRedirect.tsx";
 import { AuthStates } from "./services/AuthStates.ts";
 import AuthenticationPage from "./pages/Authentication";
 import RideResults from "./pages/RideResults.tsx";
-import Signup from "./components/Signup.tsx";
-import Signin from "./components/Signin.tsx";
+import MyRides from "./pages/MyRides.tsx";
+import { ToastContainer } from "react-toastify"; // import RideResultTemp from "./pages/RideResultTemp";
 
 const client = new ApolloClient({
   uri: "/api",
@@ -27,7 +31,11 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: "/",
+        index: true,
+        element: <Navigate to="/research" replace />,
+      },
+      {
+        path: "/:tab",
         element: <Home />,
       },
       {
@@ -53,18 +61,10 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: `/signin`,
+        path: `/my-rides/:tab`,
         element: (
-          <AuthComponent authStates={[AuthStates.unauthenticated]}>
-            <Signin />
-          </AuthComponent>
-        ),
-      },
-      {
-        path: `/signup`,
-        element: (
-          <AuthComponent authStates={[AuthStates.unauthenticated]}>
-            <Signup />
+          <AuthComponent authStates={[AuthStates.user]}>
+            <MyRides />
           </AuthComponent>
         ),
       },
@@ -93,5 +93,6 @@ const router = createBrowserRouter([
 createRoot(document.getElementById("root")!).render(
   <ApolloProvider client={client}>
     <RouterProvider router={router} />
+    <ToastContainer position="bottom-right" />
   </ApolloProvider>
 );

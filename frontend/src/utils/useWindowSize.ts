@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 
-type BreakpointKey = "sm" | "md" | "lg" | "xl" | "2xl";
+type BreakpointKey = "sm" | "md" | "lg" | "xl" | "2xl" | "4xl" | "6xl";
 
 const breakpoints: Record<BreakpointKey, number> = {
   sm: 640,
   md: 768,
   lg: 1024,
   xl: 1280,
-  "2xl": 1536,
+  "2xl": 1440,
+  "4xl": 1920,
+  "6xl": 3840,
 };
 
 type Breakpoints = {
@@ -17,6 +19,8 @@ type Breakpoints = {
   isLg: boolean;
   isXl: boolean;
   is2xl: boolean;
+  is4xl: boolean;
+  is6xl: boolean;
 };
 
 const useBreakpoints = (): Breakpoints => {
@@ -35,6 +39,8 @@ const useBreakpoints = (): Breakpoints => {
     isLg: windowWidth >= breakpoints.lg,
     isXl: windowWidth >= breakpoints.xl,
     is2xl: windowWidth >= breakpoints["2xl"],
+    is4xl: windowWidth >= breakpoints["4xl"],
+    is6xl: windowWidth >= breakpoints["6xl"],
   };
 };
 

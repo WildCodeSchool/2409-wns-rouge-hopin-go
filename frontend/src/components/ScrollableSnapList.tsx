@@ -1,130 +1,120 @@
 import { useEffect, useRef, useState } from "react";
-import CardTemplate, { CardData } from "./CardTemplate";
+import CardTemplate from "./CardTemplate";
 import { VariantType } from "../types/variantTypes";
+import {
+  DriverRidesQuery,
+  PassengerRidesQuery,
+  SearchRidesQuery,
+} from "../gql/graphql";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Swiper as SwiperType } from "swiper";
+import "swiper/css";
+import "swiper/css/scrollbar";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
 
-type ScrollableSnapListProps = {
-  dataset: CardData[];
-  getVariant: (data: CardData) => VariantType;
+import {
+  Keyboard,
+  Mousewheel,
+  Navigation,
+  Pagination,
+  Scrollbar,
+} from "swiper/modules";
+import RideProvider from "../context/Rides/rides.provider";
+
+type SearchRide = SearchRidesQuery["searchRide"][number];
+type PassengerRide = PassengerRidesQuery["passengerRides"]["rides"][number];
+type DriverRide = DriverRidesQuery["driverRides"]["rides"][number];
+
+interface ScrollableSnapListProps {
+  dataset: (SearchRide | PassengerRide | DriverRide)[];
+  getVariant: (data: SearchRide | PassengerRide | DriverRide) => VariantType;
   onSelect: (index: number) => void;
-  alignRef: React.RefObject<HTMLDivElement>; // Pour alignement éventuel
-};
+  spaceBetween?: number;
+  sliderDirection?: "vertical" | "horizontal";
+  scaleEffect?: boolean;
+  driverUpcomingRides?: boolean;
+  centerSlides?: boolean;
+  swiperClassName?: string;
+  slidePerView?: number;
+  navigationArrows?: boolean;
+  showPagination?: boolean;
+}
 
-const ScrollableSnapList: React.FC<ScrollableSnapListProps> = ({
+const ScrollableSnapList = ({
   dataset,
   getVariant,
   onSelect,
-}) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
-
+  spaceBetween = 0,
+  sliderDirection = "horizontal",
+  scaleEffect = false,
+  driverUpcomingRides,
+  centerSlides = false,
+  swiperClassName = "",
+  slidePerView = 3,
+  navigationArrows,
+  showPagination = false,
+}: ScrollableSnapListProps) => {
+  const swiperRef = useRef<SwiperType>();
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [padding, setPadding] = useState(200); // Valeur de secours
-  const [isScrollingManually, setIsScrollingManually] = useState(false);
-  const debounceTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Calcule le padding haut/bas dynamiquement
   useEffect(() => {
-    const container = containerRef.current;
-    const firstItem = itemRefs.current[0];
-    if (!container || !firstItem) return;
-
-    const updatePadding = () => {
-      const containerHeight = container.clientHeight;
-      const itemHeight = firstItem.offsetHeight;
-      const pad = containerHeight / 2 - itemHeight / 2;
-      setPadding(pad);
-    };
-
-    updatePadding();
-    window.addEventListener("resize", updatePadding);
-    return () => window.removeEventListener("resize", updatePadding);
-  }, [dataset]);
-
-  // Scroll smooth vers le centre
-  const scrollToCenter = (index: number) => {
-    const container = containerRef.current;
-    const target = itemRefs.current[index];
-    if (!container || !target) return;
-
-    const containerHeight = container.clientHeight;
-    const targetTop = target.offsetTop;
-    const targetHeight = target.offsetHeight;
-
-    const scrollTop = targetTop - containerHeight / 2 + targetHeight / 2;
-    container.scrollTo({ top: scrollTop, behavior: "smooth" });
-    setIsScrollingManually(false);
-  };
-
-  // Auto-sélection de la carte la plus proche du centre quand on scroll
-  const handleScroll = () => {
-    if (isScrollingManually) return;
-
-    const container = containerRef.current;
-    if (!container) return;
-
-    const centerY = container.scrollTop + container.clientHeight / 2;
-
-    let closestIndex = 0;
-    let minDistance = Infinity;
-
-    itemRefs.current.forEach((el, i) => {
-      if (!el) return;
-      const elTop = el.offsetTop;
-      const elCenter = elTop + el.offsetHeight / 2;
-      const distance = Math.abs(elCenter - centerY);
-
-      if (distance < minDistance) {
-        minDistance = distance;
-        closestIndex = i;
-      }
-    });
-
-    if (closestIndex !== selectedIndex) {
-      setSelectedIndex(closestIndex);
-      onSelect(closestIndex);
-
-      if (debounceTimeoutRef.current) {
-        clearTimeout(debounceTimeoutRef.current);
-      }
-
-      debounceTimeoutRef.current = setTimeout(() => {
-        scrollToCenter(closestIndex);
-      }, 200);
+    if (swiperRef.current && dataset.length > 0) {
+      swiperRef.current.slideTo(0);
+      setSelectedIndex(0);
+      onSelect(0);
     }
-  };
+  }, [dataset, onSelect]);
 
   return (
-    <div className="relative h-full w-full z-30 transition-200">
-      <div
-        ref={containerRef}
-        className="flex flex-col items-center gap-4 overflow-y-scroll scroll-smooth h-full no-scrollbar transition-200 my-2"
-        style={{ paddingTop: padding, paddingBottom: padding }}
-        onScroll={handleScroll}
-      >
-        {dataset.map((data, index) => (
-          <div
-            className="w-full sm:w-auto"
-            key={index}
-            ref={(el) => (itemRefs.current[index] = el)}
-          >
+    <Swiper
+      onSwiper={(swiper) => (swiperRef.current = swiper)}
+      onSlideChange={(swiper) => {
+        const newIndex = swiper.realIndex;
+        setSelectedIndex(newIndex);
+        onSelect(newIndex);
+      }}
+      direction={sliderDirection}
+      centeredSlides={centerSlides}
+      spaceBetween={spaceBetween}
+      grabCursor={true}
+      mousewheel={true}
+      rewind={true}
+      keyboard={{ enabled: true }}
+      modules={[Keyboard, Mousewheel, Scrollbar, Navigation, Pagination]}
+      className={`mySwiper w-full  ${swiperClassName}`}
+      scrollbar={{ hide: true, draggable: true }}
+      slidesPerView={slidePerView}
+      navigation={navigationArrows}
+      pagination={showPagination ? { clickable: true } : false}
+    >
+      {dataset.map((data, index) => (
+        <SwiperSlide
+          key={index}
+          className={`transition-transform duration-300 ease-in-out
+            ${
+              scaleEffect && index === selectedIndex
+                ? "scale-105 z-10"
+                : "scale-100 z-0"
+            }
+            flex justify-center items-center
+            h-auto min-h-[200px] w-full`}
+        >
+          <RideProvider ride={data}>
             <CardTemplate
               variant={getVariant(data)}
-              data={data}
               isSelected={index === selectedIndex}
+              driverUpcomingRides={driverUpcomingRides}
               onClick={() => {
+                swiperRef.current?.slideTo(index);
                 setSelectedIndex(index);
                 onSelect(index);
-                scrollToCenter(index);
-                setIsScrollingManually(true);
-                setTimeout(() => {
-                  setIsScrollingManually(false);
-                }, 1000); // Timeout pour éviter le scroll immédiat
               }}
             />
-          </div>
-        ))}
-      </div>
-    </div>
+          </RideProvider>
+        </SwiperSlide>
+      ))}
+    </Swiper>
   );
 };
 

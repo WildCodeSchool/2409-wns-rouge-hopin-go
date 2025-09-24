@@ -1,181 +1,124 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useQuery } from "@apollo/client";
+
+import ScrollableSnapList from "../components/ScrollableSnapList";
 import CardRideDetails from "../components/CardRideDetails";
 import { VariantType } from "../types/variantTypes";
-import ScrollableSnapList from "../components/ScrollableSnapList";
-import { CardData } from "../components/CardTemplate";
-import { formatDate, formatTime } from "../utils/formatDate";
+import { querySearchRide } from "../api/SearchRide";
+import { PassengerRideStatus, SearchRidesQuery } from "../gql/graphql";
+import Button from "../components/Button";
+import { ArrowLeft } from "lucide-react";
+import useBreakpoints from "../utils/useWindowSize";
 
-type FakeRide = {
-  departure_city: string;
-  arrival_city: string;
-  departure_address: string;
-  arrival_address: string;
-  departure_at: Date;
-  arrival_at: Date;
-  max_passenger: number;
-  nb_passenger: number;
-  driver_id: { name: string };
-  is_canceled?: boolean;
-};
-
-const generateFakeRides = (): FakeRide[] => {
-  const cities = [
-    "Chambéry",
-    "Annecy",
-    "Albertville",
-    "Grenoble",
-    "Lyon",
-    "Aix-les-Bains",
-    "Moûtiers",
-    "Bourg-Saint-Maurice",
-    "La Ravoire",
-    "Saint-Jean-de-Maurienne",
-  ];
-
-  const names = [
-    "Élodie",
-    "Julien",
-    "Manon",
-    "Thibault",
-    "Camille",
-    "Lucas",
-    "Mireille",
-    "François-Xavier",
-    "Océane",
-    "Alexandre",
-  ];
-
-  const rides: FakeRide[] = [];
-
-  for (let i = 0; i < 10; i++) {
-    const departureCity = cities[Math.floor(Math.random() * cities.length)];
-    let arrivalCity = departureCity;
-    while (arrivalCity === departureCity) {
-      arrivalCity = cities[Math.floor(Math.random() * cities.length)];
-    }
-
-    const now = new Date();
-    const departureDate = new Date(
-      now.getTime() + Math.random() * 10 * 86400000
-    ); // +0 à 10 jours
-    const durationMin = 60 + Math.floor(Math.random() * 60); // entre 1h et 2h
-    const arrivalDate = new Date(departureDate.getTime() + durationMin * 60000);
-
-    const maxPassenger = 1 + Math.floor(Math.random() * 4);
-    const nbPassenger = Math.floor(Math.random() * (maxPassenger + 1));
-    const driverName = names[Math.floor(Math.random() * names.length)];
-
-    rides.push({
-      departure_city: departureCity,
-      arrival_city: arrivalCity,
-      departure_address: `Rue de la Gare, ${departureCity}`,
-      arrival_address: `Place du Centre, ${arrivalCity}`,
-      departure_at: departureDate,
-      arrival_at: arrivalDate,
-      max_passenger: maxPassenger,
-      nb_passenger: nbPassenger,
-      driver_id: { name: driverName },
-      is_canceled: Math.random() < 0.1, // 10% des trajets annulés
-    });
-  }
-
-  return rides;
-};
+type SearchRide = SearchRidesQuery["searchRide"][number];
 
 const RideResults = () => {
-  const detailsRef = useRef<HTMLDivElement>(null);
-  const [rides, setRides] = useState<CardData[]>([]);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [searchParams] = useSearchParams();
 
-  useEffect(() => {
-    const fakeRides = generateFakeRides();
+  const { isMd } = useBreakpoints();
 
-    const dataset: CardData[] = fakeRides.map((ride) => {
-      const dateStr = formatDate(ride.departure_at);
+  const departure_city = searchParams.get("departure_city")!;
+  const departure_lng = parseFloat(searchParams.get("departure_lng")!);
+  const departure_lat = parseFloat(searchParams.get("departure_lat")!);
+  const departure_radius = parseInt(searchParams.get("departure_radius")!);
+  const arrival_city = searchParams.get("arrival_city")!;
+  const arrival_lng = parseFloat(searchParams.get("arrival_lng")!);
+  const arrival_lat = parseFloat(searchParams.get("arrival_lat")!);
+  const arrival_radius = parseInt(searchParams.get("arrival_radius")!);
+  const departure_at = searchParams.get("departure_at")!;
 
-      const departureTime = formatTime(ride.departure_at);
-      const arrivalTime = formatTime(ride.arrival_at);
+  const {
+    data: dataSearched,
+    loading,
+    error,
+  } = useQuery(querySearchRide, {
+    variables: {
+      data: {
+        departure_city,
+        departure_lng,
+        departure_lat,
+        departure_radius,
+        arrival_city,
+        arrival_lng,
+        arrival_lat,
+        arrival_radius,
+        departure_at: new Date(departure_at + ":00:00:00Z"),
+      },
+    },
+    fetchPolicy: "network-only",
+    skip: !departure_city || !arrival_city || !departure_at,
+  });
+  if (error) {
+    return (
+      <div className="text-center w-full mt-10 text-red-500">
+        Une erreur est survenue lors de la recherche des trajets. Veuillez
+        réessayer.
+      </div>
+    );
+  }
 
-      const durationMin = Math.floor(
-        (ride.arrival_at.getTime() - ride.departure_at.getTime()) / 60000
-      );
-      const travelDuration =
-        durationMin >= 60
-          ? `${Math.floor(durationMin / 60)}h${durationMin % 60 || ""}`
-          : `${durationMin}min`;
+  const rides = dataSearched?.searchRide ?? [];
 
-      return {
-        departureTime,
-        arrivalTime,
-        departureCity: ride.departure_city,
-        arrivalCity: ride.arrival_city,
-        travelDuration,
-        driverName: ride.driver_id.name,
-        price: 10 + Math.random() * 15, // prix aléatoire
-        date: dateStr,
-        availableSeats: ride.max_passenger - ride.nb_passenger,
-        is_canceled: ride.is_canceled,
-      };
-    });
+  const getVariant = (ride: SearchRide): VariantType => {
+    if (ride.is_cancelled) return "cancel";
+    if (ride.current_user_passenger_status === PassengerRideStatus.Waiting)
+      return "pending";
+    if (ride.current_user_passenger_status === PassengerRideStatus.Approved)
+      return "validation";
+    if (ride.current_user_passenger_status === PassengerRideStatus.Refused)
+      return "refused";
+    const availableSeats = ride.max_passenger - (ride.nb_passenger ?? 0);
+    if (availableSeats <= 0) return "full";
 
-    setRides(dataset);
-    setSelectedIndex(0);
-  }, []);
-
-  const getVariant = (
-    data: CardData & { is_canceled?: boolean }
-  ): VariantType => {
+    const departureDate = new Date(ride.departure_at);
     const today = new Date();
+    if (departureDate < today) return "validation";
 
-    // 🔴 1. Si le trajet est annulé
-    if (data.is_canceled) return "cancel";
-
-    // 🔴 2. Si complet
-    if (data.availableSeats === 0) return "error";
-
-    // 🟠 3. Si le trajet est dans le passé
-    const [jour, moisNom, annee] = data.date.split(" ");
-    const moisMap: Record<string, number> = {
-      janvier: 0,
-      février: 1,
-      mars: 2,
-      avril: 3,
-      mai: 4,
-      juin: 5,
-      juillet: 6,
-      août: 7,
-      septembre: 8,
-      octobre: 9,
-      novembre: 10,
-      décembre: 11,
-    };
-    const parsedDate = new Date(+annee, moisMap[moisNom.toLowerCase()], +jour);
-
-    if (parsedDate < today) return "validation";
-
-    // ✅ Sinon : trajet à venir avec places dispo
     return "primary";
   };
 
   if (rides.length === 0 || !rides[selectedIndex]) {
     return (
-      <div className="text-center w-full mt-10 text-gray-600">
+      <div className="fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-center mt-10 text-gray-600">
+        Aucun trajet trouvé.
+        <Button
+          icon={ArrowLeft}
+          isLink
+          label="Retour à la recherche"
+          isHoverBgColor
+          variant="primary"
+          className="mt-4"
+          to="/research"
+        />
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-center mt-10 text-gray-600">
         Chargement des trajets...
       </div>
     );
   }
 
   return (
-    <div className="flex items-center  h-screen justify-center max-w-7xl m-auto bg-gray-100">
-      <div className="flex-1 h-full w-full z-20  md:w-1/2 overflow-hidden">
+    <div className="flex items-center h-screen justify-center max-w-7xl m-auto bg-gray-100">
+      <div className="flex h-full w-full z-20 md:w-1/2  overflow-hidden">
         <ScrollableSnapList
           dataset={rides}
           getVariant={getVariant}
           onSelect={setSelectedIndex}
-          alignRef={detailsRef}
+          sliderDirection="vertical"
+          scaleEffect
+          centerSlides={isMd ? true : false}
+          swiperClassName="h-full !pt-32 w-full"
+          spaceBetween={isMd ? 50 : 0}
+          slidePerView={3}
         />
       </div>
-
       <div className="h-full flex md:w-1/2">
         <CardRideDetails
           variant={getVariant(rides[selectedIndex])}

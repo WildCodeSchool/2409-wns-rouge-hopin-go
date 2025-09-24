@@ -9,12 +9,15 @@ import {
 } from "type-graphql";
 import {
   BaseEntity,
+  Check,
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { ContextType } from "../auth";
+import { PassengerRide } from "./PassengerRide";
 
 export const IsUser: MiddlewareFn<ContextType> = async (
   { context, root },
@@ -32,36 +35,56 @@ export const IsUser: MiddlewareFn<ContextType> = async (
 
 @Entity()
 @ObjectType()
+@Check("char_length(first_name) >= 2")
+@Check("char_length(last_name) >= 2")
 export class User extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => ID)
   id!: number;
 
-  @Column()
+  @Column({ name: "first_name", type: "varchar", length: 50, nullable: false })
   @Field()
   firstName!: string;
 
-  @Column()
+  @Column({ name: "last_name", type: "varchar", length: 100, nullable: false })
   @Field()
   lastName!: string;
 
-  @Column({ unique: true })
+  // email unique insensible à la casse (citext)
+  @Column({ type: "citext", unique: true, nullable: false })
   @IsEmail({}, { message: "Invalid email" })
   @Field({ nullable: true }) // this should be nullable because only admins + self user may see this, null otherwise
   @UseMiddleware(IsUser)
   email!: string;
 
-  @Column({ enum: ["user", "admin"], default: "user" })
+  @Column({
+    type: "enum",
+    enum: ["user", "admin"],
+    enumName: "userRole",
+    default: "user",
+  })
   @Field()
   role!: string;
 
-  @Column()
+  @Column({
+    name: "hashed_password",
+    type: "varchar",
+    length: 255,
+    nullable: false,
+  })
   // @Field()
   hashedPassword!: string;
 
-  @CreateDateColumn()
+  @CreateDateColumn({
+    type: "timestamptz",
+    name: "created_at",
+    default: () => "now()",
+  })
   @Field()
   createdAt!: Date;
+
+  @OneToMany(() => PassengerRide, (pr) => pr.user)
+  passenger_rides!: PassengerRide[];
 
   // may be needed if user can create other users
   // @ManyToOne(() => User)

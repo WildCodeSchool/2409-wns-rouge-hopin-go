@@ -56,6 +56,9 @@ export const authChecker: AuthChecker<ContextType> = async (
   // user has already been put in context (if found) by the global middleware (see index.ts)
   // const user = context.user;
   const user = await getUserFromContext(context);
+  if (roles.length === 0) {
+    console.warn("No roles provided, you should specify at least one role");
+  }
   if (user && roles.includes(context.user?.role || "")) {
     return true;
   } else {

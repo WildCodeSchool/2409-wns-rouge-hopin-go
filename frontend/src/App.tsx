@@ -1,29 +1,35 @@
-import { Outlet } from "react-router-dom";
+import { Link, Outlet } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
+import Logo from "../public/logo.png";
+import { useQuery } from "@apollo/client";
+import { queryWhoAmI } from "./api/WhoAmI";
+import { CheckCircle } from "lucide-react";
 
 const App = () => {
+  const { data: whoAmIData } = useQuery(queryWhoAmI);
+  const me = whoAmIData?.whoami;
   return (
     <>
-      <ToastContainer
-        toastClassName="toast-custom"
-        bodyClassName="toast-body"
-        position="top-right"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-      />
-
-      <div className="flex flex-col min-h-screen">
-        <header>
+      <div>
+        <header className="z-50 md:flex md:fixed">
+          <div className="flex items-center gap-4  invisible md:visible">
+            <Link to="/">
+              <img src={Logo} alt="Logo" className="w-16 h-16 m-2" />
+            </Link>
+            {me && (
+              <span
+                className="flex items-center gap-2 text-sm  py-2 px-4 rounded-full text-white bg-primary"
+                title="Vous êtes connecté(e)"
+              >
+                {me?.email}
+                <CheckCircle className="text-validation" />
+              </span>
+            )}
+          </div>
           <NavBar />
         </header>
-        <main className="h-screen">
+        <main>
           <Outlet />
         </main>
       </div>

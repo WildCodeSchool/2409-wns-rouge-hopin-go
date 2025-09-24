@@ -26,6 +26,7 @@ h1 {
 .button-flex {
   @apply rounded-lg gap-2 flex items-center justify-center font-montserrat text-sm;
 }
+
 .button-col {
   @apply rounded-lg px-4 py-2 gap-2 flex flex-col items-center justify-center;
 }
@@ -38,6 +39,10 @@ h1 {
   @apply bg-secondary text-primary transition-200;
 }
 
+.button-secondary {
+  @apply rounded-lg bg-secondary text-textDark hover:bg-secondaryHover cursor-pointer transition-200;
+}
+
 .button-validation {
   @apply bg-validation text-textLight transition-200;
 }
@@ -46,39 +51,20 @@ h1 {
   @apply bg-pending text-textLight transition-200;
 }
 
-.button-error {
-  @apply bg-error text-textLight transition-200;
+.button-full {
+  @apply bg-full text-textLight transition-200;
 }
+
 .button-cancel {
   @apply bg-cancel text-textLight transition-200;
 }
 
+.button-refused {
+  @apply bg-refused text-textLight transition-200;
+}
+
 .text-field-with-button {
   @apply flex flex-grow justify-center gap-1;
-}
-
-.Toastify__toast-container {
-  z-index: 9999; /* Met un z-index élevé pour être au-dessus de tout */
-}
-
-.toast-custom {
-  background-color: var(--primary-color);
-  color: white;
-  font-weight: bold;
-}
-
-.toast-success {
-  background-color: var(--primary-color);
-  color: #fff;
-}
-
-.toast-error {
-  background-color: #ff4d4f;
-  color: #fff;
-}
-
-.toast-icon {
-  font-size: 1.5rem;
 }
 
 .logo {
@@ -101,13 +87,13 @@ h1 {
 
   /* Track */
   ::-webkit-scrollbar-track {
-    background: var(--color-tertiary);
+    background: transparent;
     border-radius: 0.5rem;
   }
 
   /* Handle */
   ::-webkit-scrollbar-thumb {
-    background: var(--color-primary);
+    background: #dedede;
     cursor: -webkit-grabbing;
     border-radius: 0.5rem;
     transition: all 350ms ease;
@@ -115,13 +101,14 @@ h1 {
 
   /* Handle on hover */
   ::-webkit-scrollbar-thumb:hover {
-    background: var(--color-primary-hover);
+    background: #e6e6e6;
   }
 
   /* no scrollbar visible */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
   .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -140,7 +127,71 @@ h1 {
   0% {
     transform: rotate(0deg);
   }
+
   100% {
     transform: rotate(360deg);
   }
+}
+
+/* -----------------------------SLIDER SWIPER---------------------------- */
+
+/* .mySwiper {
+  @apply w-full h-full bg-orange-600;
+}
+*/
+.swiper-wrapper {
+  @apply min-h-[280px];
+}
+
+.swiper-scrollbar {
+  @apply hidden;
+}
+
+.swiper-slide {
+  @apply !flex !items-center !justify-center;
+}
+
+.swiper-button-prev,
+.swiper-button-next {
+  @apply !text-primary transition-200 absolute top-1/2 -translate-y-1/2 z-10 flex items-center justify-center;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  @apply !text-primaryHover;
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+  @apply !text-2xl;
+}
+
+.swiper-pagination-bullet {
+  @apply !bg-primary;
+}
+
+.swiper-pagination-bullet-active {
+  @apply !bg-primaryHover;
+}
+
+.swiper-pagination-bullet:hover {
+  @apply !bg-primaryHover;
+}
+
+.swiper-pagination-bullet-active:hover {
+  @apply !bg-primary;
+}
+
+/* -----------------------------SCROLLBAR---------------------------- */
+
+/* Hide scrollbar for Chrome, Safari and Edge */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  /* IE et Edge Legacy */
+  scrollbar-width: none;
+  /* Firefox */
 }
