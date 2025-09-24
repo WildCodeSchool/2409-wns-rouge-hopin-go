@@ -56,8 +56,16 @@ const CreateRide = () => {
   // hides suggestions when clicking outside
   const departureUlRef = useRef<HTMLUListElement>(null);
   const arrivalUlRef = useRef<HTMLUListElement>(null);
-  useOutsideClick(departureUlRef, () => setShowDepartureSuggestions(false), showDepartureSuggestions);
-  useOutsideClick(arrivalUlRef, () => setShowArrivalSuggestions(false), showArrivalSuggestions);
+  useOutsideClick(
+    departureUlRef,
+    () => setShowDepartureSuggestions(false),
+    showDepartureSuggestions
+  );
+  useOutsideClick(
+    arrivalUlRef,
+    () => setShowArrivalSuggestions(false),
+    showArrivalSuggestions
+  );
 
   type Suggestion = {
     properties: {
@@ -254,7 +262,10 @@ const CreateRide = () => {
     shift: false,
   };
 
-  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, input: "departure" | "arrival") => {
+  const handleInputKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    input: "departure" | "arrival"
+  ) => {
     if (e.key === "Escape") {
       if (input === "departure") {
         setShowDepartureSuggestions(false);
@@ -291,26 +302,34 @@ const CreateRide = () => {
     }
   };
 
-  const handleLiKeyDown = (e: React.KeyboardEvent<HTMLLIElement>, address: string, li: "departure" | "arrival") => {
+  const handleLiKeyDown = (
+    e: React.KeyboardEvent<HTMLLIElement>,
+    address: string,
+    li: "departure" | "arrival"
+  ) => {
     if (e.key === "Enter") {
       e.preventDefault();
       handleSelect(address);
     } else if (e.key === "ArrowDown") {
       e.preventDefault();
       if (li === "departure") {
-        const nextIndex = departureSuggestionsRef.current.indexOf(e.currentTarget) + 1;
+        const nextIndex =
+          departureSuggestionsRef.current.indexOf(e.currentTarget) + 1;
         departureSuggestionsRef.current[nextIndex]?.focus();
       } else {
-        const nextIndex = arrivalSuggestionsRef.current.indexOf(e.currentTarget) + 1;
+        const nextIndex =
+          arrivalSuggestionsRef.current.indexOf(e.currentTarget) + 1;
         arrivalSuggestionsRef.current[nextIndex]?.focus();
       }
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       if (li === "departure") {
-        const prevIndex = departureSuggestionsRef.current.indexOf(e.currentTarget) - 1;
+        const prevIndex =
+          departureSuggestionsRef.current.indexOf(e.currentTarget) - 1;
         departureSuggestionsRef.current[prevIndex]?.focus();
       } else {
-        const prevIndex = arrivalSuggestionsRef.current.indexOf(e.currentTarget) - 1;
+        const prevIndex =
+          arrivalSuggestionsRef.current.indexOf(e.currentTarget) - 1;
         arrivalSuggestionsRef.current[prevIndex]?.focus();
       }
     } else if (e.key === "Tab") {
@@ -361,18 +380,23 @@ const CreateRide = () => {
           <input
             type="datetime-local"
             id="departureAt"
-            className={`${error.departure_at?.length
-              ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-              : "border-gray-300 bg-gray-50"
-              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+            className={`${
+              error.departure_at?.length
+                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                : "border-gray-300 bg-gray-50"
+            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
             placeholder="Date et horaire de départ"
             value={departureAt}
             ref={departureTimeRef}
             onChange={(e) => setDepartureAt(e.target.value)}
             autoComplete="none"
+            required
+            aria-describedby={
+              error.departure_at ? "departure-at-error" : undefined
+            }
           />
           {error.departure_at && (
-            <p className="text-red-500 text-sm">
+            <p id="departure-at-error" className="text-red-500 text-sm">
               {formatErrors(error.departure_at)}
             </p>
           )}
@@ -389,29 +413,47 @@ const CreateRide = () => {
             <input
               type="text"
               id="departureAddress"
-              className={`${error.departure_city?.length
-                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-                : "border-gray-300 bg-gray-50"
-                } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+              className={`${
+                error.departure_city?.length
+                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                  : "border-gray-300 bg-gray-50"
+              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
               placeholder="ex. Marseille"
               value={departureAddress}
               ref={departureRef}
               onChange={(e) => handleChange(e.target.value, "departure")}
-              onFocus={() => { setShowArrivalSuggestions(false); setLastModifiedCity("departure"); setShowDepartureSuggestions(true) }}
+              onFocus={() => {
+                setShowArrivalSuggestions(false);
+                setLastModifiedCity("departure");
+                setShowDepartureSuggestions(true);
+              }}
               onKeyDown={(e) => handleInputKeyDown(e, "departure")}
-              onKeyUp={() => keyState.shift = false}
+              onKeyUp={() => (keyState.shift = false)}
               autoComplete="off"
               maxLength={255}
+              required
+              role="combobox"
+              aria-autocomplete="list"
+              aria-expanded={showDepartureSuggestions}
+              aria-controls="departure-city-suggestions-list"
+              aria-describedby={
+                error.departure_address ? "departure-address-error" : undefined
+              }
             />
             {suggestions.departure.length > 0 && showDepartureSuggestions && (
-              <ul className="absolute bg-white border mt-1 max-h-60 w-fit overflow-auto shadow-lg no-scrollbar"
+              <ul
+                id="departure-city-suggestions-list"
+                role="listbox"
+                className="absolute bg-white border mt-1 max-h-60 w-fit overflow-auto shadow-lg no-scrollbar"
                 ref={departureUlRef}
               >
                 {suggestions.departure.map((address, index) => (
                   <li
+                    role="option"
+                    aria-selected
                     key={index}
                     tabIndex={0}
-                    ref={(el) => departureSuggestionsRef.current[index] = el!}
+                    ref={(el) => (departureSuggestionsRef.current[index] = el!)}
                     onClick={() => handleSelect(address)}
                     onKeyDown={(e) => handleLiKeyDown(e, address, "departure")}
                     className="p-2 cursor-pointer hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
@@ -422,7 +464,7 @@ const CreateRide = () => {
               </ul>
             )}
             {error.departure_address && (
-              <p className="text-red-500 text-sm">
+              <p id="departure-address-error" className="text-red-500 text-sm">
                 {formatErrors(error.departure_address)}
               </p>
             )}
@@ -438,29 +480,47 @@ const CreateRide = () => {
             <input
               type="text"
               id="arrivalAddress"
-              className={`${error.arrival_city?.length
-                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
-                : "border-gray-300 bg-gray-50"
-                } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+              className={`${
+                error.arrival_city?.length
+                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                  : "border-gray-300 bg-gray-50"
+              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
               placeholder="ex. Lyon"
               value={arrivalAddress}
               ref={arrivalRef}
               onChange={(e) => handleChange(e.target.value, "arrival")}
-              onFocus={() => { setShowDepartureSuggestions(false); setLastModifiedCity("arrival"); setShowArrivalSuggestions(true) }}
+              onFocus={() => {
+                setShowDepartureSuggestions(false);
+                setLastModifiedCity("arrival");
+                setShowArrivalSuggestions(true);
+              }}
               onKeyDown={(e) => handleInputKeyDown(e, "arrival")}
-              onKeyUp={() => keyState.shift = false}
+              onKeyUp={() => (keyState.shift = false)}
               autoComplete="off"
               maxLength={255}
+              required
+              role="combobox"
+              aria-autocomplete="list"
+              aria-expanded={showArrivalSuggestions}
+              aria-controls="arrival-city-suggestions-list"
+              aria-describedby={
+                error.arrival_address ? "arrival-address-error" : undefined
+              }
             />
             {suggestions.arrival.length > 0 && showArrivalSuggestions && (
-              <ul className="absolute bg-white border mt-1 max-h-60 overflow-auto no-scrollbar"
+              <ul
+                id="arrival-city-suggestions-list"
+                role="listbox"
+                className="absolute bg-white border mt-1 max-h-60 overflow-auto no-scrollbar"
                 ref={arrivalUlRef}
               >
                 {suggestions.arrival.map((address, index) => (
                   <li
+                    role="option"
+                    aria-selected
                     key={index}
                     tabIndex={0}
-                    ref={(el) => arrivalSuggestionsRef.current[index] = el!}
+                    ref={(el) => (arrivalSuggestionsRef.current[index] = el!)}
                     onKeyDown={(e) => handleLiKeyDown(e, address, "arrival")}
                     onClick={() => handleSelect(address)}
                     className="p-2 cursor-pointer hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
@@ -471,7 +531,7 @@ const CreateRide = () => {
               </ul>
             )}
             {error.arrival_address && (
-              <p className="text-red-500 text-sm">
+              <p id="arrival-address-error" className="text-red-500 text-sm">
                 {formatErrors(error.arrival_address)}
               </p>
             )}
@@ -483,10 +543,15 @@ const CreateRide = () => {
         <label
           htmlFor="maxPassenger"
           className="flex mb-2 text-sm font-medium text-textLight"
+          id="maxPassenger"
         >
           Nombre de passager maximum
         </label>
-        <div className="flex justify-between">
+        <div
+          role="radiogroup"
+          className="flex justify-between"
+          aria-labelledby="maxPassenger"
+        >
           <Button
             onClick={() => setMaxPassenger(1)}
             onFocus={() => setShowArrivalSuggestions(false)}
@@ -494,24 +559,32 @@ const CreateRide = () => {
             ref={passenger1Ref}
             type="button"
             label="1"
+            role="radio"
+            aria-checked={maxPassenger === 1}
           />
           <Button
             onClick={() => setMaxPassenger(2)}
             variant={`${maxPassenger === 2 ? "validation" : "pending"}`}
             type="button"
             label="2"
+            role="radio"
+            aria-checked={maxPassenger === 2}
           />
           <Button
             onClick={() => setMaxPassenger(3)}
             variant={`${maxPassenger === 3 ? "validation" : "pending"}`}
             type="button"
             label="3"
+            role="radio"
+            aria-checked={maxPassenger === 3}
           />
           <Button
             onClick={() => setMaxPassenger(4)}
             variant={`${maxPassenger === 4 ? "validation" : "pending"}`}
             type="button"
             label="4"
+            role="radio"
+            aria-checked={maxPassenger === 4}
           />
         </div>
       </div>

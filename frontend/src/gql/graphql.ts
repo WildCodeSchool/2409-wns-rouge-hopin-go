@@ -124,7 +124,6 @@ export type Query = {
   ride: Ride;
   rides: Array<Ride>;
   searchRide: Array<Ride>;
-  user: User;
   users: Array<User>;
   whoami?: Maybe<User>;
 };
@@ -158,11 +157,6 @@ export type QueryRideArgs = {
 
 export type QuerySearchRideArgs = {
   data: SearchRideInput;
-};
-
-
-export type QueryUserArgs = {
-  id: Scalars['ID']['input'];
 };
 
 export type Ride = {

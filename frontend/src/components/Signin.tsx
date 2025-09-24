@@ -96,9 +96,13 @@ const Signin = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           autoComplete="none"
+          required
+          aria-describedby={error.email ? "email-error" : undefined}
         />
         {error.email && (
-          <p className="text-red-400 text-sm">{formatErrors(error.email)}</p>
+          <p id="email-error" className="text-red-400 text-sm">
+            {formatErrors(error.email)}
+          </p>
         )}
       </div>
       {/* Mot de passe */}
@@ -113,6 +117,7 @@ const Signin = () => {
           <input
             type={revealPassword ? "text" : "password"}
             id="password"
+            required
             className={`${
               error.password?.length
                 ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
@@ -120,12 +125,18 @@ const Signin = () => {
             } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            aria-describedby={error.password ? "password-error" : undefined}
           />
 
           <button
             type="button"
             className=" -ml-8"
             onClick={() => setRevealPassword(!revealPassword)}
+            aria-label={
+              revealPassword
+                ? "Masquer le mot de passe"
+                : "Afficher le mot de passe"
+            }
           >
             {revealPassword ? (
               <Eye size="16" className="text-primary" />
@@ -139,7 +150,7 @@ const Signin = () => {
         <p className="text-red-400 text-sm">{formatErrors(error.password)}</p>
       )}
       {error.general && (
-        <p className="text-red-500 mt-4 text-sm">
+        <p role="alert" className="text-red-500 mt-4 text-sm">
           {formatErrors(error.general)}
         </p>
       )}

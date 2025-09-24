@@ -34,10 +34,7 @@ type SearchFormRideProps = {
   setLastModifiedField?: React.Dispatch<
     React.SetStateAction<"departure" | "arrival" | null>
   >;
-  handleSelect?: (
-    field: "departure" | "arrival",
-    value: string
-  ) => void;
+  handleSelect?: (field: "departure" | "arrival", value: string) => void;
   proposeRef?: React.RefObject<HTMLButtonElement>;
 };
 
@@ -57,12 +54,11 @@ const SearchFormRide = ({
   formatErrors,
   suggestions = { departure: [], arrival: [] },
   showSuggestions = { departure: false, arrival: false },
-  setShowSuggestions = () => { },
-  setLastModifiedField = () => { },
-  handleSelect = () => { },
+  setShowSuggestions = () => {},
+  setLastModifiedField = () => {},
+  handleSelect = () => {},
   proposeRef,
 }: SearchFormRideProps) => {
-
   const departureRef = useRef<HTMLInputElement>(null);
   const departureSuggestionsRef = useRef<HTMLLIElement[]>([]);
   const departureRadiusRef = useRef<HTMLInputElement>(null);
@@ -74,8 +70,16 @@ const SearchFormRide = ({
   // hides suggestions when clicking outside
   const departureUlRef = useRef<HTMLUListElement>(null);
   const arrivalUlRef = useRef<HTMLUListElement>(null);
-  useOutsideClick(departureUlRef, () => setShowSuggestions((prev) => ({ ...prev, departure: false })), showSuggestions.departure);
-  useOutsideClick(arrivalUlRef, () => setShowSuggestions((prev) => ({ ...prev, arrival: false })), showSuggestions.arrival);
+  useOutsideClick(
+    departureUlRef,
+    () => setShowSuggestions((prev) => ({ ...prev, departure: false })),
+    showSuggestions.departure
+  );
+  useOutsideClick(
+    arrivalUlRef,
+    () => setShowSuggestions((prev) => ({ ...prev, arrival: false })),
+    showSuggestions.arrival
+  );
 
   const handleInputChange = (field: "departure" | "arrival", value: string) => {
     setLastModifiedField(field);
@@ -93,7 +97,10 @@ const SearchFormRide = ({
     shift: false,
   };
 
-  const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, input: "departure" | "arrival") => {
+  const handleInputKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement>,
+    input: "departure" | "arrival"
+  ) => {
     if (e.key === "Escape") {
       if (input === "departure") {
         setShowSuggestions((prev) => ({ ...prev, departure: false }));
@@ -135,26 +142,34 @@ const SearchFormRide = ({
     }
   };
 
-  const handleLiKeyDown = (e: React.KeyboardEvent<HTMLLIElement>, address: string, li: "departure" | "arrival") => {
+  const handleLiKeyDown = (
+    e: React.KeyboardEvent<HTMLLIElement>,
+    address: string,
+    li: "departure" | "arrival"
+  ) => {
     if (e.key === "Enter") {
       e.preventDefault();
       handleSelect(`${li}`, address);
     } else if (e.key === "ArrowDown") {
       e.preventDefault();
       if (li === "departure") {
-        const nextIndex = departureSuggestionsRef.current.indexOf(e.currentTarget) + 1;
+        const nextIndex =
+          departureSuggestionsRef.current.indexOf(e.currentTarget) + 1;
         departureSuggestionsRef.current[nextIndex]?.focus();
       } else {
-        const nextIndex = arrivalSuggestionsRef.current.indexOf(e.currentTarget) + 1;
+        const nextIndex =
+          arrivalSuggestionsRef.current.indexOf(e.currentTarget) + 1;
         arrivalSuggestionsRef.current[nextIndex]?.focus();
       }
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       if (li === "departure") {
-        const prevIndex = departureSuggestionsRef.current.indexOf(e.currentTarget) - 1;
+        const prevIndex =
+          departureSuggestionsRef.current.indexOf(e.currentTarget) - 1;
         departureSuggestionsRef.current[prevIndex]?.focus();
       } else {
-        const prevIndex = arrivalSuggestionsRef.current.indexOf(e.currentTarget) - 1;
+        const prevIndex =
+          arrivalSuggestionsRef.current.indexOf(e.currentTarget) - 1;
         arrivalSuggestionsRef.current[prevIndex]?.focus();
       }
     } else if (e.key === "Tab") {
@@ -201,27 +216,43 @@ const SearchFormRide = ({
           type="text"
           id="departure-city"
           required
-          className={`${error.departureCity?.length
-            ? "border-error border-2 bg-red-50"
-            : "border-gray-300 bg-gray-50"
-            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          className={`${
+            error.departureCity?.length
+              ? "border-error border-2 bg-red-50"
+              : "border-gray-300 bg-gray-50"
+          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="Paris"
           value={departureCity}
           ref={departureRef}
           onChange={(e) => handleInputChange("departure", e.target.value)}
-          onFocus={() => { setShowSuggestions(() => ({ departure: true, arrival: false })); setLastModifiedField("departure"); }}
+          onFocus={() => {
+            setShowSuggestions(() => ({ departure: true, arrival: false }));
+            setLastModifiedField("departure");
+          }}
           onKeyDown={(e) => handleInputKeyDown(e, "departure")}
-          onKeyUp={() => keyState.shift = false}
+          onKeyUp={() => (keyState.shift = false)}
+          role="combobox"
+          aria-autocomplete="list"
+          aria-expanded={showSuggestions.departure}
+          aria-controls="departure-city-suggestions-list"
+          aria-describedby={
+            error.departureCity ? "departure-city-error" : undefined
+          }
         />
         {showSuggestions.departure && suggestions.departure.length > 0 && (
-          <ul className="absolute w-full bg-white border mt-1 max-h-60 overflow-y-auto rounded-md shadow-lg z-10"
+          <ul
+            role="listbox"
+            id="departure-city-suggestions-list"
+            className="absolute w-full bg-white border mt-1 max-h-60 overflow-y-auto rounded-md shadow-lg z-10"
             ref={departureUlRef}
           >
             {suggestions.departure.map((suggestion, index) => (
               <li
+                role="option"
+                aria-selected
                 key={index}
                 tabIndex={0}
-                ref={(el) => departureSuggestionsRef.current[index] = el!}
+                ref={(el) => (departureSuggestionsRef.current[index] = el!)}
                 onKeyDown={(e) => handleLiKeyDown(e, suggestion, "departure")}
                 onClick={() => handleSelect("departure", suggestion)}
                 className="p-2 cursor-pointer hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
@@ -232,16 +263,14 @@ const SearchFormRide = ({
           </ul>
         )}
         {error.departureCity && (
-          <p className="text-red-400 text-sm">
+          <p id="departure-city-error" className="text-red-400 text-sm">
             {formatErrors(error.departureCity)}
           </p>
         )}
       </div>
 
       <div className="text-white text-sm gap-2 grid grid-cols-2 mb-4">
-        <label
-          className="col-span-2"
-          htmlFor="departure-radius">
+        <label className="col-span-2" htmlFor="departure-radius">
           Rayon de recherche pour la ville de départ
         </label>
         <input
@@ -254,9 +283,17 @@ const SearchFormRide = ({
           value={departureRadius}
           ref={departureRadiusRef}
           onChange={(e) => setDepartureRadius(Number(e.target.value))}
-          onFocus={() => setShowSuggestions((prev) => ({ ...prev, departure: false }))}
+          onFocus={() =>
+            setShowSuggestions((prev) => ({ ...prev, departure: false }))
+          }
+          aria-valuetext={`${departureRadius} kilomètres`}
         />
-        <label className="grid-span-1 flex justify-end" htmlFor="departure-radius">{departureRadius} km</label>
+        <label
+          className="grid-span-1 flex justify-end"
+          htmlFor="departure-radius"
+        >
+          {departureRadius} km
+        </label>
       </div>
 
       {/* Date de départ */}
@@ -270,17 +307,24 @@ const SearchFormRide = ({
         <input
           type="date"
           id="departure-at"
-          className={`${error.departureAt?.length
-            ? "border-error border-2 bg-red-50"
-            : "border-gray-300 bg-gray-50"
-            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          className={`${
+            error.departureAt?.length
+              ? "border-error border-2 bg-red-50"
+              : "border-gray-300 bg-gray-50"
+          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           value={departureAt}
           ref={departureTimeRef}
           onChange={(e) => setDepartureAt(e.target.value)}
-          onFocus={() => setShowSuggestions((prev) => ({ ...prev, arrival: false }))}
+          onFocus={() =>
+            setShowSuggestions((prev) => ({ ...prev, arrival: false }))
+          }
+          required
+          aria-describedby={
+            error.departureAt ? "departure-at-error" : undefined
+          }
         />
         {error.departureAt && (
-          <p className="text-red-400 text-sm">
+          <p id="departure-at-error" className="text-red-400 text-sm">
             {formatErrors(error.departureAt)}
           </p>
         )}
@@ -298,27 +342,44 @@ const SearchFormRide = ({
           autoComplete="off"
           type="text"
           id="arrival-city"
-          className={`${error.arrivalCity?.length
-            ? "border-error border-2 bg-red-50"
-            : "border-gray-300 bg-gray-50"
-            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          required
+          className={`${
+            error.arrivalCity?.length
+              ? "border-error border-2 bg-red-50"
+              : "border-gray-300 bg-gray-50"
+          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="Lyon"
           value={arrivalCity}
           ref={arrivalRef}
-          onFocus={() => { setShowSuggestions({ arrival: true, departure: false }); setLastModifiedField("arrival"); }}
+          onFocus={() => {
+            setShowSuggestions({ arrival: true, departure: false });
+            setLastModifiedField("arrival");
+          }}
           onKeyDown={(e) => handleInputKeyDown(e, "arrival")}
-          onKeyUp={() => keyState.shift = false}
+          onKeyUp={() => (keyState.shift = false)}
           onChange={(e) => handleInputChange("arrival", e.target.value)}
+          role="combobox"
+          aria-autocomplete="list"
+          aria-expanded={showSuggestions.arrival}
+          aria-controls="arrival-city-suggestions-list"
+          aria-describedby={
+            error.arrivalCity ? "arrival-city-error" : undefined
+          }
         />
         {showSuggestions.arrival && suggestions.arrival.length > 0 && (
-          <ul className="absolute w-full bg-white border mt-1 max-h-60 overflow-y-auto rounded-md shadow-lg z-10"
+          <ul
+            role="listbox"
+            id="arrival-city-suggestions-list"
+            className="absolute w-full bg-white border mt-1 max-h-60 overflow-y-auto rounded-md shadow-lg z-10"
             ref={arrivalUlRef}
           >
             {suggestions.arrival.map((suggestion, index) => (
               <li
+                role="option"
+                aria-selected
                 key={index}
                 tabIndex={0}
-                ref={(el) => arrivalSuggestionsRef.current[index] = el!}
+                ref={(el) => (arrivalSuggestionsRef.current[index] = el!)}
                 onKeyDown={(e) => handleLiKeyDown(e, suggestion, "arrival")}
                 onClick={() => handleSelect("arrival", suggestion)}
                 className="p-2 cursor-pointer hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
@@ -329,15 +390,13 @@ const SearchFormRide = ({
           </ul>
         )}
         {error.arrivalCity && (
-          <p className="text-red-400 text-sm">
+          <p id="arrival-city-error" className="text-red-400 text-sm">
             {formatErrors(error.arrivalCity)}
           </p>
         )}
       </div>
       <div className=" text-white text-sm gap-2 grid grid-cols-2 mb-6">
-        <label
-          className="col-span-2"
-          htmlFor="arrival-radius">
+        <label className="col-span-2" htmlFor="arrival-radius">
           Rayon de recherche pour la ville d'arrivée
         </label>
         <input
@@ -350,14 +409,27 @@ const SearchFormRide = ({
           value={arrivalRadius}
           ref={arrivalRadiusRef}
           onChange={(e) => setArrivalRadius(Number(e.target.value))}
-          onFocus={() => setShowSuggestions((prev) => ({ ...prev, arrival: false }))}
+          onFocus={() =>
+            setShowSuggestions((prev) => ({ ...prev, arrival: false }))
+          }
+          aria-valuetext={`${arrivalRadius} kilomètres`}
         />
-        <label className="grid-span-1 flex justify-end" htmlFor="arrival-radius">{arrivalRadius} km</label>
+        <label
+          className="grid-span-1 flex justify-end"
+          htmlFor="arrival-radius"
+        >
+          {arrivalRadius} km
+        </label>
       </div>
 
       {/* Bouton */}
       <div className="flex w-full justify-end">
-        <Button variant="validation" type="submit" label="Rechercher" className="border-white border-2" />
+        <Button
+          variant="validation"
+          type="submit"
+          label="Rechercher"
+          className="border-white border-2"
+        />
       </div>
     </form>
   );
