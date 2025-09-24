@@ -27,6 +27,7 @@ import {
   hydratePricingFromRaw,
 } from "../utils/attachPricingSelects";
 import { datasource } from "../datasource";
+import { notifyUserRideCancelled } from "../mail/rideEmails";
 import { findSimilarRouteFromDB } from "../utils/findSimilarRouteFromDB";
 
 @Resolver(() => Ride)
@@ -104,12 +105,8 @@ export class RidesResolver {
     return rides;
   }
 
-  // @Authorized()
   @Query(() => Ride)
-  async ride(
-    @Arg("id", () => ID) id: number
-    // @Ctx() context: ContextType
-  ): Promise<Ride | null> {
+  async ride(@Arg("id", () => ID) id: number): Promise<Ride | null> {
     const ride = await Ride.findOne({
       where: { id },
       relations: ["driver"],
@@ -121,6 +118,7 @@ export class RidesResolver {
     }
   }
 
+  @Authorized("user")
   @Query(() => PaginatedRides)
   async driverRides(
     @Ctx() ctx: AuthContextType,
@@ -212,6 +210,7 @@ export class RidesResolver {
       if (cached) {
         ({ distance_km, duration_min, route_polyline5 } = cached);
         source = "DB";
+        console.log("🚀 ~ RidesResolver ~ createRide ~ source:", source);
       } else {
         // 2) Sinon → Mapbox en dernier recours
         const r = await fetchRouteFromMapbox(
@@ -224,6 +223,7 @@ export class RidesResolver {
         duration_min = r.durationMin;
         route_polyline5 = r.polyline5;
         source = "MAPBOX";
+        console.log("🚀 ~ RidesResolver ~ createRide ~ source:", source);
       }
     } catch (e) {
       source = "NONE";
@@ -256,15 +256,9 @@ export class RidesResolver {
       duration_min,
       route_polyline5,
     });
-    console.log("[createRide] ▶️ saving:", {
-      distance_km,
-      duration_min,
-      arrival_at: arrival_at.toISOString(),
-    });
-    console.log("🗺️ ROUTE SOURCE :", source);
 
     await newRide.save();
-    console.log("[createRide] ✅ saved ride id:", newRide.id);
+
     return newRide;
   }
 
@@ -314,6 +308,21 @@ export class RidesResolver {
       ride.is_cancelled = true;
       await manager.save(ride);
 
+      // Email notification to passengers of trip cancellation
+      const toNotify =
+        ride.passenger_rides
+          ?.filter(
+            (passenger) =>
+              passenger.status === PassengerRideStatus.APPROVED ||
+              passenger.status === PassengerRideStatus.WAITING
+          )
+          .map((passenger) => passenger.user) ?? [];
+
+      for (const user of toNotify) {
+        await notifyUserRideCancelled(user, ride);
+      }
+
+      // Met à jour le statut de tous les passagers du trajet à "annulé par le conducteur"
       await manager
         .createQueryBuilder()
         .update(PassengerRide)
@@ -327,6 +336,7 @@ export class RidesResolver {
     });
   }
 
+  @Authorized("user")
   @FieldResolver(() => String, { nullable: true })
   async current_user_passenger_status(
     @Root() ride: Ride,

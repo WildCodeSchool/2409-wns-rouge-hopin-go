@@ -5,12 +5,12 @@ import Modal from "./Modal";
 import { useState } from "react";
 import useRide from "../context/Rides/useRide";
 import { useApolloClient, useMutation } from "@apollo/client";
-import { mutationUpdatePassengerRideStatus } from "../api/UpdatePassengerRideStatus";
 import { PassengerRideStatus } from "../gql/graphql";
 import { queryPassengersByRide } from "../api/PassengersByRide";
 import { queryDriverRides } from "../api/DriverRides";
 import { toast } from "react-toastify";
 import ConfirmModal from "./ConfirmModal";
+import { mutationDriverSetPassengerRideStatus } from "../api/DriverSetPassengerRideStatus";
 
 export type RidePassengerValidationButtonsProps = {
   passengerId: string;
@@ -26,8 +26,8 @@ const RidePassengerValidationButtons = ({
     null
   );
 
-  const [updatePassengerRideStatus] = useMutation(
-    mutationUpdatePassengerRideStatus
+  const [driverSetPassengerRideStatus] = useMutation(
+    mutationDriverSetPassengerRideStatus
   );
 
   const modalId = `passenger-confirmation-${passengerId}`;
@@ -41,7 +41,7 @@ const RidePassengerValidationButtons = ({
     if (!ride.id || !passengerId) return;
 
     try {
-      await updatePassengerRideStatus({
+      await driverSetPassengerRideStatus({
         variables: {
           data: {
             user_id: passengerId,

@@ -4,13 +4,7 @@ import { queryWhoAmI } from "../api/WhoAmI";
 import { mutationSignout } from "../api/Signout";
 import maleUser from "../assets/male-user.png";
 import Button from "./Button";
-import {
-  CarFront,
-  CirclePlus,
-  CircleUserRound,
-  MessageCircle,
-  Search,
-} from "lucide-react";
+import { CarFront, CirclePlus, CircleUserRound, Search } from "lucide-react";
 import { useRef, useState } from "react";
 import { useOutsideClick } from "../hooks/useOutsideClick";
 
@@ -87,10 +81,16 @@ const NavBar = () => {
         >
           <div className="flex items-center justify-around w-full p-2">
             {me ? (
-              <Button isLink to="/" icon={CarFront} iconSize={26} isFlexCol />
+              <Button
+                isLink
+                to="/my-rides/passenger"
+                icon={CarFront}
+                iconSize={26}
+                isFlexCol
+              />
             ) : null}
 
-            {me ? (
+            {/* {me ? (
               <Button
                 isLink
                 to="/"
@@ -98,18 +98,24 @@ const NavBar = () => {
                 iconSize={26}
                 isFlexCol
               />
-            ) : null}
+            ) : null} */}
 
             <Button
               isLink
-              to="/ride-results"
+              to="/research"
               icon={Search}
               iconSize={26}
               isFlexCol
             />
 
             {me ? (
-              <Button isLink to="/" icon={CirclePlus} iconSize={26} isFlexCol />
+              <Button
+                isLink
+                to="/propose"
+                icon={CirclePlus}
+                iconSize={26}
+                isFlexCol
+              />
             ) : null}
 
             <Button

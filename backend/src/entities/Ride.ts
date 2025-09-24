@@ -36,7 +36,6 @@ export class Point {
 @Check("max_passenger BETWEEN 1 AND 4")
 @Check("nb_passenger >= 0")
 @Check("nb_passenger <= max_passenger")
-@Check("arrival_at > departure_at")
 export class Ride extends BaseEntity {
   @PrimaryGeneratedColumn()
   @Field(() => ID)
@@ -79,7 +78,7 @@ export class Ride extends BaseEntity {
   @Field()
   nb_passenger!: number;
 
-  @Column({ type: "double precision", nullable: true })
+  @Column({ type: "decimal", precision: 6, scale: 2, nullable: true })
   @Field(() => Float, { nullable: true })
   distance_km?: number;
 
