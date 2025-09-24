@@ -60,7 +60,9 @@ export class UsersResolver {
             process.env.JWT_SECRET_KEY || ""
           );
 
-          const cookies = new Cookies(context.req, context.res);
+          const cookies = new Cookies(context.req, context.res, {
+            secure: process.env.NODE_ENV === "production",
+          });
 
           cookies.set("token", token, {
             secure: process.env.NODE_ENV === "production",
