@@ -70,8 +70,8 @@ const RideCardModal = ({
               ))
             ) : (
               <p>
-                Vous n'avez pas de passagers à valider sur ce trajet pour le
-                moment.
+                Vous n&apos;avez pas de passagers à valider sur ce trajet pour
+                le moment.
               </p>
             )}
           </div>

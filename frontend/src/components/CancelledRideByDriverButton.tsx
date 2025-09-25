@@ -42,7 +42,7 @@ const CancelledRideByDriverButton = ({
     }
   };
 
-  if (error) return <span>Erreur lors de l'annulation</span>;
+  if (error) return <span>Erreur lors de l&apos;annulation</span>;
 
   return (
     <>

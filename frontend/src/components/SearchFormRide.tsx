@@ -336,7 +336,7 @@ const SearchFormRide = ({
           htmlFor="arrival-city"
           className="block mb-2 text-sm font-medium text-white"
         >
-          Ville d'arrivée
+          Ville d&apos;arrivée
         </label>
         <input
           autoComplete="off"
@@ -397,7 +397,7 @@ const SearchFormRide = ({
       </div>
       <div className=" text-white text-sm gap-2 grid grid-cols-2 mb-6">
         <label className="col-span-2" htmlFor="arrival-radius">
-          Rayon de recherche pour la ville d'arrivée
+          Rayon de recherche pour la ville d&apos;arrivée
         </label>
         <input
           className="cursor-pointer grid-span-1 w-[300px]"

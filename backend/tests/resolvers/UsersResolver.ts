@@ -1,7 +1,5 @@
 import { User } from "../../src/entities/User";
 import { mutationCreateUser } from "../api/createUser";
-import { mutationSignin } from "../api/signin";
-import { queryWhoami } from "../api/whoami";
 import { assert, TestArgsType } from "../index.spec";
 
 export function UsersResolverTest(testArgs: TestArgsType) {

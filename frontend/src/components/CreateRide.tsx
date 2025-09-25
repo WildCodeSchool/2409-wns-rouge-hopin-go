@@ -479,7 +479,7 @@ const CreateRide = () => {
               htmlFor="arrivalAddress"
               className="block mb-2 text-sm font-medium text-textLight"
             >
-              Adresse d'arrivée
+              Adresse d&apos;arrivée
             </label>
             <input
               type="text"

@@ -11,12 +11,10 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToMany,
   PrimaryColumn,
 } from "typeorm";
 import { Ride } from "./Ride";
 import { User } from "./User";
-import { register } from "module";
 
 export enum PassengerRideStatus {
   APPROVED = "approved",

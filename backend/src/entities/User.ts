@@ -20,11 +20,14 @@ import { ContextType } from "../auth";
 import { PassengerRide } from "./PassengerRide";
 
 export const IsUser: MiddlewareFn<ContextType> = async (
-  { context, root },
-  next
+  { context, root }: { context: ContextType; root: unknown },
+  next: () => Promise<unknown>
 ) => {
   if (context.user) {
-    if (context.user.role === "admin" || context.user.id === root.id) {
+    if (
+      context.user.role === "admin" ||
+      context.user.id === (root as User).id
+    ) {
       //si je suis admin ou si je suis le user il faut que le user connecté soit le même que le user requêté
       return await next(); // dans ce cas on poursuit le traitement
     } else {
