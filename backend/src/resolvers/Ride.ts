@@ -183,6 +183,7 @@ export class RidesResolver {
   }
 
   // Need a Middleware to verify if the user is logged in
+  @Authorized("user")
   @Mutation(() => Ride)
   async createRide(
     @Arg("data", () => RideCreateInput) data: RideCreateInput
