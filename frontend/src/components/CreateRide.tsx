@@ -12,6 +12,7 @@ import { queryWhoAmI } from "../api/WhoAmI";
 import { toast } from "react-toastify";
 import { queryDriverRides } from "../api/DriverRides";
 import { useOutsideClick } from "../hooks/useOutsideClick";
+import { LoaderCircle } from "lucide-react";
 
 const CreateRide = () => {
   // TO DO => if user is not connected, the form should not be accessible
@@ -39,12 +40,15 @@ const CreateRide = () => {
   const [lastModifiedCity, setLastModifiedCity] = useState<
     "departure" | "arrival" | null
   >(null);
-
-  const [doCreateRide] = useMutation(mutationCreateRide, {
-    refetchQueries: [queryDriverRides],
-  });
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const driver = whoAmIData?.whoami;
+
+  const [doCreateRide, { loading: isCreatingRideLoading }] = useMutation(
+    mutationCreateRide,
+    {
+      refetchQueries: [queryDriverRides, queryWhoAmI],
+    }
+  );
 
   const departureTimeRef = useRef<HTMLInputElement>(null);
   const departureRef = useRef<HTMLInputElement>(null);
@@ -592,12 +596,17 @@ const CreateRide = () => {
       <div className="flex w-full justify-end mt-6">
         <Button
           onClick={doSubmit}
-          variant="validation"
+          variant={isCreatingRideLoading ? "pending" : "validation"}
           type="button"
-          label="Créer mon trajet"
+          label={isCreatingRideLoading ? "Création..." : "Créer mon trajet"}
           isHoverBgColor
+          icon={isCreatingRideLoading ? LoaderCircle : undefined}
+          iconRotateAnimation
+          className={isCreatingRideLoading ? "disabled:cursor-not-allowed" : ""}
           isDisabled={
-            showDepartureSuggestions || showArrivalSuggestions ? true : false
+            (showDepartureSuggestions || showArrivalSuggestions
+              ? true
+              : false) || isCreatingRideLoading
           }
         />
       </div>
