@@ -14,6 +14,10 @@ import argon2 from "argon2";
 import { decode, sign, verify } from "jsonwebtoken";
 import Cookies from "cookies";
 import { ContextType, getUserFromContext } from "../auth";
+import { ensureLambdaUser } from "../utils/ensureLambdaUserAfterDeleted";
+import { PassengerRide, PassengerRideStatus } from "../entities/PassengerRide";
+import { datasource } from "../datasource";
+import { Ride } from "../entities/Ride";
 
 @Resolver()
 export class UsersResolver {
@@ -146,15 +150,100 @@ export class UsersResolver {
   }
 
   @Authorized("user")
-  @Mutation(() => User, { nullable: true })
-  async deleteUser(@Arg("id", () => ID) id: number): Promise<User | null> {
-    const user = await User.findOneBy({ id });
-    if (user !== null) {
-      await user.remove();
-      Object.assign(user, { id });
-      return user;
-    } else {
-      return null;
+  @Mutation(() => Boolean)
+  async deleteMyAccount(@Ctx() context: ContextType): Promise<boolean> {
+    const me = context.user;
+    if (!me) return false;
+
+    try {
+      const lambda = await ensureLambdaUser(); // util qui crée/retourne un user "deleted"
+
+      await User.getRepository().manager.transaction(async (m) => {
+        // 1) Charger l'utilisateur courant
+        const user = await m.findOne(User, { where: { id: me.id } });
+        if (!user) return;
+
+        // ========= A) PASSAGER : annuler + décrémenter si APPROVED, puis réassigner au lambda
+        const prs = await m.find(PassengerRide, {
+          where: { user_id: user.id },
+          relations: { ride: true },
+        });
+
+        const ridesToDecrement = prs
+          .filter((pr) => pr.status === PassengerRideStatus.APPROVED && pr.ride)
+          .map((pr) => pr.ride!.id);
+
+        if (ridesToDecrement.length) {
+          await m.query(
+            `UPDATE "ride"
+            SET nb_passenger = GREATEST(0, nb_passenger - 1)
+            WHERE id = ANY($1::int[])`,
+            [ridesToDecrement]
+          );
+        }
+
+        await m
+          .createQueryBuilder()
+          .update(PassengerRide)
+          .set({
+            status: PassengerRideStatus.CANCELLED_BY_PASSENGER,
+            user_id: lambda.id,
+          })
+          .where("user_id = :uid", { uid: user.id })
+          .execute();
+
+        // ========= B) CONDUCTEUR : marquer les trajets et passagers, réassigner driver_id
+        const driverRideRows: { id: number }[] = await m.query(
+          `SELECT id FROM "ride" WHERE driver_id = $1`,
+          [user.id]
+        );
+        const driverRideIds = driverRideRows.map((r) => r.id);
+
+        if (driverRideIds.length) {
+          // Passagers de ces trajets → CANCELLED_BY_DRIVER
+          await m
+            .createQueryBuilder()
+            .update(PassengerRide)
+            .set({ status: PassengerRideStatus.CANCELLED_BY_DRIVER })
+            .where("ride_id IN (:...rids)", { rids: driverRideIds })
+            .andWhere("status IN (:...st)", {
+              st: [PassengerRideStatus.WAITING, PassengerRideStatus.APPROVED],
+            })
+            .execute();
+
+          // Trajets → annulés
+          await m
+            .createQueryBuilder()
+            .update(Ride)
+            .set({ is_cancelled: true })
+            .where("id IN (:...rids)", { rids: driverRideIds })
+            .execute();
+
+          // Réassigner le driver **via la FK** (relation non gérée par .set)
+          await m.query(
+            `UPDATE "ride" SET driver_id = $1 WHERE id = ANY($2::int[])`,
+            [lambda.id, driverRideIds]
+          );
+        }
+
+        // ========= C) Supprimer l'utilisateur réel
+        await m.delete(User, { id: user.id });
+      });
+
+      // D) Logout (même logique que signout)
+      const cookies = new Cookies(context.req, context.res, {
+        secure: process.env.NODE_ENV === "production",
+      });
+      cookies.set("token", "", {
+        maxAge: 0,
+        sameSite: "strict",
+        httpOnly: true,
+      });
+
+      return true;
+    } catch (e) {
+      console.error("deleteMyAccount failed:", e);
+      return false;
     }
   }
 

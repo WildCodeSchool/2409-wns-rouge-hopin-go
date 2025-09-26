@@ -117,7 +117,8 @@ export class PassengerRideResolver {
     const now = new Date();
     const userId = ctx.user.id;
 
-    const baseQuery = Ride.createQueryBuilder("ride")
+    const qb = Ride.createQueryBuilder("ride")
+      // L’INNER JOIN filtre les rides par PR du user courant
       .innerJoin("ride.passenger_rides", "pr", "pr.user_id = :userId", {
         userId,
       })
@@ -126,34 +127,71 @@ export class PassengerRideResolver {
       .leftJoinAndSelect("passengerRide.user", "passenger");
 
     if (filter === "upcoming") {
-      baseQuery.andWhere("ride.departure_at > :now", { now });
-      baseQuery.andWhere("ride.is_cancelled = false");
+      qb.andWhere("ride.departure_at > :now", { now });
+      qb.andWhere("ride.is_cancelled = false");
+      qb.andWhere("pr.status IN (:...ok)", {
+        ok: [PassengerRideStatus.WAITING, PassengerRideStatus.APPROVED],
+      });
     } else if (filter === "archived") {
-      baseQuery.andWhere("ride.departure_at < :now", { now });
+      // ✅ inclut passés OU annulés OU statuts annulés/refusés
+      qb.andWhere(
+        `(
+        ride.departure_at < :now
+        OR ride.is_cancelled = true
+        OR pr.status IN (:...arch)
+      )`,
+        {
+          now,
+          arch: [
+            PassengerRideStatus.CANCELLED_BY_DRIVER,
+            PassengerRideStatus.CANCELLED_BY_PASSENGER,
+            PassengerRideStatus.REFUSED,
+          ],
+        }
+      );
     } else if (filter === "canceled") {
-      baseQuery.andWhere("ride.is_cancelled = true");
+      qb.andWhere(
+        `ride.is_cancelled = true
+       OR pr.status IN (:...arch)`,
+        {
+          arch: [
+            PassengerRideStatus.CANCELLED_BY_DRIVER,
+            PassengerRideStatus.CANCELLED_BY_PASSENGER,
+            PassengerRideStatus.REFUSED,
+          ],
+        }
+      );
     } else if (filter && filter !== "all") {
       throw new Error("Invalid filter");
     }
 
-    baseQuery.addOrderBy("ride.departure_at", sort);
+    qb.addOrderBy("ride.departure_at", sort);
 
-    // 👇 injecte les sélections de prix
-    attachPricingSelects(baseQuery, {
+    // ⬇️ tes sélections de pricing (doivent toujours référencer des alias qualifiés, ex: "ride.xxx")
+    attachPricingSelects(qb, {
       perKm: 0.14,
       minFare: 2.5,
       minFareKm: 10,
       roundTo: 2,
     });
 
+    // ⚠️ ne pas ajouter de "addSelect('ride.id', 'ride_id')" ni "addSelect('pr.status', ...)"
+    // -> on évite toute ambiguïté
+
     const [rides, totalCount, raw] = await Promise.all([
-      baseQuery.take(limit).skip(offset).getMany(),
-      baseQuery.getCount(),
-      baseQuery.getRawMany(),
+      qb.take(limit).skip(offset).getMany(),
+      qb.getCount(),
+      qb.getRawMany(),
     ]);
 
-    // recoller les valeurs calculées dans les entités
+    // Hydrate tes prix
     hydratePricingFromRaw(rides, raw);
+
+    // ✅ Hydrate le statut du user courant sans raw : via les entités
+    for (const r of rides) {
+      const myPR = r.passenger_rides?.find((x) => x.user_id === userId);
+      r.current_user_passenger_status = myPR?.status ?? undefined;
+    }
 
     return { rides, totalCount };
   }

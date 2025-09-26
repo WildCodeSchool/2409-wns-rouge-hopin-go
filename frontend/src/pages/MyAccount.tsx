@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { queryWhoAmI } from "../api/WhoAmI";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, X } from "lucide-react";
 import { formatErrors } from "../utils/formatErrors";
 import { useEffect, useState } from "react";
 import {
@@ -10,10 +10,17 @@ import {
 import Button from "../components/Button";
 import { mutationUpdateMyAccount } from "../api/UpdateMyAccount";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+import { DeleteMyAccount } from "../api/DeleteMyAccount";
+import Modal from "../components/Modal";
+import { useModal } from "../hooks/useModal";
 
 const MyAccount = () => {
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const me = whoAmIData?.whoami;
+  const navigate = useNavigate();
+
+  const { isOpen, isVisible, toggleModal, closeModal } = useModal();
 
   const [doUpdate, { loading }] = useMutation(mutationUpdateMyAccount, {
     refetchQueries: [queryWhoAmI],
@@ -66,10 +73,20 @@ const MyAccount = () => {
       });
     }
   };
+  // suppression du compte
+  const [doDelete, { loading: deleting }] = useMutation(DeleteMyAccount, {
+    refetchQueries: [queryWhoAmI],
+  });
+
+  async function handleDelete() {
+    await doDelete();
+    toast.info("Compte supprimé.");
+    navigate("/", { replace: true });
+  }
 
   return (
     <div className="h-[calc(100vh-4rem)] flex items-center justify-center pt-20 px-4">
-      <div className="flex flex-col items-center rounded-lg p-8 shadow-lg bg-white w-full max-w-md">
+      <div className="flex flex-col items-center rounded-xl p-8 shadow-lg bg-white w-full max-w-md">
         <h1 className="text-2xl font-bold mb-8">Mon Compte</h1>
 
         {me && (
@@ -153,8 +170,58 @@ const MyAccount = () => {
               disabled={loading}
               onClick={handleSubmit} // ← on appelle vraiment la mutation
             />
+            <Button
+              type="submit"
+              variant="full"
+              isHoverBgColor
+              label={deleting ? "Suppression..." : "Supprimer mon compte"}
+              disabled={loading}
+              onClick={() => toggleModal("deleteAccountModal")} // ← on appelle vraiment la mutation
+            />
           </form>
         )}
+
+        <Modal
+          id="deleteAccountModal"
+          isOpen={isOpen("deleteAccountModal")}
+          isVisible={isVisible("deleteAccountModal")}
+          onClose={() => closeModal("deleteAccountModal")}
+        >
+          <div className="p-6 bg-white rounded-xl shadow-lg">
+            <header className="w-full flex justify-between items-center mb-4">
+              <h2 className="text-lg font-semibold">
+                Confirmation de la suppression
+              </h2>
+              <Button
+                icon={X}
+                iconColor="text-primary"
+                hoverIconColor="!text-white"
+                iconSize={26}
+                type="button"
+                variant="full"
+                isBgTransparent
+                onClick={() => closeModal("deleteAccountModal")}
+                className="group hover:!bg-primaryHover"
+              />
+            </header>
+            <main className="relative w-full h-full flex flex-col gap-4 justify-between">
+              <p>Êtes-vous sûr de vouloir supprimer votre compte ?</p>
+              <p className="text-sm text-gray-500">
+                Cette action est irréversible et supprimera toutes vos données
+                personnelles.
+              </p>
+              <Button
+                type="button"
+                variant="full"
+                isHoverBgColor
+                label={deleting ? "Suppression..." : "Supprimer mon compte"}
+                disabled={loading}
+                onClick={handleDelete}
+                className=" w-fit self-end"
+              />
+            </main>
+          </div>
+        </Modal>
       </div>
     </div>
   );

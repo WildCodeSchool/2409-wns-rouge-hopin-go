@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 
 const Signin = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState("Nuagebleu73!");
   const [revealPassword, setRevealPassword] = useState(false);
   const [error, setError] = useState<Record<string, string[]>>({});
   const navigate = useNavigate();
