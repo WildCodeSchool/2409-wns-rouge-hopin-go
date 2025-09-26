@@ -44,7 +44,7 @@ const RideResults = () => {
         arrival_lng,
         arrival_lat,
         arrival_radius,
-        departure_at: new Date(departure_at + ":00:00:00Z"),
+        departure_at: new Date(`${departure_at}T00:00:00Z`),
       },
     },
     fetchPolicy: "network-only",

@@ -18,14 +18,14 @@ export const validateArrivalCity = (value: string): string[] => {
 
 export const validateDepartureAt = (value: string): string[] => {
   const errors: string[] = [];
-  if (!value) errors.push("La date et l'heure sont requises");
+  if (!value) errors.push("La date est requise");
   const date = new Date(value);
   if (isNaN(date.getTime())) {
-    errors.push("La date et l'heure sont invalides");
+    errors.push("La date est invalide");
   } else {
     const now = new Date();
     if (isBefore(startOfDay(date), startOfDay(now))) {
-      errors.push("La date et l'heure ne peuvent pas être dans le passé");
+      errors.push("La date ne peut pas être dans le passé");
     }
   }
 
