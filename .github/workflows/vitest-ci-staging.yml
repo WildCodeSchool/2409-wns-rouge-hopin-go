@@ -43,6 +43,7 @@ jobs:
       POSTGRES_DB: ${{ secrets.POSTGRES_DB }}
       MAPBOX_DIRECTIONS_TOKEN: ${{ secrets.MAPBOX_DIRECTIONS_TOKEN }}
       NODE_ENV: ${{ secrets.NODE_ENV }}
+      JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
     steps:
       - name: Check out code
         uses: actions/checkout@v4

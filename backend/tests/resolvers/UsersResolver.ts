@@ -2,6 +2,8 @@ import { validate } from "class-validator";
 import { User, UserCreateInput } from "../../src/entities/User";
 import { mutationCreateUser } from "../api/createUser";
 import { assert, TestArgsType } from "../index.spec";
+import { mutationSignin } from "../api/signin";
+import { queryWhoami } from "../api/whoami";
 
 export function UsersResolverTest(testArgs: TestArgsType) {
   const cases = [
