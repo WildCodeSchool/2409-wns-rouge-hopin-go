@@ -1,22 +1,7 @@
-import {
-  Field,
-  ID,
-  InputType,
-  ObjectType,
-  registerEnumType,
-} from "type-graphql";
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryColumn,
-} from "typeorm";
+import { Field, ID, InputType, ObjectType, registerEnumType } from "type-graphql";
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { Ride } from "./Ride";
 import { User } from "./User";
-import { register } from "module";
 
 export enum PassengerRideStatus {
   APPROVED = "approved",

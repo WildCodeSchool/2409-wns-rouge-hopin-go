@@ -76,14 +76,11 @@ export default function MapInteractive({
   });
 
   // 3) Source finale à afficher (polyline -> route.geojson -> null)
-  const line: GeoJSON.LineString | null =
-    geometryFromPolyline ?? route?.geometry ?? null;
+  const line: GeoJSON.LineString | null = geometryFromPolyline ?? route?.geometry ?? null;
 
   // 4) Données meta (distance/durée) : backend > fallback Directions
-  const finalDistanceKm =
-    typeof distanceKm === "number" ? distanceKm : route?.distanceKm;
-  const finalDurationMin =
-    typeof durationMin === "number" ? durationMin : route?.durationMin;
+  const finalDistanceKm = typeof distanceKm === "number" ? distanceKm : route?.distanceKm;
+  const finalDurationMin = typeof durationMin === "number" ? durationMin : route?.durationMin;
 
   const isLoading = !line && loading;
 
@@ -164,10 +161,7 @@ export default function MapInteractive({
       map.fitBounds(bounds, { padding: 40 });
 
       // envoie meta vers le parent (si dispo)
-      if (
-        typeof finalDistanceKm === "number" &&
-        typeof finalDurationMin === "number"
-      ) {
+      if (typeof finalDistanceKm === "number" && typeof finalDurationMin === "number") {
         onRouteDataRef.current?.({
           distanceKm: finalDistanceKm,
           durationMin: finalDurationMin,
@@ -205,7 +199,7 @@ export default function MapInteractive({
 
   if (isLoading) {
     return (
-      <div className="bg-gray-200 w-full h-full flex justify-center items-center text-primary">
+      <div className="text-primary flex h-full w-full items-center justify-center bg-gray-200">
         <p>Chargement de la carte...</p>
       </div>
     );

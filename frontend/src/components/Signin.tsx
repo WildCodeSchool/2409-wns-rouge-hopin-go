@@ -71,17 +71,14 @@ const Signin = () => {
   return (
     <form
       noValidate
-      className=" h-full w-full flex flex-col justify-center items-center max-w-sm mx-auto px-4 sm:px-0"
+      className="mx-auto flex h-full w-full max-w-sm flex-col items-center justify-center px-4 sm:px-0"
       onSubmit={(e) => {
         e.preventDefault();
         doSubmit();
       }}
     >
       <div className="mb-5 w-full">
-        <label
-          htmlFor="email"
-          className="block mb-2 text-sm font-medium text-white "
-        >
+        <label htmlFor="email" className="mb-2 block text-sm font-medium text-white">
           Email
         </label>
         <input
@@ -89,9 +86,9 @@ const Signin = () => {
           id="email"
           className={`${
             error.email?.length
-              ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+              ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
               : "border-gray-300 bg-gray-50"
-          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
           placeholder="nom@mail.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -100,7 +97,7 @@ const Signin = () => {
           aria-describedby={error.email ? "email-error" : undefined}
         />
         {error.email && (
-          <p id="email-error" className="text-red-400 text-sm">
+          <p id="email-error" className="text-sm text-red-400">
             {formatErrors(error.email)}
           </p>
         )}
@@ -109,7 +106,7 @@ const Signin = () => {
       <div className="mb-5 w-full">
         <label
           htmlFor="password"
-          className="block mb-2 text-sm font-medium text-white dark:text-white"
+          className="mb-2 block text-sm font-medium text-white dark:text-white"
         >
           Mot de passe
         </label>
@@ -120,9 +117,9 @@ const Signin = () => {
             required
             className={`${
               error.password?.length
-                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
                 : "border-gray-300 bg-gray-50"
-            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+            } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             aria-describedby={error.password ? "password-error" : undefined}
@@ -130,13 +127,9 @@ const Signin = () => {
 
           <button
             type="button"
-            className=" -ml-8"
+            className="-ml-8"
             onClick={() => setRevealPassword(!revealPassword)}
-            aria-label={
-              revealPassword
-                ? "Masquer le mot de passe"
-                : "Afficher le mot de passe"
-            }
+            aria-label={revealPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
           >
             {revealPassword ? (
               <Eye size="16" className="text-primary" />
@@ -146,11 +139,9 @@ const Signin = () => {
           </button>
         </div>
       </div>
-      {error.password && (
-        <p className="text-red-400 text-sm">{formatErrors(error.password)}</p>
-      )}
+      {error.password && <p className="text-sm text-red-400">{formatErrors(error.password)}</p>}
       {error.general && (
-        <p role="alert" className="text-red-500 mt-4 text-sm">
+        <p role="alert" className="mt-4 text-sm text-red-500">
           {formatErrors(error.general)}
         </p>
       )}

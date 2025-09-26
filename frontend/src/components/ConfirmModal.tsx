@@ -6,15 +6,11 @@ type ConfirmModalProps = {
   toggleModal: () => void;
   onConfirm: () => void;
 };
-const ConfirmModal = ({
-  message,
-  toggleModal,
-  onConfirm,
-}: ConfirmModalProps) => {
+const ConfirmModal = ({ message, toggleModal, onConfirm }: ConfirmModalProps) => {
   return (
     <div>
       <div
-        className="relative flex flex-col md:items-center md:justify-center rounded-xl bg-gray-200 p-6 max-w-md w-full"
+        className="relative flex w-full max-w-md flex-col rounded-xl bg-gray-200 p-6 md:items-center md:justify-center"
         onClick={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()} // Prevent closing modal on button click
       >
@@ -26,19 +22,13 @@ const ConfirmModal = ({
           variant="full"
           isBgTransparent
           onClick={toggleModal}
-          className="hover:!bg-primaryHover self-end mb-4"
+          className="hover:!bg-primaryHover mb-4 self-end"
         />
-        <h2 className="text-xl font-bold text-primary mb-4">Confirmation</h2>
+        <h2 className="text-primary mb-4 text-xl font-bold">Confirmation</h2>
 
         <p className="whitespace-pre-line">{message}</p>
-        <div className="flex gap-4 items-center justify-end my-6">
-          <Button
-            label="Annuler"
-            type="button"
-            icon={X}
-            variant="refused"
-            onClick={toggleModal}
-          />
+        <div className="my-6 flex items-center justify-end gap-4">
+          <Button label="Annuler" type="button" icon={X} variant="refused" onClick={toggleModal} />
           <Button
             label="Confirmer"
             type="button"

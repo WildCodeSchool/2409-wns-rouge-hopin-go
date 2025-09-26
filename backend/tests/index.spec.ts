@@ -7,7 +7,7 @@ import { UsersResolverTest } from "./resolvers/UsersResolver";
 export type TestArgsType = {
   server: ApolloServer<BaseContext>;
   datasource: DataSource;
-  data: any;
+  data: Record<string, unknown>;
 };
 
 const testArgs: TestArgsType = {
@@ -24,9 +24,7 @@ beforeAll(async () => {
   await datasource.initialize();
   try {
     const entities = datasource.entityMetadatas;
-    const tableNames = entities
-      .map((entity) => `"${entity.tableName}"`)
-      .join(", ");
+    const tableNames = entities.map((entity) => `"${entity.tableName}"`).join(", ");
     await datasource.query(`TRUNCATE ${tableNames} CASCADE;`);
   } catch (error) {
     throw new Error(`ERROR: Cleaning test database: ${error}`);

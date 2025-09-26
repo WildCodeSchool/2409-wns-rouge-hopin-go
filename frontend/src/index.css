@@ -12,11 +12,11 @@
 }
 
 * {
-  @apply m-0 p-0 box-border list-none no-underline;
+  @apply m-0 box-border list-none p-0 no-underline;
 }
 
 body {
-  @apply m-0 bg-gray-100 font-montserrat;
+  @apply font-montserrat m-0 bg-gray-100;
 }
 
 h1 {
@@ -24,11 +24,11 @@ h1 {
 }
 
 .button-flex {
-  @apply rounded-lg gap-2 flex items-center justify-center font-montserrat text-sm;
+  @apply font-montserrat flex items-center justify-center gap-2 rounded-lg text-sm;
 }
 
 .button-col {
-  @apply rounded-lg px-4 py-2 gap-2 flex flex-col items-center justify-center;
+  @apply flex flex-col items-center justify-center gap-2 rounded-lg px-4 py-2;
 }
 
 .button-primary {
@@ -40,7 +40,7 @@ h1 {
 }
 
 .button-secondary {
-  @apply rounded-lg bg-secondary text-textDark hover:bg-secondaryHover cursor-pointer transition-200;
+  @apply bg-secondary text-textDark hover:bg-secondaryHover transition-200 cursor-pointer rounded-lg;
 }
 
 .button-validation {
@@ -77,7 +77,7 @@ h1 {
   }
 
   .custom-select {
-    @apply appearance-none cursor-pointer;
+    @apply cursor-pointer appearance-none;
   }
 
   /* width */
@@ -115,7 +115,8 @@ h1 {
   }
 
   .shadow-custom {
-    box-shadow: rgba(0, 0, 0, 0.15) 10px 15px 25px,
+    box-shadow:
+      rgba(0, 0, 0, 0.15) 10px 15px 25px,
       rgba(0, 0, 0, 0.05) 10px 5px 10px;
   }
 }
@@ -153,7 +154,7 @@ h1 {
 
 .swiper-button-prev,
 .swiper-button-next {
-  @apply !text-primary transition-200 absolute top-1/2 -translate-y-1/2 z-10 flex items-center justify-center;
+  @apply !text-primary transition-200 absolute top-1/2 z-10 flex -translate-y-1/2 items-center justify-center;
 }
 
 .swiper-button-next:hover,

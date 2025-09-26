@@ -14,12 +14,7 @@ export type Tab = {
   path: string;
 };
 
-const SwitchTabs = ({
-  tabs,
-  tabParams,
-  classContainer,
-  proposeRef,
-}: SwitchTabsProps) => {
+const SwitchTabs = ({ tabs, tabParams, classContainer, proposeRef }: SwitchTabsProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const isMyRidesPage = location.pathname.includes("/my-rides");
@@ -42,19 +37,20 @@ const SwitchTabs = ({
   };
 
   return (
-    <div className="sm:border border-textDark sm:rounded-xl shadow-xl  h-full w-full overflow-hidden z-50">
+    <div className="border-textDark z-50 h-full w-full overflow-hidden shadow-xl sm:rounded-xl sm:border">
       <div className="flex h-fit w-full">
         {tabs.map((tab, index) => (
           <button
             key={index}
-            className={`flex-1 py-4 font-semibold transition-200 ${isMyRidesPage
+            className={`transition-200 flex-1 py-4 font-semibold ${
+              isMyRidesPage
                 ? activeTab === index
-                  ? "bg-gray-100 text-primary underline"
-                  : "bg-gray-200 text-primary/50 hover:text-primary"
+                  ? "text-primary bg-gray-100 underline"
+                  : "text-primary/50 hover:text-primary bg-gray-200"
                 : activeTab === index
                   ? "bg-primary text-white underline"
-                  : "bg-gray-200 text-primary/50 hover:text-primary"
-              } `}
+                  : "text-primary/50 hover:text-primary bg-gray-200"
+            } `}
             onClick={() => handleTabClick(index)}
             ref={index === 1 && proposeRef ? proposeRef : null}
           >
@@ -62,7 +58,7 @@ const SwitchTabs = ({
           </button>
         ))}
       </div>
-      <div className={`${classContainer} w-full h-full overflow-auto`}>
+      <div className={`${classContainer} h-full w-full overflow-auto`}>
         {tabs[activeTab].content}
       </div>
     </div>

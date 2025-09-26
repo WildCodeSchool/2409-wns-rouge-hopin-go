@@ -38,16 +38,15 @@ export async function sendEmail({
       .request(data);
 
     if (result) {
-      console.log(
-        "✅ Mail envoyé à",
-        toEmail,
-        "status:",
-        result.body.Messages[0].Status
-      );
+      console.log("✅ Mail envoyé à", toEmail, "status:", result.body.Messages[0].Status);
     }
     return true;
-  } catch (err: any) {
-    console.error("❌ Erreur Mailjet :", err.statusCode || err);
+  } catch (err: unknown) {
+    if (typeof err === "object" && err !== null && "statusCode" in err) {
+      console.error("❌ Erreur Mailjet :", (err as { statusCode?: unknown }).statusCode);
+    } else {
+      console.error("❌ Erreur Mailjet :", err);
+    }
     return false;
   }
 }

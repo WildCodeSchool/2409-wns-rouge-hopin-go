@@ -3,11 +3,7 @@ import { User } from "../entities/User";
 import { sendEmail } from "./sendMail";
 
 // Notification to the driver of a new passenger to be validated
-export async function notifyDriverNewPassenger(
-  driver: User,
-  passenger: User,
-  ride: Ride
-) {
+export async function notifyDriverNewPassenger(driver: User, passenger: User, ride: Ride) {
   return sendEmail({
     toEmail: driver.email,
     toName: driver.firstName,
@@ -77,9 +73,7 @@ export async function notifyUserRideRefused(passenger: User, ride: Ride) {
     subject: "Invalidation de votre trajet",
     text: `Bonjour ${passenger.firstName},
 
-Nous sommes désolés de vous informer que votre trajet de ${
-      ride.departure_city
-    } à ${
+Nous sommes désolés de vous informer que votre trajet de ${ride.departure_city} à ${
       ride.arrival_city
     } le ${ride.departure_at.toLocaleString()} n'a pas été validé. Nous vous invitons à rechercher un autre trajet.
 
@@ -108,9 +102,7 @@ export async function notifyUserRideCancelled(passenger: User, ride: Ride) {
     text: `Bonjour ${passenger.firstName},
 
 V
-Nous sommes désolés de vous informer que votre trajet de ${
-      ride.departure_city
-    } à ${
+Nous sommes désolés de vous informer que votre trajet de ${ride.departure_city} à ${
       ride.arrival_city
     } le ${ride.departure_at.toLocaleString()} a été annulé. Nous vous invitons à rechercher un autre trajet.
 
