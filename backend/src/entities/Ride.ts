@@ -206,6 +206,8 @@ export class SearchRideInput {
   departure_lat!: number;
 
   @Field()
+  @Max(100, { message: 'La rayon de recherche ne peut pas dépasser 100km' })
+  @Min(0, { message: "Le rayon doit être au moins 0 km" })
   departure_radius!: number;
 
   @Field()
@@ -220,6 +222,8 @@ export class SearchRideInput {
   arrival_lat!: number;
 
   @Field()
+  @Max(100, { message: 'La rayon de recherche ne peut pas dépasser 100km' })
+  @Min(0, { message: "Le rayon doit être au moins 0 km" })
   arrival_radius!: number;
 
   @Field(() => Date)
