@@ -104,20 +104,46 @@ export class UsersResolver {
     }
   }
 
-  // @Mutation(() => User, { nullable: true })
-  // async updateUser(
-  //     @Arg("id", () => ID) id: number,
-  //     @Arg("data", () => UserUpdateInput) data: UserUpdateInput
-  // ): Promise<User | null> {
-  //     const user = await User.findOneBy({ id });
-  //     if (user !== null) {
+  @Authorized("user")
+  @Mutation(() => User, { nullable: true })
+  async updateMyAccount(
+    @Ctx() context: ContextType,
+    @Arg("data", () => UserUpdateInput) data: UserUpdateInput
+  ): Promise<User | null> {
+    const me = context.user;
+    if (!me) return null;
 
-  //         await user.save();
-  //         return user;
-  //     } else {
-  //         return null;
-  //     }
-  // }
+    const user = await User.findOneBy({ id: me.id });
+    if (!user) return null;
+
+    // Hash si password fourni
+    if (data.password) {
+      const hashedPassword = await argon2.hash(data.password);
+      // on ne persiste jamais le champ 'password' brut
+      delete data.password;
+      (data as any).hashedPassword = hashedPassword;
+    }
+
+    Object.assign(user, data);
+
+    // validation (email sur l'entité)
+    const errors = await validate(user);
+    if (errors.length > 0) {
+      throw new Error(`Validation error: ${JSON.stringify(errors)}`);
+    }
+
+    try {
+      await user.save();
+    } catch (e: any) {
+      // gestion email unique (citext UNIQUE)
+      if (e.code === "23505") {
+        throw new Error("This email is already used.");
+      }
+      throw e;
+    }
+
+    return user;
+  }
 
   @Authorized("user")
   @Mutation(() => User, { nullable: true })

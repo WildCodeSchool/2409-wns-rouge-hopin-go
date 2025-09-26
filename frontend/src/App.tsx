@@ -22,7 +22,7 @@ const App = () => {
                 className="flex items-center gap-2 text-sm  py-2 px-4 rounded-full text-white bg-primary"
                 title="Vous êtes connecté(e)"
               >
-                {me?.email}
+                {me?.firstName}
                 <CheckCircle className="text-validation" />
               </span>
             )}

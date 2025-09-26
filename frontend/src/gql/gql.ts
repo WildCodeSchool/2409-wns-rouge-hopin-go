@@ -26,7 +26,8 @@ type Documents = {
     "\n  query SearchRides($data: SearchRideInput!) {\n    searchRide(data: $data) {\n      id\n      created_at\n      departure_city\n      departure_at\n      distance_km\n      duration_min\n      route_polyline5\n      total_route_price\n      price_per_passenger\n      departure_location {\n        type\n        coordinates\n      }\n      arrival_city\n      arrival_at\n      arrival_location {\n        type\n        coordinates\n      }\n      departure_address\n      arrival_address\n      max_passenger\n      nb_passenger\n      is_cancelled\n      available_seats\n      driver {\n        id\n        firstName\n        lastName\n        createdAt\n        role\n      }\n      passenger_rides {\n        ride_id\n        user_id\n        status\n      }\n      current_user_passenger_status\n    }\n  }\n": typeof types.SearchRidesDocument,
     "\nmutation Signin($email: String!, $password: String! ) {\n  signin(email: $email, password: $password) {\n    id\n    email\n  }\n}": typeof types.SigninDocument,
     "\nmutation Mutation {\n  signout\n}\n  ": typeof types.MutationDocument,
-    "\nquery Whoami {\n  whoami {\n    id\n    email\n    role\n  }\n}\n": typeof types.WhoamiDocument,
+    "\n    mutation UpdateMyAccount($data: UserUpdateInput!) {\n      updateMyAccount(data: $data) {\n        id\n        firstName\n        lastName\n        email\n        createdAt\n      }\n    }\n  ": typeof types.UpdateMyAccountDocument,
+    "\nquery Whoami {\n  whoami {\n    id\n    email\n    role\n    firstName\n  }\n}\n": typeof types.WhoamiDocument,
 };
 const documents: Documents = {
     "\nmutation CreatePassengerRide($data: CreatePassengerRideInput!) {\n    createPassengerRide(data: $data) {\n        user_id\n        ride_id \n    }\n  }": types.CreatePassengerRideDocument,
@@ -41,7 +42,8 @@ const documents: Documents = {
     "\n  query SearchRides($data: SearchRideInput!) {\n    searchRide(data: $data) {\n      id\n      created_at\n      departure_city\n      departure_at\n      distance_km\n      duration_min\n      route_polyline5\n      total_route_price\n      price_per_passenger\n      departure_location {\n        type\n        coordinates\n      }\n      arrival_city\n      arrival_at\n      arrival_location {\n        type\n        coordinates\n      }\n      departure_address\n      arrival_address\n      max_passenger\n      nb_passenger\n      is_cancelled\n      available_seats\n      driver {\n        id\n        firstName\n        lastName\n        createdAt\n        role\n      }\n      passenger_rides {\n        ride_id\n        user_id\n        status\n      }\n      current_user_passenger_status\n    }\n  }\n": types.SearchRidesDocument,
     "\nmutation Signin($email: String!, $password: String! ) {\n  signin(email: $email, password: $password) {\n    id\n    email\n  }\n}": types.SigninDocument,
     "\nmutation Mutation {\n  signout\n}\n  ": types.MutationDocument,
-    "\nquery Whoami {\n  whoami {\n    id\n    email\n    role\n  }\n}\n": types.WhoamiDocument,
+    "\n    mutation UpdateMyAccount($data: UserUpdateInput!) {\n      updateMyAccount(data: $data) {\n        id\n        firstName\n        lastName\n        email\n        createdAt\n      }\n    }\n  ": types.UpdateMyAccountDocument,
+    "\nquery Whoami {\n  whoami {\n    id\n    email\n    role\n    firstName\n  }\n}\n": types.WhoamiDocument,
 };
 
 /**
@@ -109,7 +111,11 @@ export function gql(source: "\nmutation Mutation {\n  signout\n}\n  "): (typeof 
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
-export function gql(source: "\nquery Whoami {\n  whoami {\n    id\n    email\n    role\n  }\n}\n"): (typeof documents)["\nquery Whoami {\n  whoami {\n    id\n    email\n    role\n  }\n}\n"];
+export function gql(source: "\n    mutation UpdateMyAccount($data: UserUpdateInput!) {\n      updateMyAccount(data: $data) {\n        id\n        firstName\n        lastName\n        email\n        createdAt\n      }\n    }\n  "): (typeof documents)["\n    mutation UpdateMyAccount($data: UserUpdateInput!) {\n      updateMyAccount(data: $data) {\n        id\n        firstName\n        lastName\n        email\n        createdAt\n      }\n    }\n  "];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\nquery Whoami {\n  whoami {\n    id\n    email\n    role\n    firstName\n  }\n}\n"): (typeof documents)["\nquery Whoami {\n  whoami {\n    id\n    email\n    role\n    firstName\n  }\n}\n"];
 
 export function gql(source: string) {
   return (documents as any)[source] ?? {};
