@@ -91,12 +91,18 @@ const MyAccount = () => {
 
         {me && (
           <form
-            className="flex flex-col w-full gap-4"
+            className="flex flex-col w-full gap-2"
             onSubmit={(e) => e.preventDefault()}
           >
-            <h2>Bienvenue {me.firstName} !</h2>
+            <h2 className="text-xl font-semibold">
+              Bienvenue {me.firstName} !
+            </h2>
+            <p>
+              Vous pouvez mettre à jour votre adresse email et votre mot de
+              passe ci-dessous.
+            </p>
 
-            <label className="block mb-2 mt-4 font-semibold" htmlFor="email">
+            <label className="block mt-4" htmlFor="email">
               Email :
             </label>
             <input
@@ -116,7 +122,7 @@ const MyAccount = () => {
               </p>
             ) : null}
 
-            <label className="block mb-2 mt-4 font-semibold" htmlFor="password">
+            <label className="block mt-4" htmlFor="password">
               Mot de passe :
             </label>
             <div className="flex">
@@ -164,20 +170,29 @@ const MyAccount = () => {
 
             <Button
               type="submit"
+              className="w-fit self-end mt-4"
               variant="validation"
               isHoverBgColor
               label={loading ? "Mise à jour..." : "Mettre à jour"}
               disabled={loading}
               onClick={handleSubmit} // ← on appelle vraiment la mutation
             />
-            <Button
-              type="submit"
-              variant="full"
-              isHoverBgColor
-              label={deleting ? "Suppression..." : "Supprimer mon compte"}
-              disabled={loading}
-              onClick={() => toggleModal("deleteAccountModal")} // ← on appelle vraiment la mutation
-            />
+            <div className="border-t border-gray-200 mt-4" />
+            <div className="flex flex-col gap-4  mt-4 bg-red-50 rounded-md p-4">
+              <p>
+                Vous pouvez également supprimer votre compte. Cette action est
+                irréversible.
+              </p>
+              <Button
+                type="submit"
+                className="w-fit self-end"
+                variant="full"
+                isHoverBgColor
+                label={deleting ? "Suppression..." : "Supprimer mon compte"}
+                disabled={loading}
+                onClick={() => toggleModal("deleteAccountModal")} // ← on appelle vraiment la mutation
+              />
+            </div>
           </form>
         )}
 
