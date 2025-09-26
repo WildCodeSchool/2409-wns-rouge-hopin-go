@@ -71,70 +71,61 @@ export function PassengerRidesResolverTest(testArgs: TestArgsType) {
       expect(data).toBeNull();
       expect(errors?.[0].extensions?.code).toBe("UNAUTHORIZED"); // erreur type-GraphQL pour @Authorized
     });
-    // Je n'ai pas réussi à valider le décorateur @Authorized dans ces tests
-    // it("succeeds if user is logged in", async () => {
+    it("succeeds if user is logged in", async () => {
+      const token = sign({ id: passenger.id }, process.env.JWT_SECRET_KEY!);
+      const createResponse = await testArgs.server.executeOperation(
+        {
+          query: mutationCreatePassengerRide,
+          variables: {
+            data: {
+              user_id: passenger.id,
+              ride_id: ride.id,
+            },
+          },
+        },
+        {
+          contextValue: {
+            req: { headers: { cookie: `token=${token};` } },
+            res: {},
+            user: { id: passenger.id, email: passenger.email, role: "user" },
+          },
+        }
+      );
 
-    //   const token = sign({ id: passenger.id }, process.env.JWT_SECRET_KEY!);
+      assert(createResponse.body.kind === "single", "Expected single-result response");
+      const { errors, data } = createResponse.body.singleResult;
 
-    //   console.log("secret:", process.env.JWT_SECRET_KEY!);
-    //   console.log("token:", token);
+      // Authentifié => la mutation réussit
+      expect(errors).toBeUndefined();
+      expect(data).toBeDefined();
+    });
+    it("fails if user tries to book his own ride", async () => {
+      const token = sign({ id: passenger.id }, process.env.JWT_SECRET_KEY!);
+      const createResponse = await testArgs.server.executeOperation(
+        {
+          query: mutationCreatePassengerRide,
+          variables: {
+            data: {
+              user_id: driver.id,
+              ride_id: ride.id,
+            },
+          },
+        },
+        {
+          contextValue: {
+            req: { headers: { cookie: `token=${token};` } },
+            res: {},
+            user: { id: driver.id, email: driver.email, role: "user" },
+          },
+        }
+      );
 
-    //   const createResponse = await testArgs.server.executeOperation(
-    //     {
-    //       query: mutationCreatePassengerRide,
-    //       variables: {
-    //         data: {
-    //           user_id: passenger.id,
-    //           ride_id: ride.id,
-    //         },
-    //       },
-    //     },
-    //     {
-    //       contextValue: {
-    //         req: { headers: { cookie: `token=${token};` } },
-    //         res: {},
-    //       },
-    //     }
-    //   );
-    //   console.log("passenger", passenger);
+      assert(createResponse.body.kind === "single", "Expected single-result response");
+      const { errors, data } = createResponse.body.singleResult;
 
-    //   assert(createResponse.body.kind === "single", "Expected single-result response");
-
-    //   const { errors, data } = createResponse.body.singleResult;
-    //   console.log("errors, data", errors, data);
-
-    //   // Authentifié => la mutation réussit
-    //   expect(errors).toBeUndefined();
-    //   expect(data).toBeDefined();
-    // });
-    // it("fails if user tries to book his own ride", async () => {
-    //   const auth = {
-    //     contextValue: {
-    //       req: { headers: { cookie: "token=fake.jwt.token" } },
-    //       res: {},
-    //       user: { id: driver.id },
-    //     },
-    //   };
-
-    //   const createResponse = await testArgs.server.executeOperation(
-    //     {
-    //       query: mutationCreatePassengerRide,
-    //       variables: {
-    //         data: {
-    //           user_id: driver.id,
-    //           ride_id: ride.id,
-    //         },
-    //       },
-    //     },
-    //     auth
-    //   );
-
-    //   assert(createResponse.body.kind === "single", "Expected single-result response");
-    //   const { errors, data } = createResponse.body.singleResult;
-
-    //   // Authentifié => la mutation réussit
-    //   expect(data).toBeDefined();
-    //   expect(errors?.[0].message).toBe("Vous ne pouvez pas réserver votre propre trajet");
-    // });
+      // Authentifié => la mutation réussit
+      expect(data).toBeDefined();
+      expect(errors?.[0].message).toBe("Vous ne pouvez pas réserver votre propre trajet");
+    });
   });
 }
