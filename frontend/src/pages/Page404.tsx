@@ -2,8 +2,8 @@
 
 const Page404 = () => {
   return (
-    <div className="flex flex-col items-center justify-center h-[90dvh] overflow-hidden ">
-      <p className=" fixed left-1/2 -translate-x-1/2 text-black font-extrabold text-4xl animate-pulse">
+    <div className="flex h-[90dvh] flex-col items-center justify-center overflow-hidden">
+      <p className="fixed left-1/2 -translate-x-1/2 animate-pulse text-4xl font-extrabold text-black">
         Redirection vers la page d&apos;accueil...
       </p>
       <img

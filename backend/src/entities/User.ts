@@ -1,12 +1,5 @@
 import { IsEmail, Matches, MaxLength, MinLength } from "class-validator";
-import {
-  Field,
-  ID,
-  InputType,
-  MiddlewareFn,
-  ObjectType,
-  UseMiddleware,
-} from "type-graphql";
+import { Field, ID, InputType, MiddlewareFn, ObjectType, UseMiddleware } from "type-graphql";
 import {
   BaseEntity,
   Check,
@@ -24,10 +17,7 @@ export const IsUser: MiddlewareFn<ContextType> = async (
   next: () => Promise<unknown>
 ) => {
   if (context.user) {
-    if (
-      context.user.role === "admin" ||
-      context.user.id === (root as User).id
-    ) {
+    if (context.user.role === "admin" || context.user.id === (root as User).id) {
       //si je suis admin ou si je suis le user il faut que le user connecté soit le même que le user requêté
       return await next(); // dans ce cas on poursuit le traitement
     } else {

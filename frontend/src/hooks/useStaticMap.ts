@@ -16,10 +16,7 @@ const staticCache = new Map<string, string>(
 );
 
 function saveStaticCache() {
-  localStorage.setItem(
-    "mapboxStaticCache",
-    JSON.stringify(Array.from(staticCache.entries()))
-  );
+  localStorage.setItem("mapboxStaticCache", JSON.stringify(Array.from(staticCache.entries())));
 }
 
 const mapBoxToken =

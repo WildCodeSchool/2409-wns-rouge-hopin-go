@@ -28,8 +28,7 @@ const PassengersButtonWithModal = ({
 
   const location = useLocation();
   const isMyRidesDriverPage = location.pathname.includes("my-rides/driver");
-  const isMyRidesPassengerPage =
-    location.pathname.includes("my-rides/passenger");
+  const isMyRidesPassengerPage = location.pathname.includes("my-rides/passenger");
   const isRidesResultsPage = location.pathname.includes("ride-results");
   const ride = useRide();
 
@@ -69,7 +68,7 @@ const PassengersButtonWithModal = ({
   if (isModal) return null;
   return (
     <div>
-      <div className="absolute right-1/2 md:right-[40%] lg:right-[35%]    flex gap-2 items-center z-10 p-2 text-sm lg:text-base text-textLight font-semibold">
+      <div className="text-textLight absolute right-1/2 z-10 flex items-center gap-2 p-2 text-sm font-semibold md:right-[40%] lg:right-[35%] lg:text-base">
         <div className="relative">
           {isMyRidesDriverPage &&
             waitingPassengers &&
@@ -77,7 +76,7 @@ const PassengersButtonWithModal = ({
             isFuture &&
             !rideCancelled && (
               <>
-                <span className="absolute rounded-full -right-[2px] -top-[2px] w-3 h-3 bg-refused animate-ping"></span>
+                <span className="bg-refused absolute -right-[2px] -top-[2px] h-3 w-3 animate-ping rounded-full"></span>
               </>
             )}
           {isMyRidesDriverPage && (
@@ -123,7 +122,7 @@ const PassengersButtonWithModal = ({
               onClick={openAppropriateModal}
               label={isXl ? "Détails" : ""}
               variant="secondary"
-              className=" !mr-5 sm:!mr-10"
+              className="!mr-5 sm:!mr-10"
             />
           )}
           {isMyRidesDriverPage &&
@@ -132,8 +131,8 @@ const PassengersButtonWithModal = ({
             waitingPassengers.length > 0 &&
             isFuture &&
             !rideCancelled && (
-              <div className="absolute bottom-full left-full bg-refused text-white overflow-hidden p-2 w-40 rounded-lg shadow-lg z-50">
-                <p className="text-xs flex items-center justify-center gap-1">
+              <div className="bg-refused absolute bottom-full left-full z-50 w-40 overflow-hidden rounded-lg p-2 text-white shadow-lg">
+                <p className="flex items-center justify-center gap-1 text-xs">
                   {waitingPassengers.length} passager
                   {waitingPassengers.length > 1 ? "s" : ""} en attente
                 </p>
@@ -145,8 +144,8 @@ const PassengersButtonWithModal = ({
             acceptedPassengers.length === 0 &&
             isFuture &&
             !rideCancelled && (
-              <div className="absolute bottom-full left-full bg-refused text-white overflow-hidden p-2 w-40 rounded-lg shadow-lg z-50">
-                <p className="text-xs flex items-center justify-center gap-1">
+              <div className="bg-refused absolute bottom-full left-full z-50 w-40 overflow-hidden rounded-lg p-2 text-white shadow-lg">
+                <p className="flex items-center justify-center gap-1 text-xs">
                   Aucun passager en attente
                 </p>
               </div>
@@ -157,10 +156,8 @@ const PassengersButtonWithModal = ({
             acceptedPassengers.length > 0 &&
             isFuture &&
             !rideCancelled && (
-              <div className="absolute bottom-full left-full bg-refused text-white overflow-hidden p-2 w-40 rounded-lg shadow-lg z-50">
-                <p className="text-xs flex items-center justify-center gap-1">
-                  Trajet complet
-                </p>
+              <div className="bg-refused absolute bottom-full left-full z-50 w-40 overflow-hidden rounded-lg p-2 text-white shadow-lg">
+                <p className="flex items-center justify-center gap-1 text-xs">Trajet complet</p>
               </div>
             )}
         </div>

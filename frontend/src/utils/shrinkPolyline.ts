@@ -35,8 +35,7 @@ export function shrinkPolyline5ForStatic(
   for (let step = 1; step <= 20; step++) {
     // Pour step=1, on garde tout (permet de vérifier si l’URL passe "as-is")
     // Pour step>1, on garde 1 point sur `step`
-    const filtered =
-      step === 1 ? coords : coords.filter((_, i) => i % step === 0);
+    const filtered = step === 1 ? coords : coords.filter((_, i) => i % step === 0);
 
     // On force la présence du premier point si le filtrage l’a supprimé
     if (filtered[0] !== coords[0]) filtered.unshift(coords[0]);

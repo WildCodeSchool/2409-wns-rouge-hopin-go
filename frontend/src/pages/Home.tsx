@@ -23,16 +23,16 @@ const Home = () => {
     ...(me
       ? [{ label: "Proposer", content: <CreateRide />, path: "/propose" }]
       : [
-        {
-          label: "Proposer",
-          content: <InformationMessage />,
-          path: "/propose",
-        },
-      ]),
+          {
+            label: "Proposer",
+            content: <InformationMessage />,
+            path: "/propose",
+          },
+        ]),
   ];
   return (
     <>
-      <div className=" flex flex-col justify-center items-center w-full h-full md:w-3/4 md:h-3/4 top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2  fixed">
+      <div className="fixed left-1/2 top-1/2 flex h-full w-full -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center md:h-3/4 md:w-3/4">
         <SwitchTab
           classContainer="bg-primary px-4"
           tabs={tabs}

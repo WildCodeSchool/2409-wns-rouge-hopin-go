@@ -54,21 +54,14 @@ type RawPricing = {
 };
 
 export function hydratePricingFromRaw(rides: Ride[], raw: RawPricing[]) {
-  const byId = new Map<
-    number,
-    { dist?: number; total?: number; per?: number }
-  >();
+  const byId = new Map<number, { dist?: number; total?: number; per?: number }>();
   for (const r of raw) {
     const id = Number(r.ride_id ?? r.id);
     if (!byId.has(id)) {
       byId.set(id, {
         dist: r.dist_km_calc != null ? Number(r.dist_km_calc) : undefined,
-        total:
-          r.total_route_price != null ? Number(r.total_route_price) : undefined,
-        per:
-          r.price_per_passenger != null
-            ? Number(r.price_per_passenger)
-            : undefined,
+        total: r.total_route_price != null ? Number(r.total_route_price) : undefined,
+        per: r.price_per_passenger != null ? Number(r.price_per_passenger) : undefined,
       });
     }
   }

@@ -31,12 +31,7 @@ type RouteData = {
   geometry: GeoJSON.LineString;
 };
 
-type Strategy =
-  | "cache-first"
-  | "cache-only"
-  | "network-first"
-  | "network-only"
-  | "swr";
+type Strategy = "cache-first" | "cache-only" | "network-first" | "network-only" | "swr";
 
 type UseMapboxRouteOptions = {
   departure: [number, number]; // [lng, lat]
@@ -64,8 +59,7 @@ const load = (): Record<string, CacheEntry> => {
     return {};
   }
 };
-const save = (obj: Record<string, CacheEntry>) =>
-  localStorage.setItem(BUCKET, JSON.stringify(obj));
+const save = (obj: Record<string, CacheEntry>) => localStorage.setItem(BUCKET, JSON.stringify(obj));
 
 /**
  * Supprime les entrées les moins récemment utilisées si on dépasse `max`.
@@ -88,13 +82,7 @@ const norm = (n: number) => Number(n.toFixed(5));
  * Clé de cache : inclut le profil (driving/walking/cycling),
  * le format (geojson pour la géométrie), et les coords normalisées.
  */
-const keyFor = (
-  profile: string,
-  dlng: number,
-  dlat: number,
-  alng: number,
-  alat: number
-) =>
+const keyFor = (profile: string, dlng: number, dlat: number, alng: number, alat: number) =>
   `${profile}|geojson|${norm(dlng)},${norm(dlat)}->${norm(alng)},${norm(alat)}`;
 
 // ⚠️ Token public. En prod, préférez un backend pour Directions.

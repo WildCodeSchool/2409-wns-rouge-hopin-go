@@ -31,9 +31,7 @@ type SearchFormRideProps = {
       arrival: boolean;
     }>
   >;
-  setLastModifiedField?: React.Dispatch<
-    React.SetStateAction<"departure" | "arrival" | null>
-  >;
+  setLastModifiedField?: React.Dispatch<React.SetStateAction<"departure" | "arrival" | null>>;
   handleSelect?: (field: "departure" | "arrival", value: string) => void;
   proposeRef?: React.RefObject<HTMLButtonElement>;
 };
@@ -153,23 +151,19 @@ const SearchFormRide = ({
     } else if (e.key === "ArrowDown") {
       e.preventDefault();
       if (li === "departure") {
-        const nextIndex =
-          departureSuggestionsRef.current.indexOf(e.currentTarget) + 1;
+        const nextIndex = departureSuggestionsRef.current.indexOf(e.currentTarget) + 1;
         departureSuggestionsRef.current[nextIndex]?.focus();
       } else {
-        const nextIndex =
-          arrivalSuggestionsRef.current.indexOf(e.currentTarget) + 1;
+        const nextIndex = arrivalSuggestionsRef.current.indexOf(e.currentTarget) + 1;
         arrivalSuggestionsRef.current[nextIndex]?.focus();
       }
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       if (li === "departure") {
-        const prevIndex =
-          departureSuggestionsRef.current.indexOf(e.currentTarget) - 1;
+        const prevIndex = departureSuggestionsRef.current.indexOf(e.currentTarget) - 1;
         departureSuggestionsRef.current[prevIndex]?.focus();
       } else {
-        const prevIndex =
-          arrivalSuggestionsRef.current.indexOf(e.currentTarget) - 1;
+        const prevIndex = arrivalSuggestionsRef.current.indexOf(e.currentTarget) - 1;
         arrivalSuggestionsRef.current[prevIndex]?.focus();
       }
     } else if (e.key === "Tab") {
@@ -201,14 +195,11 @@ const SearchFormRide = ({
     <form
       noValidate
       onSubmit={handleSubmit}
-      className="flex flex-col items-center justify-center h-full max-w-sm mx-auto"
+      className="mx-auto flex h-full max-w-sm flex-col items-center justify-center"
     >
       {/* Ville de départ */}
-      <div className="mb-5 w-full relative">
-        <label
-          htmlFor="departure-city"
-          className="block mb-2 text-sm font-medium text-textLight"
-        >
+      <div className="relative mb-5 w-full">
+        <label htmlFor="departure-city" className="text-textLight mb-2 block text-sm font-medium">
           Ville de départ
         </label>
         <input
@@ -220,7 +211,7 @@ const SearchFormRide = ({
             error.departureCity?.length
               ? "border-error border-2 bg-red-50"
               : "border-gray-300 bg-gray-50"
-          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
           placeholder="Paris"
           value={departureCity}
           ref={departureRef}
@@ -235,15 +226,13 @@ const SearchFormRide = ({
           aria-autocomplete="list"
           aria-expanded={showSuggestions.departure}
           aria-controls="departure-city-suggestions-list"
-          aria-describedby={
-            error.departureCity ? "departure-city-error" : undefined
-          }
+          aria-describedby={error.departureCity ? "departure-city-error" : undefined}
         />
         {showSuggestions.departure && suggestions.departure.length > 0 && (
           <ul
             role="listbox"
             id="departure-city-suggestions-list"
-            className="absolute w-full bg-white border mt-1 max-h-60 overflow-y-auto rounded-md shadow-lg z-10"
+            className="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-md border bg-white shadow-lg"
             ref={departureUlRef}
           >
             {suggestions.departure.map((suggestion, index) => (
@@ -255,7 +244,7 @@ const SearchFormRide = ({
                 ref={(el) => (departureSuggestionsRef.current[index] = el!)}
                 onKeyDown={(e) => handleLiKeyDown(e, suggestion, "departure")}
                 onClick={() => handleSelect("departure", suggestion)}
-                className="p-2 cursor-pointer hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
+                className="cursor-pointer p-2 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
               >
                 {suggestion}
               </li>
@@ -263,18 +252,18 @@ const SearchFormRide = ({
           </ul>
         )}
         {error.departureCity && (
-          <p id="departure-city-error" className="text-red-400 text-sm">
+          <p id="departure-city-error" className="text-sm text-red-400">
             {formatErrors(error.departureCity)}
           </p>
         )}
       </div>
 
-      <div className="text-white text-sm gap-2 grid grid-cols-2 mb-4">
+      <div className="mb-4 grid grid-cols-2 gap-2 text-sm text-white">
         <label className="col-span-2" htmlFor="departure-radius">
           Rayon de recherche pour la ville de départ
         </label>
         <input
-          className="cursor-pointer grid-span-1 w-[300px]"
+          className="grid-span-1 w-[300px] cursor-pointer"
           type="range"
           id="departure-radius"
           name="departure-radius"
@@ -283,25 +272,17 @@ const SearchFormRide = ({
           value={departureRadius}
           ref={departureRadiusRef}
           onChange={(e) => setDepartureRadius(Number(e.target.value))}
-          onFocus={() =>
-            setShowSuggestions((prev) => ({ ...prev, departure: false }))
-          }
+          onFocus={() => setShowSuggestions((prev) => ({ ...prev, departure: false }))}
           aria-valuetext={`${departureRadius} kilomètres`}
         />
-        <label
-          className="grid-span-1 flex justify-end"
-          htmlFor="departure-radius"
-        >
+        <label className="grid-span-1 flex justify-end" htmlFor="departure-radius">
           {departureRadius} km
         </label>
       </div>
 
       {/* Date de départ */}
       <div className="mb-5 w-full">
-        <label
-          htmlFor="departure-at"
-          className="block mb-2 text-sm font-medium text-white"
-        >
+        <label htmlFor="departure-at" className="mb-2 block text-sm font-medium text-white">
           Date de départ
         </label>
         <input
@@ -311,31 +292,24 @@ const SearchFormRide = ({
             error.departureAt?.length
               ? "border-error border-2 bg-red-50"
               : "border-gray-300 bg-gray-50"
-          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
           value={departureAt}
           ref={departureTimeRef}
           onChange={(e) => setDepartureAt(e.target.value)}
-          onFocus={() =>
-            setShowSuggestions((prev) => ({ ...prev, arrival: false }))
-          }
+          onFocus={() => setShowSuggestions((prev) => ({ ...prev, arrival: false }))}
           required
-          aria-describedby={
-            error.departureAt ? "departure-at-error" : undefined
-          }
+          aria-describedby={error.departureAt ? "departure-at-error" : undefined}
         />
         {error.departureAt && (
-          <p id="departure-at-error" className="text-red-400 text-sm">
+          <p id="departure-at-error" className="text-sm text-red-400">
             {formatErrors(error.departureAt)}
           </p>
         )}
       </div>
 
       {/* Ville d'arrivée */}
-      <div className="mb-5 w-full relative">
-        <label
-          htmlFor="arrival-city"
-          className="block mb-2 text-sm font-medium text-white"
-        >
+      <div className="relative mb-5 w-full">
+        <label htmlFor="arrival-city" className="mb-2 block text-sm font-medium text-white">
           Ville d&apos;arrivée
         </label>
         <input
@@ -347,7 +321,7 @@ const SearchFormRide = ({
             error.arrivalCity?.length
               ? "border-error border-2 bg-red-50"
               : "border-gray-300 bg-gray-50"
-          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
           placeholder="Lyon"
           value={arrivalCity}
           ref={arrivalRef}
@@ -362,15 +336,13 @@ const SearchFormRide = ({
           aria-autocomplete="list"
           aria-expanded={showSuggestions.arrival}
           aria-controls="arrival-city-suggestions-list"
-          aria-describedby={
-            error.arrivalCity ? "arrival-city-error" : undefined
-          }
+          aria-describedby={error.arrivalCity ? "arrival-city-error" : undefined}
         />
         {showSuggestions.arrival && suggestions.arrival.length > 0 && (
           <ul
             role="listbox"
             id="arrival-city-suggestions-list"
-            className="absolute w-full bg-white border mt-1 max-h-60 overflow-y-auto rounded-md shadow-lg z-10"
+            className="absolute z-10 mt-1 max-h-60 w-full overflow-y-auto rounded-md border bg-white shadow-lg"
             ref={arrivalUlRef}
           >
             {suggestions.arrival.map((suggestion, index) => (
@@ -382,7 +354,7 @@ const SearchFormRide = ({
                 ref={(el) => (arrivalSuggestionsRef.current[index] = el!)}
                 onKeyDown={(e) => handleLiKeyDown(e, suggestion, "arrival")}
                 onClick={() => handleSelect("arrival", suggestion)}
-                className="p-2 cursor-pointer hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
+                className="cursor-pointer p-2 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
               >
                 {suggestion}
               </li>
@@ -390,17 +362,17 @@ const SearchFormRide = ({
           </ul>
         )}
         {error.arrivalCity && (
-          <p id="arrival-city-error" className="text-red-400 text-sm">
+          <p id="arrival-city-error" className="text-sm text-red-400">
             {formatErrors(error.arrivalCity)}
           </p>
         )}
       </div>
-      <div className=" text-white text-sm gap-2 grid grid-cols-2 mb-6">
+      <div className="mb-6 grid grid-cols-2 gap-2 text-sm text-white">
         <label className="col-span-2" htmlFor="arrival-radius">
           Rayon de recherche pour la ville d&apos;arrivée
         </label>
         <input
-          className="cursor-pointer grid-span-1 w-[300px]"
+          className="grid-span-1 w-[300px] cursor-pointer"
           type="range"
           id="arrival-radius"
           name="arrival-radius"
@@ -409,15 +381,10 @@ const SearchFormRide = ({
           value={arrivalRadius}
           ref={arrivalRadiusRef}
           onChange={(e) => setArrivalRadius(Number(e.target.value))}
-          onFocus={() =>
-            setShowSuggestions((prev) => ({ ...prev, arrival: false }))
-          }
+          onFocus={() => setShowSuggestions((prev) => ({ ...prev, arrival: false }))}
           aria-valuetext={`${arrivalRadius} kilomètres`}
         />
-        <label
-          className="grid-span-1 flex justify-end"
-          htmlFor="arrival-radius"
-        >
+        <label className="grid-span-1 flex justify-end" htmlFor="arrival-radius">
           {arrivalRadius} km
         </label>
       </div>
@@ -428,7 +395,7 @@ const SearchFormRide = ({
           variant="validation"
           type="submit"
           label="Rechercher"
-          className="border-white border-2"
+          className="border-2 border-white"
         />
       </div>
     </form>

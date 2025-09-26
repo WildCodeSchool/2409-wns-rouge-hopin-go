@@ -5,8 +5,5 @@ export function getMailjet() {
     return null;
   }
 
-  return Mailjet.apiConnect(
-    process.env.MJ_APIKEY_PUBLIC,
-    process.env.MJ_APIKEY_PRIVATE
-  );
+  return Mailjet.apiConnect(process.env.MJ_APIKEY_PUBLIC, process.env.MJ_APIKEY_PRIVATE);
 }

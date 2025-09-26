@@ -2,9 +2,7 @@ import { useState, useCallback } from "react";
 
 export const useModal = () => {
   const [activeModal, setActiveModal] = useState<string | null>(null);
-  const [visibleModals, setVisibleModals] = useState<Record<string, boolean>>(
-    {}
-  );
+  const [visibleModals, setVisibleModals] = useState<Record<string, boolean>>({});
 
   const openModal = useCallback((id: string) => {
     // Fermer toutes les autres modales (animation)
@@ -47,10 +45,7 @@ export const useModal = () => {
   );
 
   const isOpen = useCallback((id: string) => activeModal === id, [activeModal]);
-  const isVisible = useCallback(
-    (id: string) => !!visibleModals[id],
-    [visibleModals]
-  );
+  const isVisible = useCallback((id: string) => !!visibleModals[id], [visibleModals]);
 
   return {
     activeModal,

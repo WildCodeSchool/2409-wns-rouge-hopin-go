@@ -1,6 +1,5 @@
 export const handleValidationErrors = (error: any, setFieldErrors: any) => {
-  const validationErrors =
-    error?.graphQLErrors?.[0]?.extensions?.validationErrors || [];
+  const validationErrors = error?.graphQLErrors?.[0]?.extensions?.validationErrors || [];
   const errors: Record<string, string[]> = {};
 
   validationErrors.forEach((err: any) => {

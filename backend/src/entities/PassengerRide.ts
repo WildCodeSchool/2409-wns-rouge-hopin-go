@@ -1,18 +1,5 @@
-import {
-  Field,
-  ID,
-  InputType,
-  ObjectType,
-  registerEnumType,
-} from "type-graphql";
-import {
-  BaseEntity,
-  Column,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryColumn,
-} from "typeorm";
+import { Field, ID, InputType, ObjectType, registerEnumType } from "type-graphql";
+import { BaseEntity, Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from "typeorm";
 import { Ride } from "./Ride";
 import { User } from "./User";
 

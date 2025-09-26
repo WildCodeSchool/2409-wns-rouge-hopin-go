@@ -1,12 +1,4 @@
-import {
-  Arg,
-  Authorized,
-  Ctx,
-  ID,
-  Mutation,
-  Query,
-  Resolver,
-} from "type-graphql";
+import { Arg, Authorized, Ctx, ID, Mutation, Query, Resolver } from "type-graphql";
 import { User, UserCreateInput } from "../entities/User";
 import { validate } from "class-validator";
 import argon2 from "argon2";
@@ -84,9 +76,7 @@ export class UsersResolver {
   }
 
   @Mutation(() => User)
-  async createUser(
-    @Arg("data", () => UserCreateInput) data: UserCreateInput
-  ): Promise<User> {
+  async createUser(@Arg("data", () => UserCreateInput) data: UserCreateInput): Promise<User> {
     const errors = await validate(data);
     if (errors.length > 0) {
       throw new Error(`Validation error: ${JSON.stringify(errors)}`);

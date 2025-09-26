@@ -16,10 +16,7 @@ type CardRideDetailsMobileModalProps = {
   acceptedPassengers?: PassengersByRideQuery["passengersByRide"];
 };
 
-const CardRideDetailsMobileModal = ({
-  toggleModal,
-  variant,
-}: CardRideDetailsMobileModalProps) => {
+const CardRideDetailsMobileModal = ({ toggleModal, variant }: CardRideDetailsMobileModalProps) => {
   const { textColor, bgFill } = variantConfigMap[variant as VariantType];
   const ride = useRide();
 
@@ -44,12 +41,11 @@ const CardRideDetailsMobileModal = ({
   // const totalPriceRoute = ride.total_route_price;
   // ---------------------End Map---------------------
 
-  const driverName =
-    ride.driver?.firstName ?? `Conducteur #${ride.driver?.id ?? "?"}`;
+  const driverName = ride.driver?.firstName ?? `Conducteur #${ride.driver?.id ?? "?"}`;
 
   return (
-    <div className="relative z-0 flex flex-col  p-4 h-screen w-screen md:max-w-2xl md:h-fit md:rounded-2xl bg-gray-200">
-      <header className="w-full flex justify-end">
+    <div className="relative z-0 flex h-screen w-screen flex-col bg-gray-200 p-4 md:h-fit md:max-w-2xl md:rounded-2xl">
+      <header className="flex w-full justify-end">
         <Button
           icon={X}
           iconColor={`${textColor}`}
@@ -59,20 +55,16 @@ const CardRideDetailsMobileModal = ({
           variant="full"
           isBgTransparent
           onClick={toggleModal}
-          className="group hover:!bg-primaryHover self-end"
+          className="hover:!bg-primaryHover group self-end"
         />
       </header>
-      <main
-        className={`relative h-full flex flex-col gap-4 justify-between ${textColor}`}
-      >
+      <main className={`relative flex h-full flex-col justify-between gap-4 ${textColor}`}>
         <h2 className={`text-2xl font-bold ${textColor}`}>{driverName}</h2>
-        <h2 className={`text-xl font-bold mb-2 ${textColor}`}>
-          Détails du trajet
-        </h2>
-        <div className="flex flex-col w-full h-1/2 justify-start gap-10">
+        <h2 className={`mb-2 text-xl font-bold ${textColor}`}>Détails du trajet</h2>
+        <div className="flex h-1/2 w-full flex-col justify-start gap-10">
           <div>
             <p className="text-sm md:text-base">{dateStr}</p>
-            <p className="text-xl md:text-4xl font-semibold">
+            <p className="text-xl font-semibold md:text-4xl">
               {pricePerPassenger}
               <span className="text-sm md:text-2xl"> €</span>
             </p>
@@ -81,47 +73,33 @@ const CardRideDetailsMobileModal = ({
               <p>
                 {variant === "cancel" || variant === "full"
                   ? "Non disponible"
-                  : `${nbPassenger} ${
-                      nbPassenger > 1 ? "places restantes" : "place restante"
-                    }`}
+                  : `${nbPassenger} ${nbPassenger > 1 ? "places restantes" : "place restante"}`}
               </p>
             </div>
           </div>
-          <div className="flex justify-start h-40">
-            <div className={`flex flex-col w-28 justify-between ${textColor}`}>
-              <p className="text-base md:text-2xl font-semibold">
-                {departureTime}
-              </p>
+          <div className="flex h-40 justify-start">
+            <div className={`flex w-28 flex-col justify-between ${textColor}`}>
+              <p className="text-base font-semibold md:text-2xl">{departureTime}</p>
               <p className="text-sm">{formatTravelDuration(durationMin)}</p>
-              <p className="text-base md:text-2xl font-semibold">
-                {arrivalTime}
-              </p>
+              <p className="text-base font-semibold md:text-2xl">{arrivalTime}</p>
             </div>
 
-            <div
-              className={`relative flex flex-col justify-between ${textColor}`}
-            >
+            <div className={`relative flex flex-col justify-between ${textColor}`}>
               <div
-                className={`dot absolute h-3 w-3 rounded-full ${bgFill} top-2 left-0 -translate-x-7`}
+                className={`dot absolute h-3 w-3 rounded-full ${bgFill} left-0 top-2 -translate-x-7`}
               />
               <div
-                className={`trait absolute h-5/6 w-[3px] rounded-sm ${bgFill} top-2 left-0 -translate-x-[23.5px]`}
+                className={`trait absolute h-5/6 w-[3px] rounded-sm ${bgFill} left-0 top-2 -translate-x-[23.5px]`}
               />
               <div
                 className={`dot absolute h-3 w-3 rounded-full ${bgFill} bottom-2 left-0 -translate-x-7`}
               />
-              <div className="flex flex-col ml-2 justify-between h-full text-left">
-                <p
-                  className="text-lg md:text-xl sm:font-bold"
-                  title={departureCity}
-                >
+              <div className="ml-2 flex h-full flex-col justify-between text-left">
+                <p className="text-lg sm:font-bold md:text-xl" title={departureCity}>
                   {departureCity}
                 </p>
                 <p className="text-sm">{distanceKm?.toFixed(1)} km</p>
-                <p
-                  className="text-lg md:text-xl sm:font-bold"
-                  title={arrivalCity}
-                >
+                <p className="text-lg sm:font-bold md:text-xl" title={arrivalCity}>
                   {arrivalCity}
                 </p>
               </div>
@@ -129,7 +107,7 @@ const CardRideDetailsMobileModal = ({
           </div>
         </div>
         <RegisterButton variant={variant} rideId={ride.id} size="large" />
-        <div className="w-full h-1/2">
+        <div className="h-1/2 w-full">
           <MapInteractive
             mapId={`dynamic-map-${ride.id}`}
             departureLatitude={departureLatitude}

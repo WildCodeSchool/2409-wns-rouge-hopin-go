@@ -12,9 +12,7 @@ export type ContextType = {
 };
 export type AuthContextType = ContextType & { user: User };
 
-export async function getUserFromContext(
-  context: ContextType
-): Promise<User | null> {
+export async function getUserFromContext(context: ContextType): Promise<User | null> {
   const cookies = new Cookies(context.req, context.res);
   const token = cookies.get("token");
 
@@ -23,10 +21,7 @@ export async function getUserFromContext(
   }
 
   try {
-    const payload = verify(
-      token,
-      process.env.JWT_SECRET_KEY || ""
-    ) as unknown as {
+    const payload = verify(token, process.env.JWT_SECRET_KEY || "") as unknown as {
       id: number;
     };
 

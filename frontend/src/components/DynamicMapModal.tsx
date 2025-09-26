@@ -32,9 +32,9 @@ const DynamicMapModal = ({
   return (
     <div
       id="DynamicMapModal"
-      className="relative z-0 flex flex-col  p-4 h-[calc(100vh-8rem)] w-screen md:max-w-4xl md:rounded-2xl bg-gray-200"
+      className="relative z-0 flex h-[calc(100vh-8rem)] w-screen flex-col bg-gray-200 p-4 md:max-w-4xl md:rounded-2xl"
     >
-      <header className="w-full flex justify-end">
+      <header className="flex w-full justify-end">
         <Button
           icon={X}
           iconColor="text-primary"
@@ -44,10 +44,10 @@ const DynamicMapModal = ({
           variant="full"
           isBgTransparent
           onClick={toggleModal}
-          className="group hover:!bg-primaryHover self-end"
+          className="hover:!bg-primaryHover group self-end"
         />
       </header>
-      <main className="relative w-full h-full flex flex-col gap-4 justify-between">
+      <main className="relative flex h-full w-full flex-col justify-between gap-4">
         <MapInteractive
           mapId={`dynamic-map-${dataId}`}
           departureLatitude={departureLatitude}
