@@ -31,12 +31,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   const ride = useRide();
   console.log("ride in CardTemplate:", ride);
   const { isMd, isXl, is2xl, windowWidth } = useBreakpoints();
-  const {
-    textColor,
-    bgFill,
-    statusLabel,
-    icon: CardIcon,
-  } = variantConfigMap[variant];
+  const { textColor, bgFill, statusLabel, icon: CardIcon } = variantConfigMap[variant];
 
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const me = whoAmIData?.whoami;
@@ -53,14 +48,13 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
 
   const travelDuration = ride.duration_min ?? 0;
 
-  const driverName =
-    ride.driver?.firstName ?? `Conducteur #${ride.driver?.id ?? "?"}`;
+  const driverName = ride.driver?.firstName ?? `Conducteur #${ride.driver?.id ?? "?"}`;
 
   return (
     <div
       className={`${
         isSelected && additionalClassName
-      } select-none transition-200  w-full max-w-[500px] p-4 transition-transform ${
+      } transition-200 w-full max-w-[500px] select-none p-4 transition-transform ${
         onClick ? "cursor-pointer" : ""
       }`}
       onClick={onClick}
@@ -69,13 +63,13 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
       tabIndex={onClick ? 0 : undefined}
     >
       <div
-        className={`flex flex-col items-center justify-center bg-textLight border border-primary rounded-t-2xl ${
+        className={`bg-textLight border-primary flex flex-col items-center justify-center rounded-t-2xl border ${
           me?.id !== driver ? "rounded-br-2xl" : ""
-        } shadow-lg z-30`}
+        } z-30 shadow-lg`}
       >
-        <div className="grid grid-cols-3 w-full p-4 h-40 z-30">
+        <div className="z-30 grid h-40 w-full grid-cols-3 p-4">
           <div
-            className={`flex flex-col justify-between ${textColor} text-base sm:text-2xl md:text-base lg:text-2xl font-semibold`}
+            className={`flex flex-col justify-between ${textColor} text-base font-semibold sm:text-2xl md:text-base lg:text-2xl`}
           >
             <p>{departureTime}</p>
             <p>{arrivalTime}</p>
@@ -87,23 +81,23 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             } ${textColor}`}
           >
             <div
-              className={`dot absolute h-3 w-3 rounded-full ${bgFill} top-2 left-0 -translate-x-7`}
+              className={`dot absolute h-3 w-3 rounded-full ${bgFill} left-0 top-2 -translate-x-7`}
             />
             <div
-              className={`trait absolute h-5/6 w-[3px] rounded-sm ${bgFill} top-2 left-0 -translate-x-[23.5px]`}
+              className={`trait absolute h-5/6 w-[3px] rounded-sm ${bgFill} left-0 top-2 -translate-x-[23.5px]`}
             />
             <div
               className={`dot absolute h-3 w-3 rounded-full ${bgFill} bottom-2 left-0 -translate-x-7`}
             />
             <p
-              className="text-sm sm:text-xl lg:text-xl sm:font-bold md:font-normal lg:font-bold truncate"
+              className="truncate text-sm sm:text-xl sm:font-bold md:font-normal lg:text-xl lg:font-bold"
               title={ride.departure_city}
             >
               {ride.departure_city}
             </p>
             <p>{formatTravelDuration(travelDuration)}</p>
             <p
-              className="text-sm sm:text-xl lg:text-xl sm:font-bold md:font-normal lg:font-bold truncate"
+              className="truncate text-sm sm:text-xl sm:font-bold md:font-normal lg:text-xl lg:font-bold"
               title={ride.arrival_city}
             >
               {ride.arrival_city}
@@ -111,49 +105,37 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
           </div>
 
           {windowWidth > 450 && (
-            <div
-              className={`flex flex-col justify-between items-end ${textColor}`}
-            >
+            <div className={`flex flex-col items-end justify-between ${textColor}`}>
               <div className="flex flex-col items-end gap-2">
                 <CircleUserRound size={isXl ? 40 : isMd ? 34 : 40} />
-                <p
-                  className="font-semibold truncate sm:max-w-[8rem]"
-                  title={driverName}
-                >
+                <p className="truncate font-semibold sm:max-w-[8rem]" title={driverName}>
                   {driverName}
                 </p>
               </div>
-              <p className="text-xl lg:text-4xl font-semibold">
+              <p className="text-xl font-semibold lg:text-4xl">
                 {(pricePerPassenger ?? 0).toFixed(2)}
-                <span className=" font-sans text-sm ">€/pp</span>
+                <span className="font-sans text-sm">€/pp</span>
               </p>
-              <p className=" text-nowrap font-semibold">
-                <span className=" font-sans text-sm text-nowrap">
-                  Total trajet{" "}
-                </span>
+              <p className="text-nowrap font-semibold">
+                <span className="text-nowrap font-sans text-sm">Total trajet </span>
                 {(totalPriceRide ?? 0).toFixed(2)}
-                <span className=" font-sans text-sm text-nowrap ">€</span>
+                <span className="text-nowrap font-sans text-sm">€</span>
               </p>
             </div>
           )}
         </div>
       </div>
 
-      <div className="relative w-full flex justify-between z-30">
+      <div className="relative z-30 flex w-full justify-between">
         <p
-          className={`absolute left-0 flex gap-2 items-center z-10 p-4 text-sm lg:text-base text-textLight ${
+          className={`text-textLight absolute left-0 z-10 flex items-center gap-2 p-4 text-sm lg:text-base ${
             me?.id === driver ? "ml-3" : ""
           }`}
         >
           {statusLabel === "" ? (
             <>
               {ride.available_seats}
-              {is2xl &&
-                `${
-                  ride.available_seats > 1
-                    ? " places restantes"
-                    : " place restante"
-                }`}
+              {is2xl && `${ride.available_seats > 1 ? " places restantes" : " place restante"}`}
               {!is2xl && (variant === "primary" || variant === "secondary") && (
                 <svg
                   fill="none"
@@ -180,7 +162,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
         <p
           className={`absolute ${
             me?.id === driver ? "right-0" : "right-16"
-          }   z-10 p-4 text-sm lg:text-base text-textLight`}
+          } text-textLight z-10 p-4 text-sm lg:text-base`}
         >
           {dateStr}
         </p>
@@ -190,7 +172,7 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             <svg
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 750.9 127"
-              className="w-full h-12 sm:h-14 md:scale-x-[0.95] lg:scale-100 md:-translate-x-[8.5px] lg:-translate-x-0 -translate-y-[1px] text-textDark z-0"
+              className="text-textDark z-0 h-12 w-full -translate-y-[1px] sm:h-14 md:-translate-x-[8.5px] md:scale-x-[0.95] lg:-translate-x-0 lg:scale-100"
               preserveAspectRatio="none"
             >
               <path
@@ -201,17 +183,10 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
                 strokeWidth={1.5}
               />
             </svg>
-            <RegisterButton
-              rideId={ride.id}
-              size="small"
-              variant={variant}
-              icon={CardIcon}
-            />
+            <RegisterButton rideId={ride.id} size="small" variant={variant} icon={CardIcon} />
           </>
         ) : (
-          <div
-            className={`${bgFill} px-6 pt-2 rounded-b-3xl shadow-md w-[100%] h-14 pl-2`}
-          ></div>
+          <div className={`${bgFill} h-14 w-[100%] rounded-b-3xl px-6 pl-2 pt-2 shadow-md`}></div>
         )}
       </div>
     </div>

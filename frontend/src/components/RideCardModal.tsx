@@ -28,7 +28,7 @@ const RideCardModal = ({
   const now = new Date();
   const isFuture = isAfter(departureDate, now);
   return (
-    <div className="relative flex flex-col items-center justify-center md:rounded-2xl bg-gray-200 p-4 w-screen h-screen md:w-[750px] md:h-auto">
+    <div className="relative flex h-screen w-screen flex-col items-center justify-center bg-gray-200 p-4 md:h-auto md:w-[750px] md:rounded-2xl">
       <Button
         icon={X}
         iconColor="!text-black"
@@ -38,20 +38,16 @@ const RideCardModal = ({
         variant="full"
         isBgTransparent
         onClick={toggleModal}
-        className="group hover:!bg-primaryHover self-end mb-4"
+        className="hover:!bg-primaryHover group mb-4 self-end"
       />
       <CardTemplate variant={variant} isModal={true} />
-      <div className="flex flex-col items-start justify-start w-full">
+      <div className="flex w-full flex-col items-start justify-start">
         {ride.is_cancelled && (
-          <h2 className="text-xl m-auto font-bold text-primary">
-            Trajet annulé
-          </h2>
+          <h2 className="text-primary m-auto text-xl font-bold">Trajet annulé</h2>
         )}
         {isFuture && ride.available_seats > 0 && !ride.is_cancelled && (
           <div className="mb-5 mt-5 w-full">
-            <h2 className="text-xl font-bold text-primary">
-              Passagers à valider :
-            </h2>
+            <h2 className="text-primary text-xl font-bold">Passagers à valider :</h2>
             {waitingPassengers && waitingPassengers.length > 0 ? (
               waitingPassengers.map((passenger) => (
                 <div
@@ -62,23 +58,18 @@ const RideCardModal = ({
                     {passenger.user.firstName} {passenger.user.lastName}
                   </p>
                   <div className="flex items-center">
-                    <RidePassengerValidationButtons
-                      passengerId={passenger.user.id}
-                    />
+                    <RidePassengerValidationButtons passengerId={passenger.user.id} />
                   </div>
                 </div>
               ))
             ) : (
-              <p>
-                Vous n'avez pas de passagers à valider sur ce trajet pour le
-                moment.
-              </p>
+              <p>Vous n&apos;avez pas de passagers à valider sur ce trajet pour le moment.</p>
             )}
           </div>
         )}
         {ride.is_cancelled === false && (
           <div className="mb-12">
-            <h2 className="text-xl font-bold text-primary">
+            <h2 className="text-primary text-xl font-bold">
               {isFuture ? "Passagers acceptés :" : "Passagers :"}
             </h2>
             {acceptedPassengers && acceptedPassengers.length > 0 ? (
@@ -99,7 +90,7 @@ const RideCardModal = ({
           </div>
         )}
         {isFuture && ride.is_cancelled === false && (
-          <div className="flex justify-end w-full">
+          <div className="flex w-full justify-end">
             <CancelledRideByDriverButton onCloseParentModal={onClose} />
           </div>
         )}

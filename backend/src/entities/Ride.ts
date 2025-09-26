@@ -1,12 +1,4 @@
-import {
-  IsDate,
-  IsString,
-  Max,
-  MaxLength,
-  Min,
-  MinLength,
-  Validate,
-} from "class-validator";
+import { IsDate, IsString, Max, MaxLength, Min, MinLength, Validate } from "class-validator";
 import { Field, Float, ID, InputType, Int, ObjectType } from "type-graphql";
 import {
   BaseEntity,

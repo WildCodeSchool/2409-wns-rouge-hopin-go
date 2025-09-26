@@ -1,13 +1,4 @@
-import {
-  Arg,
-  Authorized,
-  Ctx,
-  ID,
-  Int,
-  Mutation,
-  Query,
-  Resolver,
-} from "type-graphql";
+import { Arg, Authorized, Ctx, ID, Int, Mutation, Query, Resolver } from "type-graphql";
 import {
   CreatePassengerRideInput,
   PassengerRide,
@@ -19,10 +10,7 @@ import { PaginatedRides, Ride } from "../entities/Ride";
 import { AuthContextType } from "../auth";
 import { datasource } from "../datasource";
 import { ContextType } from "../auth";
-import {
-  attachPricingSelects,
-  hydratePricingFromRaw,
-} from "../utils/attachPricingSelects";
+import { attachPricingSelects, hydratePricingFromRaw } from "../utils/attachPricingSelects";
 import {
   notifyDriverNewPassenger,
   notifyUserRideRefused,
@@ -34,9 +22,7 @@ import { User } from "../entities/User";
 export class PassengerRideResolver {
   @Authorized("user")
   @Query(() => [PassengerRide])
-  async passengersByRide(
-    @Arg("ride_id", () => ID) ride_id: number
-  ): Promise<PassengerRide[]> {
+  async passengersByRide(@Arg("ride_id", () => ID) ride_id: number): Promise<PassengerRide[]> {
     try {
       const passengersRide = await PassengerRide.find({
         where: { ride_id },
@@ -177,14 +163,10 @@ export class PassengerRideResolver {
 
       const driverId = passengerRide.ride.driver.id;
       if (ctx.user?.id !== driverId) {
-        throw new Error(
-          "Only the driver of the ride can update the passenger status"
-        );
+        throw new Error("Only the driver of the ride can update the passenger status");
       }
 
-      if (
-        passengerRide.ride.max_passenger === passengerRide.ride.nb_passenger
-      ) {
+      if (passengerRide.ride.max_passenger === passengerRide.ride.nb_passenger) {
         throw new Error("The ride is already full");
       }
 
@@ -197,10 +179,7 @@ export class PassengerRideResolver {
       }
 
       // si on essaie d'approuver un passager alors que le trajet est complet, on bloque l'opération
-      if (
-        status === PassengerRideStatus.APPROVED &&
-        ride.nb_passenger >= ride.max_passenger
-      ) {
+      if (status === PassengerRideStatus.APPROVED && ride.nb_passenger >= ride.max_passenger) {
         throw new Error("This ride is already full");
       }
 

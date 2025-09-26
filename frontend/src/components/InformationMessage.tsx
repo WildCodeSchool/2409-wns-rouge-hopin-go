@@ -2,10 +2,9 @@ import Button from "./Button";
 
 const InformationMessage = () => {
   return (
-    <div className=" flex flex-col justify-center h-full text-center text-white">
-      Vous devez être connectés pour proposer un trajet. Veuillez vous connecter
-      ou créer un compte.
-      <div className="flex justify-center gap-4 mt-4">
+    <div className="flex h-full flex-col justify-center text-center text-white">
+      Vous devez être connectés pour proposer un trajet. Veuillez vous connecter ou créer un compte.
+      <div className="mt-4 flex justify-center gap-4">
         <Button
           isLink
           to="/auth/signup"

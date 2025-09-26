@@ -42,7 +42,7 @@ const CancelledRideByDriverButton = ({
     }
   };
 
-  if (error) return <span>Erreur lors de l'annulation</span>;
+  if (error) return <span>Erreur lors de l&apos;annulation</span>;
 
   return (
     <>
@@ -51,7 +51,7 @@ const CancelledRideByDriverButton = ({
           onClick={() => toggleModal(modalId)}
           variant="refused"
           type="button"
-          className="danger text-white px-4 py-2 rounded"
+          className="danger rounded px-4 py-2 text-white"
           label="Annuler le trajet ?"
           icon={Trash2}
           iconSize={20}
@@ -64,9 +64,7 @@ const CancelledRideByDriverButton = ({
         onClose={() => closeModal(modalId)}
       >
         <ConfirmModal
-          message={
-            "Etes-vous sûr de vouloir annuler ce trajet ?\nCette action est irréversible."
-          }
+          message={"Etes-vous sûr de vouloir annuler ce trajet ?\nCette action est irréversible."}
           onConfirm={handleCancel}
           toggleModal={() => closeModal(modalId)}
         />

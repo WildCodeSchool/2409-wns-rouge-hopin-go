@@ -93,11 +93,7 @@ export default function MapStatic({
               .join(",");
           })()
         : (() => {
-            const {
-              lon,
-              lat,
-              zoom: fitZoom,
-            } = fitLineStringToSize(line, width, height, padPx);
+            const { lon, lat, zoom: fitZoom } = fitLineStringToSize(line, width, height, padPx);
             return [
               fmt(lon),
               fmt(lat),
@@ -180,7 +176,7 @@ export default function MapStatic({
   if ((!routePolyline5 && loading) || !src) {
     return (
       <div
-        className="bg-gray-200 w-full h-[300px] flex justify-center items-center text-primary rounded-md animate-pulse"
+        className="text-primary flex h-[300px] w-full animate-pulse items-center justify-center rounded-md bg-gray-200"
         style={{ backgroundImage: `url(${streetMap})` }}
       >
         <p>Chargement de la carte...</p>
@@ -195,7 +191,7 @@ export default function MapStatic({
       width={width}
       height={height}
       alt={`Trajet ${departureCity} → ${arrivalCity}`}
-      className="w-full h-[300px] object-cover rounded-md"
+      className="h-[300px] w-full rounded-md object-cover"
       loading="lazy"
       onError={(e) => {
         // fallback ultime : centre auto sans path si jamais
