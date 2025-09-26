@@ -13,7 +13,7 @@ const App = () => {
     <>
       <div>
         <header className="z-50 md:flex md:fixed">
-          <div className="flex items-center gap-4  invisible md:visible">
+          <div className=" items-center gap-4  hidden md:flex">
             <Link to="/">
               <img src={Logo} alt="Logo" className="w-16 h-16 m-2" />
             </Link>

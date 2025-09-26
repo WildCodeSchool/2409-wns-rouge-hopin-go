@@ -8,7 +8,7 @@ import { VariantType } from "../types/variantTypes";
 import { querySearchRide } from "../api/SearchRide";
 import { PassengerRideStatus, SearchRidesQuery } from "../gql/graphql";
 import Button from "../components/Button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, LoaderCircle } from "lucide-react";
 import useBreakpoints from "../utils/useWindowSize";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
@@ -29,10 +29,18 @@ const RideResults = () => {
   const arrival_radius = parseInt(searchParams.get("arrival_radius")!);
   const departure_at = searchParams.get("departure_at")!;
 
+  // ---- Pagination --------------------------------------------------------------
+  const LIMIT = 6;
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  // ----End Pagination --------------------------------------------------------------
+
   const {
     data: dataSearched,
     loading,
     error,
+    fetchMore,
   } = useQuery(querySearchRide, {
     variables: {
       data: {
@@ -45,10 +53,16 @@ const RideResults = () => {
         arrival_lat,
         arrival_radius,
         departure_at: new Date(departure_at + ":00:00:00Z"),
+        limit: LIMIT,
+        offset: 0,
       },
     },
     fetchPolicy: "network-only",
     skip: !departure_city || !arrival_city || !departure_at,
+    onCompleted: (d) => {
+      const firstPage = d?.searchRide?.length ?? 0;
+      setHasMore(firstPage === LIMIT);
+    },
   });
   if (error) {
     return (
@@ -79,6 +93,41 @@ const RideResults = () => {
     return "primary";
   };
 
+  // ---- Pagination --------------------------------------------------------------
+  const loadMore = async () => {
+    if (loadingMore) return; // anti double-clic
+    setLoadingMore(true);
+    try {
+      const nextOffset = offset + LIMIT;
+      await fetchMore({
+        variables: {
+          data: {
+            departure_city,
+            departure_lng,
+            departure_lat,
+            departure_radius,
+            arrival_city,
+            arrival_lng,
+            arrival_lat,
+            arrival_radius,
+            departure_at: new Date(departure_at), // unifie avec le premier call
+            limit: LIMIT,
+            offset: nextOffset,
+          },
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          const next = fetchMoreResult?.searchRide ?? [];
+          setHasMore(next.length === LIMIT);
+          return { searchRide: [...(prev?.searchRide ?? []), ...next] };
+        },
+      });
+      setOffset(nextOffset);
+    } finally {
+      setLoadingMore(false);
+    }
+  };
+  // ----End Pagination --------------------------------------------------------------
+
   if (rides.length === 0 || !rides[selectedIndex]) {
     return (
       <div className="fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-center mt-10 text-gray-600">
@@ -105,8 +154,21 @@ const RideResults = () => {
   }
 
   return (
-    <div className="flex items-center h-screen justify-center max-w-7xl m-auto bg-gray-100">
-      <div className="flex h-full w-full z-20 md:w-1/2  overflow-hidden">
+    <div className=" flex items-center h-screen justify-center max-w-7xl m-auto bg-gray-100">
+      <div className="relative flex h-full w-full z-20 md:w-1/2  overflow-hidden">
+        {hasMore && (
+          <div className="absolute z-30 bottom-20 left-1/2 -translate-x-1/2">
+            <Button
+              disabled={!hasMore || loadingMore}
+              icon={loadingMore ? LoaderCircle : undefined}
+              iconRotateAnimation={loadingMore}
+              label={loadingMore ? "Chargement..." : "Charger plus"}
+              onClick={loadMore}
+              variant="secondary"
+              className="shadow-lg disabled:cursor-not-allowed disabled:opacity-50"
+            />
+          </div>
+        )}
         <ScrollableSnapList
           dataset={rides}
           getVariant={getVariant}
@@ -114,7 +176,7 @@ const RideResults = () => {
           sliderDirection="vertical"
           scaleEffect
           centerSlides={isMd ? true : false}
-          swiperClassName="h-full !pt-32 w-full"
+          swiperClassName="h-full md:!pt-32 w-full"
           spaceBetween={isMd ? 50 : 0}
           slidePerView={3}
         />

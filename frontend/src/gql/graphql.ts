@@ -209,6 +209,8 @@ export type SearchRideInput = {
   departure_lat: Scalars['Float']['input'];
   departure_lng: Scalars['Float']['input'];
   departure_radius: Scalars['Float']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type User = {

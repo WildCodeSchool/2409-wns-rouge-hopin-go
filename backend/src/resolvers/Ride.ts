@@ -40,6 +40,10 @@ export class RidesResolver {
       const startDay = startOfDay(data.departure_at);
       const endDay = endOfDay(data.departure_at);
 
+      // ---- Pagination --------------------------------------------------------------
+      const limit = Math.min(Math.max(data.limit ?? 20, 1), 100); // 1..100
+      const offset = Math.max(data.offset ?? 0, 0);
+
       // ---- Query --------------------------------------------------------------
       const qb = Ride.createQueryBuilder("ride")
         .innerJoinAndSelect("ride.driver", "driver")
@@ -77,7 +81,10 @@ export class RidesResolver {
         })
         .andWhere("ride.is_cancelled = false")
         .andWhere("ride.nb_passenger < ride.max_passenger")
-        .orderBy("ride.departure_at", "ASC");
+        .orderBy("ride.departure_at", "ASC")
+        .addOrderBy("ride.id", "ASC")
+        .take(limit)
+        .skip(offset);
 
       attachPricingSelects(qb, {
         perKm: 0.14,

@@ -194,6 +194,8 @@ export class RideCreateInput {
 
 @InputType()
 export class SearchRideInput {
+  @Field(() => Int, { nullable: true }) limit?: number; // pagination limit
+  @Field(() => Int, { nullable: true }) offset?: number; // pagination offset
   @Field()
   @MinLength(2, { message: "City must be at least 2 characters long" })
   @MaxLength(100, { message: "City cannot exceed 100 characters" })
