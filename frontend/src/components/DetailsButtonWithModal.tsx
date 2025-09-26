@@ -10,7 +10,7 @@ import { useQuery } from "@apollo/client";
 import { queryPassengersByRide } from "../api/PassengersByRide";
 import { useState } from "react";
 import { useLocation } from "react-router-dom";
-import CardRideDetailsMobileModal from "./CardRideDetailsMobileModal";
+import CardRideDetailsPassengerModal from "./CardRideDetailsPassengerModal";
 import useRide from "../context/Rides/useRide";
 import { isAfter, parseISO } from "date-fns";
 
@@ -60,7 +60,7 @@ const PassengersButtonWithModal = ({
 
   const openAppropriateModal = () => {
     if ((!isMd && isRidesResultsPage) || isMyRidesPassengerPage) {
-      openModal("CardRideDetailsMobileModal");
+      openModal("CardRideDetailsPassengerModal");
     } else if (isMyRidesDriverPage) {
       openModal("RideCardModal");
     }
@@ -69,7 +69,7 @@ const PassengersButtonWithModal = ({
   if (isModal) return null;
   return (
     <div>
-      <div className="absolute right-1/2 md:right-[40%] lg:right-[35%]    flex gap-2 items-center z-10 p-2 text-sm lg:text-base text-textLight font-semibold">
+      <div className="absolute right-1/2 md:right-[40%] lg:right-[38%]    flex gap-2 items-center z-10 p-2 text-sm lg:text-base text-textLight font-semibold">
         <div className="relative">
           {isMyRidesDriverPage &&
             waitingPassengers &&
@@ -179,14 +179,14 @@ const PassengersButtonWithModal = ({
           />
         </Modal>
         <Modal
-          id="CardRideDetailsMobileModal"
-          isOpen={isOpen("CardRideDetailsMobileModal")}
-          isVisible={isVisible("CardRideDetailsMobileModal")}
-          onClose={() => closeModal("CardRideDetailsMobileModal")}
+          id="CardRideDetailsPassengerModal"
+          isOpen={isOpen("CardRideDetailsPassengerModal")}
+          isVisible={isVisible("CardRideDetailsPassengerModal")}
+          onClose={() => closeModal("CardRideDetailsPassengerModal")}
         >
-          <CardRideDetailsMobileModal
+          <CardRideDetailsPassengerModal
             variant={variant}
-            toggleModal={() => closeModal("CardRideDetailsMobileModal")}
+            toggleModal={() => closeModal("CardRideDetailsPassengerModal")}
           />
         </Modal>
       </div>

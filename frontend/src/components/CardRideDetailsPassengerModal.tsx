@@ -8,20 +8,25 @@ import { formatDate, formatTime } from "../utils/formatDate";
 import RegisterButton from "./RegisterButton";
 import MapInteractive from "./MapInteractive";
 import { formatTravelDuration } from "../utils/formatTravelDuration";
+import CardTemplate from "./CardTemplate";
+import useBreakpoints from "../utils/useWindowSize";
 
-type CardRideDetailsMobileModalProps = {
+type CardRideDetailsPassengerModalProps = {
   toggleModal: () => void;
   variant: VariantType;
   waitingPassengers?: PassengersByRideQuery["passengersByRide"];
   acceptedPassengers?: PassengersByRideQuery["passengersByRide"];
 };
 
-const CardRideDetailsMobileModal = ({
+const CardRideDetailsPassengerModal = ({
   toggleModal,
   variant,
-}: CardRideDetailsMobileModalProps) => {
+}: CardRideDetailsPassengerModalProps) => {
   const { textColor, bgFill } = variantConfigMap[variant as VariantType];
   const ride = useRide();
+  const { isMd } = useBreakpoints();
+
+  // ---------------------Dates---------------------
 
   const departureDate = new Date(ride.departure_at);
   const arrivalDate = new Date(ride.arrival_at);
@@ -65,71 +70,81 @@ const CardRideDetailsMobileModal = ({
       <main
         className={`relative h-full flex flex-col gap-4 justify-between ${textColor}`}
       >
-        <h2 className={`text-2xl font-bold ${textColor}`}>{driverName}</h2>
-        <h2 className={`text-xl font-bold mb-2 ${textColor}`}>
-          Détails du trajet
-        </h2>
-        <div className="flex flex-col w-full h-1/2 justify-start gap-10">
-          <div>
-            <p className="text-sm md:text-base">{dateStr}</p>
-            <p className="text-xl md:text-4xl font-semibold">
-              {pricePerPassenger}
-              <span className="text-sm md:text-2xl"> €</span>
-            </p>
-
-            <div className="flex flex-col gap-2">
-              <p>
-                {variant === "cancel" || variant === "full"
-                  ? "Non disponible"
-                  : `${nbPassenger} ${
-                      nbPassenger > 1 ? "places restantes" : "place restante"
-                    }`}
-              </p>
-            </div>
+        {isMd ? (
+          <div className="flex justify-center">
+            <CardTemplate variant={variant} isModal={true} />
           </div>
-          <div className="flex justify-start h-40">
-            <div className={`flex flex-col w-28 justify-between ${textColor}`}>
-              <p className="text-base md:text-2xl font-semibold">
-                {departureTime}
+        ) : (
+          <div className="flex flex-col w-full h-1/2 justify-start gap-10">
+            <h2 className={`text-2xl font-bold ${textColor}`}>{driverName}</h2>
+            <h2 className={`text-xl font-bold mb-2 ${textColor}`}>
+              Détails du trajet
+            </h2>
+            <div>
+              <p className="text-sm md:text-base">{dateStr}</p>
+              <p className="text-xl md:text-4xl font-semibold">
+                {pricePerPassenger}
+                <span className="text-sm md:text-2xl"> €</span>
               </p>
-              <p className="text-sm">{formatTravelDuration(durationMin)}</p>
-              <p className="text-base md:text-2xl font-semibold">
-                {arrivalTime}
-              </p>
-            </div>
 
-            <div
-              className={`relative flex flex-col justify-between ${textColor}`}
-            >
-              <div
-                className={`dot absolute h-3 w-3 rounded-full ${bgFill} top-2 left-0 -translate-x-7`}
-              />
-              <div
-                className={`trait absolute h-5/6 w-[3px] rounded-sm ${bgFill} top-2 left-0 -translate-x-[23.5px]`}
-              />
-              <div
-                className={`dot absolute h-3 w-3 rounded-full ${bgFill} bottom-2 left-0 -translate-x-7`}
-              />
-              <div className="flex flex-col ml-2 justify-between h-full text-left">
-                <p
-                  className="text-lg md:text-xl sm:font-bold"
-                  title={departureCity}
-                >
-                  {departureCity}
-                </p>
-                <p className="text-sm">{distanceKm?.toFixed(1)} km</p>
-                <p
-                  className="text-lg md:text-xl sm:font-bold"
-                  title={arrivalCity}
-                >
-                  {arrivalCity}
+              <div className="flex flex-col gap-2">
+                <p>
+                  {variant === "cancel" || variant === "full"
+                    ? "Non disponible"
+                    : `${nbPassenger} ${
+                        nbPassenger > 1 ? "places restantes" : "place restante"
+                      }`}
                 </p>
               </div>
             </div>
+            <div className="flex justify-start h-40">
+              <div
+                className={`flex flex-col w-28 justify-between ${textColor}`}
+              >
+                <p className="text-base md:text-2xl font-semibold">
+                  {departureTime}
+                </p>
+                <p className="text-sm">{formatTravelDuration(durationMin)}</p>
+                <p className="text-base md:text-2xl font-semibold">
+                  {arrivalTime}
+                </p>
+              </div>
+
+              <div
+                className={`relative flex flex-col justify-between ${textColor}`}
+              >
+                <div
+                  className={`dot absolute h-3 w-3 rounded-full ${bgFill} top-2 left-0 -translate-x-7`}
+                />
+                <div
+                  className={`trait absolute h-5/6 w-[3px] rounded-sm ${bgFill} top-2 left-0 -translate-x-[23.5px]`}
+                />
+                <div
+                  className={`dot absolute h-3 w-3 rounded-full ${bgFill} bottom-2 left-0 -translate-x-7`}
+                />
+                <div className="flex flex-col ml-2 justify-between h-full text-left">
+                  <p
+                    className="text-lg md:text-xl sm:font-bold"
+                    title={departureCity}
+                  >
+                    {departureCity}
+                  </p>
+                  <p className="text-sm">{distanceKm?.toFixed(1)} km</p>
+                  <p
+                    className="text-lg md:text-xl sm:font-bold"
+                    title={arrivalCity}
+                  >
+                    {arrivalCity}
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
+        )}
+        <div className="flex justify-center w-1/2 m-auto">
+          <RegisterButton variant={variant} rideId={ride.id} size="large" />
         </div>
-        <RegisterButton variant={variant} rideId={ride.id} size="large" />
-        <div className="w-full h-1/2">
+        <div className="w-full h-1/2 md:h-96">
           <MapInteractive
             mapId={`dynamic-map-${ride.id}`}
             departureLatitude={departureLatitude}
@@ -148,4 +163,4 @@ const CardRideDetailsMobileModal = ({
   );
 };
 
-export default CardRideDetailsMobileModal;
+export default CardRideDetailsPassengerModal;

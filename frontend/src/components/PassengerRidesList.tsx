@@ -103,7 +103,7 @@ const PassengerRidesList = () => {
               getVariant={getVariant}
               onSelect={setSelectedIndex}
               sliderDirection={isMd ? "horizontal" : "vertical"}
-              slidePerView={is2xl ? 3 : isSm ? 2 : 3}
+              slidePerView={is2xl ? 3 : isMd ? 2 : isSm ? 1 : 3}
               swiperClassName={!isMd ? "h-full w-full" : ""}
               navigationArrows
               showPagination
