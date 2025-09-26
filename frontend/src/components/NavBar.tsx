@@ -62,14 +62,20 @@ const NavBar = () => {
               </>
             ) : null}
             {me ? (
-              <>
+              <div className="w-full flex flex-col gap-4">
+                <Button
+                  label="Mon compte"
+                  className="font-semibold"
+                  variant="secondary"
+                  onClick={() => navigate("/my-account")}
+                />
                 <Button
                   label="Déconnexion"
                   className="font-semibold"
                   variant="secondary"
                   onClick={handleSignout}
                 />
-              </>
+              </div>
             ) : null}
           </div>
         </div>
@@ -193,6 +199,14 @@ const NavBar = () => {
                   isLink
                   to="/my-rides/passenger"
                   label="Trajets"
+                  className="font-semibold w-full"
+                  variant="secondary"
+                  isHoverBgColor
+                />
+                <Button
+                  isLink
+                  to="/my-account"
+                  label="Mon compte"
                   className="font-semibold w-full"
                   variant="secondary"
                   isHoverBgColor
