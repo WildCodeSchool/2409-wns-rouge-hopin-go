@@ -30,7 +30,7 @@ const RideResults = () => {
   const departure_at = searchParams.get("departure_at")!;
 
   // ---- Pagination --------------------------------------------------------------
-  const LIMIT = 6;
+  const LIMIT = 4;
   const [offset, setOffset] = useState(0);
   const [hasMore, setHasMore] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
