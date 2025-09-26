@@ -135,7 +135,8 @@ export class UsersResolver {
   // Pas de décorateur ici, c'est intentionnel
   @Query(() => User, { nullable: true })
   async whoami(@Ctx() context: ContextType): Promise<User | null> {
-    return getUserFromContext(context);
+    // return getUserFromContext(context);
+    return context.user ?? null;
   }
 
   @Authorized("user")
