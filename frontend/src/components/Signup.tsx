@@ -107,7 +107,11 @@ export default function Signup() {
           } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="Jean"
           value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
+          onChange={(e) =>
+            setFirstName(
+              e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1)
+            )
+          }
           aria-describedby={error.firstName ? "first-name-error" : undefined}
         />
         {error.firstName && (
@@ -139,7 +143,11 @@ export default function Signup() {
           } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
           placeholder="Dupont"
           value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
+          onChange={(e) =>
+            setLastName(
+              e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1)
+            )
+          }
           aria-describedby={error.lastName ? "last-name-error" : undefined}
         />
         {error.lastName && (

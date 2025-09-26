@@ -203,6 +203,40 @@ const SearchFormRide = ({
       onSubmit={handleSubmit}
       className="flex flex-col items-center justify-center h-full max-w-sm mx-auto"
     >
+      {/* Date de départ */}
+      <div className="mb-5 w-full">
+        <label
+          htmlFor="departure-at"
+          className="block mb-2 text-sm font-medium text-white"
+        >
+          Date de départ
+        </label>
+        <input
+          type="date"
+          id="departure-at"
+          className={`${
+            error.departureAt?.length
+              ? "border-error border-2 bg-red-50"
+              : "border-gray-300 bg-gray-50"
+          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          value={departureAt}
+          ref={departureTimeRef}
+          onChange={(e) => setDepartureAt(e.target.value)}
+          onFocus={() =>
+            setShowSuggestions((prev) => ({ ...prev, arrival: false }))
+          }
+          required
+          aria-describedby={
+            error.departureAt ? "departure-at-error" : undefined
+          }
+        />
+        {error.departureAt && (
+          <p id="departure-at-error" className="text-red-400 text-sm">
+            {formatErrors(error.departureAt)}
+          </p>
+        )}
+      </div>
+
       {/* Ville de départ */}
       <div className="mb-5 w-full relative">
         <label
@@ -294,40 +328,6 @@ const SearchFormRide = ({
         >
           {departureRadius} km
         </label>
-      </div>
-
-      {/* Date de départ */}
-      <div className="mb-5 w-full">
-        <label
-          htmlFor="departure-at"
-          className="block mb-2 text-sm font-medium text-white"
-        >
-          Date de départ
-        </label>
-        <input
-          type="date"
-          id="departure-at"
-          className={`${
-            error.departureAt?.length
-              ? "border-error border-2 bg-red-50"
-              : "border-gray-300 bg-gray-50"
-          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
-          value={departureAt}
-          ref={departureTimeRef}
-          onChange={(e) => setDepartureAt(e.target.value)}
-          onFocus={() =>
-            setShowSuggestions((prev) => ({ ...prev, arrival: false }))
-          }
-          required
-          aria-describedby={
-            error.departureAt ? "departure-at-error" : undefined
-          }
-        />
-        {error.departureAt && (
-          <p id="departure-at-error" className="text-red-400 text-sm">
-            {formatErrors(error.departureAt)}
-          </p>
-        )}
       </div>
 
       {/* Ville d'arrivée */}
