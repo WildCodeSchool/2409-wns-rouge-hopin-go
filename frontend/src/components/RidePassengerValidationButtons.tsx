@@ -16,19 +16,13 @@ export type RidePassengerValidationButtonsProps = {
   passengerId: string;
 };
 
-const RidePassengerValidationButtons = ({
-  passengerId,
-}: RidePassengerValidationButtonsProps) => {
+const RidePassengerValidationButtons = ({ passengerId }: RidePassengerValidationButtonsProps) => {
   const ride = useRide();
   const client = useApolloClient();
   const { isOpen, isVisible, openModal, closeModal, toggleModal } = useModal();
-  const [actionType, setActionType] = useState<"accept" | "refuse" | null>(
-    null
-  );
+  const [actionType, setActionType] = useState<"accept" | "refuse" | null>(null);
 
-  const [driverSetPassengerRideStatus] = useMutation(
-    mutationDriverSetPassengerRideStatus
-  );
+  const [driverSetPassengerRideStatus] = useMutation(mutationDriverSetPassengerRideStatus);
 
   const modalId = `passenger-confirmation-${passengerId}`;
 
@@ -47,9 +41,7 @@ const RidePassengerValidationButtons = ({
             user_id: passengerId,
             ride_id: ride.id,
             status:
-              actionType === "accept"
-                ? PassengerRideStatus.Approved
-                : PassengerRideStatus.Refused,
+              actionType === "accept" ? PassengerRideStatus.Approved : PassengerRideStatus.Refused,
           },
         },
       });
@@ -59,9 +51,7 @@ const RidePassengerValidationButtons = ({
       });
 
       toggleModal(modalId);
-      toast.success(
-        `Passager ${actionType === "accept" ? "validé" : "refusé"} avec succès`
-      );
+      toast.success(`Passager ${actionType === "accept" ? "validé" : "refusé"} avec succès`);
     } catch (error) {
       console.error("Error validating/refusing passenger:", error);
     }
@@ -69,19 +59,14 @@ const RidePassengerValidationButtons = ({
 
   return (
     <>
-      <div className="flex flex-row gap-4 items-center justify-end">
+      <div className="flex flex-row items-center justify-end gap-4">
         <Button
           variant="validation"
           icon={Check}
           type="button"
           onClick={() => handleClick("accept")}
         />
-        <Button
-          variant="refused"
-          icon={X}
-          type="button"
-          onClick={() => handleClick("refuse")}
-        />
+        <Button variant="refused" icon={X} type="button" onClick={() => handleClick("refuse")} />
       </div>
 
       <Modal

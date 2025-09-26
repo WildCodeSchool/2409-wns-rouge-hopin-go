@@ -1,24 +1,15 @@
 import { validate } from "class-validator";
 import { User, UserCreateInput } from "../../src/entities/User";
 import { mutationCreateUser } from "../api/createUser";
+import { assert, TestArgsType } from "../index.spec";
 import { mutationSignin } from "../api/signin";
 import { queryWhoami } from "../api/whoami";
-import { assert, TestArgsType } from "../index.spec";
-import * as jwt from "jsonwebtoken";
 
 export function UsersResolverTest(testArgs: TestArgsType) {
   const cases = [
     ["less than 8 char", "Ab1!", "Password must be at least 8 characters long"],
-    [
-      "no uper case",
-      "abcd1234!",
-      "Password must contain at least one uppercase letter",
-    ],
-    [
-      "no lower case",
-      "ABCD1234!",
-      "Password must contain at least one lowercase letter",
-    ],
+    ["no uper case", "abcd1234!", "Password must contain at least one uppercase letter"],
+    ["no lower case", "ABCD1234!", "Password must contain at least one lowercase letter"],
     ["no digit", "Abcdefgh!", "Password must contain at least one number"],
     [
       "no special char",

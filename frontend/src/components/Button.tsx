@@ -51,15 +51,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     const config = variantConfigMap[variant];
 
     const baseClass = isFlexCol ? "button-col" : "button-flex";
-    const iconClass = iconRotate
-      ? "rotate-0 group-hover:-rotate-12 transition-200"
-      : "";
-    const iconRotateClass = iconRotateAnimation
-      ? "animate-[spin_2s_linear_infinite]"
-      : "";
-    const finalIconClass = [iconClass, iconRotateClass]
-      .filter(Boolean)
-      .join(" ");
+    const iconClass = iconRotate ? "rotate-0 group-hover:-rotate-12 transition-200" : "";
+    const iconRotateClass = iconRotateAnimation ? "animate-[spin_2s_linear_infinite]" : "";
+    const finalIconClass = [iconClass, iconRotateClass].filter(Boolean).join(" ");
     // If isHoverBgColor is true and config.hoverBg exists, use it; otherwise, use an empty string
     const hoverBgClass = isHoverBgColor && config.hoverBg ? config.hoverBg : "";
 
@@ -95,9 +89,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         <NavLink
           to={to}
           className={({ isActive, isPending }) =>
-            `${finalButtonClass} ${
-              isPending ? "opacity-50" : isActive ? "underline" : ""
-            }`.trim()
+            `${finalButtonClass} ${isPending ? "opacity-50" : isActive ? "underline" : ""}`.trim()
           }
           aria-label={label || "link button"}
         >
@@ -121,5 +113,7 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     );
   }
 );
+
+Button.displayName = "Button";
 
 export default Button;

@@ -74,9 +74,7 @@ describe("Signup", () => {
     const passwordInput = screen.getByLabelText("Mot de passe");
     const lastnameInput = screen.getByLabelText("Nom");
     const firstnameInput = screen.getByLabelText("Prénom");
-    const confirmPasswordInput = screen.getByLabelText(
-      "Confirmer mot de passe"
-    );
+    const confirmPasswordInput = screen.getByLabelText("Confirmer mot de passe");
 
     // Simulate user typing in inputs
     fireEvent.change(firstnameInput, { target: { value: "François-Xavier" } });
@@ -94,8 +92,6 @@ describe("Signup", () => {
     const button = await screen.findByText("S'inscrire");
 
     fireEvent.click(button);
-    waitFor(() =>
-      expect(screen.getByText("Inscription réussie !")).toBeInTheDocument()
-    );
+    waitFor(() => expect(screen.getByText("Inscription réussie !")).toBeInTheDocument());
   });
 });

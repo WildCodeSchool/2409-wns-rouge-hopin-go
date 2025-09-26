@@ -21,12 +21,9 @@ const PassengerRidesList = () => {
   const getVariant = (dataset: PassengerRide): VariantType => {
     if (dataset.is_cancelled) return "cancel";
     if (dataset.nb_passenger === dataset.max_passenger) return "full";
-    if (dataset.current_user_passenger_status === PassengerRideStatus.Waiting)
-      return "pending";
-    if (dataset.current_user_passenger_status === PassengerRideStatus.Approved)
-      return "validation";
-    if (dataset.current_user_passenger_status === PassengerRideStatus.Refused)
-      return "refused";
+    if (dataset.current_user_passenger_status === PassengerRideStatus.Waiting) return "pending";
+    if (dataset.current_user_passenger_status === PassengerRideStatus.Approved) return "validation";
+    if (dataset.current_user_passenger_status === PassengerRideStatus.Refused) return "refused";
     return "primary";
   };
 
@@ -50,8 +47,8 @@ const PassengerRidesList = () => {
   const totalArchived = archivedData?.passengerRides?.totalCount ?? 0;
 
   return (
-    <div className="h-full w-full flex flex-col sm:pb-16 overflow-auto bg-gray-100">
-      <div className=" h-full flex flex-col my-2 gap-4 sm:gap-0">
+    <div className="flex h-full w-full flex-col overflow-auto bg-gray-100 sm:pb-16">
+      <div className="my-2 flex h-full flex-col gap-4 sm:gap-0">
         <span className="ml-4">Trajets à venir</span>
         {upcomingList.length > 0 ? (
           <>
@@ -91,10 +88,10 @@ const PassengerRidesList = () => {
             ) : null}
           </>
         ) : (
-          <div className="text-center w-full mt-10">Aucun trajet à venir.</div>
+          <div className="mt-10 w-full text-center">Aucun trajet à venir.</div>
         )}
       </div>
-      <div className=" h-full flex flex-col my-20 sm:my-0 gap-4 sm:gap-0">
+      <div className="my-20 flex h-full flex-col gap-4 sm:my-0 sm:gap-0">
         <span className="ml-4">Trajets archivés</span>
         {archivedList.length > 0 ? (
           <>
@@ -133,7 +130,7 @@ const PassengerRidesList = () => {
             ) : null}
           </>
         ) : (
-          <div className="text-center w-full mt-10">Aucun trajet archivé.</div>
+          <div className="mt-10 w-full text-center">Aucun trajet archivé.</div>
         )}
       </div>
     </div>

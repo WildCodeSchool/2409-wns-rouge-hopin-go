@@ -34,12 +34,12 @@ const NavBar = () => {
       <div ref={toggleMenuRef}>
         {/* Toggle Menu */}
         <div
-          className={`flex md:hidden fixed bottom-[58px] md:bottom-0 transition-transform duration-300 ease-in-out transform right-0 z-40 w-fit h-18 bg-primary p-2 rounded-tl-lg ${
+          className={`h-18 bg-primary fixed bottom-[58px] right-0 z-40 flex w-fit transform rounded-tl-lg p-2 transition-transform duration-300 ease-in-out md:bottom-0 md:hidden ${
             isOpen ? "translate-y-0" : "translate-y-full"
           }`}
         >
           <div
-            className={`flex flex-col items-start gap-4 p-4 w-full transition-opacity duration-300 ease-in-out ${
+            className={`flex w-full flex-col items-start gap-4 p-4 transition-opacity duration-300 ease-in-out ${
               isOpen ? "opacity-100" : "opacity-0"
             }`}
           >
@@ -75,19 +75,10 @@ const NavBar = () => {
         </div>
 
         {/* Navbar */}
-        <nav
-          className="flex md:hidden fixed bottom-0 left-0 right-0 z-50 w-full h-18
-      bg-primary text-secondary "
-        >
-          <div className="flex items-center justify-around w-full p-2">
+        <nav className="h-18 bg-primary text-secondary fixed bottom-0 left-0 right-0 z-50 flex w-full md:hidden">
+          <div className="flex w-full items-center justify-around p-2">
             {me ? (
-              <Button
-                isLink
-                to="/my-rides/passenger"
-                icon={CarFront}
-                iconSize={26}
-                isFlexCol
-              />
+              <Button isLink to="/my-rides/passenger" icon={CarFront} iconSize={26} isFlexCol />
             ) : null}
 
             {/* {me ? (
@@ -100,23 +91,9 @@ const NavBar = () => {
               />
             ) : null} */}
 
-            <Button
-              isLink
-              to="/research"
-              icon={Search}
-              iconSize={26}
-              isFlexCol
-            />
+            <Button isLink to="/research" icon={Search} iconSize={26} isFlexCol />
 
-            {me ? (
-              <Button
-                isLink
-                to="/propose"
-                icon={CirclePlus}
-                iconSize={26}
-                isFlexCol
-              />
-            ) : null}
+            {me ? <Button isLink to="/propose" icon={CirclePlus} iconSize={26} isFlexCol /> : null}
 
             <Button
               onClick={() => {
@@ -132,8 +109,8 @@ const NavBar = () => {
         {/* Version Desktop */}
 
         {/* Navbar */}
-        <nav className="hidden md:flex justify-end fixed -right-4 -top-6 overflow-hidden z-50">
-          <div className=" flex justify-between gap-4 pl-6 pr-8 my-6 w-fit items-center bg-primary rounded-bl-3xl">
+        <nav className="fixed -right-4 -top-6 z-50 hidden justify-end overflow-hidden md:flex">
+          <div className="bg-primary my-6 flex w-fit items-center justify-between gap-4 rounded-bl-3xl pl-6 pr-8">
             <Button
               isLink
               to="/research"
@@ -153,7 +130,7 @@ const NavBar = () => {
               icon={CirclePlus}
             />
           </div>
-          <div className="relative rounded-l-full rounded-br-full bg-gray-100 -ml-4 p-4 m-2 flex flex-col items-center justify-center">
+          <div className="relative m-2 -ml-4 flex flex-col items-center justify-center rounded-l-full rounded-br-full bg-gray-100 p-4">
             <button onClick={() => setIsOpen(!isOpen)}>
               <img src={maleUser} alt="profile" width={80} />
             </button>
@@ -162,11 +139,9 @@ const NavBar = () => {
 
         {/* Toggle Menu */}
         <div
-          className={`hidden md:flex fixed md:top-[62px] md:bottom-auto transition-transform duration-300 ease-in-out transform right-0 z-40 w-fit h-18  p-2 rounded-tl-lg md:h-fit md:pt-10 md:rounded-bl-3xl bg-primary
-        ${isOpen ? "translate-y-0 " : "!-translate-y-full"}
-        `}
+          className={`h-18 bg-primary fixed right-0 z-40 hidden w-fit transform rounded-tl-lg p-2 transition-transform duration-300 ease-in-out md:bottom-auto md:top-[62px] md:flex md:h-fit md:rounded-bl-3xl md:pt-10 ${isOpen ? "translate-y-0" : "!-translate-y-full"} `}
         >
-          <div className="flex flex-col gap-4 p-4 w-full">
+          <div className="flex w-full flex-col gap-4 p-4">
             {!me ? (
               <>
                 <Button
@@ -193,7 +168,7 @@ const NavBar = () => {
                   isLink
                   to="/my-rides/passenger"
                   label="Trajets"
-                  className="font-semibold w-full"
+                  className="w-full font-semibold"
                   variant="secondary"
                   isHoverBgColor
                 />

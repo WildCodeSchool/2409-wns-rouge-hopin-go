@@ -11,12 +11,7 @@ describe("Button component", () => {
     render(
       <>
         <h1 data-testid="title">false</h1>
-        <Button
-          onClick={() => modify()}
-          variant="validation"
-          type="button"
-          label="S'inscrire"
-        />
+        <Button onClick={() => modify()} variant="validation" type="button" label="S'inscrire" />
       </>
     );
     const button = await screen.findByText("S'inscrire");

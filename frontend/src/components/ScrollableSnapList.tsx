@@ -1,11 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import CardTemplate from "./CardTemplate";
 import { VariantType } from "../types/variantTypes";
-import {
-  DriverRidesQuery,
-  PassengerRidesQuery,
-  SearchRidesQuery,
-} from "../gql/graphql";
+import { DriverRidesQuery, PassengerRidesQuery, SearchRidesQuery } from "../gql/graphql";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Swiper as SwiperType } from "swiper";
 import "swiper/css";
@@ -13,13 +9,7 @@ import "swiper/css/scrollbar";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-import {
-  Keyboard,
-  Mousewheel,
-  Navigation,
-  Pagination,
-  Scrollbar,
-} from "swiper/modules";
+import { Keyboard, Mousewheel, Navigation, Pagination, Scrollbar } from "swiper/modules";
 import RideProvider from "../context/Rides/rides.provider";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
@@ -82,7 +72,7 @@ const ScrollableSnapList = ({
       rewind={true}
       keyboard={{ enabled: true }}
       modules={[Keyboard, Mousewheel, Scrollbar, Navigation, Pagination]}
-      className={`mySwiper w-full  ${swiperClassName}`}
+      className={`mySwiper w-full ${swiperClassName}`}
       scrollbar={{ hide: true, draggable: true }}
       slidesPerView={slidePerView}
       navigation={navigationArrows}
@@ -91,14 +81,9 @@ const ScrollableSnapList = ({
       {dataset.map((data, index) => (
         <SwiperSlide
           key={index}
-          className={`transition-transform duration-300 ease-in-out
-            ${
-              scaleEffect && index === selectedIndex
-                ? "scale-105 z-10"
-                : "scale-100 z-0"
-            }
-            flex justify-center items-center
-            h-auto min-h-[200px] w-full`}
+          className={`transition-transform duration-300 ease-in-out ${
+            scaleEffect && index === selectedIndex ? "z-10 scale-105" : "z-0 scale-100"
+          } flex h-auto min-h-[200px] w-full items-center justify-center`}
         >
           <RideProvider ride={data}>
             <CardTemplate

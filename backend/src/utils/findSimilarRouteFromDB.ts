@@ -60,12 +60,7 @@ export async function findSimilarRouteFromDB(
     .limit(1);
 
   const hit = await qb.getOne();
-  if (
-    !hit ||
-    hit.distance_km == null ||
-    hit.duration_min == null ||
-    !hit.route_polyline5
-  ) {
+  if (!hit || hit.distance_km == null || hit.duration_min == null || !hit.route_polyline5) {
     return null;
   }
 
