@@ -4,7 +4,7 @@ import { validate } from "class-validator";
 import argon2 from "argon2";
 import { sign } from "jsonwebtoken";
 import Cookies from "cookies";
-import { ContextType, getUserFromContext } from "../auth";
+import { ContextType } from "../auth";
 
 @Resolver()
 export class UsersResolver {

@@ -115,6 +115,7 @@ export class RidesResolver {
     @Arg("filter", () => String, { nullable: true }) filter?: string,
     @Arg("limit", () => Int, { nullable: true }) limit = 10,
     @Arg("offset", () => Int, { nullable: true }) offset = 0,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Arg("sort", () => String, { nullable: true }) sort: "ASC" | "DESC" = "ASC"
   ): Promise<PaginatedRides> {
     if (!ctx.user) throw new Error("Unauthorized");

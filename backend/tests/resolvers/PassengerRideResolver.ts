@@ -1,7 +1,5 @@
 import { assert, TestArgsType } from "../index.spec";
 import { mutationCreatePassengerRide } from "../api/createPassengerRide";
-import { queryWhoami } from "../api/whoami";
-import { datasource } from "../../src/datasource";
 import { User } from "../../src/entities/User";
 import { Ride } from "../../src/entities/Ride";
 import { sign } from "jsonwebtoken";
@@ -99,7 +97,7 @@ export function PassengerRidesResolverTest(testArgs: TestArgsType) {
       expect(data).toBeDefined();
     });
     it("fails if user tries to book his own ride", async () => {
-      const token = sign({ id: passenger.id }, process.env.JWT_SECRET_KEY!);
+      const token = sign({ id: driver.id }, process.env.JWT_SECRET_KEY!);
       const createResponse = await testArgs.server.executeOperation(
         {
           query: mutationCreatePassengerRide,

@@ -38,7 +38,7 @@ export function UsersResolverTest(testArgs: TestArgsType) {
 
       assert(errors !== undefined);
       const validationErrors: Array<unknown> = errors[0].extensions
-        ?.validationErrors as any as unknown[];
+        ?.validationErrors as unknown as unknown[];
       expect(response.body.singleResult.data).toBeNull();
       expect(validationErrors[0]).toMatchObject({ property: "email" });
     });
@@ -61,8 +61,7 @@ export function UsersResolverTest(testArgs: TestArgsType) {
 
       assert(errors !== undefined);
       const validationErrors: Array<unknown> = errors[0].extensions
-        ?.validationErrors as any as unknown[];
-      console.log("error", validationErrors);
+        ?.validationErrors as unknown as unknown[];
       expect(validationErrors[0]).toMatchObject({ property: "password" });
       expect(response.body.singleResult.data).toBeNull();
     });
@@ -80,20 +79,23 @@ export function UsersResolverTest(testArgs: TestArgsType) {
           },
         },
       });
+      // check API response
       assert(response.body.kind === "single");
       expect(response.body.singleResult.errors).toBeUndefined();
       expect(response.body.singleResult.data).toBeDefined();
-    });
-    // it("refuse si aucune majuscule", async () => {
-    //   const input = new UserCreateInput();
-    //   input.firstName = "Jean"
-    //   input.lastName = "TEST"
-    //   input.email = "test@test.fr"
-    //   input.password = "abcd1234!";
 
-    //   const errors = await validate(input);
-    //   expect(errors[0].constraints?.matches).toContain("Password must contain at least one uppercase letter");
-    // });
+      // check user in database
+      const userFromDb = await User.findOneBy({
+        id: response.body.singleResult.data?.createUser?.id,
+      });
+      expect(userFromDb).toBeDefined();
+      expect(userFromDb?.email).toBe("test@test.fr");
+      expect(userFromDb?.hashedPassword).not.toBe("Test1234!");
+      testArgs.data.userId = response.body.singleResult.data?.createUser?.id;
+      testArgs.data.userEmail = userFromDb?.email;
+      testArgs.data.user = userFromDb;
+    });
+
     it.each(cases)(
       "fails to create a user if password has %s",
       async (_, password, expectedMessage) => {
@@ -204,7 +206,6 @@ export function UsersResolverTest(testArgs: TestArgsType) {
       );
       assert(response.body.kind === "single");
       const { errors, data } = response.body.singleResult;
-      console.log(errors, data);
       expect(errors).toBeUndefined();
       expect(data?.whoami).not.toBeNull();
       expect(data?.whoami.id).toBeDefined();
@@ -224,7 +225,6 @@ export function UsersResolverTest(testArgs: TestArgsType) {
     });
     assert(response.body.kind === "single");
     const { errors, data } = response.body.singleResult;
-    console.log(errors, data);
     expect(errors).toBeUndefined();
     expect(data?.signin).toBeNull();
   });
@@ -240,7 +240,6 @@ export function UsersResolverTest(testArgs: TestArgsType) {
     });
     assert(response.body.kind === "single");
     const { errors, data } = response.body.singleResult;
-    console.log(errors, data);
     expect(errors).toBeUndefined();
     expect(data?.signin).toBeNull();
   });
@@ -295,8 +294,8 @@ export function UsersResolverTest(testArgs: TestArgsType) {
       const { errors, data } = response.body.singleResult;
       expect(errors).toBeUndefined();
       expect(data?.whoami).not.toBeNull();
-      expect(data?.whoami.id).toBeDefined();
-      expect(data?.whoami.email).toBeDefined();
+      expect(data?.whoami.id).toBe(testArgs.data.userId);
+      expect(data?.whoami.email).toBe(testArgs.data.userEmail);
       expect(data?.whoami.role).toBeDefined();
     });
   });
