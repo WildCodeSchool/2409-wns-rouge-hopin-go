@@ -2,6 +2,9 @@
 import { assert, TestArgsType } from "../index.spec";
 import { mutationCreateRide } from "../api/createRide";
 import { queryWhoami } from "../api/whoami";
+import { sign } from "jsonwebtoken";
+import { User } from "../../src/entities/User";
+import { Ride } from "../../src/entities/Ride";
 
 export function RidesResolverTest(testArgs: TestArgsType) {
   describe("RidesResolver", () => {
@@ -9,16 +12,13 @@ export function RidesResolverTest(testArgs: TestArgsType) {
     const noAuth = {
       contextValue: {
         req: { headers: {} }, // pas de cookie
-        res: {},              // mock suffisant pour cookies
-        user: null,           // champ présent dans ContextType, même si non utilisé
+        res: {}, // mock suffisant pour cookies
+        user: null, // champ présent dans ContextType, même si non utilisé
       },
     };
 
     it("returns null on whoami when not authenticated", async () => {
-      const whoamiResponse = await testArgs.server.executeOperation(
-        { query: queryWhoami },
-        noAuth
-      );
+      const whoamiResponse = await testArgs.server.executeOperation({ query: queryWhoami }, noAuth);
 
       assert(whoamiResponse.body.kind === "single", "Expected single-result response");
       const res = whoamiResponse.body.singleResult;
@@ -44,7 +44,7 @@ export function RidesResolverTest(testArgs: TestArgsType) {
               departure_lng: 2.3522,
               departure_lat: 48.8566,
               arrival_lng: 4.8357,
-              arrival_lat: 45.7640,
+              arrival_lat: 45.764,
               max_passenger: 3,
             },
           },
@@ -76,7 +76,7 @@ export function RidesResolverTest(testArgs: TestArgsType) {
               departure_lat: 48.8566,
               arrival_lng: 4.8357,
               arrival_lat: 45.764,
-              max_passenger: 0,            // invalide (Min(1) côté input)
+              max_passenger: 0, // invalide (Min(1) côté input)
             },
           },
         },
@@ -89,6 +89,60 @@ export function RidesResolverTest(testArgs: TestArgsType) {
       // Selon l’ordre (auth d’abord ou validation d’abord), on aura de toute façon un échec
       expect(data).toBeNull();
       expect(errors).toBeDefined();
+    });
+    it("succeed to create a ride when user is authenticated", async () => {
+      const driver = await User.save({
+        email: "driver@example.com",
+        firstName: "Jean",
+        lastName: "TEST",
+        hashedPassword: "dummy",
+      });
+      const token = sign({ id: driver.id }, process.env.JWT_SECRET_KEY!);
+      const createResponse = await testArgs.server.executeOperation<{
+        createRide: Ride;
+      }>(
+        {
+          query: mutationCreateRide,
+          variables: {
+            data: {
+              departure_city: "Paris",
+              arrival_city: "Lyon",
+              departure_address: "10 rue de Paris",
+              arrival_address: "20 avenue de Lyon",
+              driver: { id: driver.id },
+              departure_at: new Date("2024-07-01T10:00:00Z"),
+              departure_lng: 2.3522,
+              departure_lat: 48.8566,
+              arrival_lng: 4.8357,
+              arrival_lat: 45.764,
+              max_passenger: 3,
+            },
+          },
+        },
+        {
+          contextValue: {
+            req: { headers: { cookie: `token=${token};` } },
+            res: {},
+            user: { id: driver.id, email: driver.email, role: "user" },
+          },
+        }
+      );
+      // check API response
+      assert(createResponse.body.kind === "single", "Expected single-result response");
+      const { errors, data } = createResponse.body.singleResult;
+      expect(data).not.toBeNull();
+      expect(errors).toBeUndefined();
+      expect(data?.createRide).toBeDefined();
+      expect(data?.createRide.id).toBeDefined();
+      expect(data?.createRide.id).toBe("1");
+
+      // check ride in database
+      const ride = await Ride.findOne({
+        where: { id: Number(data?.createRide.id) },
+        relations: ["driver"],
+      });
+      expect(ride!.driver.id).toBe(driver.id);
+      expect(ride!.max_passenger).toBe(3);
     });
   });
 }

@@ -32,6 +32,17 @@ export async function sendEmail({
       },
     ],
   };
+
+  // Short circuit if Mailjet is disabled
+  if (!mailjet) {
+    if (process.env.NODE_ENV === "testing") {
+      console.info("Mailjet disabled in test mode, simulated sending.");
+    } else {
+      console.warn("Mailjet not configured, email not sent.");
+    }
+    return true; // simulated success
+  }
+
   try {
     const result: LibraryResponse<SendEmailV3_1.Response> | null = await mailjet
       .post("send", { version: "v3.1" })
@@ -43,9 +54,9 @@ export async function sendEmail({
     return true;
   } catch (err: unknown) {
     if (typeof err === "object" && err !== null && "statusCode" in err) {
-      console.error("❌ Erreur Mailjet :", (err as { statusCode?: unknown }).statusCode);
+      console.error("❌ Error Mailjet :", (err as { statusCode?: unknown }).statusCode);
     } else {
-      console.error("❌ Erreur Mailjet :", err);
+      console.error("❌ Error Mailjet :", err);
     }
     return false;
   }

@@ -1,14 +1,11 @@
 import { assert, TestArgsType } from "../index.spec";
 import { mutationCreatePassengerRide } from "../api/createPassengerRide";
-import { queryWhoami } from "../api/whoami";
-import { datasource } from "../../src/datasource";
 import { User } from "../../src/entities/User";
 import { Ride } from "../../src/entities/Ride";
 import { sign } from "jsonwebtoken";
 
 export function PassengerRidesResolverTest(testArgs: TestArgsType) {
   describe("creating a passenger_ride", () => {
-
     let driver: User;
     let ride: Ride;
     let passenger: User;
@@ -27,7 +24,7 @@ export function PassengerRidesResolverTest(testArgs: TestArgsType) {
         departure_address: "AddressA",
         arrival_address: "AddressB",
         departure_location: { type: "Point", coordinates: [2.3522, 48.8566] },
-        arrival_location: { type: "Point", coordinates: [4.8357, 45.7640] },
+        arrival_location: { type: "Point", coordinates: [4.8357, 45.764] },
         departure_at: new Date(),
         arrival_at: new Date(),
         max_passenger: 3,
@@ -46,8 +43,8 @@ export function PassengerRidesResolverTest(testArgs: TestArgsType) {
       const noAuth = {
         contextValue: {
           req: { headers: {} }, // pas de cookie
-          res: {},              // mock suffisant pour cookies
-          user: null,           // champ présent dans ContextType, même si non utilisé
+          res: {}, // mock suffisant pour cookies
+          user: null, // champ présent dans ContextType, même si non utilisé
         },
       };
 
@@ -100,7 +97,7 @@ export function PassengerRidesResolverTest(testArgs: TestArgsType) {
       expect(data).toBeDefined();
     });
     it("fails if user tries to book his own ride", async () => {
-      const token = sign({ id: passenger.id }, process.env.JWT_SECRET_KEY!);
+      const token = sign({ id: driver.id }, process.env.JWT_SECRET_KEY!);
       const createResponse = await testArgs.server.executeOperation(
         {
           query: mutationCreatePassengerRide,
