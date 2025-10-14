@@ -424,12 +424,7 @@ const SearchFormRide = ({
 
       {/* Bouton */}
       <div className="flex w-full justify-end">
-        <Button
-          variant="validation"
-          type="submit"
-          label="Rechercher"
-          className="border-white border-2"
-        />
+        <Button variant="secondary" type="submit" label="Rechercher" />
       </div>
     </form>
   );

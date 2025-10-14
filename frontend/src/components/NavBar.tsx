@@ -11,6 +11,7 @@ import { useOutsideClick } from "../hooks/useOutsideClick";
 const NavBar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  console.log("🚀 ~ NavBar ~ isOpen:", isOpen);
   const toggleMenuRef = useRef<HTMLDivElement>(null);
   useOutsideClick(toggleMenuRef, () => setIsOpen(false), isOpen);
 
@@ -25,6 +26,10 @@ const NavBar = () => {
   const handleSignout = () => {
     doSignout();
     navigate("/");
+  };
+
+  const closeNavBar = () => {
+    setIsOpen(false);
   };
 
   return (
@@ -46,6 +51,7 @@ const NavBar = () => {
             {!me ? (
               <>
                 <Button
+                  onClick={closeNavBar}
                   isLink
                   to="/auth/signup"
                   label="Inscription"
@@ -53,6 +59,7 @@ const NavBar = () => {
                   variant="secondary"
                 />
                 <Button
+                  onClick={closeNavBar}
                   isLink
                   to="/auth/signin"
                   label="Connexion"
@@ -161,7 +168,7 @@ const NavBar = () => {
           </div>
           <div className="relative rounded-l-full rounded-br-full bg-gray-100 -ml-4 p-4 m-2 flex flex-col items-center justify-center">
             <button onClick={() => setIsOpen(!isOpen)}>
-              <img src={maleUser} alt="profile" width={80} />
+              <img src={maleUser} alt="profile" width={80} loading="lazy" />
             </button>
           </div>
         </nav>
@@ -176,6 +183,7 @@ const NavBar = () => {
             {!me ? (
               <>
                 <Button
+                  onClick={() => setIsOpen(false)}
                   isLink
                   to="/auth/signup"
                   label="Inscription"
@@ -184,6 +192,7 @@ const NavBar = () => {
                   isHoverBgColor
                 />
                 <Button
+                  onClick={() => setIsOpen(false)}
                   isLink
                   to="/auth/signin"
                   label="Connexion"

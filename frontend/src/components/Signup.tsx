@@ -85,7 +85,7 @@ export default function Signup() {
   }
 
   return (
-    <form className="flex flex-col justify-center items-center max-w-sm mx-auto w-full h-full px-4 sm:px-0 ">
+    <form className="flex flex-col justify-center items-center max-w-sm mx-auto w-full h-full px-4 sm:py-8">
       {/* Prénom */}
       <div className="mb-5 w-full">
         <label
@@ -211,7 +211,7 @@ export default function Signup() {
 
           <button
             type="button"
-            className=" -ml-8"
+            className="-ml-9 bg-gray-200 rounded-lg p-2 m-1"
             onClick={() => setRevealPassword(!revealPassword)}
             aria-label={
               revealPassword
@@ -264,7 +264,12 @@ export default function Signup() {
           />
           <button
             type="button"
-            className=" -ml-8"
+            aria-label={
+              revealPassword
+                ? "Masquer le mot de passe"
+                : "Afficher le mot de passe"
+            }
+            className="-ml-9 bg-gray-200 rounded-lg p-2 m-1"
             onClick={() => setRevealPassword(!revealPassword)}
           >
             {revealPassword ? (
@@ -289,7 +294,7 @@ export default function Signup() {
       <div className="flex w-full justify-end">
         <Button
           onClick={doSubmit}
-          variant="validation"
+          variant="secondary"
           type="button"
           label="S'inscrire"
         />

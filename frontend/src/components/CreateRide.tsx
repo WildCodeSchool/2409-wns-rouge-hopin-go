@@ -366,7 +366,7 @@ const CreateRide = () => {
 
   return (
     <form
-      className="flex flex-col items-center h-full w-full  max-w-xl mx-auto  justify-center"
+      className="flex flex-col items-center h-full w-full lg:p-20 mx-auto  justify-center"
       onSubmit={(e) => {
         e.preventDefault();
         doSubmit();

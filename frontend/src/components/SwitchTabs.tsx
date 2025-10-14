@@ -42,19 +42,24 @@ const SwitchTabs = ({
   };
 
   return (
-    <div className="sm:border border-textDark sm:rounded-xl shadow-xl  h-full w-full overflow-hidden z-50">
-      <div className="flex h-fit w-full">
+    <div
+      className={`sm:border border-textDark sm:rounded-xl shadow-xl ${
+        !isMyRidesPage && "max-w-xl"
+      }  h-full w-full overflow-hidden z-50`}
+    >
+      <div className="flex h-fit w-full  ">
         {tabs.map((tab, index) => (
           <button
             key={index}
-            className={`flex-1 py-4 font-semibold transition-200 ${isMyRidesPage
+            className={`flex-1 py-4 font-semibold transition-200 ${
+              isMyRidesPage
                 ? activeTab === index
                   ? "bg-gray-100 text-primary underline"
-                  : "bg-gray-200 text-primary/50 hover:text-primary"
+                  : "bg-gray-200 text-primary hover:text-primary"
                 : activeTab === index
-                  ? "bg-primary text-white underline"
-                  : "bg-gray-200 text-primary/50 hover:text-primary"
-              } `}
+                ? "bg-primary text-white underline"
+                : "bg-gray-100 text-primary hover:bg-gray-50"
+            } `}
             onClick={() => handleTabClick(index)}
             ref={index === 1 && proposeRef ? proposeRef : null}
           >

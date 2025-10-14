@@ -71,7 +71,7 @@ const Signin = () => {
   return (
     <form
       noValidate
-      className=" h-full w-full flex flex-col justify-center items-center max-w-sm mx-auto px-4 sm:px-0"
+      className=" h-full w-full flex flex-col justify-center items-center max-w-sm mx-auto px-4 sm:p-8 sm:py-8"
       onSubmit={(e) => {
         e.preventDefault();
         doSubmit();
@@ -91,7 +91,9 @@ const Signin = () => {
             error.email?.length
               ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
               : "border-gray-300 bg-gray-50"
-          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5 ${
+            error.email && error.email.length > 0 && "border-full"
+          }`}
           placeholder="nom@mail.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -99,8 +101,11 @@ const Signin = () => {
           required
           aria-describedby={error.email ? "email-error" : undefined}
         />
-        {error.email && (
-          <p id="email-error" className="text-red-400 text-sm">
+        {error.email && error.email.length > 0 && (
+          <p
+            id="email-error"
+            className="text-full text-sm mt-5 bg-gray-50 px-2 py-1 rounded-lg w-fit"
+          >
             {formatErrors(error.email)}
           </p>
         )}
@@ -122,40 +127,43 @@ const Signin = () => {
               error.password?.length
                 ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
                 : "border-gray-300 bg-gray-50"
-            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5 ${
+              error.password && error.password.length > 0 && "border-full"
+            }`}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             aria-describedby={error.password ? "password-error" : undefined}
           />
 
-          <button
+          <Button
+            variant="secondary"
             type="button"
-            className=" -ml-8"
+            className="!-ml-[2.40rem] rounded-lg !m-1"
             onClick={() => setRevealPassword(!revealPassword)}
             aria-label={
               revealPassword
                 ? "Masquer le mot de passe"
                 : "Afficher le mot de passe"
             }
-          >
-            {revealPassword ? (
-              <Eye size="16" className="text-primary" />
-            ) : (
-              <EyeOff size="16" className="text-primary" />
-            )}
-          </button>
+            icon={revealPassword ? Eye : EyeOff}
+          />
         </div>
       </div>
-      {error.password && (
-        <p className="text-red-400 text-sm">{formatErrors(error.password)}</p>
+      {error.password && error.password.length > 0 && (
+        <p className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit">
+          {formatErrors(error.password)}
+        </p>
       )}
       {error.general && (
-        <p role="alert" className="text-red-500 mt-4 text-sm">
+        <p
+          role="alert"
+          className="text-full mt-4 text-sm bg-gray-50 p-2 rounded-lg w-fit"
+        >
           {formatErrors(error.general)}
         </p>
       )}
-      <div className="flex w-full justify-end">
-        <Button variant="validation" type="submit" label="Connexion" />
+      <div className="flex w-full justify-end mt-5">
+        <Button variant="secondary" type="submit" label="Connexion" />
       </div>
     </form>
   );
