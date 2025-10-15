@@ -66,9 +66,8 @@ const RideResults = () => {
   });
   if (error) {
     return (
-      <div className="text-center w-full mt-10 text-red-500">
-        Une erreur est survenue lors de la recherche des trajets. Veuillez
-        réessayer.
+      <div className="mt-10 w-full text-center text-red-500">
+        Une erreur est survenue lors de la recherche des trajets. Veuillez réessayer.
       </div>
     );
   }
@@ -77,12 +76,9 @@ const RideResults = () => {
 
   const getVariant = (ride: SearchRide): VariantType => {
     if (ride.is_cancelled) return "cancel";
-    if (ride.current_user_passenger_status === PassengerRideStatus.Waiting)
-      return "pending";
-    if (ride.current_user_passenger_status === PassengerRideStatus.Approved)
-      return "validation";
-    if (ride.current_user_passenger_status === PassengerRideStatus.Refused)
-      return "refused";
+    if (ride.current_user_passenger_status === PassengerRideStatus.Waiting) return "pending";
+    if (ride.current_user_passenger_status === PassengerRideStatus.Approved) return "validation";
+    if (ride.current_user_passenger_status === PassengerRideStatus.Refused) return "refused";
     const availableSeats = ride.max_passenger - (ride.nb_passenger ?? 0);
     if (availableSeats <= 0) return "full";
 
@@ -130,7 +126,7 @@ const RideResults = () => {
 
   if (rides.length === 0 || !rides[selectedIndex]) {
     return (
-      <div className="fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-center mt-10 text-gray-600">
+      <div className="fixed left-1/2 top-1/2 mt-10 -translate-x-1/2 -translate-y-1/2 text-center text-gray-600">
         Aucun trajet trouvé.
         <Button
           icon={ArrowLeft}
@@ -147,7 +143,7 @@ const RideResults = () => {
 
   if (loading) {
     return (
-      <div className="fixed top-1/2 -translate-y-1/2 left-1/2 -translate-x-1/2 text-center mt-10 text-gray-600">
+      <div className="fixed left-1/2 top-1/2 mt-10 -translate-x-1/2 -translate-y-1/2 text-center text-gray-600">
         Chargement des trajets...
       </div>
     );
@@ -181,11 +177,8 @@ const RideResults = () => {
           slidePerView={3}
         />
       </div>
-      <div className="h-full flex md:w-1/2">
-        <CardRideDetails
-          variant={getVariant(rides[selectedIndex])}
-          data={rides[selectedIndex]}
-        />
+      <div className="flex h-full md:w-1/2">
+        <CardRideDetails variant={getVariant(rides[selectedIndex])} data={rides[selectedIndex]} />
       </div>
     </div>
   );

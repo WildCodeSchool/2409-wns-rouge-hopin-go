@@ -32,20 +32,15 @@ const SearchRide = ({ variant, proposeRef }: SearchRideProps) => {
     departure: false,
     arrival: false,
   });
-  const [lastModifiedField, setLastModifiedField] = useState<
-    "departure" | "arrival" | null
-  >(null);
+  const [lastModifiedField, setLastModifiedField] = useState<"departure" | "arrival" | null>(null);
 
   useEffect(() => {
     const fetchSuggestions = async () => {
-      const query =
-        lastModifiedField === "departure" ? departureCity : arrivalCity;
+      const query = lastModifiedField === "departure" ? departureCity : arrivalCity;
       if (!query) return;
       if (lastModifiedField === "departure") {
         try {
-          const res = await fetch(
-            `https://api-adresse.data.gouv.fr/search/?q=${query}&limit=5`
-          );
+          const res = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${query}&limit=5`);
           const data = await res.json();
 
           type Feature = { properties: { label: string } };
@@ -66,9 +61,7 @@ const SearchRide = ({ variant, proposeRef }: SearchRideProps) => {
         }
       } else if (lastModifiedField === "arrival") {
         try {
-          const res = await fetch(
-            `https://api-adresse.data.gouv.fr/search/?q=${query}&limit=5`
-          );
+          const res = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${query}&limit=5`);
           const data = await res.json();
 
           type Feature = { properties: { label: string } };

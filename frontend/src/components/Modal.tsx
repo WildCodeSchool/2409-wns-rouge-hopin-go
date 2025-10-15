@@ -11,14 +11,7 @@ type ModalProps = {
   zIndex?: number;
 };
 
-const Modal: React.FC<ModalProps> = ({
-  id,
-  isOpen,
-  isVisible,
-  onClose,
-  children,
-  zIndex,
-}) => {
+const Modal: React.FC<ModalProps> = ({ id, isOpen, isVisible, onClose, children, zIndex }) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useOutsideClick(
@@ -44,12 +37,11 @@ const Modal: React.FC<ModalProps> = ({
           ref={ref}
           data-modal-id={id}
           onClick={(e) => e.stopPropagation()}
-          className={`fixed top-1/2 left-1/2 z-50 transform transition-all duration-200 -translate-x-1/2
-            ${
-              isVisible
-                ? "opacity-100 -translate-y-1/2 pointer-events-auto"
-                : "opacity-0 -translate-y-[55%] pointer-events-none"
-            }`}
+          className={`fixed left-1/2 top-1/2 z-50 -translate-x-1/2 transform transition-all duration-200 ${
+            isVisible
+              ? "pointer-events-auto -translate-y-1/2 opacity-100"
+              : "pointer-events-none -translate-y-[55%] opacity-0"
+          }`}
         >
           {children}
         </div>

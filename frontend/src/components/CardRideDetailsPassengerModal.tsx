@@ -49,12 +49,11 @@ const CardRideDetailsPassengerModal = ({
   // const totalPriceRoute = ride.total_route_price;
   // ---------------------End Map---------------------
 
-  const driverName =
-    ride.driver?.firstName ?? `Conducteur #${ride.driver?.id ?? "?"}`;
+  const driverName = ride.driver?.firstName ?? `Conducteur #${ride.driver?.id ?? "?"}`;
 
   return (
-    <div className="relative z-0 flex flex-col  p-4 h-screen w-screen md:max-w-2xl md:h-fit md:rounded-2xl bg-gray-200">
-      <header className="w-full flex justify-end">
+    <div className="relative z-0 flex h-screen w-screen flex-col bg-gray-200 p-4 md:h-fit md:max-w-2xl md:rounded-2xl">
+      <header className="flex w-full justify-end">
         <Button
           icon={X}
           iconColor={`${textColor}`}
@@ -64,7 +63,7 @@ const CardRideDetailsPassengerModal = ({
           variant="full"
           isBgTransparent
           onClick={toggleModal}
-          className="group hover:!bg-primaryHover self-end"
+          className="hover:!bg-primaryHover group self-end"
         />
       </header>
       <main

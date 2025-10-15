@@ -23,12 +23,12 @@ const AuthComponent: React.FC<AuthComponentProps> = ({
       <button
         disabled
         type="button"
-        className="text-white bg-yellow-500  focus:outline-none font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 0 inline-flex items-center"
+        className="0 me-2 inline-flex items-center rounded-lg bg-yellow-500 px-5 py-2.5 text-center text-sm font-medium text-white focus:outline-none"
       >
         <svg
           aria-hidden="true"
           role="status"
-          className="inline w-4 h-4 me-3 text-white animate-spin"
+          className="me-3 inline h-4 w-4 animate-spin text-white"
           viewBox="0 0 100 101"
           fill="none"
           xmlns="http://www.w3.org/2000/svg"

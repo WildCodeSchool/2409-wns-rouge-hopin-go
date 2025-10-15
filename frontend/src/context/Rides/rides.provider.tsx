@@ -1,13 +1,7 @@
 import { ReactNode } from "react";
 import RideContext, { RideContextType } from ".";
 
-const RideProvider = ({
-  ride,
-  children,
-}: {
-  ride: RideContextType;
-  children: ReactNode;
-}) => {
+const RideProvider = ({ ride, children }: { ride: RideContextType; children: ReactNode }) => {
   return <RideContext.Provider value={ride}>{children}</RideContext.Provider>;
 };
 

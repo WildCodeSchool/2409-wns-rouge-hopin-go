@@ -1,11 +1,7 @@
 import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
-import {
-  createBrowserRouter,
-  Navigate,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home.tsx";
 import Page404 from "./pages/Page404.tsx";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
@@ -49,9 +45,7 @@ const router = createBrowserRouter([
       {
         path: `/ride-results`,
         element: (
-          <AuthComponent
-            authStates={[AuthStates.unauthenticated, AuthStates.user]}
-          >
+          <AuthComponent authStates={[AuthStates.unauthenticated, AuthStates.user]}>
             <RideResults />
           </AuthComponent>
         ),
@@ -85,9 +79,7 @@ const router = createBrowserRouter([
   {
     path: "*",
     element: (
-      <BadURLRedirect
-        authStates={[AuthStates.unauthenticated, AuthStates.user]}
-      >
+      <BadURLRedirect authStates={[AuthStates.unauthenticated, AuthStates.user]}>
         <Page404 />
       </BadURLRedirect>
     ),

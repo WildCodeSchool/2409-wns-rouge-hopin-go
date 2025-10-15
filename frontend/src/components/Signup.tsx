@@ -29,10 +29,7 @@ export default function Signup() {
     const lastNameErrors = validateLastNameUtils(lastName);
     const emailErrors = validateEmailUtils(email);
     const passwordErrors = validatePasswordUtils(password);
-    const confirmPasswordErrors = validateConfirmPasswordUtils(
-      password,
-      confirmPassword
-    );
+    const confirmPasswordErrors = validateConfirmPasswordUtils(password, confirmPassword);
 
     // Mise à jour de l'état des erreurs une seule fois (plus clean !)
     setError({
@@ -88,10 +85,7 @@ export default function Signup() {
     <form className="flex flex-col justify-center items-center max-w-sm mx-auto w-full h-full px-4 sm:py-8">
       {/* Prénom */}
       <div className="mb-5 w-full">
-        <label
-          htmlFor="first-name"
-          className="block mb-2 text-sm font-medium text-textLight"
-        >
+        <label htmlFor="first-name" className="text-textLight mb-2 block text-sm font-medium">
           Prénom
         </label>
         <input
@@ -102,9 +96,9 @@ export default function Signup() {
           required
           className={`${
             error.firstName?.length
-              ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+              ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
               : "border-gray-300 bg-gray-50"
-          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
           placeholder="Jean"
           value={firstName}
           onChange={(e) =>
@@ -115,7 +109,7 @@ export default function Signup() {
           aria-describedby={error.firstName ? "first-name-error" : undefined}
         />
         {error.firstName && (
-          <p id="first-name-error" className="text-red-400 text-sm">
+          <p id="first-name-error" className="text-sm text-red-400">
             {formatErrors(error.firstName)}
           </p>
         )}
@@ -123,10 +117,7 @@ export default function Signup() {
 
       {/* Nom */}
       <div className="mb-5 w-full">
-        <label
-          htmlFor="last-name"
-          className="block mb-2 text-sm font-medium text-white"
-        >
+        <label htmlFor="last-name" className="mb-2 block text-sm font-medium text-white">
           Nom
         </label>
         <input
@@ -138,9 +129,9 @@ export default function Signup() {
           maxLength={100}
           className={`${
             error.lastName?.length
-              ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+              ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
               : "border-gray-300 bg-gray-50"
-          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
           placeholder="Dupont"
           value={lastName}
           onChange={(e) =>
@@ -151,17 +142,14 @@ export default function Signup() {
           aria-describedby={error.lastName ? "last-name-error" : undefined}
         />
         {error.lastName && (
-          <p id="last-name-error" className="text-red-400 text-sm">
+          <p id="last-name-error" className="text-sm text-red-400">
             {formatErrors(error.lastName)}
           </p>
         )}
       </div>
       {/* Email */}
       <div className="mb-5 w-full">
-        <label
-          htmlFor="email"
-          className="block mb-2 text-sm font-medium text-white "
-        >
+        <label htmlFor="email" className="mb-2 block text-sm font-medium text-white">
           Email
         </label>
         <input
@@ -169,9 +157,9 @@ export default function Signup() {
           id="email"
           className={`${
             error.email?.length
-              ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+              ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
               : "border-gray-300 bg-gray-50"
-          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
           placeholder="nom@mail.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -180,7 +168,7 @@ export default function Signup() {
           aria-describedby={error.email ? "email-error" : undefined}
         />
         {error.email && (
-          <p id="email-error" className="text-red-400 text-sm">
+          <p id="email-error" className="text-sm text-red-400">
             {formatErrors(error.email)}
           </p>
         )}
@@ -190,7 +178,7 @@ export default function Signup() {
       <div className="mb-5 w-full">
         <label
           htmlFor="password"
-          className="block mb-2 text-sm font-medium text-white dark:text-white"
+          className="mb-2 block text-sm font-medium text-white dark:text-white"
         >
           Mot de passe
         </label>
@@ -200,9 +188,9 @@ export default function Signup() {
             id="password"
             className={`${
               error.password?.length
-                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
                 : "border-gray-300 bg-gray-50"
-            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+            } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -213,21 +201,17 @@ export default function Signup() {
             type="button"
             className="-ml-9 bg-gray-200 rounded-lg p-2 m-1"
             onClick={() => setRevealPassword(!revealPassword)}
-            aria-label={
-              revealPassword
-                ? "Masquer le mot de passe"
-                : "Afficher le mot de passe"
-            }
+            aria-label={revealPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
           >
             {revealPassword ? (
-              <Eye size={16} className=" text-primary" />
+              <Eye size={16} className="text-primary" />
             ) : (
-              <EyeOff size={16} className=" text-primary" />
+              <EyeOff size={16} className="text-primary" />
             )}
           </button>
         </div>
         {error.password && (
-          <p id="password-error" className="text-red-400 text-sm">
+          <p id="password-error" className="text-sm text-red-400">
             {formatErrors(error.password)}
           </p>
         )}
@@ -235,10 +219,7 @@ export default function Signup() {
 
       {/* Confirmation du mot de passe */}
       <div className="mb-10 w-full">
-        <label
-          htmlFor="repeat-password"
-          className="block mb-2 text-sm font-medium text-white"
-        >
+        <label htmlFor="repeat-password" className="mb-2 block text-sm font-medium text-white">
           Confirmer mot de passe
         </label>
         <div className="flex items-center">
@@ -247,20 +228,14 @@ export default function Signup() {
             id="repeat-password"
             className={`${
               error.confirmPassword?.length
-                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
                 : "border-gray-300 bg-gray-50"
-            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+            } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
-            aria-describedby={
-              error.confirmPassword ? "confirm-password-error" : undefined
-            }
-            aria-label={
-              revealPassword
-                ? "Masquer le mot de passe"
-                : "Afficher le mot de passe"
-            }
+            aria-describedby={error.confirmPassword ? "confirm-password-error" : undefined}
+            aria-label={revealPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
           />
           <button
             type="button"
@@ -273,18 +248,14 @@ export default function Signup() {
             onClick={() => setRevealPassword(!revealPassword)}
           >
             {revealPassword ? (
-              <Eye size={16} className=" text-primary" />
+              <Eye size={16} className="text-primary" />
             ) : (
-              <EyeOff size={16} className=" text-primary" />
+              <EyeOff size={16} className="text-primary" />
             )}
           </button>
         </div>
         {error.confirmPassword && (
-          <p
-            role="alert"
-            id="confirm-password-error"
-            className="text-red-400 text-sm"
-          >
+          <p role="alert" id="confirm-password-error" className="text-sm text-red-400">
             {formatErrors(error.confirmPassword)}
           </p>
         )}

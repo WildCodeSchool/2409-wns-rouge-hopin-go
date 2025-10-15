@@ -10,22 +10,14 @@ import {
   Resolver,
   Root,
 } from "type-graphql";
-import {
-  PaginatedRides,
-  Ride,
-  RideCreateInput,
-  SearchRideInput,
-} from "../entities/Ride";
+import { PaginatedRides, Ride, RideCreateInput, SearchRideInput } from "../entities/Ride";
 import { validate } from "class-validator";
 import { endOfDay, startOfDay } from "date-fns";
 import { User } from "../entities/User";
 import { PassengerRide, PassengerRideStatus } from "../entities/PassengerRide";
 import { AuthContextType, ContextType } from "../auth";
 import { fetchRouteFromMapbox } from "../utils/fetchRouteFromMapBox";
-import {
-  attachPricingSelects,
-  hydratePricingFromRaw,
-} from "../utils/attachPricingSelects";
+import { attachPricingSelects, hydratePricingFromRaw } from "../utils/attachPricingSelects";
 import { datasource } from "../datasource";
 import { notifyUserRideCancelled } from "../mail/rideEmails";
 import { findSimilarRouteFromDB } from "../utils/findSimilarRouteFromDB";
@@ -33,9 +25,7 @@ import { findSimilarRouteFromDB } from "../utils/findSimilarRouteFromDB";
 @Resolver(() => Ride)
 export class RidesResolver {
   @Query(() => [Ride])
-  async searchRide(
-    @Arg("data", () => SearchRideInput) data: SearchRideInput
-  ): Promise<Ride[]> {
+  async searchRide(@Arg("data", () => SearchRideInput) data: SearchRideInput): Promise<Ride[]> {
     try {
       const startDay = startOfDay(data.departure_at);
       const endDay = endOfDay(data.departure_at);
@@ -132,6 +122,7 @@ export class RidesResolver {
     @Arg("filter", () => String, { nullable: true }) filter?: string,
     @Arg("limit", () => Int, { nullable: true }) limit = 10,
     @Arg("offset", () => Int, { nullable: true }) offset = 0,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Arg("sort", () => String, { nullable: true }) sort: "ASC" | "DESC" = "ASC"
   ): Promise<PaginatedRides> {
     if (!ctx.user) throw new Error("Unauthorized");
@@ -149,12 +140,9 @@ export class RidesResolver {
       baseQuery.andWhere("ride.departure_at > :now", { now });
       baseQuery.andWhere("ride.is_cancelled = false");
     } else if (filter === "archived") {
-      baseQuery.andWhere(
-        "(ride.departure_at < :now OR ride.is_cancelled = true)",
-        {
-          now,
-        }
-      );
+      baseQuery.andWhere("(ride.departure_at < :now OR ride.is_cancelled = true)", {
+        now,
+      });
     } else if (filter === "canceled") {
       baseQuery.andWhere("ride.is_cancelled = true");
     } else if (filter && filter !== "all") {
@@ -192,9 +180,7 @@ export class RidesResolver {
   // Need a Middleware to verify if the user is logged in
   @Authorized("user")
   @Mutation(() => Ride)
-  async createRide(
-    @Arg("data", () => RideCreateInput) data: RideCreateInput
-  ): Promise<Ride> {
+  async createRide(@Arg("data", () => RideCreateInput) data: RideCreateInput): Promise<Ride> {
     const errors = await validate(data);
     if (errors.length > 0) {
       throw new Error(`Validation error: ${JSON.stringify(errors)}`);
@@ -235,17 +221,12 @@ export class RidesResolver {
       }
     } catch (e) {
       source = "NONE";
-      console.error(
-        "[createRide] route lookup/fetch failed, saving without route.",
-        e
-      );
+      console.error("[createRide] route lookup/fetch failed, saving without route.", e);
     }
 
     // 3) arrival_at = departure_at + durée
     const departureAt = new Date(data.departure_at);
-    const arrival_at = new Date(
-      departureAt.getTime() + (duration_min ?? 0) * 60_000
-    );
+    const arrival_at = new Date(departureAt.getTime() + (duration_min ?? 0) * 60_000);
 
     // 4) Sauvegarde
     const newRide = new Ride();
@@ -286,10 +267,7 @@ export class RidesResolver {
 
   @Authorized("user")
   @Mutation(() => Ride)
-  async cancelRide(
-    @Arg("id", () => ID) id: number,
-    @Ctx() ctx: AuthContextType
-  ): Promise<Ride> {
+  async cancelRide(@Arg("id", () => ID) id: number, @Ctx() ctx: AuthContextType): Promise<Ride> {
     return await datasource.transaction(async (manager) => {
       const ride = await manager.findOne(Ride, {
         where: { id },

@@ -1,29 +1,19 @@
-import {
-  Arg,
-  Authorized,
-  Ctx,
-  ID,
-  Info,
-  Mutation,
-  Query,
-  Resolver,
-} from "type-graphql";
+import { Arg, Authorized, Ctx, ID, Mutation, Query, Resolver } from "type-graphql";
 import { User, UserCreateInput, UserUpdateInput } from "../entities/User";
 import { validate } from "class-validator";
 import argon2 from "argon2";
-import { decode, sign, verify } from "jsonwebtoken";
+import { sign } from "jsonwebtoken";
 import Cookies from "cookies";
-import { ContextType, getUserFromContext } from "../auth";
+import { ContextType } from "../auth";
 import { ensureLambdaUser } from "../utils/ensureLambdaUserAfterDeleted";
 import { PassengerRide, PassengerRideStatus } from "../entities/PassengerRide";
-import { datasource } from "../datasource";
 import { Ride } from "../entities/Ride";
 
 @Resolver()
 export class UsersResolver {
   @Authorized("admin")
   @Query(() => [User])
-  async users(@Ctx() context: ContextType): Promise<User[] | null> {
+  async users(): Promise<User[] | null> {
     const users = await User.find();
     if (users !== null) {
       return users;
@@ -89,9 +79,7 @@ export class UsersResolver {
   }
 
   @Mutation(() => User)
-  async createUser(
-    @Arg("data", () => UserCreateInput) data: UserCreateInput
-  ): Promise<User> {
+  async createUser(@Arg("data", () => UserCreateInput) data: UserCreateInput): Promise<User> {
     const errors = await validate(data);
     if (errors.length > 0) {
       throw new Error(`Validation error: ${JSON.stringify(errors)}`);
@@ -250,7 +238,8 @@ export class UsersResolver {
   // Pas de décorateur ici, c'est intentionnel
   @Query(() => User, { nullable: true })
   async whoami(@Ctx() context: ContextType): Promise<User | null> {
-    return getUserFromContext(context);
+    // return getUserFromContext(context);
+    return context.user ?? null;
   }
 
   @Authorized("user")

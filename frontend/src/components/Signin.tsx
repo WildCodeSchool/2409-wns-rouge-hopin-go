@@ -78,10 +78,7 @@ const Signin = () => {
       }}
     >
       <div className="mb-5 w-full">
-        <label
-          htmlFor="email"
-          className="block mb-2 text-sm font-medium text-white "
-        >
+        <label htmlFor="email" className="mb-2 block text-sm font-medium text-white">
           Email
         </label>
         <input
@@ -89,7 +86,7 @@ const Signin = () => {
           id="email"
           className={`${
             error.email?.length
-              ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+              ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
               : "border-gray-300 bg-gray-50"
           } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5 ${
             error.email && error.email.length > 0 && "border-full"
@@ -114,7 +111,7 @@ const Signin = () => {
       <div className="mb-5 w-full">
         <label
           htmlFor="password"
-          className="block mb-2 text-sm font-medium text-white dark:text-white"
+          className="mb-2 block text-sm font-medium text-white dark:text-white"
         >
           Mot de passe
         </label>
@@ -125,7 +122,7 @@ const Signin = () => {
             required
             className={`${
               error.password?.length
-                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
                 : "border-gray-300 bg-gray-50"
             } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5 ${
               error.password && error.password.length > 0 && "border-full"

@@ -15,11 +15,11 @@ const App = () => {
         <header className="z-50 md:flex md:fixed">
           <div className=" items-center gap-4  hidden md:flex">
             <Link to="/">
-              <img src={Logo} alt="Logo" className="w-16 h-16 m-2" />
+              <img src={Logo} alt="Logo" className="m-2 h-16 w-16" />
             </Link>
             {me && (
               <span
-                className="flex items-center gap-2 text-sm  py-2 px-4 rounded-full text-white bg-primary"
+                className="bg-primary flex items-center gap-2 rounded-full px-4 py-2 text-sm text-white"
                 title="Vous êtes connecté(e)"
               >
                 {me?.firstName}

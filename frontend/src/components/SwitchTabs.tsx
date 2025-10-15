@@ -14,12 +14,7 @@ export type Tab = {
   path: string;
 };
 
-const SwitchTabs = ({
-  tabs,
-  tabParams,
-  classContainer,
-  proposeRef,
-}: SwitchTabsProps) => {
+const SwitchTabs = ({ tabs, tabParams, classContainer, proposeRef }: SwitchTabsProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const isMyRidesPage = location.pathname.includes("/my-rides");
@@ -67,7 +62,7 @@ const SwitchTabs = ({
           </button>
         ))}
       </div>
-      <div className={`${classContainer} w-full h-full overflow-auto`}>
+      <div className={`${classContainer} h-full w-full overflow-auto`}>
         {tabs[activeTab].content}
       </div>
     </div>

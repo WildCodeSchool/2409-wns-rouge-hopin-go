@@ -1,8 +1,4 @@
-import {
-  DriverRidesQuery,
-  PassengerRidesQuery,
-  SearchRidesQuery,
-} from "../../gql/graphql";
+import { DriverRidesQuery, PassengerRidesQuery, SearchRidesQuery } from "../../gql/graphql";
 import { createContext } from "react";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
