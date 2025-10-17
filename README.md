@@ -7,7 +7,7 @@
 - [Running the Project](#running-the-project)
 - [Usage](#usage)
 - [Example Commands](#example-commands)
-- [Api Gateway](#api-gateway)
+- [Deployment(staging/production)](#deployment)
 
 ## Prerequisites
 
@@ -113,6 +113,33 @@ docker compose stop
 docker compose down
 ```
 
+## Code Quality – Prettier & ESLint
+
+To ensure consistent code style and maintain high-quality code across the project, we use **Prettier** and **ESLint**.
+
+- **Prettier** automatically formats the code according to a defined style (indentation, quotes, semicolons, line length, etc.).
+- **ESLint** analyzes the code and highlights syntax errors, bad practices, or deviations from our coding rules.
+
+The following VS Code settings are used to apply these tools automatically:
+
+```json
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"]
+}
+
+### Usage
+
+To check the code locally before committing:
+
+```bash
+# Check linting errors
+npx eslint .
+
+# Automatically fix errors and format code
+npx eslint . --fix
+
 ## Continue delivery
 
 - **Connect on server**
@@ -134,3 +161,37 @@ tail -f apps/production/logs/access.log
 # or
 tail -f apps/production/logs/error.log
 ```
+
+## Deployment (staging / production)
+
+The project is deployed automatically through **GitHub Actions (CI)** and a **webhook** configured on the remote server.
+
+---
+
+### 1. How it works
+
+The **CI (Continuous Integration)** pipeline runs automatically on each push to the `dev` branch:
+
+- Executes **automated tests** (frontend and backend)
+- Builds **Docker images** from the Dockerfiles
+- Publishes the images to **DockerHub**
+
+The **CD (Continuous Deployment)** process is handled by a **webhook**:
+
+- It pulls the latest images from DockerHub
+- Then restarts the containers using **Docker Compose** on the server
+
+This ensures that each validated update is deployed automatically.
+
+---
+
+### 2. Accessing the Server
+
+For manual checks or maintenance, connect via SSH:
+
+```bash
+ssh wns_student@092024-rouge-5.wns.wilders.dev -p 2269
+
+ajouter le chemin dans le serveur apps/production et apps/staging avec le contenu des fichiers. expliquer déroulement staging et mise en prod (manuelle)
+
++ migration
