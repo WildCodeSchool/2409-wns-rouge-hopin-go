@@ -180,39 +180,6 @@ export function UsersResolverTest(testArgs: TestArgsType) {
       expect(data?.signin.id).toBeDefined();
     });
   });
-
-  describe("UserResolver whoamI", () => {
-    it("should return a user if user connected", async () => {
-      const user = await User.save({
-        email: "test4@test.fr",
-        firstName: "Jean",
-        lastName: "TEST",
-        hashedPassword: "toto911367",
-      });
-      const response = await testArgs.server.executeOperation<{
-        whoami: User;
-      }>(
-        {
-          query: queryWhoami,
-        },
-        // Contexte simulant une requête HTTP avec des en-têtes de réponse
-        {
-          contextValue: {
-            user: { id: user.id, email: user.email, role: user.role },
-            req: { headers: { cookie: "token=fake.jwt.token" } },
-            res: {},
-          },
-        }
-      );
-      assert(response.body.kind === "single");
-      const { errors, data } = response.body.singleResult;
-      expect(errors).toBeUndefined();
-      expect(data?.whoami).not.toBeNull();
-      expect(data?.whoami.id).toBeDefined();
-      expect(data?.whoami.email).toBeDefined();
-      expect(data?.whoami.role).toBeDefined();
-    });
-  });
   it("fails to find a user if email is invalid", async () => {
     const response = await testArgs.server.executeOperation<{
       signin: User;
@@ -275,6 +242,30 @@ export function UsersResolverTest(testArgs: TestArgsType) {
 
   describe("UserResolver whoamI", () => {
     it("should return a user if user connected", async () => {
+      const response = await testArgs.server.executeOperation<{
+        whoami: User;
+      }>(
+        {
+          query: queryWhoami,
+        },
+        // Contexte simulant une requête HTTP avec des en-têtes de réponse
+        {
+          contextValue: {
+            user: { id: "1", email: "test@test.fr", role: "user" },
+            req: { headers: { cookie: "token=fake.jwt.token" } },
+            res: {},
+          },
+        }
+      );
+      assert(response.body.kind === "single");
+      const { errors, data } = response.body.singleResult;
+      expect(errors).toBeUndefined();
+      expect(data?.whoami).not.toBeNull();
+      expect(data?.whoami.id).toBe(testArgs.data.userId);
+      expect(data?.whoami.email).toBe(testArgs.data.userEmail);
+      expect(data?.whoami.role).toBeDefined();
+    });
+    it("should return null if user not connected", async () => {
       const response = await testArgs.server.executeOperation<{
         whoami: User;
       }>(

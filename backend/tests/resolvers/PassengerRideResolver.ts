@@ -122,7 +122,7 @@ export function PassengerRidesResolverTest(testArgs: TestArgsType) {
       //check API response
       assert(createResponse.body.kind === "single", "Expected single-result response");
       const { errors } = createResponse.body.singleResult;
-      expect(errors?.[0].message).toBe("Vous ne pouvez pas réserver votre propre trajet");
+      expect(errors?.[0].message).toBe("You cannot book your own ride");
 
       // check database
       const after = await PassengerRide.count();
