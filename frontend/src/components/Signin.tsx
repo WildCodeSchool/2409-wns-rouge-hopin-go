@@ -3,7 +3,7 @@ import { useState } from "react";
 import { mutationSignin } from "../api/Signin";
 import { useNavigate } from "react-router-dom";
 import { queryWhoAmI } from "../api/WhoAmI";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import {
   validateEmail as validateEmailUtils,
   validatePassword as validatePasswordUtils,
@@ -19,7 +19,7 @@ const Signin = () => {
   const [error, setError] = useState<Record<string, string[]>>({});
   const navigate = useNavigate();
 
-  const [doSignin] = useMutation(mutationSignin, {
+  const [doSignin,{loading}] = useMutation(mutationSignin, {
     refetchQueries: [queryWhoAmI],
   });
 
@@ -160,7 +160,14 @@ const Signin = () => {
         </p>
       )}
       <div className="flex w-full justify-end mt-5">
-        <Button variant="secondary" type="submit" label="Connexion" />
+        <Button
+        type="submit"
+              disabled={loading}
+              icon={loading ? LoaderCircle : undefined}
+              iconRotateAnimation={loading}
+              label={loading ? "Connexion..." : "Connexion"}
+              variant={loading ? "pending" : "secondary"}
+            />
       </div>
     </form>
   );

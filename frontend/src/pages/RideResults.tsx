@@ -150,8 +150,8 @@ const RideResults = () => {
   }
 
   return (
-    <div className=" flex items-center h-screen justify-center max-w-7xl m-auto bg-gray-100">
-      <div className="relative flex h-full w-full z-20 md:w-1/2  overflow-hidden">
+    <div className="relative flex items-center h-screen justify-center max-w-7xl m-auto bg-gray-100">
+      <div className="relative flex h-full w-full z-20 md:w-1/2 overflow-visible">
         {hasMore && (
           <div className="absolute z-30 bottom-20 left-1/2 -translate-x-1/2">
             <Button
@@ -172,12 +172,30 @@ const RideResults = () => {
           sliderDirection="vertical"
           scaleEffect
           centerSlides={isMd ? true : false}
-          swiperClassName="h-full md:!pt-32 w-full"
+          swiperClassName="h-full w-full"
           spaceBetween={isMd ? 50 : 0}
           slidePerView={3}
         />
+        <div className="pointer-events-none absolute top-1/2 right-0 hidden xl:flex w-full z-0 -translate-y-1/2 justify-center translate-x-[4.3px] bg-gray-100 ">
+          <svg
+            id="overlay"
+            className="scale-y-[1.01]"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 648.14 389.63"
+          >
+            <path
+              style={{
+                fill: "#f3f4f6",
+                stroke: "#8e387c",
+                strokeWidth:4,
+              }}
+              className="overlay"
+              d="M645.72,389.63c0-20.75-13.43-37.57-30-37.57H28c-14.36,0-26-14.58-26-32.56V70.26c0-17.98,11.64-32.56,26-32.56h588.14c16.6,0,30.05-16.89,30-37.69"
+            />
+          </svg>
+        </div>
       </div>
-      <div className="flex h-full md:w-1/2">
+      <div className="flex h-full md:w-1/2 z-0">
         <CardRideDetails variant={getVariant(rides[selectedIndex])} data={rides[selectedIndex]} />
       </div>
     </div>

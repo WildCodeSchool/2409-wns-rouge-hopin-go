@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@apollo/client";
 import { queryWhoAmI } from "../api/WhoAmI";
-import { Eye, EyeOff, X } from "lucide-react";
+import { Eye, EyeOff, LoaderCircle, X } from "lucide-react";
 import { formatErrors } from "../utils/formatErrors";
 import { useEffect, useState } from "react";
 import {
@@ -169,6 +169,8 @@ const MyAccount = () => {
               className="w-fit self-end mt-4"
               variant={loading ? "pending" : "secondary"}
               isHoverBgColor
+              icon={loading ? LoaderCircle : undefined}
+              iconRotateAnimation={loading}
               label={loading ? "Mise à jour..." : "Mettre à jour"}
               disabled={loading}
               onClick={handleSubmit} // ← on appelle vraiment la mutation
@@ -182,7 +184,8 @@ const MyAccount = () => {
               <Button
                 type="submit"
                 className="w-fit self-end"
-                
+                icon={loading ? LoaderCircle : undefined}
+                iconRotateAnimation={loading}
                 isHoverBgColor
                 label={deleting ? "Suppression..." : "Supprimer mon compte"}
                 disabled={loading}
@@ -225,6 +228,8 @@ const MyAccount = () => {
                 type="button"
                 variant="full"
                 isHoverBgColor
+                icon={loading ? LoaderCircle : undefined}
+                iconRotateAnimation={loading}
                 label={deleting ? "Suppression..." : "Supprimer mon compte"}
                 disabled={loading}
                 onClick={handleDelete}

@@ -79,24 +79,7 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
       <div
         className={`shadow-custom border-primary relative z-10 mb-40 mr-8 mt-40 hidden h-fit space-y-5 rounded-3xl border-4 p-8 md:block md:w-full ${textColor} bg-gray-100`}
       >
-        <div className="pointer-events-none absolute -left-full top-1/2 flex w-full -translate-y-1/2 justify-center bg-gray-100 lg:translate-x-[3px] xl:translate-x-[1px]">
-          <svg
-            id="overlay"
-            className="md:scale-y-[1.04] lg:scale-x-[0.99] lg:scale-y-[1.01] xl:skew-x-[0.04deg] xl:scale-x-[0.999] xl:scale-y-[1.005]"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 648.14 389.63"
-          >
-            <path
-              style={{
-                fill: "#f3f4f6",
-                stroke: "#8e387c",
-                strokeWidth: `${isXl ? 4 : isLg ? 4.6 : isMd ? 6 : 1}px`,
-              }}
-              className="overlay"
-              d="M645.72,389.63c0-20.75-13.43-37.57-30-37.57H28c-14.36,0-26-14.58-26-32.56V70.26c0-17.98,11.64-32.56,26-32.56h588.14c16.6,0,30.05-16.89,30-37.69"
-            />
-          </svg>
-        </div>
+        
         <h2 className={`text-2xl font-bold ${textColor}`}>{driverName}</h2>
         <h2 className={`mb-2 text-xl font-bold ${textColor}`}>Détails du trajet</h2>
         <div className="flex w-full justify-start gap-10">

@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/client";
 import { mutationCreateUser } from "../api/CreateUser";
 import { useState } from "react";
 import Button from "../components/Button";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import { toast } from "react-toastify";
 import {
   validateFirstName as validateFirstNameUtils,
@@ -262,13 +262,16 @@ export default function Signup() {
       </div>
 
       {/* Bouton */}
-      <div className="flex w-full justify-end">
-        <Button
-          onClick={doSubmit}
-          variant={loadingCreateUser ? "pending" : "secondary"}
-          type="button"
-          label={loadingCreateUser ? "Création..." : "S'inscrire"}
-        />
+      <div className="flex w-full justify-end">       
+         <Button
+        type="button"
+        onClick={doSubmit}
+              disabled={loadingCreateUser}
+              icon={loadingCreateUser ? LoaderCircle : undefined}
+              iconRotateAnimation={loadingCreateUser}
+              label={loadingCreateUser ? "Inscription..." : "S'inscrire"}
+              variant={loadingCreateUser ? "pending" : "secondary"}
+            />
       </div>
     </form>
   );
