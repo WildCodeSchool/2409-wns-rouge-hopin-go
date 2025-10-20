@@ -5,7 +5,7 @@ import { MockedProvider } from "@apollo/client/testing";
 import { mutationCreateUser } from "../api/CreateUser";
 
 describe("Signup", () => {
-  it("renders the Signup component", async () => {
+  it("should render the Signup component", async () => {
     const mocks: any[] = [];
     render(
       <MockedProvider mocks={mocks}>
@@ -16,7 +16,7 @@ describe("Signup", () => {
 
     screen.debug(); // prints out the jsx in the App component unto the command line
   });
-  it("Form require valid informations, and account is created after the button click", async () => {
+  it("should validate credentials and display a success toast", async () => {
     const mocks = [
       {
         request: {

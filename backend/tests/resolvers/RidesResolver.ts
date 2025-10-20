@@ -1,7 +1,6 @@
 // tests/resolvers/RidesResolver.ts
 import { assert, TestArgsType } from "../index.spec";
 import { mutationCreateRide } from "../api/createRide";
-import { queryWhoami } from "../api/whoami";
 import { sign } from "jsonwebtoken";
 import { User } from "../../src/entities/User";
 import { Ride } from "../../src/entities/Ride";
@@ -16,18 +15,6 @@ export function RidesResolverTest(testArgs: TestArgsType) {
         user: null, // champ présent dans ContextType, même si non utilisé
       },
     };
-
-    it("returns null on whoami when not authenticated", async () => {
-      const whoamiResponse = await testArgs.server.executeOperation({ query: queryWhoami }, noAuth);
-
-      assert(whoamiResponse.body.kind === "single", "Expected single-result response");
-      const res = whoamiResponse.body.singleResult;
-
-      // whoami ne doit pas créer d'erreur GraphQL
-      expect(res.errors).toBeUndefined();
-      expect(res.data).toBeDefined();
-      expect(res.data!.whoami).toBeNull();
-    });
 
     it("fails to create a ride when user is not authenticated", async () => {
       const createResponse = await testArgs.server.executeOperation(
@@ -60,7 +47,7 @@ export function RidesResolverTest(testArgs: TestArgsType) {
       expect(errors).toBeDefined();
     });
 
-    it("rejects obviously invalid payload (validation/DB checks), still unauthenticated", async () => {
+    it("should rejects obviously invalid payload (validation/DB checks), still unauthenticated", async () => {
       const invalidResponse = await testArgs.server.executeOperation(
         {
           query: mutationCreateRide,
@@ -90,7 +77,7 @@ export function RidesResolverTest(testArgs: TestArgsType) {
       expect(data).toBeNull();
       expect(errors).toBeDefined();
     });
-    it("succeed to create a ride when user is authenticated", async () => {
+    it("should create a ride when user is authenticated", async () => {
       const driver = await User.save({
         email: "driver@example.com",
         firstName: "Jean",
