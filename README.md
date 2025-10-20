@@ -123,7 +123,7 @@ docker compose stop
 docker compose down
 ```
 
-## Code Quality – Prettier & ESLint
+## Code Quality
 
 To ensure consistent code style and maintain high-quality code across the project, we use **Prettier** and **ESLint**.
 
