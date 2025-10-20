@@ -1,7 +1,7 @@
 import { Link, Outlet } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import "react-toastify/dist/ReactToastify.css";
-import Logo from "../public/logo.webp";
+import Logo from "../public/logo.svg";
 import { useQuery } from "@apollo/client";
 import { queryWhoAmI } from "./api/WhoAmI";
 import { CheckCircle } from "lucide-react";

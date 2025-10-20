@@ -548,7 +548,7 @@ const CreateRide = () => {
       <div className="mt-6 flex w-full justify-end">
         <Button
           onClick={doSubmit}
-          variant={isCreatingRideLoading ? "pending" : "validation"}
+          variant={isCreatingRideLoading ? "pending" : "secondary"}
           type="button"
           label={isCreatingRideLoading ? "Création..." : "Créer mon trajet"}
           isHoverBgColor

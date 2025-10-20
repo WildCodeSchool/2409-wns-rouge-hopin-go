@@ -22,7 +22,7 @@ export default function Signup() {
   const [error, setError] = useState<Record<string, string[]>>({});
   const [revealPassword, setRevealPassword] = useState(false);
 
-  const [doCreateUser] = useMutation(mutationCreateUser);
+  const [doCreateUser, { loading: loadingCreateUser }] = useMutation(mutationCreateUser);
 
   const validateCreateForm = (): boolean => {
     const firstNameErrors = validateFirstNameUtils(firstName);
@@ -108,8 +108,8 @@ export default function Signup() {
           }
           aria-describedby={error.firstName ? "first-name-error" : undefined}
         />
-        {error.firstName && (
-          <p id="first-name-error" className="text-sm text-red-400">
+        {error.firstName && error.firstName.length > 0 && (
+          <p id="first-name-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
             {formatErrors(error.firstName)}
           </p>
         )}
@@ -141,8 +141,8 @@ export default function Signup() {
           }
           aria-describedby={error.lastName ? "last-name-error" : undefined}
         />
-        {error.lastName && (
-          <p id="last-name-error" className="text-sm text-red-400">
+        {error.lastName && error.lastName.length > 0 && (
+          <p id="last-name-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
             {formatErrors(error.lastName)}
           </p>
         )}
@@ -167,8 +167,8 @@ export default function Signup() {
           required
           aria-describedby={error.email ? "email-error" : undefined}
         />
-        {error.email && (
-          <p id="email-error" className="text-sm text-red-400">
+        {error.email && error.email.length > 0 && (
+          <p id="email-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
             {formatErrors(error.email)}
           </p>
         )}
@@ -210,8 +210,8 @@ export default function Signup() {
             )}
           </button>
         </div>
-        {error.password && (
-          <p id="password-error" className="text-sm text-red-400">
+        {error.password && error.password.length > 0 && (
+          <p id="password-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
             {formatErrors(error.password)}
           </p>
         )}
@@ -254,8 +254,8 @@ export default function Signup() {
             )}
           </button>
         </div>
-        {error.confirmPassword && (
-          <p role="alert" id="confirm-password-error" className="text-sm text-red-400">
+        {error.confirmPassword && error.confirmPassword.length > 0 && (
+          <p role="alert" id="confirm-password-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
             {formatErrors(error.confirmPassword)}
           </p>
         )}
@@ -265,9 +265,9 @@ export default function Signup() {
       <div className="flex w-full justify-end">
         <Button
           onClick={doSubmit}
-          variant="secondary"
+          variant={loadingCreateUser ? "pending" : "secondary"}
           type="button"
-          label="S'inscrire"
+          label={loadingCreateUser ? "Création..." : "S'inscrire"}
         />
       </div>
     </form>

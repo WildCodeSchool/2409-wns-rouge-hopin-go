@@ -86,7 +86,7 @@ const MyAccount = () => {
 
   return (
     <div className="h-[calc(100vh-4rem)] flex items-center justify-center pt-20 px-4">
-      <div className="flex flex-col items-center rounded-xl p-8 shadow-lg bg-white w-full max-w-md">
+      <div className="flex flex-col items-center rounded-xl p-8 shadow-lg bg-primary text-white w-full max-w-md">
         <h1 className="text-2xl font-bold mb-8">Mon Compte</h1>
 
         {me && (
@@ -103,67 +103,63 @@ const MyAccount = () => {
             </p>
 
             <label className="block mt-4" htmlFor="email">
-              Email :
+              Email
             </label>
             <input
               type="email"
               id="email"
               value={email} // ← contrôlé
               onChange={(e) => setEmail(e.target.value)}
-              className={`border p-2 rounded-md w-full ${
+              className={`border p-2 rounded-md w-full text-black ${
                 error.email?.length
                   ? "border-error bg-red-50"
                   : "border-gray-300"
               }`}
             />
             {error.email?.length ? (
-              <p className="text-red-400 text-sm">
+              <p className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
                 {formatErrors(error.email)}
               </p>
             ) : null}
 
             <label className="block mt-4" htmlFor="password">
-              Mot de passe :
+              Mot de passe
             </label>
             <div className="flex">
               <input
                 type={revealPassword ? "text" : "password"}
                 id="password"
-                className={`shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5 ${
+                className={`shadow-sm border textDark text-sm text-black rounded-lg focus:outline-none block w-full p-2.5 ${
                   error.password?.length
                     ? "border-error bg-red-50"
-                    : "border-gray-300 bg-gray-50"
+                    : "border-gray-300 bg-white"
                 }`}
                 value={password} // ← contrôlé
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Mot de passe (laissez vide pour ne pas changer)"
                 aria-describedby={error.password ? "password-error" : undefined}
               />
-              <button
-                type="button"
-                className="-ml-8"
-                onClick={() => setRevealPassword(!revealPassword)}
-                aria-label={
-                  revealPassword
-                    ? "Masquer le mot de passe"
-                    : "Afficher le mot de passe"
-                }
-              >
-                {revealPassword ? (
-                  <Eye size="16" className="text-primary" />
-                ) : (
-                  <EyeOff size="16" className="text-primary" />
-                )}
-              </button>
+              <Button
+            variant="secondary"
+            type="button"
+            className="!-ml-[2.40rem] rounded-lg !m-1"
+            onClick={() => setRevealPassword(!revealPassword)}
+            aria-label={
+              revealPassword
+                ? "Masquer le mot de passe"
+                : "Afficher le mot de passe"
+            }
+            icon={revealPassword ? Eye : EyeOff}
+          />
             </div>
             {error.password?.length ? (
-              <p id="password-error" className="text-red-400 text-sm">
+              <p id="password-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit">
                 {formatErrors(error.password)}
               </p>
             ) : null}
 
             {error.general && (
-              <p role="alert" className="text-red-500 mt-2 text-sm">
+              <p role="alert" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
                 {formatErrors(error.general)}
               </p>
             )}
@@ -171,14 +167,14 @@ const MyAccount = () => {
             <Button
               type="submit"
               className="w-fit self-end mt-4"
-              variant="validation"
+              variant={loading ? "pending" : "secondary"}
               isHoverBgColor
               label={loading ? "Mise à jour..." : "Mettre à jour"}
               disabled={loading}
               onClick={handleSubmit} // ← on appelle vraiment la mutation
             />
             <div className="border-t border-gray-200 mt-4" />
-            <div className="flex flex-col gap-4  mt-4 bg-red-50 rounded-md p-4">
+            <div className="flex flex-col gap-4  mt-4 bg-gray-50 text-black rounded-md p-4">
               <p>
                 Vous pouvez également supprimer votre compte. Cette action est
                 irréversible.
@@ -186,7 +182,7 @@ const MyAccount = () => {
               <Button
                 type="submit"
                 className="w-fit self-end"
-                variant="full"
+                
                 isHoverBgColor
                 label={deleting ? "Suppression..." : "Supprimer mon compte"}
                 disabled={loading}
