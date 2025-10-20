@@ -359,8 +359,8 @@ const CreateRide = () => {
             required
             aria-describedby={error.departure_at ? "departure-at-error" : undefined}
           />
-          {error.departure_at && (
-            <p id="departure-at-error" className="text-sm text-red-500">
+          {error.departure_at && error.departure_at.length > 0 && (
+            <p id="departure-at-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
               {formatErrors(error.departure_at)}
             </p>
           )}
@@ -425,8 +425,8 @@ const CreateRide = () => {
                 ))}
               </ul>
             )}
-            {error.departure_address && (
-              <p id="departure-address-error" className="text-sm text-red-500">
+            {error.departure_address && error.departure_address.length > 0 && (
+              <p id="departure-address-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
                 {formatErrors(error.departure_address)}
               </p>
             )}
@@ -490,8 +490,8 @@ const CreateRide = () => {
                 ))}
               </ul>
             )}
-            {error.arrival_address && (
-              <p id="arrival-address-error" className="text-sm text-red-500">
+            {error.arrival_address && error.arrival_address.length > 0 && (
+              <p id="arrival-address-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
                 {formatErrors(error.arrival_address)}
               </p>
             )}

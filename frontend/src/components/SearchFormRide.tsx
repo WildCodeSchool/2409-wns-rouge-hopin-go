@@ -224,8 +224,8 @@ const SearchFormRide = ({
             error.departureAt ? "departure-at-error" : undefined
           }
         />
-        {error.departureAt && (
-          <p id="departure-at-error" className="text-red-400 text-sm">
+        {error.departureAt && error.departureAt.length > 0 && (
+          <p id="departure-at-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
             {formatErrors(error.departureAt)}
           </p>
         )}
@@ -285,8 +285,8 @@ const SearchFormRide = ({
             ))}
           </ul>
         )}
-        {error.departureCity && (
-          <p id="departure-city-error" className="text-sm text-red-400">
+        {error.departureCity && error.departureCity.length > 0 && (
+          <p id="departure-city-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
             {formatErrors(error.departureCity)}
           </p>
         )}
@@ -368,8 +368,8 @@ const SearchFormRide = ({
             ))}
           </ul>
         )}
-        {error.arrivalCity && (
-          <p id="arrival-city-error" className="text-sm text-red-400">
+        {error.arrivalCity && error.arrivalCity.length > 0 && (
+          <p id="arrival-city-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
             {formatErrors(error.arrivalCity)}
           </p>
         )}
