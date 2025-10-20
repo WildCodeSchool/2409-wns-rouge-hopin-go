@@ -3,7 +3,7 @@ import { describe, it, expect } from "vitest";
 import Button from "../components/Button";
 
 describe("Button component", () => {
-  it("Should switch h1 from false to true when button is clicked", async () => {
+  it("should switch h1 from false to true when button is clicked", async () => {
     const modify = () => {
       const title = screen.getByTestId("title");
       title.textContent = "true";
@@ -21,7 +21,7 @@ describe("Button component", () => {
     screen.debug(); // prints out the jsx in the App component unto the command line
   });
 
-  it("Should be disabled if isDisabled is true", async () => {
+  it("should be disabled if isDisabled is true", async () => {
     render(
       <Button
         data-testid="button"

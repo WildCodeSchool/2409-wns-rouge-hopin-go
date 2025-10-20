@@ -69,7 +69,7 @@ export function PassengerRidesResolverTest(testArgs: TestArgsType) {
       expect(data).toBeNull();
       expect(errors?.[0].extensions?.code).toBe("UNAUTHORIZED"); // erreur type-GraphQL pour @Authorized
     });
-    it("succeeds if user is logged in", async () => {
+    it("should create a passenger ride if user is logged in", async () => {
       const token = sign({ id: passenger.id }, process.env.JWT_SECRET_KEY!);
       const createResponse = await testArgs.server.executeOperation(
         {
