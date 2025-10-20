@@ -5,8 +5,9 @@
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Running the Project](#running-the-project)
-- [Code Quality & Testing](#code-quality--testing)
-- [Deployment Workflow (CI/CD)](#deployment-workflow-cicd)
+- [Code Quality](#code-quality)
+- [Manual Tests](#manual-tests)
+- [Deployment Workflow (CI/CD/Deployment)](#deployment-workflow-cicddeployment)
 - [Manual Server Management](#manual-server-management)
 
 ## Prerequisites
@@ -151,7 +152,7 @@ npx eslint .
 npx eslint . --fix
 ```
 
-## Manual tests
+## Manual Tests
 
 To check the code quality and non-regression before pushing to github you must run the tests manually:
 
