@@ -5,9 +5,9 @@
 - [Prerequisites](#prerequisites)
 - [Installation](#installation)
 - [Running the Project](#running-the-project)
-- [Usage](#usage)
-- [Example Commands](#example-commands)
-- [Deployment(staging/production)](#deployment)
+- [Code Quality & Testing](#code-quality--testing)
+- [Deployment Workflow (CI/CD)](#deployment-workflow-cicd)
+- [Manual Server Management](#manual-server-management)
 
 ## Prerequisites
 
@@ -27,6 +27,8 @@ docker-compose --version
 
 ## Installation
 
+Follow these steps to get the project running on your local machine.
+
 ### 1. Clone the Repository
 
 Clone this repository to your local machine using Git:
@@ -38,10 +40,15 @@ cd your-repository
 
 ### 2. Install Dependencies
 
+Install the dependencies for both the frontend and backend.
+
 ```bash
+# Install frontend dependencies
 cd frontend
 npm install
 cd ..
+
+# Install backend dependencies
 cd backend
 npm install
 ```
@@ -79,8 +86,10 @@ npx graphql-codegen --watch
 
 ## Usage
 
-Once the project is running, access it by navigating to http://localhost:8080 in your web browser for the frontend.
-To see Appollo Studio in the backend, access it by navigating to http://localhost:8080/api.
+Once the containers are running, you can access the services:
+
+- **Frontend**: [http://localhost:8080](http://localhost:8080)
+- **Backend (Apollo Studio)**: [http://localhost:8080/api](http://localhost:8080/api)
 
 ## Example Commands
 
@@ -128,8 +137,9 @@ The following VS Code settings are used to apply these tools automatically:
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"]
 }
+```
 
-### Usage
+### Running ESLint
 
 To check the code locally before committing:
 
@@ -139,59 +149,119 @@ npx eslint .
 
 # Automatically fix errors and format code
 npx eslint . --fix
-
-## Continue delivery
-
-- **Connect on server**
-
-```bash
-ssh wns_student@092024-rouge-5.wns.wilders.dev -p 2269
 ```
 
-- **View Logs**
+## Manual tests
 
-To view the logs of your Docker containers:
+To check the code quality and non-regression before pushing to github you must run the tests manually:
+
+### Running Tests Manually
 
 ```bash
-# webhook
-journalctl -u webhook -f
+# Run frontend tests
+cd frontend
+npm run vitest
 
-# Nginx
-tail -f apps/production/logs/access.log
-# or
-tail -f apps/production/logs/error.log
+# Run backend tests
+cd backend
+npm run test:postgres
 ```
 
-## Deployment (staging / production)
+## Deployment Workflow (CI/CD/Deployment)
+
+### 1. Continuous Integration (CI)
+
+The **CI (Continuous Integration)** pipeline runs automatically on each push to the `dev` and `main` branch:
+
+- Executes **automated tests** (frontend and backend)
+- If tests succeed, build and push **Docker images** from the Dockerfiles
+- Publishes the images to **DockerHub** with the appropriate tags (`staging` or `latest`).
+
+This ensures that each validated update is deployed automatically.
+
+## 2. Staging Deployment (Automatic)
 
 The project is deployed automatically through **GitHub Actions (CI)** and a **webhook** configured on the remote server.
 
----
+The **CD (Continuous Deployment)** process is handled by a **webhook** after the push on `dev` branch:
 
-### 1. How it works
-
-The **CI (Continuous Integration)** pipeline runs automatically on each push to the `dev` branch:
-
-- Executes **automated tests** (frontend and backend)
-- Builds **Docker images** from the Dockerfiles
-- Publishes the images to **DockerHub**
-
-The **CD (Continuous Deployment)** process is handled by a **webhook**:
-
-- It pulls the latest images from DockerHub
+- It pulls the latest images from DockerHub with "staging" tag
 - Then restarts the containers using **Docker Compose** on the server
 
 This ensures that each validated update is deployed automatically.
 
----
+To see the project in staging, click on :
+[https://staging.092024-rouge-5.wns.wilders.dev/](https://staging.092024-rouge-5.wns.wilders.dev/)
 
-### 2. Accessing the Server
+### 3. Production Deployment (Manual)
+
+The **Deployment** process is handled manually after the push on `main` branch once the staging project is validated by the team:
+
+- It pulls the latest images from DockerHub with "latest" tag
+- Then restarts the containers using **Docker Compose** on the server
+
+To see the project deployed, click on :
+[https://092024-rouge-5.wns.wilders.dev/](https://092024-rouge-5.wns.wilders.dev/)
+
+## Manual Server Management
+
+These commands are for use on the remote server.
+
+### 1. Connect via SSH
 
 For manual checks or maintenance, connect via SSH:
 
 ```bash
 ssh wns_student@092024-rouge-5.wns.wilders.dev -p 2269
+```
+### 2. File Structure
 
-ajouter le chemin dans le serveur apps/production et apps/staging avec le contenu des fichiers. expliquer déroulement staging et mise en prod (manuelle)
+- **Production:** 
+```bash
+/home/wns_student/apps/hopingo-prod/
+├── backend.env
+├── database.env
+├── compose.prod.yml
+├── fetch-and-deploy.sh
+├── nginx
+    └── nginx.conf
+```
 
-+ migration
+- **Staging:**
+```bash
+/home/wns_student/apps/hopingo-staging/
+├── backend.env
+├── database.env
+├── compose.prod.yml
+├── fetch-and-deploy.sh
+├── nginx
+    └── nginx.conf
+```
+
+### 3. Server-Side Commands
+
+Navigate to the appropriate directory (`hopingo-staging` or `hopingo-prod`) before running these commands.
+
+- **Start the services:**
+  ```bash
+  docker compose -f compose.prod.yml up -d
+  ```
+
+- **Check container status:**
+  ```bash
+  docker compose -f compose.prod.yml ps
+  ```
+
+- **View logs:**
+  ```bash
+  # Webhook service logs
+  journalctl -u webhook -f
+
+  # Nginx access logs (example for production)
+  tail -f /home/wns_student/apps/hopingo-prod/nginx/logs/access.log
+  ```
+
+
+### 4. Database Migrations
+TODO
+
