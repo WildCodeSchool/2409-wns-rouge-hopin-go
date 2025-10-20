@@ -3,6 +3,7 @@ import { mutationCreatePassengerRide } from "../api/createPassengerRide";
 import { User } from "../../src/entities/User";
 import { Ride } from "../../src/entities/Ride";
 import { sign } from "jsonwebtoken";
+import { PassengerRide } from "../../src/entities/PassengerRide";
 
 export function PassengerRidesResolverTest(testArgs: TestArgsType) {
   describe("creating a passenger_ride", () => {
@@ -68,7 +69,7 @@ export function PassengerRidesResolverTest(testArgs: TestArgsType) {
       expect(data).toBeNull();
       expect(errors?.[0].extensions?.code).toBe("UNAUTHORIZED"); // erreur type-GraphQL pour @Authorized
     });
-    it("succeeds if user is logged in", async () => {
+    it("should create a passenger ride if user is logged in", async () => {
       const token = sign({ id: passenger.id }, process.env.JWT_SECRET_KEY!);
       const createResponse = await testArgs.server.executeOperation(
         {
@@ -98,6 +99,7 @@ export function PassengerRidesResolverTest(testArgs: TestArgsType) {
     });
     it("fails if user tries to book his own ride", async () => {
       const token = sign({ id: driver.id }, process.env.JWT_SECRET_KEY!);
+      const before = await PassengerRide.count();
       const createResponse = await testArgs.server.executeOperation(
         {
           query: mutationCreatePassengerRide,
@@ -117,12 +119,14 @@ export function PassengerRidesResolverTest(testArgs: TestArgsType) {
         }
       );
 
+      //check API response
       assert(createResponse.body.kind === "single", "Expected single-result response");
-      const { errors, data } = createResponse.body.singleResult;
+      const { errors } = createResponse.body.singleResult;
+      expect(errors?.[0].message).toBe("You cannot book your own ride");
 
-      // Authentifié => la mutation réussit
-      expect(data).toBeDefined();
-      expect(errors?.[0].message).toBe("Vous ne pouvez pas réserver votre propre trajet");
+      // check database
+      const after = await PassengerRide.count();
+      expect(after).toBe(before);
     });
   });
 }

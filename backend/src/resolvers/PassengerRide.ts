@@ -51,10 +51,10 @@ export class PassengerRideResolver {
         lock: { mode: "pessimistic_write" }, // s'assure qu'un seul utilisateur peut réserver le trajet à la fois
       });
 
-      if (!ride) throw new Error("Trajet introuvable");
+      if (!ride) throw new Error("Ride not found");
 
       if (user === null) {
-        throw new Error("Utilisateur non authentifié");
+        throw new Error("Unauthenticated user");
       }
 
       const rideWithDriver = await manager.findOne(Ride, {
@@ -62,15 +62,15 @@ export class PassengerRideResolver {
         relations: ["driver"],
       });
 
-      if (!rideWithDriver) throw new Error("Conducteur introuvable");
+      if (!rideWithDriver) throw new Error("Driver not found");
 
       if (rideWithDriver.driver.id === user!.id) {
-        throw new Error("Vous ne pouvez pas réserver votre propre trajet");
+        throw new Error("You cannot book your own ride");
       }
 
       // Vérification du nombre de places restantes
       if (ride.nb_passenger >= ride.max_passenger) {
-        throw new Error("Ce trajet est déjà complet");
+        throw new Error("This ride is already full");
       }
 
       // Création du tuple PassengerRide

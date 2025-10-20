@@ -65,7 +65,7 @@ export function UsersResolverTest(testArgs: TestArgsType) {
       expect(validationErrors[0]).toMatchObject({ property: "password" });
       expect(response.body.singleResult.data).toBeNull();
     });
-    it("creates a user and stores it in the DB", async () => {
+    it("should creates a user and stores it in the DB", async () => {
       const response = await testArgs.server.executeOperation<{
         createUser: User;
       }>({
@@ -134,6 +134,51 @@ export function UsersResolverTest(testArgs: TestArgsType) {
       expect(errors).toBeUndefined();
       expect(data?.signin).toBeNull();
     });
+    it("should sign in a user with valid credentials", async () => {
+      const response = await testArgs.server.executeOperation<{
+        signin: User;
+      }>(
+        {
+          query: mutationSignin,
+          variables: {
+            email: "test@test.fr",
+            password: "Test1234!",
+          },
+        },
+        // Contexte simulant une requête HTTP avec des en-têtes de réponse
+        {
+          contextValue: {
+            req: {},
+            res: {
+              // Simule les méthodes getHeader et setHeader utilisées pour gérer les cookies
+              getHeader: () => "",
+              setHeader: () => {},
+            },
+            user: null,
+          },
+        }
+      );
+      assert(response.body.kind === "single");
+      const { errors, data } = response.body.singleResult;
+      expect(errors).toBeUndefined();
+      expect(data?.signin).not.toBeNull();
+      expect(data?.signin.id).toBeDefined();
+    });
+    it("fails to find a user if email is invalid", async () => {
+      const response = await testArgs.server.executeOperation<{
+        signin: User;
+      }>({
+        query: mutationSignin,
+        variables: {
+          email: "nonexist@user.fr",
+          password: "Test1234!",
+        },
+      });
+      assert(response.body.kind === "single");
+      const { errors, data } = response.body.singleResult;
+      expect(errors).toBeUndefined();
+      expect(data?.signin).toBeNull();
+    });
     it("fails to signin if passord is invalid", async () => {
       const response = await testArgs.server.executeOperation<{
         signin: User;
@@ -169,7 +214,6 @@ export function UsersResolverTest(testArgs: TestArgsType) {
               getHeader: () => "",
               setHeader: () => {},
             },
-            user: null,
           },
         }
       );
@@ -179,98 +223,6 @@ export function UsersResolverTest(testArgs: TestArgsType) {
       expect(data?.signin).not.toBeNull();
       expect(data?.signin.id).toBeDefined();
     });
-  });
-
-  describe("UserResolver whoamI", () => {
-    it("should return a user if user connected", async () => {
-      const user = await User.save({
-        email: "test4@test.fr",
-        firstName: "Jean",
-        lastName: "TEST",
-        hashedPassword: "toto911367",
-      });
-      const response = await testArgs.server.executeOperation<{
-        whoami: User;
-      }>(
-        {
-          query: queryWhoami,
-        },
-        // Contexte simulant une requête HTTP avec des en-têtes de réponse
-        {
-          contextValue: {
-            user: { id: user.id, email: user.email, role: user.role },
-            req: { headers: { cookie: "token=fake.jwt.token" } },
-            res: {},
-          },
-        }
-      );
-      assert(response.body.kind === "single");
-      const { errors, data } = response.body.singleResult;
-      expect(errors).toBeUndefined();
-      expect(data?.whoami).not.toBeNull();
-      expect(data?.whoami.id).toBeDefined();
-      expect(data?.whoami.email).toBeDefined();
-      expect(data?.whoami.role).toBeDefined();
-    });
-  });
-  it("fails to find a user if email is invalid", async () => {
-    const response = await testArgs.server.executeOperation<{
-      signin: User;
-    }>({
-      query: mutationSignin,
-      variables: {
-        email: "nonexist@user.fr",
-        password: "Test1234!",
-      },
-    });
-    assert(response.body.kind === "single");
-    const { errors, data } = response.body.singleResult;
-    expect(errors).toBeUndefined();
-    expect(data?.signin).toBeNull();
-  });
-  it("fails to signin if passord is invalid", async () => {
-    const response = await testArgs.server.executeOperation<{
-      signin: User;
-    }>({
-      query: mutationSignin,
-      variables: {
-        email: "nonexist@user.fr",
-        password: "examplePassword78!",
-      },
-    });
-    assert(response.body.kind === "single");
-    const { errors, data } = response.body.singleResult;
-    expect(errors).toBeUndefined();
-    expect(data?.signin).toBeNull();
-  });
-  it("should sign in a user with valid credentials", async () => {
-    const response = await testArgs.server.executeOperation<{
-      signin: User;
-    }>(
-      {
-        query: mutationSignin,
-        variables: {
-          email: "test@test.fr",
-          password: "Test1234!",
-        },
-      },
-      // Contexte simulant une requête HTTP avec des en-têtes de réponse
-      {
-        contextValue: {
-          req: {},
-          res: {
-            // Simule les méthodes getHeader et setHeader utilisées pour gérer les cookies
-            getHeader: () => "",
-            setHeader: () => {},
-          },
-        },
-      }
-    );
-    assert(response.body.kind === "single");
-    const { errors, data } = response.body.singleResult;
-    expect(errors).toBeUndefined();
-    expect(data?.signin).not.toBeNull();
-    expect(data?.signin.id).toBeDefined();
   });
 
   describe("UserResolver whoamI", () => {
@@ -297,6 +249,26 @@ export function UsersResolverTest(testArgs: TestArgsType) {
       expect(data?.whoami.id).toBe(testArgs.data.userId);
       expect(data?.whoami.email).toBe(testArgs.data.userEmail);
       expect(data?.whoami.role).toBeDefined();
+    });
+    it("should returns null on whoami when not authenticated", async () => {
+      const whoamiResponse = await testArgs.server.executeOperation(
+        { query: queryWhoami },
+        {
+          contextValue: {
+            user: null, // champ présent dans ContextType, même si non utilisé
+            req: { headers: { cookie: "" } },
+            res: {},
+          },
+        }
+      );
+
+      assert(whoamiResponse.body.kind === "single", "Expected single-result response");
+      const res = whoamiResponse.body.singleResult;
+
+      // whoami ne doit pas créer d'erreur GraphQL
+      expect(res.errors).toBeUndefined();
+      expect(res.data).toBeDefined();
+      expect(res.data!.whoami).toBeNull();
     });
   });
 }
