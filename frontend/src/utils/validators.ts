@@ -55,32 +55,3 @@ export const validateConfirmPassword = (password: string, confirmPassword: strin
   }
   return errors;
 };
-
-
-export function mapApolloError(e: unknown): Record<string, string[]> {
-  const err = e as any;
-  const g = err?.graphQLErrors?.[0];
-  // message brut
-  let msg = g?.message || err?.message || "Une erreur est survenue.";
-  const field = g?.extensions?.field as string | undefined;
-
-  // mapping minimaliste, même style que validators.ts (une seule phrase lisible)
-  // 1) priorité au champ ciblé
-  if (field === "currentPassword") msg = "Mot de passe actuel invalide.";
-  else if (field === "email" && /already/i.test(msg)) msg = "Cet email est déjà utilisé.";
-  else if (field === "newPassword" || field === "password") {
-    // class-validator en anglais → phrase FR générique et polie
-    if (/least|characters|contain|uppercase|lowercase|number|special/i.test(msg)) {
-      msg = "Le mot de passe ne respecte pas les règles de complexité.";
-    }
-  }
-
-  // 2) heuristiques simples si pas de field
-  if (/invalid current password/i.test(msg)) msg = "Mot de passe actuel invalide.";
-  if (/invalid email/i.test(msg)) msg = "Email invalide";
-  if (/already.*used/i.test(msg)) msg = "Cet email est déjà utilisé.";
-  if (/validation error/i.test(msg)) msg = "Données invalides.";
-
-  // retour au format de tes validators: Record<string, string[]>
-  return field ? { [field]: [msg] } : { general: [msg] };
-}

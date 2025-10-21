@@ -4,7 +4,6 @@ import { Eye, EyeOff, LoaderCircle, X } from "lucide-react";
 import { formatErrors } from "../utils/formatErrors";
 import { useEffect, useState } from "react";
 import {
-  mapApolloError,
   validateEmail as validateEmailUtils,
   validatePassword as validatePasswordUtils,
 } from "../utils/validators";
@@ -74,6 +73,7 @@ const [deleteError, setDeleteError] = useState<string | null>(null);
   const data: Record<string, string> = {};
 
   if (email && email !== me?.email) data.email = email;
+  
   if (wantsPasswordChange) {
     data.currentPassword = currentPassword;
     data.password = newPassword;
@@ -88,19 +88,17 @@ const [deleteError, setDeleteError] = useState<string | null>(null);
   try {
     await doUpdate({ variables: { data } });
     toast.success("Compte mis à jour avec succès !");
-    // Reset propre si on a changé le mdp
     if (wantsPasswordChange) {
       setCurrentPassword("");
       setNewPassword("");
     }
     setError({});
   } catch (e: unknown) {
-    toast.error("Erreur lors de la mise à jour du compte.");
-    setError(mapApolloError(e));
+    toast.error("Le mot de passe actuel est requis pour changer le mot de passe.");    
   }
 };
 
-  // suppression du compte
+ 
   const [doDelete, { loading: deleting }] = useMutation(DeleteMyAccount, {
     refetchQueries: [queryWhoAmI],
   });
@@ -112,8 +110,7 @@ const [deleteError, setDeleteError] = useState<string | null>(null);
     toast.info("Compte supprimé.");
     navigate("/", { replace: true });
   } catch (e: unknown) {
-    const mapped = mapApolloError(e);
-    setDeleteError(mapped.currentPassword?.[0] || mapped.general?.[0] || "Suppression impossible.");
+    console.error(e);
   }
 }
 
@@ -263,7 +260,7 @@ function closeDeleteModalSafe() {
             </div>
           </form>
         )}
-       <Modal
+        <Modal
           id="deleteAccountModal"
           isOpen={isOpen("deleteAccountModal")}
           isVisible={isVisible("deleteAccountModal")}
