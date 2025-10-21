@@ -1,5 +1,7 @@
-// api/DeleteMyAccount.ts
-import { gql } from "../gql";
-export const DeleteMyAccount = gql(`
-  mutation DeleteMyAccount { deleteMyAccount }
-`);
+import { gql } from "@apollo/client";
+
+export const DeleteMyAccount = gql`
+  mutation DeleteMyAccount($currentPassword: String!) {
+    deleteMyAccount(currentPassword: $currentPassword)
+  }
+`;
