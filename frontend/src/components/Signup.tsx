@@ -2,7 +2,7 @@ import { useMutation } from "@apollo/client";
 import { mutationCreateUser } from "../api/CreateUser";
 import { useState } from "react";
 import Button from "../components/Button";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import { toast } from "react-toastify";
 import {
   validateFirstName as validateFirstNameUtils,
@@ -22,7 +22,7 @@ export default function Signup() {
   const [error, setError] = useState<Record<string, string[]>>({});
   const [revealPassword, setRevealPassword] = useState(false);
 
-  const [doCreateUser] = useMutation(mutationCreateUser);
+  const [doCreateUser, { loading: loadingCreateUser }] = useMutation(mutationCreateUser);
 
   const validateCreateForm = (): boolean => {
     const firstNameErrors = validateFirstNameUtils(firstName);
@@ -82,7 +82,7 @@ export default function Signup() {
   }
 
   return (
-    <form className="mx-auto flex h-full w-full max-w-sm flex-col items-center justify-center px-4 sm:px-0">
+    <form className="flex flex-col justify-center items-center max-w-sm mx-auto w-full h-full px-4 sm:py-8">
       {/* Prénom */}
       <div className="mb-5 w-full">
         <label htmlFor="first-name" className="text-textLight mb-2 block text-sm font-medium">
@@ -101,11 +101,15 @@ export default function Signup() {
           } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
           placeholder="Jean"
           value={firstName}
-          onChange={(e) => setFirstName(e.target.value)}
+          onChange={(e) =>
+            setFirstName(
+              e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1)
+            )
+          }
           aria-describedby={error.firstName ? "first-name-error" : undefined}
         />
-        {error.firstName && (
-          <p id="first-name-error" className="text-sm text-red-400">
+        {error.firstName && error.firstName.length > 0 && (
+          <p id="first-name-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
             {formatErrors(error.firstName)}
           </p>
         )}
@@ -130,11 +134,15 @@ export default function Signup() {
           } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
           placeholder="Dupont"
           value={lastName}
-          onChange={(e) => setLastName(e.target.value)}
+          onChange={(e) =>
+            setLastName(
+              e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1)
+            )
+          }
           aria-describedby={error.lastName ? "last-name-error" : undefined}
         />
-        {error.lastName && (
-          <p id="last-name-error" className="text-sm text-red-400">
+        {error.lastName && error.lastName.length > 0 && (
+          <p id="last-name-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
             {formatErrors(error.lastName)}
           </p>
         )}
@@ -159,8 +167,8 @@ export default function Signup() {
           required
           aria-describedby={error.email ? "email-error" : undefined}
         />
-        {error.email && (
-          <p id="email-error" className="text-sm text-red-400">
+        {error.email && error.email.length > 0 && (
+          <p id="email-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
             {formatErrors(error.email)}
           </p>
         )}
@@ -191,7 +199,7 @@ export default function Signup() {
 
           <button
             type="button"
-            className="-ml-8"
+            className="-ml-9 bg-gray-200 rounded-lg p-2 m-1"
             onClick={() => setRevealPassword(!revealPassword)}
             aria-label={revealPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
           >
@@ -202,8 +210,8 @@ export default function Signup() {
             )}
           </button>
         </div>
-        {error.password && (
-          <p id="password-error" className="text-sm text-red-400">
+        {error.password && error.password.length > 0 && (
+          <p id="password-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
             {formatErrors(error.password)}
           </p>
         )}
@@ -231,7 +239,12 @@ export default function Signup() {
           />
           <button
             type="button"
-            className="-ml-8"
+            aria-label={
+              revealPassword
+                ? "Masquer le mot de passe"
+                : "Afficher le mot de passe"
+            }
+            className="-ml-9 bg-gray-200 rounded-lg p-2 m-1"
             onClick={() => setRevealPassword(!revealPassword)}
           >
             {revealPassword ? (
@@ -241,16 +254,24 @@ export default function Signup() {
             )}
           </button>
         </div>
-        {error.confirmPassword && (
-          <p role="alert" id="confirm-password-error" className="text-sm text-red-400">
+        {error.confirmPassword && error.confirmPassword.length > 0 && (
+          <p role="alert" id="confirm-password-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
             {formatErrors(error.confirmPassword)}
           </p>
         )}
       </div>
 
       {/* Bouton */}
-      <div className="flex w-full justify-end">
-        <Button onClick={doSubmit} variant="validation" type="button" label="S'inscrire" />
+      <div className="flex w-full justify-end">       
+         <Button
+        type="button"
+        onClick={doSubmit}
+              disabled={loadingCreateUser}
+              icon={loadingCreateUser ? LoaderCircle : undefined}
+              iconRotateAnimation={loadingCreateUser}
+              label={loadingCreateUser ? "Inscription..." : "S'inscrire"}
+              variant={loadingCreateUser ? "pending" : "secondary"}
+            />
       </div>
     </form>
   );

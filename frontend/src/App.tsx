@@ -1,7 +1,7 @@
 import { Link, Outlet } from "react-router-dom";
 import NavBar from "./components/NavBar";
 import "react-toastify/dist/ReactToastify.css";
-import Logo from "../public/logo.png";
+import Logo from "../public/logo.svg";
 import { useQuery } from "@apollo/client";
 import { queryWhoAmI } from "./api/WhoAmI";
 import { CheckCircle } from "lucide-react";
@@ -12,8 +12,8 @@ const App = () => {
   return (
     <>
       <div>
-        <header className="z-50 md:fixed md:flex">
-          <div className="invisible flex items-center gap-4 md:visible">
+        <header className="z-50 md:flex md:fixed">
+          <div className=" items-center gap-4  hidden md:flex">
             <Link to="/">
               <img src={Logo} alt="Logo" className="m-2 h-16 w-16" />
             </Link>
@@ -22,7 +22,7 @@ const App = () => {
                 className="bg-primary flex items-center gap-2 rounded-full px-4 py-2 text-sm text-white"
                 title="Vous êtes connecté(e)"
               >
-                {me?.email}
+                {me?.firstName}
                 <CheckCircle className="text-validation" />
               </span>
             )}

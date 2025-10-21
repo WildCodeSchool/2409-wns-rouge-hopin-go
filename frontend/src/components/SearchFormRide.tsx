@@ -197,6 +197,40 @@ const SearchFormRide = ({
       onSubmit={handleSubmit}
       className="mx-auto flex h-full max-w-sm flex-col items-center justify-center"
     >
+      {/* Date de départ */}
+      <div className="mb-5 w-full">
+        <label
+          htmlFor="departure-at"
+          className="block mb-2 text-sm font-medium text-white"
+        >
+          Date de départ
+        </label>
+        <input
+          type="date"
+          id="departure-at"
+          className={`${
+            error.departureAt?.length
+              ? "border-error border-2 bg-red-50"
+              : "border-gray-300 bg-gray-50"
+          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          value={departureAt}
+          ref={departureTimeRef}
+          onChange={(e) => setDepartureAt(e.target.value)}
+          onFocus={() =>
+            setShowSuggestions((prev) => ({ ...prev, arrival: false }))
+          }
+          required
+          aria-describedby={
+            error.departureAt ? "departure-at-error" : undefined
+          }
+        />
+        {error.departureAt && error.departureAt.length > 0 && (
+          <p id="departure-at-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
+            {formatErrors(error.departureAt)}
+          </p>
+        )}
+      </div>
+
       {/* Ville de départ */}
       <div className="relative mb-5 w-full">
         <label htmlFor="departure-city" className="text-textLight mb-2 block text-sm font-medium">
@@ -251,8 +285,8 @@ const SearchFormRide = ({
             ))}
           </ul>
         )}
-        {error.departureCity && (
-          <p id="departure-city-error" className="text-sm text-red-400">
+        {error.departureCity && error.departureCity.length > 0 && (
+          <p id="departure-city-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
             {formatErrors(error.departureCity)}
           </p>
         )}
@@ -278,33 +312,6 @@ const SearchFormRide = ({
         <label className="grid-span-1 flex justify-end" htmlFor="departure-radius">
           {departureRadius} km
         </label>
-      </div>
-
-      {/* Date de départ */}
-      <div className="mb-5 w-full">
-        <label htmlFor="departure-at" className="mb-2 block text-sm font-medium text-white">
-          Date de départ
-        </label>
-        <input
-          type="date"
-          id="departure-at"
-          className={`${
-            error.departureAt?.length
-              ? "border-error border-2 bg-red-50"
-              : "border-gray-300 bg-gray-50"
-          } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
-          value={departureAt}
-          ref={departureTimeRef}
-          onChange={(e) => setDepartureAt(e.target.value)}
-          onFocus={() => setShowSuggestions((prev) => ({ ...prev, arrival: false }))}
-          required
-          aria-describedby={error.departureAt ? "departure-at-error" : undefined}
-        />
-        {error.departureAt && (
-          <p id="departure-at-error" className="text-sm text-red-400">
-            {formatErrors(error.departureAt)}
-          </p>
-        )}
       </div>
 
       {/* Ville d'arrivée */}
@@ -361,8 +368,8 @@ const SearchFormRide = ({
             ))}
           </ul>
         )}
-        {error.arrivalCity && (
-          <p id="arrival-city-error" className="text-sm text-red-400">
+        {error.arrivalCity && error.arrivalCity.length > 0 && (
+          <p id="arrival-city-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
             {formatErrors(error.arrivalCity)}
           </p>
         )}
@@ -391,12 +398,7 @@ const SearchFormRide = ({
 
       {/* Bouton */}
       <div className="flex w-full justify-end">
-        <Button
-          variant="validation"
-          type="submit"
-          label="Rechercher"
-          className="border-2 border-white"
-        />
+        <Button variant="secondary" type="submit" label="Rechercher" />
       </div>
     </form>
   );

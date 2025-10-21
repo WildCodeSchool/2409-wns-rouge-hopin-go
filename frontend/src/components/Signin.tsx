@@ -3,7 +3,7 @@ import { useState } from "react";
 import { mutationSignin } from "../api/Signin";
 import { useNavigate } from "react-router-dom";
 import { queryWhoAmI } from "../api/WhoAmI";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, LoaderCircle } from "lucide-react";
 import {
   validateEmail as validateEmailUtils,
   validatePassword as validatePasswordUtils,
@@ -19,7 +19,7 @@ const Signin = () => {
   const [error, setError] = useState<Record<string, string[]>>({});
   const navigate = useNavigate();
 
-  const [doSignin] = useMutation(mutationSignin, {
+  const [doSignin,{loading}] = useMutation(mutationSignin, {
     refetchQueries: [queryWhoAmI],
   });
 
@@ -71,7 +71,7 @@ const Signin = () => {
   return (
     <form
       noValidate
-      className="mx-auto flex h-full w-full max-w-sm flex-col items-center justify-center px-4 sm:px-0"
+      className=" h-full w-full flex flex-col justify-center items-center max-w-sm mx-auto px-4 sm:p-8 sm:py-8"
       onSubmit={(e) => {
         e.preventDefault();
         doSubmit();
@@ -88,7 +88,9 @@ const Signin = () => {
             error.email?.length
               ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
               : "border-gray-300 bg-gray-50"
-          } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
+          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5 ${
+            error.email && error.email.length > 0 && "border-full"
+          }`}
           placeholder="nom@mail.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -96,8 +98,11 @@ const Signin = () => {
           required
           aria-describedby={error.email ? "email-error" : undefined}
         />
-        {error.email && (
-          <p id="email-error" className="text-sm text-red-400">
+        {error.email && error.email.length > 0 && (
+          <p
+            id="email-error"
+            className="text-full text-sm mt-5 bg-gray-50 px-2 py-1 rounded-lg w-fit"
+          >
             {formatErrors(error.email)}
           </p>
         )}
@@ -119,34 +124,50 @@ const Signin = () => {
               error.password?.length
                 ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
                 : "border-gray-300 bg-gray-50"
-            } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
+            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5 ${
+              error.password && error.password.length > 0 && "border-full"
+            }`}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             aria-describedby={error.password ? "password-error" : undefined}
           />
 
-          <button
+          <Button
+            variant="secondary"
             type="button"
-            className="-ml-8"
+            className="!-ml-[2.40rem] rounded-lg !m-1"
             onClick={() => setRevealPassword(!revealPassword)}
-            aria-label={revealPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
-          >
-            {revealPassword ? (
-              <Eye size="16" className="text-primary" />
-            ) : (
-              <EyeOff size="16" className="text-primary" />
-            )}
-          </button>
+            aria-label={
+              revealPassword
+                ? "Masquer le mot de passe"
+                : "Afficher le mot de passe"
+            }
+            icon={revealPassword ? Eye : EyeOff}
+          />
         </div>
       </div>
-      {error.password && <p className="text-sm text-red-400">{formatErrors(error.password)}</p>}
+      {error.password && error.password.length > 0 && (
+        <p className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit">
+          {formatErrors(error.password)}
+        </p>
+      )}
       {error.general && (
-        <p role="alert" className="mt-4 text-sm text-red-500">
+        <p
+          role="alert"
+          className="text-full mt-4 text-sm bg-gray-50 p-2 rounded-lg w-fit"
+        >
           {formatErrors(error.general)}
         </p>
       )}
-      <div className="flex w-full justify-end">
-        <Button variant="validation" type="submit" label="Connexion" />
+      <div className="flex w-full justify-end mt-5">
+        <Button
+        type="submit"
+              disabled={loading}
+              icon={loading ? LoaderCircle : undefined}
+              iconRotateAnimation={loading}
+              label={loading ? "Connexion..." : "Connexion"}
+              variant={loading ? "pending" : "secondary"}
+            />
       </div>
     </form>
   );

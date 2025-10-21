@@ -3,10 +3,9 @@ import App from "./App.tsx";
 import "./index.css";
 import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom";
 import Home from "./pages/Home.tsx";
-import About from "./pages/About.tsx";
 import Page404 from "./pages/Page404.tsx";
 import { ApolloClient, InMemoryCache, ApolloProvider } from "@apollo/client";
-import Create from "./pages/Admin.tsx";
+import Create from "./pages/MyAccount.tsx";
 import AuthComponent from "./components/AuthComponent.tsx";
 import BadURLRedirect from "./components/BadURLRedirect.tsx";
 import { AuthStates } from "./services/AuthStates.ts";
@@ -14,6 +13,7 @@ import AuthenticationPage from "./pages/Authentication";
 import RideResults from "./pages/RideResults.tsx";
 import MyRides from "./pages/MyRides.tsx";
 import { ToastContainer } from "react-toastify"; // import RideResultTemp from "./pages/RideResultTemp";
+import MyAccount from "./pages/MyAccount.tsx";
 
 const client = new ApolloClient({
   uri: "/api",
@@ -43,10 +43,6 @@ const router = createBrowserRouter([
         ),
       },
       {
-        path: "/about",
-        element: <About />,
-      },
-      {
         path: `/ride-results`,
         element: (
           <AuthComponent authStates={[AuthStates.unauthenticated, AuthStates.user]}>
@@ -67,6 +63,14 @@ const router = createBrowserRouter([
         element: (
           <AuthComponent authStates={[AuthStates.unauthenticated]}>
             <AuthenticationPage />
+          </AuthComponent>
+        ),
+      },
+      {
+        path: `/my-account`,
+        element: (
+          <AuthComponent authStates={[AuthStates.user]}>
+            <MyAccount />
           </AuthComponent>
         ),
       },

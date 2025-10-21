@@ -1,10 +1,13 @@
 import { Arg, Authorized, Ctx, ID, Mutation, Query, Resolver } from "type-graphql";
-import { User, UserCreateInput } from "../entities/User";
+import { User, UserCreateInput, UserUpdateInput } from "../entities/User";
 import { validate } from "class-validator";
 import argon2 from "argon2";
 import { sign } from "jsonwebtoken";
 import Cookies from "cookies";
 import { ContextType } from "../auth";
+import { ensureLambdaUser } from "../utils/ensureLambdaUserAfterDeleted";
+import { PassengerRide, PassengerRideStatus } from "../entities/PassengerRide";
+import { Ride } from "../entities/Ride";
 
 @Resolver()
 export class UsersResolver {
@@ -93,35 +96,146 @@ export class UsersResolver {
     }
   }
 
-  // @Mutation(() => User, { nullable: true })
-  // async updateUser(
-  //     @Arg("id", () => ID) id: number,
-  //     @Arg("data", () => UserUpdateInput) data: UserUpdateInput
-  // ): Promise<User | null> {
-  //     const user = await User.findOneBy({ id });
-  //     if (user !== null) {
-
-  //         await user.save();
-  //         return user;
-  //     } else {
-  //         return null;
-  //     }
-  // }
-
   @Authorized("user")
   @Mutation(() => User, { nullable: true })
-  async deleteUser(@Arg("id", () => ID) id: number): Promise<User | null> {
-    const user = await User.findOneBy({ id });
-    if (user !== null) {
-      await user.remove();
-      Object.assign(user, { id });
-      return user;
-    } else {
-      return null;
+  async updateMyAccount(
+    @Ctx() context: ContextType,
+    @Arg("data", () => UserUpdateInput) data: UserUpdateInput
+  ): Promise<User | null> {
+    const me = context.user;
+    if (!me) return null;
+
+    const user = await User.findOneBy({ id: me.id });
+    if (!user) return null;
+
+    // Hash si password fourni
+    if (data.password) {
+      const hashedPassword = await argon2.hash(data.password);
+      // on ne persiste jamais le champ 'password' brut
+      delete data.password;
+      (data as any).hashedPassword = hashedPassword;
+    }
+
+    Object.assign(user, data);
+
+    // validation (email on the entity)
+    const errors = await validate(user);
+    if (errors.length > 0) {
+      throw new Error(`Validation error: ${JSON.stringify(errors)}`);
+    }
+
+    try {
+      await user.save();
+    } catch (e: any) {
+      // handle unique email (citext UNIQUE)
+      if (e.code === "23505") {
+        throw new Error("This email is already used.");
+      }
+      throw e;
+    }
+
+    return user;
+  }
+
+  @Authorized("user")
+  @Mutation(() => Boolean)
+  async deleteMyAccount(@Ctx() context: ContextType): Promise<boolean> {
+    const me = context.user;
+    if (!me) return false;
+
+    try {
+      const lambda = await ensureLambdaUser(); // util that creates/returns a "deleted" user
+
+      await User.getRepository().manager.transaction(async (m) => {
+        // 1) Load the current user
+        const user = await m.findOne(User, { where: { id: me.id } });
+        if (!user) return;
+
+        // ========= A) PASSENGER: cancel + decrement if APPROVED, then reassign to lambda
+        const prs = await m.find(PassengerRide, {
+          where: { user_id: user.id },
+          relations: { ride: true },
+        });
+
+        const ridesToDecrement = prs
+          .filter((pr) => pr.status === PassengerRideStatus.APPROVED && pr.ride)
+          .map((pr) => pr.ride!.id);
+
+        if (ridesToDecrement.length) {
+          await m.query(
+            `UPDATE "ride"
+            SET nb_passenger = GREATEST(0, nb_passenger - 1)
+            WHERE id = ANY($1::int[])`,
+            [ridesToDecrement]
+          );
+        }
+
+        await m
+          .createQueryBuilder()
+          .update(PassengerRide)
+          .set({
+            status: PassengerRideStatus.CANCELLED_BY_PASSENGER,
+            user_id: lambda.id,
+          })
+          .where("user_id = :uid", { uid: user.id })
+          .execute();
+
+        // ========= B) DRIVER: Mark trips and passengers, reassign driver_id
+        const driverRideRows: { id: number }[] = await m.query(
+          `SELECT id FROM "ride" WHERE driver_id = $1`,
+          [user.id]
+        );
+        const driverRideIds = driverRideRows.map((r) => r.id);
+
+        if (driverRideIds.length) {
+          // Passengers on these trips → CANCELLED_BY_DRIVER
+          await m
+            .createQueryBuilder()
+            .update(PassengerRide)
+            .set({ status: PassengerRideStatus.CANCELLED_BY_DRIVER })
+            .where("ride_id IN (:...rids)", { rids: driverRideIds })
+            .andWhere("status IN (:...st)", {
+              st: [PassengerRideStatus.WAITING, PassengerRideStatus.APPROVED],
+            })
+            .execute();
+
+          // Trajets → annulés
+          await m
+            .createQueryBuilder()
+            .update(Ride)
+            .set({ is_cancelled: true })
+            .where("id IN (:...rids)", { rids: driverRideIds })
+            .execute();
+
+          // Reassign the driver to lambda user
+          await m.query(
+            `UPDATE "ride" SET driver_id = $1 WHERE id = ANY($2::int[])`,
+            [lambda.id, driverRideIds]
+          );
+        }
+
+        // ========= C) Delete real user
+        await m.delete(User, { id: user.id });
+      });
+
+      // D) Logout (same logic as signout)
+      const cookies = new Cookies(context.req, context.res, {
+        secure: process.env.NODE_ENV === "production",
+      });
+      cookies.set("token", "", {
+        maxAge: 0,
+        sameSite: "strict",
+        httpOnly: true,
+      });
+
+      return true;
+    } catch (e) {
+      console.error("deleteMyAccount failed:", e);
+      return false;
     }
   }
 
-  // Pas de décorateur ici, c'est intentionnel
+  // No decorator here, it's intentional
   @Query(() => User, { nullable: true })
   async whoami(@Ctx() context: ContextType): Promise<User | null> {
     // return getUserFromContext(context);

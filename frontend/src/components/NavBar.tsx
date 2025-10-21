@@ -11,6 +11,7 @@ import { useOutsideClick } from "../hooks/useOutsideClick";
 const NavBar = () => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  console.log("🚀 ~ NavBar ~ isOpen:", isOpen);
   const toggleMenuRef = useRef<HTMLDivElement>(null);
   useOutsideClick(toggleMenuRef, () => setIsOpen(false), isOpen);
 
@@ -25,6 +26,10 @@ const NavBar = () => {
   const handleSignout = () => {
     doSignout();
     navigate("/");
+  };
+
+  const closeNavBar = () => {
+    setIsOpen(false);
   };
 
   return (
@@ -46,6 +51,7 @@ const NavBar = () => {
             {!me ? (
               <>
                 <Button
+                  onClick={closeNavBar}
                   isLink
                   to="/auth/signup"
                   label="Inscription"
@@ -53,6 +59,7 @@ const NavBar = () => {
                   variant="secondary"
                 />
                 <Button
+                  onClick={closeNavBar}
                   isLink
                   to="/auth/signin"
                   label="Connexion"
@@ -62,14 +69,20 @@ const NavBar = () => {
               </>
             ) : null}
             {me ? (
-              <>
+              <div className="w-full flex flex-col gap-4">
+                <Button
+                  label="Mon compte"
+                  className="font-semibold"
+                  variant="secondary"
+                  onClick={() => navigate("/my-account")}
+                />
                 <Button
                   label="Déconnexion"
                   className="font-semibold"
                   variant="secondary"
                   onClick={handleSignout}
                 />
-              </>
+              </div>
             ) : null}
           </div>
         </div>
@@ -132,7 +145,7 @@ const NavBar = () => {
           </div>
           <div className="relative m-2 -ml-4 flex flex-col items-center justify-center rounded-l-full rounded-br-full bg-gray-100 p-4">
             <button onClick={() => setIsOpen(!isOpen)}>
-              <img src={maleUser} alt="profile" width={80} />
+              <img src={maleUser} alt="profile" width={80} loading="lazy" />
             </button>
           </div>
         </nav>
@@ -145,6 +158,7 @@ const NavBar = () => {
             {!me ? (
               <>
                 <Button
+                  onClick={() => setIsOpen(false)}
                   isLink
                   to="/auth/signup"
                   label="Inscription"
@@ -153,6 +167,7 @@ const NavBar = () => {
                   isHoverBgColor
                 />
                 <Button
+                  onClick={() => setIsOpen(false)}
                   isLink
                   to="/auth/signin"
                   label="Connexion"
@@ -169,6 +184,14 @@ const NavBar = () => {
                   to="/my-rides/passenger"
                   label="Trajets"
                   className="w-full font-semibold"
+                  variant="secondary"
+                  isHoverBgColor
+                />
+                <Button
+                  isLink
+                  to="/my-account"
+                  label="Mon compte"
+                  className="font-semibold w-full"
                   variant="secondary"
                   isHoverBgColor
                 />

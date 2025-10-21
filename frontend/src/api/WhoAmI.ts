@@ -6,6 +6,7 @@ query Whoami {
     id
     email
     role
+    firstName
   }
 }
 `);

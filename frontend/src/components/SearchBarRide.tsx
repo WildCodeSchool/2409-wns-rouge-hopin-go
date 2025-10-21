@@ -265,6 +265,7 @@ const SearchBarRide = ({
               aria-autocomplete="list"
               aria-expanded={showSuggestions.departure}
               aria-controls="departure-city-suggestions-list"
+              role="combobox"
             />
             {showSuggestions.departure && suggestions.departure.length > 0 && (
               <ul

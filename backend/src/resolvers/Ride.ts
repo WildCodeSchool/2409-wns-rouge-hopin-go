@@ -30,8 +30,12 @@ export class RidesResolver {
       const startDay = startOfDay(data.departure_at);
       const endDay = endOfDay(data.departure_at);
 
+      // ---- Pagination --------------------------------------------------------------
+      const limit = Math.min(Math.max(data.limit ?? 20, 1), 100);
+      const offset = Math.max(data.offset ?? 0, 0);
+
       // ---- Query --------------------------------------------------------------
-      const qb = Ride.createQueryBuilder("ride")
+      const queryBuilder = Ride.createQueryBuilder("ride")
         .innerJoinAndSelect("ride.driver", "driver")
         .where(
           `
@@ -67,16 +71,19 @@ export class RidesResolver {
         })
         .andWhere("ride.is_cancelled = false")
         .andWhere("ride.nb_passenger < ride.max_passenger")
-        .orderBy("ride.departure_at", "ASC");
+        .orderBy("ride.departure_at", "ASC")
+        .addOrderBy("ride.id", "ASC")
+        .take(limit)
+        .skip(offset);
 
-      attachPricingSelects(qb, {
+      attachPricingSelects(queryBuilder, {
         perKm: 0.14,
         minFare: 2.5,
         minFareKm: 10,
         roundTo: 2,
       });
 
-      const { entities: rides, raw } = await qb.getRawAndEntities();
+      const { entities: rides, raw } = await queryBuilder.getRawAndEntities();
 
       hydratePricingFromRaw(rides, raw);
 
@@ -142,35 +149,34 @@ export class RidesResolver {
       throw new Error("Invalid filter");
     }
 
-    // Tri secondaire
+    // secondary sorting
     const order = filter === "archived" ? "DESC" : "ASC";
     baseQuery.orderBy("ride.departure_at", order);
 
-    // 🔹 Clone pour le COUNT (⚠️ pas de selects pricing ici)
-    const countQB = baseQuery.clone();
-    const totalCount = await countQB.getCount();
+    // Clone COUNT
+    const countQueryBuilder = baseQuery.clone();
+    const totalCount = await countQueryBuilder.getCount();
 
-    // 🔹 Clone pour DATA + pricing
-    const dataQB = baseQuery.clone();
+    // Clone DATA + pricing
+    const dataQueryBuilder = baseQuery.clone();
 
-    // 👇 injecte les sélections de prix
-    attachPricingSelects(dataQB, {
+    // injects price selections
+    attachPricingSelects(dataQueryBuilder, {
       perKm: 0.13,
       minFare: 2.5,
       minFareKm: 10,
       roundTo: 2,
     });
-    dataQB.take(limit).skip(offset);
-    // Un seul aller/retour : raw + entities alignés en interne
-    const { entities: rides, raw } = await dataQB.getRawAndEntities();
+    dataQueryBuilder.take(limit).skip(offset);
+    // One round trip: raw + internally aligned entities
+    const { entities: rides, raw } = await dataQueryBuilder.getRawAndEntities();
 
-    // Hydrate via ride_id (indépendant des duplications dues aux LEFT JOINs)
+    // Hydrate via ride_id (independent of duplications due to LEFT JOINs)
     hydratePricingFromRaw(rides, raw);
 
     return { rides, totalCount };
   }
 
-  // Need a Middleware to verify if the user is logged in
   @Authorized("user")
   @Mutation(() => Ride)
   async createRide(@Arg("data", () => RideCreateInput) data: RideCreateInput): Promise<Ride> {
@@ -179,7 +185,7 @@ export class RidesResolver {
       throw new Error(`Validation error: ${JSON.stringify(errors)}`);
     }
 
-    // 1) Essayer de réutiliser une route quasi identique
+    // 1) Trying to reuse a nearly identical route from DB
     let distance_km: number | undefined;
     let duration_min: number | undefined;
     let route_polyline5: string | undefined;
@@ -191,7 +197,7 @@ export class RidesResolver {
         data.departure_lat,
         data.arrival_lng,
         data.arrival_lat,
-        500 // tolérance 500 m (ajuste selon ton besoin)
+        500 // tolerance 500 m
       );
 
       if (cached) {
@@ -199,7 +205,7 @@ export class RidesResolver {
         source = "DB";
         console.log("🚀 ~ RidesResolver ~ createRide ~ source:", source);
       } else {
-        // 2) Sinon → Mapbox en dernier recours
+        // 2) Otherwise Mapbox
         const r = await fetchRouteFromMapbox(
           data.departure_lng,
           data.departure_lat,
@@ -210,18 +216,18 @@ export class RidesResolver {
         duration_min = r.durationMin;
         route_polyline5 = r.polyline5;
         source = "MAPBOX";
-        console.log("🚀 ~ RidesResolver ~ createRide ~ source:", source);
+        console.info("🚀 ~ RidesResolver ~ createRide ~ source:", source);
       }
     } catch (e) {
       source = "NONE";
       console.error("[createRide] route lookup/fetch failed, saving without route.", e);
     }
 
-    // 3) arrival_at = departure_at + durée
+    // 3) arrival_at = departure_at + duration
     const departureAt = new Date(data.departure_at);
     const arrival_at = new Date(departureAt.getTime() + (duration_min ?? 0) * 60_000);
 
-    // 4) Sauvegarde
+    // 4) Save ride
     const newRide = new Ride();
     Object.assign(newRide, {
       ...data,
@@ -244,7 +250,6 @@ export class RidesResolver {
     return newRide;
   }
 
-  // Need a Middleware to verify if the user is logged in and is the user that created the ride
   @Authorized("user")
   @Mutation(() => Ride, { nullable: true })
   async deleteRide(@Arg("id", () => ID) id: number): Promise<Ride | null> {
@@ -301,7 +306,7 @@ export class RidesResolver {
         await notifyUserRideCancelled(user, ride);
       }
 
-      // Met à jour le statut de tous les passagers du trajet à "annulé par le conducteur"
+      // Updates the status of all passengers on the trip to "cancelled by driver"
       await manager
         .createQueryBuilder()
         .update(PassengerRide)
