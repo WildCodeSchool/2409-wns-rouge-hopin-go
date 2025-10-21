@@ -103,7 +103,7 @@ export class PassengerRideResolver {
     const now = new Date();
     const userId = ctx.user.id;
 
-    const qb = Ride.createQueryBuilder("ride")
+    const queryBuilder = Ride.createQueryBuilder("ride")
       // INNER JOIN filters rides by PR of the current user
       .innerJoin("ride.passenger_rides", "pr", "pr.user_id = :userId", {
         userId,
@@ -113,14 +113,14 @@ export class PassengerRideResolver {
       .leftJoinAndSelect("passengerRide.user", "passenger");
 
     if (filter === "upcoming") {
-      qb.andWhere("ride.departure_at > :now", { now });
-      qb.andWhere("ride.is_cancelled = false");
-      qb.andWhere("pr.status IN (:...ok)", {
+      queryBuilder.andWhere("ride.departure_at > :now", { now });
+      queryBuilder.andWhere("ride.is_cancelled = false");
+      queryBuilder.andWhere("pr.status IN (:...ok)", {
         ok: [PassengerRideStatus.WAITING, PassengerRideStatus.APPROVED],
       });
     } else if (filter === "archived") {
       // includes past OR cancelled OR statuses cancelled/refused
-      qb.andWhere(
+      queryBuilder.andWhere(
         `(
         ride.departure_at < :now
         OR ride.is_cancelled = true
@@ -136,7 +136,7 @@ export class PassengerRideResolver {
         }
       );
     } else if (filter === "canceled") {
-      qb.andWhere(
+      queryBuilder.andWhere(
         `ride.is_cancelled = true
        OR pr.status IN (:...arch)`,
         {
@@ -151,32 +151,29 @@ export class PassengerRideResolver {
       throw new Error("Invalid filter");
     }
 
-    qb.addOrderBy("ride.departure_at", sort);
+    queryBuilder.addOrderBy("ride.departure_at", sort);
 
-    // Attach pricing selects (must always reference qualified aliases, e.g., "ride.xxx")
-    attachPricingSelects(qb, {
+    // Attach pricing selects
+    attachPricingSelects(queryBuilder, {
       perKm: 0.14,
       minFare: 2.5,
       minFareKm: 10,
       roundTo: 2,
     });
-
-    // ⚠️ ne pas ajouter de "addSelect('ride.id', 'ride_id')" ni "addSelect('pr.status', ...)"
-    // -> on évite toute ambiguïté
-
+    
     const [rides, totalCount, raw] = await Promise.all([
-      qb.take(limit).skip(offset).getMany(),
-      qb.getCount(),
-      qb.getRawMany(),
+      queryBuilder.take(limit).skip(offset).getMany(),
+      queryBuilder.getCount(),
+      queryBuilder.getRawMany(),
     ]);
 
-    // Hydrate tes prix
+    // Hydrate pricing
     hydratePricingFromRaw(rides, raw);
 
-    // ✅ Hydrate le statut du user courant sans raw : via les entités
+    // Hydrate the current user's status without raw: via entities
     for (const r of rides) {
-      const myPR = r.passenger_rides?.find((x) => x.user_id === userId);
-      r.current_user_passenger_status = myPR?.status ?? undefined;
+      const myPassengerRide = r.passenger_rides?.find((x) => x.user_id === userId);
+      r.current_user_passenger_status = myPassengerRide?.status ?? undefined;
     }
 
     return { rides, totalCount };
@@ -210,36 +207,36 @@ export class PassengerRideResolver {
 
       const ride = await manager.findOne(Ride, {
         where: { id: ride_id },
-        lock: { mode: "pessimistic_write" }, // s'assure qu'un seul utilisateur peut valider ou refuser un passager à la fois
+        lock: { mode: "pessimistic_write" }, // ensures that only one user can validate or reject a passenger at a time
       });
       if (!ride) {
         throw new Error("Ride not found");
       }
 
-      // si on essaie d'approuver un passager alors que le trajet est complet, on bloque l'opération
+      // status change to APPROVED: check if there are still seats
       if (status === PassengerRideStatus.APPROVED && ride.nb_passenger >= ride.max_passenger) {
         throw new Error("This ride is already full");
       }
 
-      // Mise à jour du statut du passager (approuvé ou refusé)
+      // Update the passenger status (approved or refused)
       passengerRide.status = status;
       await manager.save(passengerRide);
 
-      // Notification par e-mail au passager de la validation ou du refus de son trajet
+      // Email notification to the passenger about the validation or refusal of their ride
       if (status === PassengerRideStatus.APPROVED) {
         await notifyUserRideValidation(passengerRide.user, ride);
       } else if (status === PassengerRideStatus.REFUSED) {
         await notifyUserRideRefused(passengerRide.user, ride);
       }
 
-      // Si le passager est approuvé, on incrémente le nombre de passagers du trajet
+      // If approved, increment the number of passengers in the ride
       if (status === PassengerRideStatus.APPROVED) {
         ride.nb_passenger += 1;
         await manager.save(ride);
       }
 
-      // Si le trajet est complet, on met à jour le statut de tous les passagers restants en attente à "refusé"
-      // pour éviter les overbooking
+      // If the ride is full, update the status of all remaining waiting passengers to "refused"
+      // to avoid overbooking
       if (ride.nb_passenger >= ride.max_passenger) {
         await manager
           .createQueryBuilder()
