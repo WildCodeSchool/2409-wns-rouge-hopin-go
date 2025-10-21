@@ -8,8 +8,9 @@ import { VariantType } from "../types/variantTypes";
 import { querySearchRide } from "../api/SearchRide";
 import { PassengerRideStatus, SearchRidesQuery } from "../gql/graphql";
 import Button from "../components/Button";
-import { ArrowLeft, LoaderCircle } from "lucide-react";
+import { LoaderCircle } from "lucide-react";
 import useBreakpoints from "../utils/useWindowSize";
+import SearchRide from "../components/SearchRide";
 
 type SearchRide = SearchRidesQuery["searchRide"][number];
 
@@ -124,19 +125,18 @@ const RideResults = () => {
   };
   // ----End Pagination --------------------------------------------------------------
 
-  if (rides.length === 0 || !rides[selectedIndex]) {
+  if (!loading && (rides.length === 0 || !rides[selectedIndex])) {
     return (
-      <div className="fixed left-1/2 top-1/2 mt-10 -translate-x-1/2 -translate-y-1/2 text-center text-gray-600">
-        Aucun trajet trouvé.
-        <Button
-          icon={ArrowLeft}
-          isLink
-          label="Retour à la recherche"
-          isHoverBgColor
-          variant="primary"
-          className="mt-4"
-          to="/research"
-        />
+      <div className="fixed left-1/2 top-1/2 flex h-full w-full -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center md:h-3/4 md:w-3/4">
+        <div className="sm:border border-textDark sm:rounded-xl shadow-xl max-w-xl  h-full w-full overflow-hidden z-50">
+          <div className="bg-primary px-4 h-full w-full overflow-auto relative">
+            <div className="bg-secondaryHover absolute text-center bottom-[80%] left-1/2 -translate-x-1/2 rounded-lg p-2 w-[384px]">
+              <p className="text-center">Aucun trajet trouvé !</p>
+              <p>Essayez d'élargir vos critères de recherche.</p>
+            </div>
+            <SearchRide variant="searchFormRide" />
+          </div>
+        </div>
       </div>
     );
   }
@@ -187,7 +187,7 @@ const RideResults = () => {
               style={{
                 fill: "#f3f4f6",
                 stroke: "#8e387c",
-                strokeWidth:4,
+                strokeWidth: 4,
               }}
               className="overlay"
               d="M645.72,389.63c0-20.75-13.43-37.57-30-37.57H28c-14.36,0-26-14.58-26-32.56V70.26c0-17.98,11.64-32.56,26-32.56h588.14c16.6,0,30.05-16.89,30-37.69"
