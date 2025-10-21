@@ -273,7 +273,7 @@ The database schema is managed using **TypeORM migrations**.
   ```bash
   npm run typeorm migration:generate ./migrations/title
   ```
-  → This creates a file in `src/migrations/`.
+  → This creates a file in `./migrations/`.
 - These migration files are committed to Git and included in the Docker image during build.
 - On staging and production, migrations are **executed automatically** at startup (via `migrationsRun: true`) or manually:
 
@@ -286,7 +286,7 @@ TypeORM keeps track of applied migrations inside the table migrations in the Pos
 
 After modifying an entity, you must generate a new migration file to reflect this change. This process ensures that your entity code and database schema stay in sync.
 
-**Follow these steps on your local machine:**
+**Follow these steps on your local machine. All of the following commands must be run from within the `/backend` directory.**
 
 > **Warning:** This process includes a destructive command (`schema:drop`) that will erase all data in your local development database. **Never run this on a production database.**
 
@@ -306,12 +306,12 @@ After modifying an entity, you must generate a new migration file to reflect thi
 4.  **Generate the new migration.** TypeORM will now compare the database schema (from step 3) with your updated entity code and generate a file containing the difference.
     ```bash
     # Replace "UpdateUserEntity" with a descriptive name for your change
-    npm run typeorm migration:generate ./src/migrations/UpdateUserEntity
+    npm run typeorm migration:generate ./migrations/UpdateUserEntity
     ```
 
 5.  **Analyze the result:**
     *   **If you see `No changes in database schema were found`:** Your code changes had no impact on the database schema. You can delete the empty migration file if one was created.
-    *   **If a new migration file is generated:** Open the file in `src/migrations/` to review the SQL commands (`UP` and `DOWN`). Ensure they match your expectations. You can edit the file if needed.
+    *   **If a new migration file is generated:** Open the file in `./migrations/` to review the SQL commands (`UP` and `DOWN`). Ensure they match your expectations. You can edit the file if needed.
 
 6.  **Commit the new migration file** to Git. It is now part of the project history and will be executed during deployment.
 
