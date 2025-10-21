@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Bloquer l'admin (exemple)
+Disallow: /admin/
+
+# Exemple de patterns utiles
+# Disallow: /*.pdf$
+# Allow: /images/
+
+Sitemap: http://localhost:8080
