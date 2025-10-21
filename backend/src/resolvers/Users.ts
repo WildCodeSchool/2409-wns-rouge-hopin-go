@@ -118,7 +118,7 @@ export class UsersResolver {
 
     Object.assign(user, data);
 
-    // validation (email sur l'entité)
+    // validation (email on the entity)
     const errors = await validate(user);
     if (errors.length > 0) {
       throw new Error(`Validation error: ${JSON.stringify(errors)}`);
@@ -127,7 +127,7 @@ export class UsersResolver {
     try {
       await user.save();
     } catch (e: any) {
-      // gestion email unique (citext UNIQUE)
+      // handle unique email (citext UNIQUE)
       if (e.code === "23505") {
         throw new Error("This email is already used.");
       }
@@ -144,14 +144,14 @@ export class UsersResolver {
     if (!me) return false;
 
     try {
-      const lambda = await ensureLambdaUser(); // util qui crée/retourne un user "deleted"
+      const lambda = await ensureLambdaUser(); // util that creates/returns a "deleted" user
 
       await User.getRepository().manager.transaction(async (m) => {
-        // 1) Charger l'utilisateur courant
+        // 1) Load the current user
         const user = await m.findOne(User, { where: { id: me.id } });
         if (!user) return;
 
-        // ========= A) PASSAGER : annuler + décrémenter si APPROVED, puis réassigner au lambda
+        // ========= A) PASSENGER: cancel + decrement if APPROVED, then reassign to lambda
         const prs = await m.find(PassengerRide, {
           where: { user_id: user.id },
           relations: { ride: true },
@@ -180,7 +180,7 @@ export class UsersResolver {
           .where("user_id = :uid", { uid: user.id })
           .execute();
 
-        // ========= B) CONDUCTEUR : marquer les trajets et passagers, réassigner driver_id
+        // ========= B) DRIVER: Mark trips and passengers, reassign driver_id
         const driverRideRows: { id: number }[] = await m.query(
           `SELECT id FROM "ride" WHERE driver_id = $1`,
           [user.id]
@@ -188,7 +188,7 @@ export class UsersResolver {
         const driverRideIds = driverRideRows.map((r) => r.id);
 
         if (driverRideIds.length) {
-          // Passagers de ces trajets → CANCELLED_BY_DRIVER
+          // Passengers on these trips → CANCELLED_BY_DRIVER
           await m
             .createQueryBuilder()
             .update(PassengerRide)
@@ -207,18 +207,18 @@ export class UsersResolver {
             .where("id IN (:...rids)", { rids: driverRideIds })
             .execute();
 
-          // Réassigner le driver **via la FK** (relation non gérée par .set)
+          // Reassign the driver to lambda user
           await m.query(
             `UPDATE "ride" SET driver_id = $1 WHERE id = ANY($2::int[])`,
             [lambda.id, driverRideIds]
           );
         }
 
-        // ========= C) Supprimer l'utilisateur réel
+        // ========= C) Delete real user
         await m.delete(User, { id: user.id });
       });
 
-      // D) Logout (même logique que signout)
+      // D) Logout (same logic as signout)
       const cookies = new Cookies(context.req, context.res, {
         secure: process.env.NODE_ENV === "production",
       });
@@ -235,7 +235,7 @@ export class UsersResolver {
     }
   }
 
-  // Pas de décorateur ici, c'est intentionnel
+  // No decorator here, it's intentional
   @Query(() => User, { nullable: true })
   async whoami(@Ctx() context: ContextType): Promise<User | null> {
     // return getUserFromContext(context);

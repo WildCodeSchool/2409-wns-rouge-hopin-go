@@ -48,7 +48,7 @@ export class PassengerRideResolver {
     return await datasource.transaction(async (manager) => {
       const ride = await manager.findOne(Ride, {
         where: { id: data.ride_id },
-        lock: { mode: "pessimistic_write" }, // s'assure qu'un seul utilisateur peut réserver le trajet à la fois
+        lock: { mode: "pessimistic_write" }, // ensures that only one user can book the ride at a time
       });
 
       if (!ride) throw new Error("Ride not found");
@@ -68,16 +68,16 @@ export class PassengerRideResolver {
         throw new Error("You cannot book your own ride");
       }
 
-      // Vérification du nombre de places restantes
+      // Check remaining seats
       if (ride.nb_passenger >= ride.max_passenger) {
         throw new Error("This ride is already full");
       }
 
-      // Création du tuple PassengerRide
+      // Create PassengerRide tuple
       const newPassengerRide = manager.create(PassengerRide, data);
       await manager.save(newPassengerRide);
 
-      // Notification par email au conducteur
+      // Email notification to the driver
       const driver = await manager.findOneByOrFail(User, {
         id: rideWithDriver.driver.id,
       });
@@ -104,7 +104,7 @@ export class PassengerRideResolver {
     const userId = ctx.user.id;
 
     const qb = Ride.createQueryBuilder("ride")
-      // L’INNER JOIN filtre les rides par PR du user courant
+      // INNER JOIN filters rides by PR of the current user
       .innerJoin("ride.passenger_rides", "pr", "pr.user_id = :userId", {
         userId,
       })
@@ -119,7 +119,7 @@ export class PassengerRideResolver {
         ok: [PassengerRideStatus.WAITING, PassengerRideStatus.APPROVED],
       });
     } else if (filter === "archived") {
-      // ✅ inclut passés OU annulés OU statuts annulés/refusés
+      // includes past OR cancelled OR statuses cancelled/refused
       qb.andWhere(
         `(
         ride.departure_at < :now
@@ -153,7 +153,7 @@ export class PassengerRideResolver {
 
     qb.addOrderBy("ride.departure_at", sort);
 
-    // ⬇️ tes sélections de pricing (doivent toujours référencer des alias qualifiés, ex: "ride.xxx")
+    // Attach pricing selects (must always reference qualified aliases, e.g., "ride.xxx")
     attachPricingSelects(qb, {
       perKm: 0.14,
       minFare: 2.5,

@@ -2,7 +2,7 @@
 import argon2 from "argon2";
 import { User } from "../entities/User";
 
-export const LAMBDA_EMAIL = "deleted@system.local";
+export const LAMBDA_EMAIL = "";
 
 export async function ensureLambdaUser(): Promise<User> {
   let u = await User.findOne({ where: { email: LAMBDA_EMAIL } });
