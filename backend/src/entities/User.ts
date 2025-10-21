@@ -124,6 +124,9 @@ export class UserUpdateInput {
   email?: string;
 
   @Field({ nullable: true })
+  currentPassword?: string;
+
+  @Field({ nullable: true })
   @MinLength(8, { message: "Password must be at least 8 characters long" })
   @MaxLength(32, { message: "Password cannot exceed 32 characters" })
   @Matches(/[a-z]/, {

@@ -8,6 +8,7 @@ import { ContextType } from "../auth";
 import { ensureLambdaUser } from "../utils/ensureLambdaUserAfterDeleted";
 import { PassengerRide, PassengerRideStatus } from "../entities/PassengerRide";
 import { Ride } from "../entities/Ride";
+import { GraphQLError } from "graphql";
 
 @Resolver()
 export class UsersResolver {
@@ -96,52 +97,78 @@ export class UsersResolver {
     }
   }
 
-  @Authorized("user")
-  @Mutation(() => User, { nullable: true })
-  async updateMyAccount(
-    @Ctx() context: ContextType,
-    @Arg("data", () => UserUpdateInput) data: UserUpdateInput
-  ): Promise<User | null> {
-    const me = context.user;
-    if (!me) return null;
 
-    const user = await User.findOneBy({ id: me.id });
-    if (!user) return null;
+@Authorized("user")
+@Mutation(() => User, { nullable: true })
+async updateMyAccount(
+  @Ctx() context: ContextType,
+  @Arg("data", () => UserUpdateInput) data: UserUpdateInput
+): Promise<User | null> {
+  const me = context.user;
+  if (!me) return null;
 
-    // Hash si password fourni
-    if (data.password) {
-      const hashedPassword = await argon2.hash(data.password);
-      // on ne persiste jamais le champ 'password' brut
-      delete data.password;
-      (data as any).hashedPassword = hashedPassword;
+  const user = await User.findOneBy({ id: me.id });
+  if (!user) return null;
+
+  // 1) If requesting a password change: require and verify currentPassword
+  if (data.password) {
+    if (!data.currentPassword) {
+      throw new GraphQLError("Current password is required.", {
+        extensions: { code: "BAD_USER_INPUT", field: "currentPassword" },
+      });
     }
-
-    Object.assign(user, data);
-
-    // validation (email on the entity)
-    const errors = await validate(user);
-    if (errors.length > 0) {
-      throw new Error(`Validation error: ${JSON.stringify(errors)}`);
+    const ok = await argon2.verify(user.hashedPassword, data.currentPassword);
+    if (!ok) {
+      throw new GraphQLError("Current password is invalid.", {
+        extensions: { code: "BAD_USER_INPUT", field: "currentPassword" },
+      });
     }
-
-    try {
-      await user.save();
-    } catch (e: any) {
-      // handle unique email (citext UNIQUE)
-      if (e.code === "23505") {
-        throw new Error("This email is already used.");
-      }
-      throw e;
-    }
-
-    return user;
+    // 2) Hash the new password
+    user.hashedPassword = await argon2.hash(data.password);
   }
+
+  // 3) Never persist these raw fields
+  delete (data as any).password;
+  delete (data as any).currentPassword;
+
+  // 4) Apply the rest (email/firstname/lastname) and validate the entity
+  Object.assign(user, data);
+
+  const errors = await validate(user);
+  if (errors.length > 0) {
+    throw new GraphQLError("Invalid data.", { extensions: { code: "BAD_USER_INPUT" } });
+  }
+
+  try {
+    await user.save();
+  } catch (e: any) {
+    if (e.code === "23505") {
+      throw new GraphQLError("This email is already in use.", {
+        extensions: { code: "BAD_USER_INPUT", field: "email" },
+      });
+    }
+    throw e;
+  }
+
+  return user;
+}
+
 
   @Authorized("user")
   @Mutation(() => Boolean)
-  async deleteMyAccount(@Ctx() context: ContextType): Promise<boolean> {
+  async deleteMyAccount(@Ctx() context: ContextType, @Arg("currentPassword") currentPassword: string): Promise<boolean> {
     const me = context.user;
     if (!me) return false;
+
+     const userForCheck = await User.findOneBy({ id: me.id });
+  if (!userForCheck) return false;
+
+  const ok = await argon2.verify(userForCheck.hashedPassword, currentPassword);
+  if (!ok) {
+    throw new GraphQLError("Invalid current password.", {
+      extensions: { code: "BAD_USER_INPUT", field: "currentPassword" },
+    });
+  }
 
     try {
       const lambda = await ensureLambdaUser(); // util that creates/returns a "deleted" user
