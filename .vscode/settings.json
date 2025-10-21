@@ -1,16 +1,5 @@
 {
-  // "github.copilot.enable": {
-  //   "*": true,
-  //   "plaintext": false,
-  //   "markdown": false,
-  //   "scminput": false
-  // },
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "eslint.validate": [
-    "javascript",
-    "javascriptreact",
-    "typescript",
-    "typescriptreact"
-  ],
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"]
 }
