@@ -39,11 +39,12 @@ export type Mutation = {
   createPassengerRide: PassengerRide;
   createRide: Ride;
   createUser: User;
+  deleteMyAccount: Scalars['Boolean']['output'];
   deleteRide?: Maybe<Ride>;
-  deleteUser?: Maybe<User>;
   driverSetPassengerRideStatus: PassengerRide;
   signin?: Maybe<User>;
   signout: Scalars['Boolean']['output'];
+  updateMyAccount?: Maybe<User>;
 };
 
 
@@ -72,11 +73,6 @@ export type MutationDeleteRideArgs = {
 };
 
 
-export type MutationDeleteUserArgs = {
-  id: Scalars['ID']['input'];
-};
-
-
 export type MutationDriverSetPassengerRideStatusArgs = {
   data: DriverSetPassengerRideStatusInput;
 };
@@ -85,6 +81,11 @@ export type MutationDriverSetPassengerRideStatusArgs = {
 export type MutationSigninArgs = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
+};
+
+
+export type MutationUpdateMyAccountArgs = {
+  data: UserUpdateInput;
 };
 
 export type PaginatedRides = {
@@ -209,6 +210,8 @@ export type SearchRideInput = {
   departure_lat: Scalars['Float']['input'];
   departure_lng: Scalars['Float']['input'];
   departure_radius: Scalars['Float']['input'];
+  limit?: InputMaybe<Scalars['Int']['input']>;
+  offset?: InputMaybe<Scalars['Int']['input']>;
 };
 
 export type User = {
@@ -226,6 +229,11 @@ export type UserCreateInput = {
   firstName: Scalars['String']['input'];
   lastName: Scalars['String']['input'];
   password: Scalars['String']['input'];
+};
+
+export type UserUpdateInput = {
+  email?: InputMaybe<Scalars['String']['input']>;
+  password?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CreatePassengerRideMutationVariables = Exact<{
