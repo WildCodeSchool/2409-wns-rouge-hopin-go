@@ -78,7 +78,7 @@ docker compose ps
 
 ### 3. On Windows: launch codegen
 
-To update typescript types, use:
+To automatically update TypeScript types when the GraphQL schema changes, run this command in a separate terminal:
 
 ```bash
 cd frontend
@@ -95,7 +95,7 @@ Once the containers are running, you can access the services:
 ## Example Commands
 
 - **Rebuild**
-  To rebuild if if you added dependencies, modified the dockerfile or compose.yml:
+  To rebuild if you added dependencies, modified the dockerfile or compose.yml:
 
 ```bash
 docker compose up --build -d
@@ -154,7 +154,7 @@ npx eslint . --fix
 
 ## Manual Tests
 
-To check the code quality and non-regression before pushing to github you must run the tests manually:
+To check the code quality and non-regression before pushing to Github you **must** run the tests manually:
 
 ### Running Tests Manually
 
@@ -170,6 +170,8 @@ npm run test:postgres
 
 ## Deployment Workflow (CI/CD/Deployment)
 
+This section describes the full deployment pipeline, from code validation (CI) to automatic staging deployment and manual production deployment.
+
 ### 1. Continuous Integration (CI)
 
 The **CI (Continuous Integration)** pipeline runs automatically on each push to the `dev` and `main` branch:
@@ -180,7 +182,7 @@ The **CI (Continuous Integration)** pipeline runs automatically on each push to 
 
 This ensures that each validated update is deployed automatically.
 
-## 2. Staging Deployment (Automatic)
+### 2. Staging Deployment (Automatic)
 
 The project is deployed automatically through **GitHub Actions (CI)** and a **webhook** configured on the remote server.
 
@@ -191,17 +193,17 @@ The **CD (Continuous Deployment)** process is handled by a **webhook** after the
 
 This ensures that each validated update is deployed automatically.
 
-To see the project in staging, click on :
+You can access the deployed project in staging here:
 [https://staging.092024-rouge-5.wns.wilders.dev/](https://staging.092024-rouge-5.wns.wilders.dev/)
 
 ### 3. Production Deployment (Manual)
 
-The **Deployment** process is handled manually after the push on `main` branch once the staging project is validated by the team:
+The **production deployment** process is is triggered manually after pushing to the `main` branch, once the staging version has been validated by the team : 
 
 - It pulls the latest images from DockerHub with "latest" tag
 - Then restarts the containers using **Docker Compose** on the server
 
-To see the project deployed, click on :
+You can access the deployed project in production here: 
 [https://092024-rouge-5.wns.wilders.dev/](https://092024-rouge-5.wns.wilders.dev/)
 
 ## Manual Server Management
@@ -262,7 +264,7 @@ Navigate to the appropriate directory (`hopingo-staging` or `hopingo-prod`) befo
   tail -f /home/wns_student/apps/hopingo-prod/nginx/logs/access.log
   ```
 
-
 ### 4. Database Migrations
 TODO
+
 
