@@ -102,18 +102,22 @@ export class UsersResolver {
 
   @Mutation(() => VerifyEmailResponse)
   async verifyEmail(@Arg("token") token: string): Promise<VerifyEmailResponse> {
+    console.log("[VERIFY] Mutation appelée !");
+
     try {
       const decoded = verify(token, process.env.JWT_VERIFY_SECRET || "") as unknown as {
         userId: number;
       };
+      console.log("DECODE>>>>>", decoded);
       const user = await User.findOne({ where: { id: decoded.userId } });
 
       if (!user) throw new Error("User not found");
       if (user.isVerified) return { success: true, message: "Already verfied" };
+      console.log("userverified>>>>>>>", user.isVerified);
 
       user.isVerified = true;
       await user.save();
-
+      console.log("[VERIFY] ✅ Email vérifié pour l’utilisateur :", user.email);
       return { success: true, message: "Email verified successfully!" };
     } catch (error) {
       console.error("Verification error :", error);
