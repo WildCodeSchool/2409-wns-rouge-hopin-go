@@ -28,8 +28,15 @@ const Verify = () => {
     }
 
     if (!result) return;
-    if (result.success) {
-      toast.success(`Email vérifié — Redirection en cours...`);
+
+    const isSuccess =
+      result.success &&
+      ["Email verified successfully!", "Already verified"].includes(result.message);
+
+    if (isSuccess) {
+      toast.success(
+        `${result.message === "Already verified" ? "Email déjà vérifié" : "Email vérifié"} — Redirection en cours...`
+      );
       setTimeout(() => navigate("/auth/signin"), 3000);
     } else {
       toast.error("Lien invalide ou expiré. Veuillez recommencer votre inscription.");
@@ -38,22 +45,29 @@ const Verify = () => {
 
   if (loading) return <p>Vérification en cours...</p>;
 
+  const messages: Record<string, { title: string; text: string }> = {
+    "Email verified successfully!": {
+      title: "Votre email est vérifié.",
+      text: "Vous allez être redirigé automatiquement vers la page de connexion.",
+    },
+    "Already verified": {
+      title: "Votre email a déjà été vérifié.",
+      text: "Vous allez être redirigé automatiquement vers la page de connexion.",
+    },
+    default: {
+      title: "Lien invalide ou expiré.",
+      text: "Veuillez recommencer votre inscription.",
+    },
+  };
+  const message = messages[result?.message || "default"];
+
   return (
     <div className="flex h-screen items-center justify-center bg-gray-50">
       <div className="bg-primary flex h-1/3 w-2/3 flex-col items-center justify-center rounded-xl text-white shadow-lg">
-        {result?.success ? (
-          <>
-            <h1 className="text-center text-xl font-semibold">Votre email est vérifié.</h1>
-            <p className="mt-2 text-center">
-              Vous allez être redirigé automatiquement vers la page de connexion.
-            </p>
-          </>
-        ) : (
-          <>
-            <h1 className="text-center text-xl font-semibold">Lien invalide ou expiré.</h1>
-            <p className="mt-2 text-center">Veuillez recommencer votre inscription.</p>
-          </>
-        )}
+        <>
+          <h1 className="text-center text-xl font-semibold">{message.title}</h1>
+          <p className="mt-2 text-center">{message.text}</p>
+        </>
       </div>
     </div>
   );
