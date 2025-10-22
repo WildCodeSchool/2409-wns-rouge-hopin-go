@@ -1,4 +1,4 @@
-import { Arg, Authorized, Ctx, ID, Mutation, Query, Resolver } from "type-graphql";
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
 import { User, UserCreateInput, UserUpdateInput } from "../entities/User";
 import { validate } from "class-validator";
 import argon2 from "argon2";
@@ -35,6 +35,9 @@ export class UsersResolver {
     try {
       const user = await User.findOneBy({ email });
       if (user) {
+        if (!user.isVerified) {
+          throw new Error("Unverified Email");
+        }
         if (await argon2.verify(user.hashedPassword, password)) {
           const token = sign(
             {
@@ -64,7 +67,7 @@ export class UsersResolver {
       }
     } catch (e) {
       console.error(e);
-      return null;
+      throw e;
     }
   }
 
@@ -102,22 +105,19 @@ export class UsersResolver {
 
   @Mutation(() => VerifyEmailResponse)
   async verifyEmail(@Arg("token") token: string): Promise<VerifyEmailResponse> {
-    console.log("[VERIFY] Mutation appelée !");
-
     try {
       const decoded = verify(token, process.env.JWT_VERIFY_SECRET || "") as unknown as {
         userId: number;
       };
-      console.log("DECODE>>>>>", decoded);
+
       const user = await User.findOne({ where: { id: decoded.userId } });
 
       if (!user) throw new Error("User not found");
       if (user.isVerified) return { success: true, message: "Already verfied" };
-      console.log("userverified>>>>>>>", user.isVerified);
 
       user.isVerified = true;
       await user.save();
-      console.log("[VERIFY] ✅ Email vérifié pour l’utilisateur :", user.email);
+
       return { success: true, message: "Email verified successfully!" };
     } catch (error) {
       console.error("Verification error :", error);

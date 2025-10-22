@@ -71,7 +71,7 @@ export default function Signup() {
       setEmail("");
       setPassword("");
       setConfirmPassword("");
-      toast.success("Inscription réussie !");
+      toast.success("Inscription réussie ! Vous allez recevoir un mail pour valider votre compte.");
       setError({});
     } catch (e: unknown) {
       console.error(e);
@@ -82,7 +82,7 @@ export default function Signup() {
   }
 
   return (
-    <form className="flex flex-col justify-center items-center max-w-sm mx-auto w-full h-full px-4 sm:py-8">
+    <form className="mx-auto flex h-full w-full max-w-sm flex-col items-center justify-center px-4 sm:py-8">
       {/* Prénom */}
       <div className="mb-5 w-full">
         <label htmlFor="first-name" className="text-textLight mb-2 block text-sm font-medium">
@@ -102,14 +102,15 @@ export default function Signup() {
           placeholder="Jean"
           value={firstName}
           onChange={(e) =>
-            setFirstName(
-              e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1)
-            )
+            setFirstName(e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1))
           }
           aria-describedby={error.firstName ? "first-name-error" : undefined}
         />
         {error.firstName && error.firstName.length > 0 && (
-          <p id="first-name-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
+          <p
+            id="first-name-error"
+            className="text-full mt-2 w-fit self-start rounded-lg bg-gray-50 px-2 py-1 text-sm"
+          >
             {formatErrors(error.firstName)}
           </p>
         )}
@@ -135,14 +136,15 @@ export default function Signup() {
           placeholder="Dupont"
           value={lastName}
           onChange={(e) =>
-            setLastName(
-              e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1)
-            )
+            setLastName(e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1))
           }
           aria-describedby={error.lastName ? "last-name-error" : undefined}
         />
         {error.lastName && error.lastName.length > 0 && (
-          <p id="last-name-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
+          <p
+            id="last-name-error"
+            className="text-full mt-2 w-fit self-start rounded-lg bg-gray-50 px-2 py-1 text-sm"
+          >
             {formatErrors(error.lastName)}
           </p>
         )}
@@ -168,7 +170,10 @@ export default function Signup() {
           aria-describedby={error.email ? "email-error" : undefined}
         />
         {error.email && error.email.length > 0 && (
-          <p id="email-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
+          <p
+            id="email-error"
+            className="text-full mt-2 w-fit self-start rounded-lg bg-gray-50 px-2 py-1 text-sm"
+          >
             {formatErrors(error.email)}
           </p>
         )}
@@ -199,7 +204,7 @@ export default function Signup() {
 
           <button
             type="button"
-            className="-ml-9 bg-gray-200 rounded-lg p-2 m-1"
+            className="m-1 -ml-9 rounded-lg bg-gray-200 p-2"
             onClick={() => setRevealPassword(!revealPassword)}
             aria-label={revealPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
           >
@@ -211,7 +216,10 @@ export default function Signup() {
           </button>
         </div>
         {error.password && error.password.length > 0 && (
-          <p id="password-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
+          <p
+            id="password-error"
+            className="text-full mt-2 w-fit self-start rounded-lg bg-gray-50 px-2 py-1 text-sm"
+          >
             {formatErrors(error.password)}
           </p>
         )}
@@ -239,12 +247,8 @@ export default function Signup() {
           />
           <button
             type="button"
-            aria-label={
-              revealPassword
-                ? "Masquer le mot de passe"
-                : "Afficher le mot de passe"
-            }
-            className="-ml-9 bg-gray-200 rounded-lg p-2 m-1"
+            aria-label={revealPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+            className="m-1 -ml-9 rounded-lg bg-gray-200 p-2"
             onClick={() => setRevealPassword(!revealPassword)}
           >
             {revealPassword ? (
@@ -255,23 +259,27 @@ export default function Signup() {
           </button>
         </div>
         {error.confirmPassword && error.confirmPassword.length > 0 && (
-          <p role="alert" id="confirm-password-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
+          <p
+            role="alert"
+            id="confirm-password-error"
+            className="text-full mt-2 w-fit self-start rounded-lg bg-gray-50 px-2 py-1 text-sm"
+          >
             {formatErrors(error.confirmPassword)}
           </p>
         )}
       </div>
 
       {/* Bouton */}
-      <div className="flex w-full justify-end">       
-         <Button
-        type="button"
-        onClick={doSubmit}
-              disabled={loadingCreateUser}
-              icon={loadingCreateUser ? LoaderCircle : undefined}
-              iconRotateAnimation={loadingCreateUser}
-              label={loadingCreateUser ? "Inscription..." : "S'inscrire"}
-              variant={loadingCreateUser ? "pending" : "secondary"}
-            />
+      <div className="flex w-full justify-end">
+        <Button
+          type="button"
+          onClick={doSubmit}
+          disabled={loadingCreateUser}
+          icon={loadingCreateUser ? LoaderCircle : undefined}
+          iconRotateAnimation={loadingCreateUser}
+          label={loadingCreateUser ? "Inscription..." : "S'inscrire"}
+          variant={loadingCreateUser ? "pending" : "secondary"}
+        />
       </div>
     </form>
   );
