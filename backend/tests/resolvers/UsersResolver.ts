@@ -88,7 +88,14 @@ export function UsersResolverTest(testArgs: TestArgsType) {
       const userFromDb = await User.findOneBy({
         id: response.body.singleResult.data?.createUser?.id,
       });
+
       expect(userFromDb).toBeDefined();
+
+      if (userFromDb) {
+        userFromDb.isVerified = true;
+        await userFromDb.save();
+        expect(userFromDb.isVerified).toBe(true);
+      }
       expect(userFromDb?.email).toBe("test@test.fr");
       expect(userFromDb?.hashedPassword).not.toBe("Test1234!");
       testArgs.data.userId = response.body.singleResult.data?.createUser?.id;
