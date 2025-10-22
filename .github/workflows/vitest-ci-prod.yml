@@ -44,6 +44,7 @@ jobs:
       MAPBOX_DIRECTIONS_TOKEN: ${{ secrets.MAPBOX_DIRECTIONS_TOKEN }}
       NODE_ENV: ${{ secrets.NODE_ENV }}
       JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+      JWT_VERIFY_SECRET: ${{ secrets.JWT_VERIFY_SECRET }}
     steps:
       - name: Check out code
         uses: actions/checkout@v4
