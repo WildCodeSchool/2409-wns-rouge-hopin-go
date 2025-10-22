@@ -35,59 +35,102 @@ export class PassengerRideResolver {
     }
   }
 
-  @Authorized("user")
-  @Mutation(() => PassengerRide)
-  async createPassengerRide(
-    @Arg("data", () => CreatePassengerRideInput) data: CreatePassengerRideInput,
-    @Ctx() { user }: ContextType
-  ): Promise<PassengerRide> {
-    const errors = await validate(data);
-    if (errors.length > 0) {
-      throw new Error(`Validation error: ${JSON.stringify(errors)}`);
-    }
-    return await datasource.transaction(async (manager) => {
-      const ride = await manager.findOne(Ride, {
-        where: { id: data.ride_id },
-        lock: { mode: "pessimistic_write" }, // ensures that only one user can book the ride at a time
-      });
-
-      if (!ride) throw new Error("Ride not found");
-
-      if (user === null) {
-        throw new Error("Unauthenticated user");
-      }
-
-      const rideWithDriver = await manager.findOne(Ride, {
-        where: { id: data.ride_id },
-        relations: ["driver"],
-      });
-
-      if (!rideWithDriver) throw new Error("Driver not found");
-
-      if (rideWithDriver.driver.id === user!.id) {
-        throw new Error("You cannot book your own ride");
-      }
-
-      // Check remaining seats
-      if (ride.nb_passenger >= ride.max_passenger) {
-        throw new Error("This ride is already full");
-      }
-
-      // Create PassengerRide tuple
-      const newPassengerRide = manager.create(PassengerRide, data);
-      await manager.save(newPassengerRide);
-
-      // Email notification to the driver
-      const driver = await manager.findOneByOrFail(User, {
-        id: rideWithDriver.driver.id,
-      });
-      const passenger = await manager.findOneByOrFail(User, {
-        id: data.user_id,
-      });
-      await notifyDriverNewPassenger(driver, passenger, ride);
-      return newPassengerRide;
-    });
+ @Authorized("user")
+@Mutation(() => PassengerRide)
+async createPassengerRide(
+  @Arg("data", () => CreatePassengerRideInput) data: CreatePassengerRideInput,
+  @Ctx() { user }: ContextType
+): Promise<PassengerRide> {
+  const errors = await validate(data);
+  if (errors.length > 0) {
+    throw new Error(`Validation error: ${JSON.stringify(errors)}`);
   }
+
+  if (!user) throw new Error("Unauthenticated user");
+
+  return await datasource.transaction(async (manager) => {
+    // Lock the ride row to prevent concurrent seat booking
+    const ride = await manager.findOne(Ride, {
+      where: { id: data.ride_id },
+      lock: { mode: "pessimistic_write" },
+    });
+    if (!ride) throw new Error("Ride not found");
+
+    // Load the ride with driver relation
+    const rideWithDriver = await manager.findOne(Ride, {
+      where: { id: data.ride_id },
+      relations: ["driver"],
+    });
+    if (!rideWithDriver) throw new Error("Driver not found");
+
+    // Prevent drivers from booking their own ride
+    if (rideWithDriver.driver.id === user.id) {
+      throw new Error("You cannot book your own ride");
+    }
+
+    // Check remaining seats
+    if (ride.nb_passenger >= ride.max_passenger) {
+      throw new Error("This ride is already full");
+    }
+
+    // Check if a PassengerRide tuple already exists for this user and ride
+    const existing = await manager.findOne(PassengerRide, {
+      where: { user_id: data.user_id, ride_id: data.ride_id },
+    });
+
+    if (existing) {
+      // Already approved or waiting -> block rebooking
+      if (
+        existing.status === PassengerRideStatus.WAITING ||
+        existing.status === PassengerRideStatus.APPROVED
+      ) {
+        throw new Error("You already have a reservation for this ride");
+      }
+
+      // Rebooking allowed only if the passenger cancelled themselves
+      if (existing.status === PassengerRideStatus.CANCELLED_BY_PASSENGER) {
+        existing.status = PassengerRideStatus.WAITING;
+        await manager.save(existing);
+
+        // Send email notification to the driver
+        const driver = await manager.findOneByOrFail(User, {
+          id: rideWithDriver.driver.id,
+        });
+        const passenger = await manager.findOneByOrFail(User, {
+          id: data.user_id,
+        });
+        await notifyDriverNewPassenger(driver, passenger, ride);
+
+        return existing;
+      }
+
+      // Rebooking blocked if the driver refused the passenger
+      if (existing.status === PassengerRideStatus.REFUSED) {
+        throw new Error("You cannot rebook this ride because the driver refused your request");
+      }
+    }
+
+    // Create a new PassengerRide entry
+    const newPassengerRide = manager.create(PassengerRide, {
+      user_id: data.user_id,
+      ride_id: data.ride_id,
+      status: PassengerRideStatus.WAITING,
+    });
+    await manager.save(newPassengerRide);
+
+    // Send notification email to the driver
+    const driver = await manager.findOneByOrFail(User, {
+      id: rideWithDriver.driver.id,
+    });
+    const passenger = await manager.findOneByOrFail(User, {
+      id: data.user_id,
+    });
+    await notifyDriverNewPassenger(driver, passenger, ride);
+
+    return newPassengerRide;
+  });
+}
+
 
   @Authorized("user")
   @Query(() => PaginatedRides)
@@ -250,6 +293,85 @@ export class PassengerRideResolver {
       }
 
       return passengerRide;
+    });
+  }
+
+  @Authorized("user")
+  @Mutation(() => PassengerRide)
+  async passengerWithdrawFromRide(
+    @Arg("ride_id", () => ID) ride_id: number,
+    @Ctx() ctx: AuthContextType
+  ): Promise<PassengerRide> {
+    const userId = ctx.user?.id;
+    if (!userId) throw new Error("Unauthorized");
+
+    return await datasource.transaction("READ COMMITTED", async (manager) => {
+      const pr = await manager
+        .getRepository(PassengerRide)
+        .createQueryBuilder("pr")
+        .setLock("pessimistic_write")
+        .where("pr.user_id = :userId AND pr.ride_id = :rideId", { userId, rideId: ride_id })
+        .getOne();
+
+      if (!pr) throw new Error("Passenger ride not found");
+      if (pr.user_id !== userId) {
+        throw new Error("Only the passenger of the ride can withdraw from the ride");
+      }
+
+      const r = await manager
+        .getRepository(Ride)
+        .createQueryBuilder("r")
+        .setLock("pessimistic_write")
+        .where("r.id = :rideId", { rideId: ride_id })
+        .getOne();
+
+      if (!r) throw new Error("Ride not found");
+
+      const now = new Date();
+      if (r.departure_at && r.departure_at <= now) {
+        throw new Error("Ride already started or finished");
+      }
+
+      // 4) Idempotence: if already cancelled, just return the existing record
+      if (
+        pr.status === PassengerRideStatus.CANCELLED_BY_PASSENGER ||
+        pr.status === PassengerRideStatus.CANCELLED_BY_DRIVER
+      ) {
+        // Reload with relations for the response
+        const already = await manager.getRepository(PassengerRide).findOneOrFail({
+          where: { user_id: userId, ride_id },
+          relations: { user: true, ride: { driver: true } },
+        });
+        return already;
+      }
+
+      // 5) If APPROVED, atomically decrement the counter, without going below 0
+      if (pr.status === PassengerRideStatus.APPROVED) {
+        await manager
+          .getRepository(Ride)
+          .createQueryBuilder()
+          .update(Ride)
+          .set({ nb_passenger: () => "GREATEST(nb_passenger - 1, 0)" })
+          .where("id = :rideId", { rideId: ride_id })
+          .execute();
+      }
+
+      // 6) Update the status of the PassengerRide
+      await manager
+        .getRepository(PassengerRide)
+        .createQueryBuilder()
+        .update(PassengerRide)
+        .set({ status: PassengerRideStatus.CANCELLED_BY_PASSENGER })
+        .where("user_id = :userId AND ride_id = :rideId", { userId, rideId: ride_id })
+        .execute();
+
+      // 7) Reload with relations for the response
+      const updated = await manager.getRepository(PassengerRide).findOneOrFail({
+        where: { user_id: userId, ride_id },
+        relations: { user: true, ride: { driver: true } },
+      });
+
+      return updated;
     });
   }
 }
