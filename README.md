@@ -323,13 +323,6 @@ Before running the steps below, temporarily set NODE_ENV to `prod` in the projec
 
 After you have generated, reviewed and committed the migration, make sure to set `NODE_ENV` back to `dev` in `backend.env` so you resume normal local development.
 
-If you changed containers/config while producing migrations, restart the local stack:
-
-```bash
-docker compose down
-docker compose up --build
-```
-
 ### Undo the last migration
 
 If there is a problem while performing a migration, it is possible to revert to the previous state of the schema:
