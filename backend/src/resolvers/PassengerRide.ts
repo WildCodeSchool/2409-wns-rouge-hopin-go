@@ -13,6 +13,7 @@ import { ContextType } from "../auth";
 import { attachPricingSelects, hydratePricingFromRaw } from "../utils/attachPricingSelects";
 import {
   notifyDriverNewPassenger,
+  notifyDriverPassengerWithdraw,
   notifyUserRideRefused,
   notifyUserRideValidation,
 } from "../mail/rideEmails";
@@ -181,7 +182,7 @@ async createPassengerRide(
     } else if (filter === "canceled") {
       queryBuilder.andWhere(
         `ride.is_cancelled = true
-       OR pr.status IN (:...arch)`,
+        OR pr.status IN (:...arch)`,
         {
           arch: [
             PassengerRideStatus.CANCELLED_BY_DRIVER,
@@ -214,9 +215,9 @@ async createPassengerRide(
     hydratePricingFromRaw(rides, raw);
 
     // Hydrate the current user's status without raw: via entities
-    for (const r of rides) {
-      const myPassengerRide = r.passenger_rides?.find((x) => x.user_id === userId);
-      r.current_user_passenger_status = myPassengerRide?.status ?? undefined;
+    for (const ride of rides) {
+      const myPassengerRide = ride.passenger_rides?.find((x) => x.user_id === userId);
+      ride.current_user_passenger_status = myPassengerRide?.status ?? undefined;
     }
 
     return { rides, totalCount };
@@ -306,36 +307,37 @@ async createPassengerRide(
     if (!userId) throw new Error("Unauthorized");
 
     return await datasource.transaction("READ COMMITTED", async (manager) => {
-      const pr = await manager
+      const passengerRide = await manager
         .getRepository(PassengerRide)
         .createQueryBuilder("pr")
         .setLock("pessimistic_write")
         .where("pr.user_id = :userId AND pr.ride_id = :rideId", { userId, rideId: ride_id })
         .getOne();
 
-      if (!pr) throw new Error("Passenger ride not found");
-      if (pr.user_id !== userId) {
+      if (!passengerRide) throw new Error("Passenger ride not found");
+      if (passengerRide.user_id !== userId) {
         throw new Error("Only the passenger of the ride can withdraw from the ride");
       }
 
-      const r = await manager
+      const ride = await manager
         .getRepository(Ride)
         .createQueryBuilder("r")
         .setLock("pessimistic_write")
         .where("r.id = :rideId", { rideId: ride_id })
         .getOne();
 
-      if (!r) throw new Error("Ride not found");
+      if (!ride) throw new Error("Ride not found");
 
+      // Prevent withdrawal after departure
       const now = new Date();
-      if (r.departure_at && r.departure_at <= now) {
+      if (ride.departure_at && ride.departure_at <= now) {
         throw new Error("Ride already started or finished");
       }
 
-      // 4) Idempotence: if already cancelled, just return the existing record
+      // Idempotence: if already cancelled, just return the existing record
       if (
-        pr.status === PassengerRideStatus.CANCELLED_BY_PASSENGER ||
-        pr.status === PassengerRideStatus.CANCELLED_BY_DRIVER
+        passengerRide.status === PassengerRideStatus.CANCELLED_BY_PASSENGER ||
+        passengerRide.status === PassengerRideStatus.CANCELLED_BY_DRIVER
       ) {
         // Reload with relations for the response
         const already = await manager.getRepository(PassengerRide).findOneOrFail({
@@ -345,8 +347,8 @@ async createPassengerRide(
         return already;
       }
 
-      // 5) If APPROVED, atomically decrement the counter, without going below 0
-      if (pr.status === PassengerRideStatus.APPROVED) {
+      // If APPROVED, atomically decrement the counter, without going below 0
+      if (passengerRide.status === PassengerRideStatus.APPROVED) {
         await manager
           .getRepository(Ride)
           .createQueryBuilder()
@@ -356,7 +358,7 @@ async createPassengerRide(
           .execute();
       }
 
-      // 6) Update the status of the PassengerRide
+      // Update the status of the PassengerRide
       await manager
         .getRepository(PassengerRide)
         .createQueryBuilder()
@@ -365,11 +367,14 @@ async createPassengerRide(
         .where("user_id = :userId AND ride_id = :rideId", { userId, rideId: ride_id })
         .execute();
 
-      // 7) Reload with relations for the response
+      // Reload with relations for the response
       const updated = await manager.getRepository(PassengerRide).findOneOrFail({
         where: { user_id: userId, ride_id },
         relations: { user: true, ride: { driver: true } },
       });
+
+      // Notify the driver that the passenger withdrew
+    await notifyDriverPassengerWithdraw(updated.ride.driver, updated.user, { ...ride } as Ride);
 
       return updated;
     });
