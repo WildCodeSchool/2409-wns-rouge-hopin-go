@@ -28,6 +28,7 @@ type Documents = {
     "\nmutation Signin($email: String!, $password: String! ) {\n  signin(email: $email, password: $password) {\n    id\n    email\n  }\n}": typeof types.SigninDocument,
     "\nmutation Mutation {\n  signout\n}\n  ": typeof types.MutationDocument,
     "\n    mutation UpdateMyAccount($data: UserUpdateInput!) {\n      updateMyAccount(data: $data) {\n        id\n        firstName\n        lastName\n        email\n        createdAt\n      }\n    }\n  ": typeof types.UpdateMyAccountDocument,
+    "\n  mutation VerifyEmail($token: String!) {\n    verifyEmail(token: $token) {\n      success\n      message\n    }\n  }\n": typeof types.VerifyEmailDocument,
     "\nquery Whoami {\n  whoami {\n    id\n    email\n    role\n    firstName\n  }\n}\n": typeof types.WhoamiDocument,
 };
 const documents: Documents = {
@@ -45,6 +46,7 @@ const documents: Documents = {
     "\nmutation Signin($email: String!, $password: String! ) {\n  signin(email: $email, password: $password) {\n    id\n    email\n  }\n}": types.SigninDocument,
     "\nmutation Mutation {\n  signout\n}\n  ": types.MutationDocument,
     "\n    mutation UpdateMyAccount($data: UserUpdateInput!) {\n      updateMyAccount(data: $data) {\n        id\n        firstName\n        lastName\n        email\n        createdAt\n      }\n    }\n  ": types.UpdateMyAccountDocument,
+    "\n  mutation VerifyEmail($token: String!) {\n    verifyEmail(token: $token) {\n      success\n      message\n    }\n  }\n": types.VerifyEmailDocument,
     "\nquery Whoami {\n  whoami {\n    id\n    email\n    role\n    firstName\n  }\n}\n": types.WhoamiDocument,
 };
 
@@ -118,6 +120,10 @@ export function gql(source: "\nmutation Mutation {\n  signout\n}\n  "): (typeof 
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */
 export function gql(source: "\n    mutation UpdateMyAccount($data: UserUpdateInput!) {\n      updateMyAccount(data: $data) {\n        id\n        firstName\n        lastName\n        email\n        createdAt\n      }\n    }\n  "): (typeof documents)["\n    mutation UpdateMyAccount($data: UserUpdateInput!) {\n      updateMyAccount(data: $data) {\n        id\n        firstName\n        lastName\n        email\n        createdAt\n      }\n    }\n  "];
+/**
+ * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
+ */
+export function gql(source: "\n  mutation VerifyEmail($token: String!) {\n    verifyEmail(token: $token) {\n      success\n      message\n    }\n  }\n"): (typeof documents)["\n  mutation VerifyEmail($token: String!) {\n    verifyEmail(token: $token) {\n      success\n      message\n    }\n  }\n"];
 /**
  * The gql function is used to parse GraphQL queries into a document that can be used by GraphQL clients.
  */

@@ -16,7 +16,9 @@ Vous avez une nouvelle demande de réservation pour votre trajet le ${ride.depar
 
 Passager : ${passenger.firstName} ${passenger.lastName}
 
-Veuillez vous connecter à votre compte pour accepter ou refuser cette demande.
+Veuillez vous connecter à votre compte pour accepter ou refuser cette demande :
+${process.env.FRONTEND_URL}/auth/signin
+
 
 Cordialement,
 L'équipe Hopin'Go`,
@@ -29,7 +31,7 @@ L'équipe Hopin'Go`,
 
 <p><strong>Passager :</strong> ${passenger.firstName} ${passenger.lastName}</p>
 
-<p>Veuillez vous connecter à votre compte pour accepter ou refuser cette demande<a href="http://localhost:8080/auth/signin"> ici</a>.</p> 
+<p>Veuillez vous connecter à votre compte pour accepter ou refuser cette demande<a href="${process.env.FRONTEND_URL}/auth/signin"></a>.</p> 
 
 <p>Cordialement,<br/>
 L'équipe Hopin'Go</p>`,
@@ -75,7 +77,10 @@ export async function notifyUserRideRefused(passenger: User, ride: Ride) {
 
 Nous sommes désolés de vous informer que votre trajet de ${ride.departure_city} à ${
       ride.arrival_city
-    } le ${ride.departure_at.toLocaleString()} n'a pas été validé. Nous vous invitons à rechercher un autre trajet.
+    } le ${ride.departure_at.toLocaleString()} n'a pas été validé. 
+    Nous vous invitons à rechercher un autre trajet ici :
+    ${process.env.FRONTEND_URL}/research"> 
+
 
 Cordialement,
 L'équipe Hopin'Go`,
@@ -86,7 +91,7 @@ L'équipe Hopin'Go`,
       ride.departure_city
     }</strong> à <strong>${
       ride.arrival_city
-    }</strong> le <strong>${ride.departure_at.toLocaleString()}</strong> n'a pas été validé. Nous vous invitons à rechercher un autre trajet ici <a href="http://localhost:8080/research"> ici</a>.</p>
+    }</strong> le <strong>${ride.departure_at.toLocaleString()}</strong> n'a pas été validé. Nous vous invitons à rechercher un autre trajet ici <a href="${process.env.FRONTEND_URL}/research"> ici</a>.</p>
 
 <p>Cordialement,<br/>
 L'équipe Hopin'Go</p>`,
@@ -104,7 +109,8 @@ export async function notifyUserRideCancelled(passenger: User, ride: Ride) {
 V
 Nous sommes désolés de vous informer que votre trajet de ${ride.departure_city} à ${
       ride.arrival_city
-    } le ${ride.departure_at.toLocaleString()} a été annulé. Nous vous invitons à rechercher un autre trajet.
+    } le ${ride.departure_at.toLocaleString()} a été annulé. Nous vous invitons à rechercher un autre trajet ici :
+    ${process.env.FRONTEND_URL}/research"> 
 
 Cordialement,
 L'équipe Hopin'Go`,
@@ -115,7 +121,7 @@ L'équipe Hopin'Go`,
       ride.departure_city
     }</strong> à <strong>${
       ride.arrival_city
-    }</strong> le <strong>${ride.departure_at.toLocaleString()}</strong> a été annulé. Nous vous invitons à rechercher un autre trajet ici <a href="http://localhost:8080/research"> ici</a>.</p>
+    }</strong> le <strong>${ride.departure_at.toLocaleString()}</strong> a été annulé. Nous vous invitons à rechercher un autre trajet ici <a href="${process.env.FRONTEND_URL}/research"> ici</a>.</p>
 
 <p>Cordialement,<br/>
 L'équipe Hopin'Go</p>`,

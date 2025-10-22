@@ -1,8 +1,6 @@
 import type { LibraryResponse, SendEmailV3_1 } from "node-mailjet";
 import { getMailjet } from "./mjClient";
 
-const mailjet = getMailjet();
-
 type SendEmailOptions = {
   toEmail: string;
   toName?: string;
@@ -18,6 +16,8 @@ export async function sendEmail({
   text,
   html,
 }: SendEmailOptions): Promise<boolean> {
+  const mailjet = getMailjet();
+
   const data: SendEmailV3_1.Body = {
     Messages: [
       {

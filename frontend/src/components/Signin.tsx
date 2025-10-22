@@ -19,7 +19,7 @@ const Signin = () => {
   const [error, setError] = useState<Record<string, string[]>>({});
   const navigate = useNavigate();
 
-  const [doSignin,{loading}] = useMutation(mutationSignin, {
+  const [doSignin, { loading }] = useMutation(mutationSignin, {
     refetchQueries: [queryWhoAmI],
   });
 
@@ -61,17 +61,25 @@ const Signin = () => {
       }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
-      console.error(e);
-      setError((prev) => ({
-        ...prev,
-        general: ["Une erreur est survenue. Veuillez réessayer plus tard."],
-      }));
+      const message = e.graphQLErrors?.[0]?.message || e.message;
+
+      if (message === "Unverified Email") {
+        setError((prev) => ({
+          ...prev,
+          general: ["Veuillez d'abord vérifier votre e-mail avant de vous connecter."],
+        }));
+      } else {
+        setError((prev) => ({
+          ...prev,
+          general: ["Une erreur est survenue. Veuillez réessayer plus tard."],
+        }));
+      }
     }
   }
   return (
     <form
       noValidate
-      className=" h-full w-full flex flex-col justify-center items-center max-w-sm mx-auto px-4 sm:p-8 sm:py-8"
+      className="mx-auto flex h-full w-full max-w-sm flex-col items-center justify-center px-4 sm:p-8 sm:py-8"
       onSubmit={(e) => {
         e.preventDefault();
         doSubmit();
@@ -88,7 +96,7 @@ const Signin = () => {
             error.email?.length
               ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
               : "border-gray-300 bg-gray-50"
-          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5 ${
+          } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none ${
             error.email && error.email.length > 0 && "border-full"
           }`}
           placeholder="nom@mail.com"
@@ -101,7 +109,7 @@ const Signin = () => {
         {error.email && error.email.length > 0 && (
           <p
             id="email-error"
-            className="text-full text-sm mt-5 bg-gray-50 px-2 py-1 rounded-lg w-fit"
+            className="text-full mt-5 w-fit rounded-lg bg-gray-50 px-2 py-1 text-sm"
           >
             {formatErrors(error.email)}
           </p>
@@ -124,7 +132,7 @@ const Signin = () => {
               error.password?.length
                 ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
                 : "border-gray-300 bg-gray-50"
-            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5 ${
+            } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none ${
               error.password && error.password.length > 0 && "border-full"
             }`}
             value={password}
@@ -135,39 +143,32 @@ const Signin = () => {
           <Button
             variant="secondary"
             type="button"
-            className="!-ml-[2.40rem] rounded-lg !m-1"
+            className="!m-1 !-ml-[2.40rem] rounded-lg"
             onClick={() => setRevealPassword(!revealPassword)}
-            aria-label={
-              revealPassword
-                ? "Masquer le mot de passe"
-                : "Afficher le mot de passe"
-            }
+            aria-label={revealPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
             icon={revealPassword ? Eye : EyeOff}
           />
         </div>
       </div>
       {error.password && error.password.length > 0 && (
-        <p className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit">
+        <p className="text-full w-fit self-start rounded-lg bg-gray-50 px-2 py-1 text-sm">
           {formatErrors(error.password)}
         </p>
       )}
       {error.general && (
-        <p
-          role="alert"
-          className="text-full mt-4 text-sm bg-gray-50 p-2 rounded-lg w-fit"
-        >
+        <p role="alert" className="text-full mt-4 w-fit rounded-lg bg-gray-50 p-2 text-sm">
           {formatErrors(error.general)}
         </p>
       )}
-      <div className="flex w-full justify-end mt-5">
+      <div className="mt-5 flex w-full justify-end">
         <Button
-        type="submit"
-              disabled={loading}
-              icon={loading ? LoaderCircle : undefined}
-              iconRotateAnimation={loading}
-              label={loading ? "Connexion..." : "Connexion"}
-              variant={loading ? "pending" : "secondary"}
-            />
+          type="submit"
+          disabled={loading}
+          icon={loading ? LoaderCircle : undefined}
+          iconRotateAnimation={loading}
+          label={loading ? "Connexion..." : "Connexion"}
+          variant={loading ? "pending" : "secondary"}
+        />
       </div>
     </form>
   );
