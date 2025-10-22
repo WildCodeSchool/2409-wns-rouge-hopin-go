@@ -73,11 +73,28 @@ export default function Signup() {
       setConfirmPassword("");
       toast.success("Inscription réussie ! Vous allez recevoir un mail pour valider votre compte.");
       setError({});
-    } catch (e: unknown) {
+    } catch (e: any) {
       console.error(e);
-      setError({
-        form: ["Une erreur est survenue lors de l'inscription. Réessayez."],
-      });
+      const message = e.graphQLErrors?.[0]?.message || e.message;
+
+      if (message === "account not expired") {
+        setError((prev) => ({
+          ...prev,
+          general: [
+            "Un compte non vérifié existe déjà avec cet email. Consultez votre boîte mail pour valider votre inscription.",
+          ],
+        }));
+      } else if (message === "account already verified") {
+        setError((prev) => ({
+          ...prev,
+          general: ["Un utilisateur avec cet email existe déjà."],
+        }));
+      } else {
+        setError((prev) => ({
+          ...prev,
+          general: ["Une erreur est survenue. Veuillez réessayer plus tard."],
+        }));
+      }
     }
   }
 
@@ -226,7 +243,7 @@ export default function Signup() {
       </div>
 
       {/* Confirmation du mot de passe */}
-      <div className="mb-10 w-full">
+      <div className="mb-5 w-full">
         <label htmlFor="repeat-password" className="mb-2 block text-sm font-medium text-white">
           Confirmer mot de passe
         </label>
@@ -268,6 +285,11 @@ export default function Signup() {
           </p>
         )}
       </div>
+      {error.general && (
+        <p role="alert" className="text-full mb-4 w-fit rounded-lg bg-gray-50 p-2 text-sm">
+          {formatErrors(error.general)}
+        </p>
+      )}
 
       {/* Bouton */}
       <div className="flex w-full justify-end">

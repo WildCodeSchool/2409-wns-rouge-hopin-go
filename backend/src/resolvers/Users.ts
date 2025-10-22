@@ -79,6 +79,31 @@ export class UsersResolver {
     }
     const newUser = new User();
     try {
+      // Checks if a user with this email already exists
+      const existingUser = await User.findOneBy({ email: data.email });
+
+      if (existingUser) {
+        // if user email exists but not verified
+        if (!existingUser.isVerified) {
+          // calculate how long ago his account was created
+          const createdAt = existingUser.createdAt.getTime();
+          const now = Date.now();
+          const delay = now - createdAt;
+          const oneDay = 24 * 60 * 60 * 1000; // 24h
+
+          if (delay > oneDay) {
+            // if unverified account expired : GDPR-friendly deletion
+            await existingUser.remove();
+          } else {
+            // if account not expired
+            throw new Error("account not expired");
+          }
+        } else {
+          // account already verified
+          throw new Error("account already verified");
+        }
+      }
+
       const hashedPassword = await argon2.hash(data.password);
       Object.assign(newUser, data, { hashedPassword, password: undefined });
       await newUser.save();
@@ -99,6 +124,9 @@ export class UsersResolver {
       return newUser;
     } catch (error) {
       console.error(error);
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      }
       throw new Error("unable to create user");
     }
   }
