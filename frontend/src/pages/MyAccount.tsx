@@ -32,9 +32,8 @@ const MyAccount = () => {
   const [revealPassword, setRevealPassword] = useState(false);
   const [error, setError] = useState<Record<string, string[]>>({});
   const [deletePassword, setDeletePassword] = useState("");
-const [revealDeletePassword, setRevealDeletePassword] = useState(false);
-const [deleteError, setDeleteError] = useState<string | null>(null);
-
+  const [revealDeletePassword, setRevealDeletePassword] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     if (me?.email) setEmail(me.email);

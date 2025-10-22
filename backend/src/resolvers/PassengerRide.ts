@@ -37,11 +37,11 @@ export class PassengerRideResolver {
   }
 
  @Authorized("user")
-@Mutation(() => PassengerRide)
-async createPassengerRide(
+  @Mutation(() => PassengerRide)
+  async createPassengerRide(
   @Arg("data", () => CreatePassengerRideInput) data: CreatePassengerRideInput,
   @Ctx() { user }: ContextType
-): Promise<PassengerRide> {
+  ): Promise<PassengerRide> {
   const errors = await validate(data);
   if (errors.length > 0) {
     throw new Error(`Validation error: ${JSON.stringify(errors)}`);

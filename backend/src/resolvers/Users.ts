@@ -302,15 +302,8 @@ export class UsersResolver {
         await m.delete(User, { id: user.id });
       });
 
-      // D) Logout (same logic as signout)
-      const cookies = new Cookies(context.req, context.res, {
-        secure: process.env.NODE_ENV === "production",
-      });
-      cookies.set("token", "", {
-        maxAge: 0,
-        sameSite: "strict",
-        httpOnly: true,
-      });
+    
+     this.signout(context);
 
       return true;
     } catch (e) {
