@@ -137,7 +137,7 @@ export default function RegisterButton({
         onClick={isLoggedIn && !hasRegistered ? handleRegister : undefined}
         isLink={isLoggedIn ? false : true}
         to="/auth/signin"
-        className="w-full"
+        className="w-fit"
       />
     );
   }

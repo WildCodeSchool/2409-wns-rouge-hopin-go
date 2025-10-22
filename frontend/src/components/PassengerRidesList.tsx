@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ScrollableSnapList from "./ScrollableSnapList";
 import { VariantType } from "../types/variantTypes";
 import useBreakpoints from "../utils/useWindowSize";
@@ -21,36 +21,83 @@ const PassengerRidesList = () => {
   const getVariant = (dataset: PassengerRide): VariantType => {
     if (dataset.is_cancelled) return "cancel";
     if (dataset.nb_passenger === dataset.max_passenger) return "full";
-    if (dataset.current_user_passenger_status === PassengerRideStatus.Waiting) return "pending";
-    if (dataset.current_user_passenger_status === PassengerRideStatus.Approved) return "validation";
-    if (dataset.current_user_passenger_status === PassengerRideStatus.Refused) return "refused";
+    if (dataset.current_user_passenger_status === PassengerRideStatus.Waiting)
+      return "pending";
+    if (dataset.current_user_passenger_status === PassengerRideStatus.Approved)
+      return "validation";
+    if (dataset.current_user_passenger_status === PassengerRideStatus.Refused)
+      return "refused";
     return "primary";
   };
 
-  const { data: upcomingData } = useQuery(queryPassengerRides, {
+  // --- Upcoming Rides ---
+  const {
+    data: upcomingData,
+    refetch: refetchUpcoming,
+    loading: loadingUpcoming,
+  } = useQuery(queryPassengerRides, {
     variables: { filter: "upcoming", limit, offset: upcomingOffset },
     fetchPolicy: "cache-and-network",
-    onCompleted: (data) => {
-      const newRides = data?.passengerRides?.rides ?? [];
-      setUpcomingList((prev) => [...prev, ...newRides]);
-    },
   });
+
+  useEffect(() => {
+    if (!upcomingData?.passengerRides?.rides) return;
+    const filtered =
+      upcomingData.passengerRides.rides.filter(
+        (ride) =>
+          ride.current_user_passenger_status !==
+          PassengerRideStatus.CancelledByPassenger
+      ) ?? [];
+    setUpcomingList((prev) =>
+      upcomingOffset === 0 ? filtered : [...prev, ...filtered]
+    );
+  }, [upcomingData, upcomingOffset]);
+
   const totalUpcoming = upcomingData?.passengerRides?.totalCount ?? 0;
 
-  const { data: archivedData } = useQuery(queryPassengerRides, {
+  // --- Archived Rides ---
+  const {
+    data: archivedData,
+    refetch: refetchArchived,
+    loading: loadingArchived,
+  } = useQuery(queryPassengerRides, {
     variables: { filter: "archived", limit, offset: archivedOffset },
-    onCompleted: (data) => {
-      const newRides = data?.passengerRides?.rides ?? [];
-      setArchivedList((prev) => [...prev, ...newRides]);
-    },
+    fetchPolicy: "cache-and-network",
   });
+
+  useEffect(() => {
+    if (!archivedData?.passengerRides?.rides) return;
+    const filtered =
+      archivedData.passengerRides.rides.filter(
+        (r) =>
+          r.current_user_passenger_status !==
+          PassengerRideStatus.CancelledByPassenger
+      ) ?? [];
+    setArchivedList((prev) =>
+      archivedOffset === 0 ? filtered : [...prev, ...filtered]
+    );
+  }, [archivedData, archivedOffset]);
+
   const totalArchived = archivedData?.passengerRides?.totalCount ?? 0;
+
+  useEffect(() => {
+    const handleRefetch = async () => {
+      await Promise.all([refetchUpcoming(), refetchArchived()]);
+    };
+   
+    handleRefetch();
+  }, []);
 
   return (
     <div className="flex h-full w-full flex-col overflow-auto bg-gray-100 sm:pb-16">
+      {/* --- Upcoming Rides --- */}
       <div className="my-2 flex h-full flex-col gap-4 sm:gap-0">
         <span className="ml-4">Trajets à venir</span>
-        {upcomingList.length > 0 ? (
+        {loadingUpcoming ? (
+          <div className="mt-10 w-full text-center text-gray-500">
+            Chargement...
+          </div>
+        ) : upcomingList.length > 0 ? (
           <>
             <ScrollableSnapList
               dataset={upcomingList}
@@ -59,8 +106,8 @@ const PassengerRidesList = () => {
               sliderDirection={isMd ? "horizontal" : "vertical"}
               slidePerView={is2xl ? 3 : isSm ? 2 : 3}
               swiperClassName={!isMd ? "h-full w-full" : ""}
-              navigationArrows={isMd ? true : false}
-              showPagination={isMd ? true : false}
+              navigationArrows={isMd}
+              showPagination={isMd}
               spaceBetween={isMd ? 0 : 50}
             />
 
@@ -91,9 +138,15 @@ const PassengerRidesList = () => {
           <div className="mt-10 w-full text-center">Aucun trajet à venir.</div>
         )}
       </div>
+
+      {/* --- Archived Rides --- */}
       <div className="my-20 flex h-full flex-col gap-4 sm:my-0 sm:gap-0">
         <span className="ml-4">Trajets archivés</span>
-        {archivedList.length > 0 ? (
+        {loadingArchived ? (
+          <div className="mt-10 w-full text-center text-gray-500">
+            Chargement...
+          </div>
+        ) : archivedList.length > 0 ? (
           <>
             <ScrollableSnapList
               dataset={archivedList}

@@ -127,3 +127,30 @@ L'équipe Hopin'Go`,
 L'équipe Hopin'Go</p>`,
   });
 }
+
+
+// Notify the driver that a passenger withdrew from their ride
+export async function notifyDriverPassengerWithdraw(driver: User, passenger: User, ride: Ride) {
+  return sendEmail({
+    toEmail: driver.email,
+    toName: driver.firstName,
+    subject: "Désinscription d’un passager",
+    text: `Bonjour ${driver.firstName},
+
+Le passager ${passenger.firstName} ${passenger.lastName} s’est retiré de votre trajet du ${ride.departure_at.toLocaleString()} de ${ride.departure_city} à ${ride.arrival_city}.
+
+Vous pouvez consulter les détails de votre trajet dans votre espace.
+
+Cordialement,
+L'équipe Hopin'Go`,
+
+    html: `<p>Bonjour ${driver.firstName},</p>
+
+<p>Le passager <strong>${passenger.firstName} ${passenger.lastName}</strong> s’est retiré de votre trajet du <strong>${ride.departure_at.toLocaleString()}</strong> de <strong>${ride.departure_city}</strong> à <strong>${ride.arrival_city}</strong>.</p>
+
+<p>Vous pouvez consulter les détails de votre trajet dans votre espace <a href="http://localhost:8080/auth/signin">ici</a>.</p>
+
+<p>Cordialement,<br/>
+L'équipe Hopin'Go</p>`,
+  });
+}

@@ -10,6 +10,7 @@ import MapInteractive from "./MapInteractive";
 import { formatTravelDuration } from "../utils/formatTravelDuration";
 import CardTemplate from "./CardTemplate";
 import useBreakpoints from "../utils/useWindowSize";
+import WithdrawPassengerButton from "./WithdrawPassengerButton";
 
 type CardRideDetailsPassengerModalProps = {
   toggleModal: () => void;
@@ -140,8 +141,9 @@ const CardRideDetailsPassengerModal = ({
             </div>
           </div>
         )}
-        <div className="flex justify-center w-1/2 m-auto">
+        <div className="flex justify-between w-full m-auto">
           <RegisterButton variant={variant} rideId={ride.id} size="large" />
+          <WithdrawPassengerButton onCloseParentModal={toggleModal} />
         </div>
         <div className="w-full h-1/2 md:h-96">
           <MapInteractive
@@ -152,8 +154,8 @@ const CardRideDetailsPassengerModal = ({
             arrivalLatitude={arrivalLatitude}
             arrivalLongitude={arrivalLongitude}
             arrivalCity={arrivalCity}
-            routePolyline5={routePolyline5 ?? undefined} // ✅ évite Directions
-            distanceKm={distanceKm ?? undefined} // ✅ meta backend
+            routePolyline5={routePolyline5 ?? undefined}
+            distanceKm={distanceKm ?? undefined}
             durationMin={durationMin ?? undefined}
           />
         </div>
