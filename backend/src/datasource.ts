@@ -1,6 +1,6 @@
 import { DataSource } from "typeorm";
 
-const syncMode = process.env.NODE_ENV === "dev";
+const syncMode = process.env.NODE_ENV === "dev" || process.env.NODE_ENV === "testing";
 
 export const datasource = new DataSource({
   type: "postgres",

@@ -82,6 +82,12 @@ export class User extends BaseEntity {
   @OneToMany(() => PassengerRide, (pr) => pr.user)
   passenger_rides!: PassengerRide[];
 
+  @Column({ name: "hashed_reset_token", type: "varchar", nullable: true })
+  hashedResetToken?: string | null;
+
+  @Column({ name: "reset_token_expires_at", type: "timestamptz", nullable: true })
+  resetTokenExpiresAt?: Date | null;
+
   // may be needed if user can create other users
   // @ManyToOne(() => User)
   // @Field(() => User)
@@ -143,4 +149,25 @@ export class UserUpdateInput {
     message: "Password must contain at least one special character (@$!%*?&)",
   })
   password?: string;
+}
+
+@InputType()
+export class UserResetPasswordInput {
+  @Field()
+  @MinLength(8, { message: "Password must be at least 8 characters long" })
+  @MaxLength(32, { message: "Password cannot exceed 32 characters" })
+  @Matches(/[a-z]/, {
+    message: "Password must contain at least one lowercase letter",
+  })
+  @Matches(/[A-Z]/, {
+    message: "Password must contain at least one uppercase letter",
+  })
+  @Matches(/\d/, { message: "Password must contain at least one number" })
+  @Matches(/[@$!%*?&]/, {
+    message: "Password must contain at least one special character (@$!%*?&)",
+  })
+  password!: string;
+
+  @Field()
+  resetToken!: string;
 }
