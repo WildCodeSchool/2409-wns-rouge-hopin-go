@@ -50,6 +50,9 @@ export class User extends BaseEntity {
   @UseMiddleware(IsUser)
   email!: string;
 
+  @Column({ type: "boolean", default: "false" })
+  isVerified = false;
+
   @Column({
     type: "enum",
     enum: ["user", "admin"],

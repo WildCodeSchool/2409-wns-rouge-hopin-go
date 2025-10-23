@@ -71,18 +71,35 @@ export default function Signup() {
       setEmail("");
       setPassword("");
       setConfirmPassword("");
-      toast.success("Inscription réussie !");
+      toast.success("Inscription réussie ! Vous allez recevoir un mail pour valider votre compte.");
       setError({});
-    } catch (e: unknown) {
+    } catch (e: any) {
       console.error(e);
-      setError({
-        form: ["Une erreur est survenue lors de l'inscription. Réessayez."],
-      });
+      const message = e.graphQLErrors?.[0]?.message || e.message;
+
+      if (message === "account not expired") {
+        setError((prev) => ({
+          ...prev,
+          general: [
+            "Un compte non vérifié existe déjà avec cet email. Consultez votre boîte mail pour valider votre inscription.",
+          ],
+        }));
+      } else if (message === "account already verified") {
+        setError((prev) => ({
+          ...prev,
+          general: ["Un utilisateur avec cet email existe déjà."],
+        }));
+      } else {
+        setError((prev) => ({
+          ...prev,
+          general: ["Une erreur est survenue. Veuillez réessayer plus tard."],
+        }));
+      }
     }
   }
 
   return (
-    <form className="flex flex-col justify-center items-center max-w-sm mx-auto w-full h-full px-4 sm:py-8">
+    <form className="mx-auto flex h-full w-full max-w-sm flex-col items-center justify-center px-4 sm:py-8">
       {/* Prénom */}
       <div className="mb-5 w-full">
         <label htmlFor="first-name" className="text-textLight mb-2 block text-sm font-medium">
@@ -101,14 +118,15 @@ export default function Signup() {
           placeholder="Jean"
           value={firstName}
           onChange={(e) =>
-            setFirstName(
-              e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1)
-            )
+            setFirstName(e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1))
           }
           aria-describedby={error.firstName ? "first-name-error" : undefined}
         />
         {error.firstName && error.firstName.length > 0 && (
-          <p id="first-name-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
+          <p
+            id="first-name-error"
+            className="text-full mt-2 w-fit self-start rounded-lg bg-gray-50 px-2 py-1 text-sm"
+          >
             {formatErrors(error.firstName)}
           </p>
         )}
@@ -133,14 +151,15 @@ export default function Signup() {
           placeholder="Dupont"
           value={lastName}
           onChange={(e) =>
-            setLastName(
-              e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1)
-            )
+            setLastName(e.target.value.charAt(0).toUpperCase() + e.target.value.slice(1))
           }
           aria-describedby={error.lastName ? "last-name-error" : undefined}
         />
         {error.lastName && error.lastName.length > 0 && (
-          <p id="last-name-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
+          <p
+            id="last-name-error"
+            className="text-full mt-2 w-fit self-start rounded-lg bg-gray-50 px-2 py-1 text-sm"
+          >
             {formatErrors(error.lastName)}
           </p>
         )}
@@ -165,7 +184,10 @@ export default function Signup() {
           aria-describedby={error.email ? "email-error" : undefined}
         />
         {error.email && error.email.length > 0 && (
-          <p id="email-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
+          <p
+            id="email-error"
+            className="text-full mt-2 w-fit self-start rounded-lg bg-gray-50 px-2 py-1 text-sm"
+          >
             {formatErrors(error.email)}
           </p>
         )}
@@ -195,7 +217,7 @@ export default function Signup() {
 
           <button
             type="button"
-            className="-ml-9 bg-gray-200 rounded-lg p-2 m-1"
+            className="m-1 -ml-9 rounded-lg bg-gray-200 p-2"
             onClick={() => setRevealPassword(!revealPassword)}
             aria-label={revealPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
           >
@@ -207,14 +229,17 @@ export default function Signup() {
           </button>
         </div>
         {error.password && error.password.length > 0 && (
-          <p id="password-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
+          <p
+            id="password-error"
+            className="text-full mt-2 w-fit self-start rounded-lg bg-gray-50 px-2 py-1 text-sm"
+          >
             {formatErrors(error.password)}
           </p>
         )}
       </div>
 
       {/* Confirmation du mot de passe */}
-      <div className="mb-10 w-full">
+      <div className="mb-5 w-full">
         <label htmlFor="repeat-password" className="mb-2 block text-sm font-medium text-white">
           Confirmer mot de passe
         </label>
@@ -233,12 +258,8 @@ export default function Signup() {
           />
           <button
             type="button"
-            aria-label={
-              revealPassword
-                ? "Masquer le mot de passe"
-                : "Afficher le mot de passe"
-            }
-            className="-ml-9 bg-gray-200 rounded-lg p-2 m-1"
+            aria-label={revealPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+            className="m-1 -ml-9 rounded-lg bg-gray-200 p-2"
             onClick={() => setRevealPassword(!revealPassword)}
           >
             {revealPassword ? (
@@ -249,11 +270,20 @@ export default function Signup() {
           </button>
         </div>
         {error.confirmPassword && error.confirmPassword.length > 0 && (
-          <p role="alert" id="confirm-password-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
+          <p
+            role="alert"
+            id="confirm-password-error"
+            className="text-full mt-2 w-fit self-start rounded-lg bg-gray-50 px-2 py-1 text-sm"
+          >
             {formatErrors(error.confirmPassword)}
           </p>
         )}
       </div>
+      {error.general && (
+        <p role="alert" className="text-full mb-4 w-fit rounded-lg bg-gray-50 p-2 text-sm">
+          {formatErrors(error.general)}
+        </p>
+      )}
 
       {/* Bouton */}
       <div className="flex w-full justify-end">

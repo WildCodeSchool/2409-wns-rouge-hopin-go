@@ -39,14 +39,12 @@ const NavBar = () => {
       <div ref={toggleMenuRef}>
         {/* Toggle Menu */}
         <div
-          className={`h-18 bg-primary fixed bottom-[58px] right-0 z-40 flex w-fit transform rounded-tl-lg p-2 transition-transform duration-300 ease-in-out md:bottom-0 md:hidden ${
-            isOpen ? "translate-y-0" : "translate-y-full"
-          }`}
+          className={`h-18 bg-primary fixed bottom-[58px] right-0 z-40 flex w-fit transform rounded-tl-lg p-2 transition-transform duration-300 ease-in-out md:bottom-0 md:hidden ${isOpen ? "translate-y-0" : "translate-y-full"
+            }`}
         >
           <div
-            className={`flex w-full flex-col items-start gap-4 p-4 transition-opacity duration-300 ease-in-out ${
-              isOpen ? "opacity-100" : "opacity-0"
-            }`}
+            className={`flex w-full flex-col items-start gap-4 p-4 transition-opacity duration-300 ease-in-out ${isOpen ? "opacity-100" : "opacity-0"
+              }`}
           >
             {!me ? (
               <>
@@ -66,15 +64,44 @@ const NavBar = () => {
                   className="font-semibold"
                   variant="secondary"
                 />
+                <Button
+                  isLink
+                  to="/terms-of-service"
+                  label="Mentions légales et CGU"
+                  className="font-semibold"
+                  variant="secondary"
+                />
+                <Button
+                  isLink
+                  to="/confidentiality-policy"
+                  label="Politique de confidentialité"
+                  className="font-semibold"
+                  variant="secondary"
+                />
               </>
             ) : null}
             {me ? (
               <div className="w-full flex flex-col gap-4">
                 <Button
+                  isLink
+                  to="/my-account"
                   label="Mon compte"
                   className="font-semibold"
                   variant="secondary"
-                  onClick={() => navigate("/my-account")}
+                />
+                <Button
+                  isLink
+                  to="/terms-of-service"
+                  label="Mentions légales et CGU"
+                  className="font-semibold"
+                  variant="secondary"
+                />
+                <Button
+                  isLink
+                  to="/confidentiality-policy"
+                  label="Politique de confidentialité"
+                  className="font-semibold"
+                  variant="secondary"
                 />
                 <Button
                   label="Déconnexion"

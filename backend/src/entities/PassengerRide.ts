@@ -65,3 +65,10 @@ export class DriverSetPassengerRideStatusInput {
   @Field(() => PassengerRideStatus)
   status!: PassengerRideStatus;
 }
+
+@InputType()
+export class PassengerWithdrawFromRideInput {
+  @Field(() => ID)
+  ride_id!: number;
+
+}

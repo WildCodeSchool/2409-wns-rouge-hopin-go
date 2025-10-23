@@ -14,6 +14,9 @@ import RideResults from "./pages/RideResults.tsx";
 import MyRides from "./pages/MyRides.tsx";
 import { ToastContainer } from "react-toastify"; // import RideResultTemp from "./pages/RideResultTemp";
 import MyAccount from "./pages/MyAccount.tsx";
+import VerifyEmail from "./pages/VerifyEmail.tsx";
+import TermsOfService from "./pages/TermsOfService.tsx";
+import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
 import ForgotPassword from "./pages/ForgotPassword.tsx";
 import ResetPassword from "./pages/ResetPassword.tsx";
 
@@ -69,10 +72,34 @@ const router = createBrowserRouter([
         ),
       },
       {
+        path: `/verify`,
+        element: (
+          <AuthComponent authStates={[AuthStates.unauthenticated]}>
+            <VerifyEmail />
+          </AuthComponent>
+        ),
+      },
+      {
         path: `/my-account`,
         element: (
           <AuthComponent authStates={[AuthStates.user]}>
             <MyAccount />
+          </AuthComponent>
+        ),
+      },
+      {
+        path: `/terms-of-service`,
+        element: (
+          <AuthComponent authStates={[AuthStates.unauthenticated, AuthStates.user]}>
+            <TermsOfService />
+          </AuthComponent>
+        ),
+      },
+      {
+        path: `/confidentiality-policy`,
+        element: (
+          <AuthComponent authStates={[AuthStates.unauthenticated, AuthStates.user]}>
+            <PrivacyPolicy />
           </AuthComponent>
         ),
       },

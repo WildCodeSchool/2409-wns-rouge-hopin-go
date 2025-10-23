@@ -38,8 +38,8 @@ const SwitchTabs = ({ tabs, tabParams, classContainer, proposeRef }: SwitchTabsP
 
   return (
     <div
-      className={`sm:border border-textDark sm:rounded-xl shadow-xl ${
-        !isMyRidesPage && "max-w-xl"
+      className={`md:border border-textDark md:rounded-xl shadow-xl ${
+        !isMyRidesPage && "md:max-w-xl"
       }  h-full w-full overflow-hidden z-50`}
     >
       <div className="flex h-fit w-full  ">
