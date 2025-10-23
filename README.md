@@ -290,6 +290,10 @@ After modifying an entity, you must generate a new migration file to reflect thi
 
 > **Warning:** This process includes a destructive command (`schema:drop`) that will erase all data in your local development database. **Never run this on a production database.**
 
+**Important (temporary): set NODE_ENV=prod**
+
+Before running the steps below, temporarily set NODE_ENV to `prod` in the project root `backend.env` so TypeORM loads the production DB config used by migrations.
+
 1.  **Ensure your local database container is running.**
 
 2.  **Drop your local database schema** to start from a clean slate. This removes all tables.
@@ -314,6 +318,10 @@ After modifying an entity, you must generate a new migration file to reflect thi
     *   **If a new migration file is generated:** Open the file in `./migrations/` to review the SQL commands (`UP` and `DOWN`). Ensure they match your expectations. You can edit the file if needed.
 
 6.  **Commit the new migration file** to Git. It is now part of the project history and will be executed during deployment.
+
+**Reminder — restore NODE_ENV to `dev`**
+
+After you have generated, reviewed and committed the migration, make sure to set `NODE_ENV` back to `dev` in `backend.env` so you resume normal local development.
 
 ### Undo the last migration
 

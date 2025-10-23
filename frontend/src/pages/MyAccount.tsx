@@ -32,93 +32,92 @@ const MyAccount = () => {
   const [revealPassword, setRevealPassword] = useState(false);
   const [error, setError] = useState<Record<string, string[]>>({});
   const [deletePassword, setDeletePassword] = useState("");
-const [revealDeletePassword, setRevealDeletePassword] = useState(false);
-const [deleteError, setDeleteError] = useState<string | null>(null);
-
+  const [revealDeletePassword, setRevealDeletePassword] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   useEffect(() => {
     if (me?.email) setEmail(me.email);
   }, [me?.email]);
 
   const validate = (): boolean => {
-  const emailErrors = email ? validateEmailUtils(email) : [];
+    const emailErrors = email ? validateEmailUtils(email) : [];
 
-  const wantsPasswordChange = !!newPassword;
+    const wantsPasswordChange = !!newPassword;
 
-  const currentPasswordErrors = wantsPasswordChange
-    ? (currentPassword ? [] : ["Le mot de passe actuel est requis"])
-    : [];
+    const currentPasswordErrors = wantsPasswordChange
+      ? (currentPassword ? [] : ["Le mot de passe actuel est requis"])
+      : [];
 
-  const newPasswordErrors = wantsPasswordChange
-    ? validatePasswordUtils(newPassword)
-    : [];
+    const newPasswordErrors = wantsPasswordChange
+      ? validatePasswordUtils(newPassword)
+      : [];
 
-  setError({
-    email: emailErrors,
-    currentPassword: currentPasswordErrors,
-    newPassword: newPasswordErrors,
-  });
+    setError({
+      email: emailErrors,
+      currentPassword: currentPasswordErrors,
+      newPassword: newPasswordErrors,
+    });
 
-  return (
-    emailErrors.length === 0 &&
-    currentPasswordErrors.length === 0 &&
-    newPasswordErrors.length === 0
-  );
-};
+    return (
+      emailErrors.length === 0 &&
+      currentPasswordErrors.length === 0 &&
+      newPasswordErrors.length === 0
+    );
+  };
 
   const handleSubmit = async () => {
-  if (!validate()) return;
+    if (!validate()) return;
 
-  const wantsPasswordChange = !!newPassword;
-  const data: Record<string, string> = {};
+    const wantsPasswordChange = !!newPassword;
+    const data: Record<string, string> = {};
 
-  if (email && email !== me?.email) data.email = email;
-  
-  if (wantsPasswordChange) {
-    data.currentPassword = currentPassword;
-    data.password = newPassword;
-  }
+    if (email && email !== me?.email) data.email = email;
 
-  if (Object.keys(data).length === 0) {
-    setError({ general: ["Aucune modification à enregistrer."] });
-    setTimeout(() => setError({}), 3000);
-    return;
-  }
-
-  try {
-    await doUpdate({ variables: { data } });
-    toast.success("Compte mis à jour avec succès !");
     if (wantsPasswordChange) {
-      setCurrentPassword("");
-      setNewPassword("");
+      data.currentPassword = currentPassword;
+      data.password = newPassword;
     }
-    setError({});
-  } catch (e: unknown) {
-    toast.error("Le mot de passe actuel est requis pour changer le mot de passe.");    
-  }
-};
 
- 
+    if (Object.keys(data).length === 0) {
+      setError({ general: ["Aucune modification à enregistrer."] });
+      setTimeout(() => setError({}), 3000);
+      return;
+    }
+
+    try {
+      await doUpdate({ variables: { data } });
+      toast.success("Compte mis à jour avec succès !");
+      if (wantsPasswordChange) {
+        setCurrentPassword("");
+        setNewPassword("");
+      }
+      setError({});
+    } catch (e: unknown) {
+      toast.error("Le mot de passe actuel est requis pour changer le mot de passe.");
+    }
+  };
+
+
   const [doDelete, { loading: deleting }] = useMutation(DeleteMyAccount, {
     refetchQueries: [queryWhoAmI],
   });
 
   async function handleDelete() {
-  setDeleteError(null);
-  try {
-    await doDelete({ variables: { currentPassword: deletePassword } });
-    toast.info("Compte supprimé.");
-    navigate("/", { replace: true });
-  } catch (e: unknown) {
-    console.error(e);
+    setDeleteError(null);
+    try {
+      await doDelete({ variables: { currentPassword: deletePassword } });
+      toast.info("Compte supprimé.");
+      navigate("/", { replace: true });
+    } catch (e: unknown) {
+      console.error(e);
+    }
   }
-}
 
-function closeDeleteModalSafe() {
-  setDeletePassword("");
-  setDeleteError(null);
-  closeModal("deleteAccountModal");
-}
+  function closeDeleteModalSafe() {
+    setDeletePassword("");
+    setDeleteError(null);
+    closeModal("deleteAccountModal");
+  }
 
   return (
     <div className="h-screen md:h-[calc(100vh-4rem)] flex items-center justify-center md:pt-20 md:px-4">
@@ -146,11 +145,10 @@ function closeDeleteModalSafe() {
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className={`border p-2 rounded-md w-full text-black ${
-                error.email?.length
+              className={`border p-2 rounded-md w-full text-black ${error.email?.length
                   ? "border-error bg-red-50"
                   : "border-gray-300"
-              }`}
+                }`}
             />
             {error.email?.length ? (
               <p className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
@@ -167,11 +165,10 @@ function closeDeleteModalSafe() {
               <input
                 type={revealPassword ? "text" : "password"}
                 id="currentPassword"
-                className={`shadow-sm border  text-sm text-black rounded-lg focus:outline-none block w-full p-2.5 ${
-                  error.currentPassword?.length
+                className={`shadow-sm border  text-sm text-black rounded-lg focus:outline-none block w-full p-2.5 ${error.currentPassword?.length
                     ? "border-error bg-red-50"
                     : "border-gray-300 bg-white"
-                }`}
+                  }`}
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder="Entrez votre mot de passe actuel"
@@ -198,26 +195,25 @@ function closeDeleteModalSafe() {
                 disabled={!currentPassword}
                 type={revealPassword ? "text" : "password"}
                 id="newPassword"
-                className={`shadow-sm border text-black text-sm rounded-lg focus:outline-none block w-full p-2.5 ${
-                  !currentPassword ? "opacity-50 cursor-not-allowed" : ""
-                } ${error.newPassword?.length ? "border-error bg-red-50" : "border-gray-300 bg-white"}`}
+                className={`shadow-sm border text-black text-sm rounded-lg focus:outline-none block w-full p-2.5 ${!currentPassword ? "opacity-50 cursor-not-allowed" : ""
+                  } ${error.newPassword?.length ? "border-error bg-red-50" : "border-gray-300 bg-white"}`}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="Mot de passe (laissez vide pour ne pas changer)"
                 aria-describedby={error.newPassword ? "newPassword-error" : undefined}
               />
-              <Button               
-            variant="secondary"
-            type="button"
-            className="!-ml-[2.40rem] rounded-lg !m-1"
-            onClick={() => setRevealPassword(!revealPassword)}
-            aria-label={
-              revealPassword
-                ? "Masquer le mot de passe"
-                : "Afficher le mot de passe"
-            }
-            icon={revealPassword ? Eye : EyeOff}
-          />
+              <Button
+                variant="secondary"
+                type="button"
+                className="!-ml-[2.40rem] rounded-lg !m-1"
+                onClick={() => setRevealPassword(!revealPassword)}
+                aria-label={
+                  revealPassword
+                    ? "Masquer le mot de passe"
+                    : "Afficher le mot de passe"
+                }
+                icon={revealPassword ? Eye : EyeOff}
+              />
             </div>
             {error.newPassword?.length ? (
               <p id="newPassword-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit">
@@ -294,9 +290,8 @@ function closeDeleteModalSafe() {
                   <input
                     type={revealDeletePassword ? "text" : "password"}
                     id="deletePassword"
-                    className={`shadow-sm border text-sm text-black rounded-lg focus:outline-none block w-full p-2.5 ${
-                      deleteError ? "border-error bg-red-50" : "border-gray-300 bg-white"
-                    }`}
+                    className={`shadow-sm border text-sm text-black rounded-lg focus:outline-none block w-full p-2.5 ${deleteError ? "border-error bg-red-50" : "border-gray-300 bg-white"
+                      }`}
                     value={deletePassword}
                     onChange={(e) => {
                       setDeletePassword(e.target.value);

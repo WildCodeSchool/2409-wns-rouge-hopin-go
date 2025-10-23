@@ -5,7 +5,7 @@
   "scripts": {
     "test:postgres": "node ./scripts/test-postgres.js && dotenv -e .env.test -- npx jest",
     "start": "concurrently -n \"BACK\" -c \"cyan.bgBlack\" \"ts-node-dev src/index.ts\"",
-    "typeorm": "POSTGRES_HOST=localhost POSTGRES_PASSWORD=supersecret POSTGRES_USER=hopingo POSTGRES_DB=hopingo typeorm-ts-node-commonjs -d src/datasource.ts"
+    "typeorm": "cross-env POSTGRES_HOST=localhost POSTGRES_PASSWORD=supersecret POSTGRES_USER=hopingo POSTGRES_DB=hopingo typeorm-ts-node-commonjs -d src/datasource.ts"
   },
   "keywords": [],
   "author": "",
