@@ -139,7 +139,6 @@ export class UsersResolver {
       };
 
       const user = await User.findOne({ where: { id: decoded.id } });
-      console.log("user", user);
 
       if (!user) throw new Error("User not found");
       if (user.isVerified) return { success: true, message: "Already verified" };
