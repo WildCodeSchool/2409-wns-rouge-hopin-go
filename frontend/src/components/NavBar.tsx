@@ -83,10 +83,11 @@ const NavBar = () => {
             {me ? (
               <div className="w-full flex flex-col gap-4">
                 <Button
+                  isLink
+                  to="/my-account"
                   label="Mon compte"
                   className="font-semibold"
                   variant="secondary"
-                  onClick={() => navigate("/my-account")}
                 />
                 <Button
                   isLink
