@@ -91,9 +91,8 @@ const CardRideDetailsPassengerModal = ({
                 <p>
                   {variant === "cancel" || variant === "full"
                     ? "Non disponible"
-                    : `${nbPassenger} ${
-                        nbPassenger > 1 ? "places restantes" : "place restante"
-                      }`}
+                    : `${nbPassenger} ${nbPassenger > 1 ? "places restantes" : "place restante"
+                    }`}
                 </p>
               </div>
             </div>

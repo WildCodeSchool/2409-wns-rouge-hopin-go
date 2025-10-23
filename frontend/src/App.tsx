@@ -5,6 +5,7 @@ import Logo from "../public/logo.svg";
 import { useQuery } from "@apollo/client";
 import { queryWhoAmI } from "./api/WhoAmI";
 import { CheckCircle } from "lucide-react";
+import Footer from "./components/Footer";
 
 const App = () => {
   const { data: whoAmIData } = useQuery(queryWhoAmI);
@@ -32,6 +33,7 @@ const App = () => {
         <main>
           <Outlet />
         </main>
+        <Footer />
       </div>
     </>
   );
