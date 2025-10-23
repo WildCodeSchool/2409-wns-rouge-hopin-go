@@ -1,5 +1,5 @@
-import { Arg, Authorized, Ctx, ID, Mutation, Query, Resolver } from "type-graphql";
-import { User, UserCreateInput, UserUpdateInput } from "../entities/User";
+import { Arg, Authorized, Ctx, Mutation, Query, Resolver } from "type-graphql";
+import { User, UserCreateInput, UserResetPasswordInput, UserUpdateInput } from "../entities/User";
 import { validate } from "class-validator";
 import argon2 from "argon2";
 import { sign } from "jsonwebtoken";
@@ -9,6 +9,9 @@ import { ensureLambdaUser } from "../utils/ensureLambdaUserAfterDeleted";
 import { PassengerRide, PassengerRideStatus } from "../entities/PassengerRide";
 import { Ride } from "../entities/Ride";
 import { GraphQLError } from "graphql";
+import crypto from "crypto";
+import { resetLink } from "../mail/resetLink";
+import { confirmPasswordChange } from "../mail/confirmPasswordChange";
 
 @Resolver()
 export class UsersResolver {
@@ -274,6 +277,64 @@ async updateMyAccount(
   async signout(@Ctx() context: ContextType): Promise<boolean> {
     const cookies = new Cookies(context.req, context.res);
     cookies.set("token", "", { maxAge: 0 });
+    return true;
+  }
+
+
+  @Mutation(() => Boolean)
+  async sendResetLink(@Arg("email") email: string): Promise<boolean> {
+    const user = await User.findOneBy({ email });
+
+    // same neutral response whether user exists or not to prevent user enumeration attacks
+    if (!user) return true;
+
+
+    // randomly generate a reset token
+    const token = crypto.randomBytes(32).toString("hex");
+
+    // hash token for secure storage
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    // Save the hashed token and its expiration date in DB
+    user.hashedResetToken = hashedToken;
+    user.resetTokenExpiresAt = new Date(Date.now() + 1000 * 60 * 10); // 10 min
+    await User.save(user);
+
+    // Send an email with the reset link
+    await resetLink(user, token);
+
+    return true;
+  }
+
+  @Mutation(() => Boolean)
+  async resetPassword(@Arg("data", () => UserResetPasswordInput) data: UserResetPasswordInput): Promise<boolean> {
+    const errors = await validate(data);
+    if (errors.length > 0) {
+      throw new Error(`Validation error: ${JSON.stringify(errors)}`);
+    }
+
+    const { password, resetToken } = data;
+
+    // hash the received token
+    const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+
+    // find user by hashed token
+    const user = await User.findOne({ where: { hashedResetToken: hashedToken } });
+    
+    // check token validity
+    if (!user || !user.resetTokenExpiresAt || user.resetTokenExpiresAt < new Date()) {
+      throw new GraphQLError("Invalid or expired token.", { extensions: { code: "UNAUTHENTICATED" } });
+    }
+
+    // Hash the new password and update DB
+    user.hashedPassword = await argon2.hash(password);
+    user.hashedResetToken = null;
+    user.resetTokenExpiresAt = null;
+    await User.save(user);
+
+    // Send confirmation email
+    await confirmPasswordChange(user);
+
     return true;
   }
 }

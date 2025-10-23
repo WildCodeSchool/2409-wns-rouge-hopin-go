@@ -94,11 +94,10 @@ export default function Signup() {
           minLength={2}
           maxLength={50}
           required
-          className={`${
-            error.firstName?.length
+          className={`${error.firstName?.length
               ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
               : "border-gray-300 bg-gray-50"
-          } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
+            } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
           placeholder="Jean"
           value={firstName}
           onChange={(e) =>
@@ -127,11 +126,10 @@ export default function Signup() {
           max="100"
           required
           maxLength={100}
-          className={`${
-            error.lastName?.length
+          className={`${error.lastName?.length
               ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
               : "border-gray-300 bg-gray-50"
-          } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
+            } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
           placeholder="Dupont"
           value={lastName}
           onChange={(e) =>
@@ -155,11 +153,10 @@ export default function Signup() {
         <input
           type="email"
           id="email"
-          className={`${
-            error.email?.length
+          className={`${error.email?.length
               ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
               : "border-gray-300 bg-gray-50"
-          } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
+            } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
           placeholder="nom@mail.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -186,11 +183,10 @@ export default function Signup() {
           <input
             type={revealPassword ? "text" : "password"}
             id="password"
-            className={`${
-              error.password?.length
+            className={`${error.password?.length
                 ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
                 : "border-gray-300 bg-gray-50"
-            } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
+              } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -226,16 +222,14 @@ export default function Signup() {
           <input
             type={revealPassword ? "text" : "password"}
             id="repeat-password"
-            className={`${
-              error.confirmPassword?.length
+            className={`${error.confirmPassword?.length
                 ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
                 : "border-gray-300 bg-gray-50"
-            } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
+              } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
             aria-describedby={error.confirmPassword ? "confirm-password-error" : undefined}
-            aria-label={revealPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
           />
           <button
             type="button"
@@ -262,16 +256,16 @@ export default function Signup() {
       </div>
 
       {/* Bouton */}
-      <div className="flex w-full justify-end">       
-         <Button
-        type="button"
-        onClick={doSubmit}
-              disabled={loadingCreateUser}
-              icon={loadingCreateUser ? LoaderCircle : undefined}
-              iconRotateAnimation={loadingCreateUser}
-              label={loadingCreateUser ? "Inscription..." : "S'inscrire"}
-              variant={loadingCreateUser ? "pending" : "secondary"}
-            />
+      <div className="flex w-full justify-end">
+        <Button
+          type="button"
+          onClick={doSubmit}
+          disabled={loadingCreateUser}
+          icon={loadingCreateUser ? LoaderCircle : undefined}
+          iconRotateAnimation={loadingCreateUser}
+          label={loadingCreateUser ? "Inscription..." : "S'inscrire"}
+          variant={loadingCreateUser ? "pending" : "secondary"}
+        />
       </div>
     </form>
   );

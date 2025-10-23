@@ -14,6 +14,8 @@ import RideResults from "./pages/RideResults.tsx";
 import MyRides from "./pages/MyRides.tsx";
 import { ToastContainer } from "react-toastify"; // import RideResultTemp from "./pages/RideResultTemp";
 import MyAccount from "./pages/MyAccount.tsx";
+import ForgotPassword from "./pages/ForgotPassword.tsx";
+import ResetPassword from "./pages/ResetPassword.tsx";
 
 const client = new ApolloClient({
   uri: "/api",
@@ -71,6 +73,22 @@ const router = createBrowserRouter([
         element: (
           <AuthComponent authStates={[AuthStates.user]}>
             <MyAccount />
+          </AuthComponent>
+        ),
+      },
+      {
+        path: `/auth/forgot-password`,
+        element: (
+          <AuthComponent authStates={[AuthStates.unauthenticated]}>
+            <ForgotPassword />
+          </AuthComponent>
+        ),
+      },
+      {
+        path: `/auth/reset-password`,
+        element: (
+          <AuthComponent authStates={[AuthStates.unauthenticated]}>
+            <ResetPassword />
           </AuthComponent>
         ),
       },

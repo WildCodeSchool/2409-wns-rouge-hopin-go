@@ -19,7 +19,7 @@ const Signin = () => {
   const [error, setError] = useState<Record<string, string[]>>({});
   const navigate = useNavigate();
 
-  const [doSignin,{loading}] = useMutation(mutationSignin, {
+  const [doSignin, { loading }] = useMutation(mutationSignin, {
     refetchQueries: [queryWhoAmI],
   });
 
@@ -84,13 +84,11 @@ const Signin = () => {
         <input
           type="email"
           id="email"
-          className={`${
-            error.email?.length
-              ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
-              : "border-gray-300 bg-gray-50"
-          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5 ${
-            error.email && error.email.length > 0 && "border-full"
-          }`}
+          className={`${error.email?.length
+            ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
+            : "border-gray-300 bg-gray-50"
+            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5 ${error.email && error.email.length > 0 && "border-full"
+            }`}
           placeholder="nom@mail.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -120,13 +118,11 @@ const Signin = () => {
             type={revealPassword ? "text" : "password"}
             id="password"
             required
-            className={`${
-              error.password?.length
-                ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
-                : "border-gray-300 bg-gray-50"
-            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5 ${
-              error.password && error.password.length > 0 && "border-full"
-            }`}
+            className={`${error.password?.length
+              ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
+              : "border-gray-300 bg-gray-50"
+              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5 ${error.password && error.password.length > 0 && "border-full"
+              }`}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             aria-describedby={error.password ? "password-error" : undefined}
@@ -159,15 +155,18 @@ const Signin = () => {
           {formatErrors(error.general)}
         </p>
       )}
+      <a href="/auth/forgot-password" className="text-sm hover:underline" style={{ color: "rgb(0, 236, 255)" }}>
+        Mot de passe oublié ?
+      </a>
       <div className="flex w-full justify-end mt-5">
         <Button
-        type="submit"
-              disabled={loading}
-              icon={loading ? LoaderCircle : undefined}
-              iconRotateAnimation={loading}
-              label={loading ? "Connexion..." : "Connexion"}
-              variant={loading ? "pending" : "secondary"}
-            />
+          type="submit"
+          disabled={loading}
+          icon={loading ? LoaderCircle : undefined}
+          iconRotateAnimation={loading}
+          label={loading ? "Connexion..." : "Connexion"}
+          variant={loading ? "pending" : "secondary"}
+        />
       </div>
     </form>
   );
