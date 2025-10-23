@@ -305,7 +305,9 @@ export class PassengerRideResolver {
   ): Promise<PassengerRide> {
     const userId = ctx.user?.id;
     if (!userId) throw new Error("Unauthorized");
-
+    // Run the transaction at READ COMMITTED isolation level: 
+    // ensures that only committed data is read, 
+    // preventing dirty reads but allowing data to change between queries.
     return await datasource.transaction("READ COMMITTED", async (manager) => {
       const passengerRide = await manager
         .getRepository(PassengerRide)
