@@ -49,7 +49,7 @@ export async function sendEmail({
       .request(data);
 
     if (result) {
-      console.log("✅ Mail envoyé à", toEmail, "status:", result.body.Messages[0].Status);
+      console.log("✅ Mail envoyé");
     }
     return true;
   } catch (err: unknown) {
