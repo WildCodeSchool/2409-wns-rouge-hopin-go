@@ -15,6 +15,8 @@ import MyRides from "./pages/MyRides.tsx";
 import { ToastContainer } from "react-toastify"; // import RideResultTemp from "./pages/RideResultTemp";
 import MyAccount from "./pages/MyAccount.tsx";
 import VerifyEmail from "./pages/VerifyEmail.tsx";
+import TermsOfService from "./pages/TermsOfService.tsx";
+import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
 
 const client = new ApolloClient({
   uri: "/api",
@@ -80,6 +82,22 @@ const router = createBrowserRouter([
         element: (
           <AuthComponent authStates={[AuthStates.user]}>
             <MyAccount />
+          </AuthComponent>
+        ),
+      },
+      {
+        path: `/terms-of-service`,
+        element: (
+          <AuthComponent authStates={[AuthStates.unauthenticated, AuthStates.user]}>
+            <TermsOfService />
+          </AuthComponent>
+        ),
+      },
+      {
+        path: `/confidentiality-policy`,
+        element: (
+          <AuthComponent authStates={[AuthStates.unauthenticated, AuthStates.user]}>
+            <PrivacyPolicy />
           </AuthComponent>
         ),
       },
