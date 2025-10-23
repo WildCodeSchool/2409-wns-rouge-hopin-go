@@ -42,9 +42,11 @@ export type Mutation = {
   deleteMyAccount: Scalars['Boolean']['output'];
   deleteRide?: Maybe<Ride>;
   driverSetPassengerRideStatus: PassengerRide;
+  passengerWithdrawFromRide: PassengerRide;
   signin?: Maybe<User>;
   signout: Scalars['Boolean']['output'];
   updateMyAccount?: Maybe<User>;
+  verifyEmail: VerifyEmailResponse;
 };
 
 
@@ -83,6 +85,11 @@ export type MutationDriverSetPassengerRideStatusArgs = {
 };
 
 
+export type MutationPassengerWithdrawFromRideArgs = {
+  ride_id: Scalars['ID']['input'];
+};
+
+
 export type MutationSigninArgs = {
   email: Scalars['String']['input'];
   password: Scalars['String']['input'];
@@ -91,6 +98,11 @@ export type MutationSigninArgs = {
 
 export type MutationUpdateMyAccountArgs = {
   data: UserUpdateInput;
+};
+
+
+export type MutationVerifyEmailArgs = {
+  token: Scalars['String']['input'];
 };
 
 export type PaginatedRides = {
@@ -240,6 +252,12 @@ export type UserUpdateInput = {
   currentPassword?: InputMaybe<Scalars['String']['input']>;
   email?: InputMaybe<Scalars['String']['input']>;
   password?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type VerifyEmailResponse = {
+  __typename?: 'VerifyEmailResponse';
+  message: Scalars['String']['output'];
+  success: Scalars['Boolean']['output'];
 };
 
 export type CreatePassengerRideMutationVariables = Exact<{
