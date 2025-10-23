@@ -135,10 +135,11 @@ export class UsersResolver {
   async verifyEmail(@Arg("token") token: string): Promise<VerifyEmailResponse> {
     try {
       const decoded = verify(token, process.env.JWT_VERIFY_SECRET || "") as unknown as {
-        userId: number;
+        id: number;
       };
 
-      const user = await User.findOne({ where: { id: decoded.userId } });
+      const user = await User.findOne({ where: { id: decoded.id } });
+      console.log("user", user);
 
       if (!user) throw new Error("User not found");
       if (user.isVerified) return { success: true, message: "Already verified" };
@@ -302,8 +303,7 @@ export class UsersResolver {
         await m.delete(User, { id: user.id });
       });
 
-    
-     this.signout(context);
+      this.signout(context);
 
       return true;
     } catch (e) {

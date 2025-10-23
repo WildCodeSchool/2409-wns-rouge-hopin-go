@@ -10,8 +10,9 @@ export async function notifyDriverNewPassenger(driver: User, passenger: User, ri
     subject: "Nouvelle demande de réservation",
     text: `Bonjour ${driver.firstName},
 
-Vous avez une nouvelle demande de réservation pour votre trajet le ${ride.departure_at.toLocaleString()} de ${ride.departure_city
-      } à ${ride.arrival_city}.
+Vous avez une nouvelle demande de réservation pour votre trajet le ${ride.departure_at.toLocaleString()} de ${
+      ride.departure_city
+    } à ${ride.arrival_city}.
 
 Passager : ${passenger.firstName} ${passenger.lastName}
 
@@ -24,8 +25,9 @@ L'équipe Hopin'Go`,
 
     html: `<p>Bonjour ${driver.firstName},</p>
 
-<p>Vous avez une nouvelle demande de réservation pour votre trajet le <strong>${ride.departure_at.toLocaleString()}</strong> de <strong>${ride.departure_city
-      }</strong> à <strong>${ride.arrival_city}</strong>.</p>
+<p>Vous avez une nouvelle demande de réservation pour votre trajet le <strong>${ride.departure_at.toLocaleString()}</strong> de <strong>${
+      ride.departure_city
+    }</strong> à <strong>${ride.arrival_city}</strong>.</p>
 
 <p><strong>Passager :</strong> ${passenger.firstName} ${passenger.lastName}</p>
 
@@ -44,16 +46,18 @@ export async function notifyUserRideValidation(passenger: User, ride: Ride) {
     subject: "Validation de votre trajet",
     text: `Bonjour ${passenger.firstName},
 
-Votre trajet de ${ride.departure_city} à ${ride.arrival_city
-      } le ${ride.departure_at.toLocaleString()} a été validé.
+Votre trajet de ${ride.departure_city} à ${
+      ride.arrival_city
+    } le ${ride.departure_at.toLocaleString()} a été validé.
 
 Cordialement,
 L'équipe Hopin'Go`,
 
     html: `<p>Bonjour ${passenger.firstName},</p>
 
-<p>Votre trajet de <strong>${ride.departure_city}</strong> à <strong>${ride.arrival_city
-      }</strong> le ${ride.departure_at.toLocaleString()} a été validé.</p>
+<p>Votre trajet de <strong>${ride.departure_city}</strong> à <strong>${
+      ride.arrival_city
+    }</strong> le ${ride.departure_at.toLocaleString()} a été validé.</p>
 
 <p>Nous vous souhaitons un bon voyage !</p>
 
@@ -71,10 +75,11 @@ export async function notifyUserRideRefused(passenger: User, ride: Ride) {
     subject: "Invalidation de votre trajet",
     text: `Bonjour ${passenger.firstName},
 
-Nous sommes désolés de vous informer que votre trajet de ${ride.departure_city} à ${ride.arrival_city
-      } le ${ride.departure_at.toLocaleString()} n'a pas été validé. 
+Nous sommes désolés de vous informer que votre trajet de ${ride.departure_city} à ${
+      ride.arrival_city
+    } le ${ride.departure_at.toLocaleString()} n'a pas été validé. 
     Nous vous invitons à rechercher un autre trajet ici :
-    ${process.env.FRONTEND_URL}/research"> 
+    ${process.env.FRONTEND_URL}/research
 
 
 Cordialement,
@@ -82,9 +87,11 @@ L'équipe Hopin'Go`,
 
     html: `<p>Bonjour ${passenger.firstName},</p>
 
-<p>Nous sommes désolés de vous informer que votre trajet de <strong>${ride.departure_city
-      }</strong> à <strong>${ride.arrival_city
-      }</strong> le <strong>${ride.departure_at.toLocaleString()}</strong> n'a pas été validé. Nous vous invitons à rechercher un autre trajet ici <a href="${process.env.FRONTEND_URL}/research"> ici</a>.</p>
+<p>Nous sommes désolés de vous informer que votre trajet de <strong>${
+      ride.departure_city
+    }</strong> à <strong>${
+      ride.arrival_city
+    }</strong> le <strong>${ride.departure_at.toLocaleString()}</strong> n'a pas été validé. Nous vous invitons à rechercher un autre trajet ici <a href="${process.env.FRONTEND_URL}/research"> ici</a>.</p>
 
 <p>Cordialement,<br/>
 L'équipe Hopin'Go</p>`,
@@ -100,24 +107,26 @@ export async function notifyUserRideCancelled(passenger: User, ride: Ride) {
     text: `Bonjour ${passenger.firstName},
 
 V
-Nous sommes désolés de vous informer que votre trajet de ${ride.departure_city} à ${ride.arrival_city
-      } le ${ride.departure_at.toLocaleString()} a été annulé. Nous vous invitons à rechercher un autre trajet ici :
-    ${process.env.FRONTEND_URL}/research"> 
+Nous sommes désolés de vous informer que votre trajet de ${ride.departure_city} à ${
+      ride.arrival_city
+    } le ${ride.departure_at.toLocaleString()} a été annulé. Nous vous invitons à rechercher un autre trajet ici :
+    ${process.env.FRONTEND_URL}/research.
 
 Cordialement,
 L'équipe Hopin'Go`,
 
     html: `<p>Bonjour ${passenger.firstName},</p>
 
-<p>Nous sommes désolés de vous informer que votre trajet de <strong>${ride.departure_city
-      }</strong> à <strong>${ride.arrival_city
-      }</strong> le <strong>${ride.departure_at.toLocaleString()}</strong> a été annulé. Nous vous invitons à rechercher un autre trajet ici <a href="${process.env.FRONTEND_URL}/research"> ici</a>.</p>
+<p>Nous sommes désolés de vous informer que votre trajet de <strong>${
+      ride.departure_city
+    }</strong> à <strong>${
+      ride.arrival_city
+    }</strong> le <strong>${ride.departure_at.toLocaleString()}</strong> a été annulé. Nous vous invitons à rechercher un autre trajet ici <a href="${process.env.FRONTEND_URL}/research"> ici</a>.</p>
 
 <p>Cordialement,<br/>
 L'équipe Hopin'Go</p>`,
   });
 }
-
 
 // Notify the driver that a passenger withdrew from their ride
 export async function notifyDriverPassengerWithdraw(driver: User, passenger: User, ride: Ride) {
@@ -138,8 +147,8 @@ L'équipe Hopin'Go`,
 
 <p>Le passager <strong>${passenger.firstName} ${passenger.lastName}</strong> s’est retiré de votre trajet du <strong>${ride.departure_at.toLocaleString()}</strong> de <strong>${ride.departure_city}</strong> à <strong>${ride.arrival_city}</strong>.</p>
 
-<p>Vous pouvez consulter les détails de votre trajet dans votre espace <a href="http://localhost:8080/auth/signin">ici</a>.</p>
 
+<p>Vous pouvez consulter les détails de votre trajet dans votre espace <a href="${process.env.FRONTEND_URL}auth/signin">ici</a>.</p>
 <p>Cordialement,<br/>
 L'équipe Hopin'Go</p>`,
   });
