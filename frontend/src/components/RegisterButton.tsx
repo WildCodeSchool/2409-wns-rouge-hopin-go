@@ -1,9 +1,4 @@
-import {
-  useApolloClient,
-  useLazyQuery,
-  useMutation,
-  useQuery,
-} from "@apollo/client";
+import { useApolloClient, useLazyQuery, useMutation, useQuery } from "@apollo/client";
 import Button from "./Button";
 import { queryRide } from "../api/Ride";
 import useWindowSize from "../utils/useWindowSize";
@@ -29,9 +24,7 @@ export default function RegisterButton({
   const client = useApolloClient();
 
   const [getRide] = useLazyQuery(queryRide);
-  const [doCreatePassengerRide, { loading }] = useMutation(
-    mutationCreatePassengerRide
-  );
+  const [doCreatePassengerRide, { loading }] = useMutation(mutationCreatePassengerRide);
 
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const me = whoAmIData?.whoami;
@@ -42,8 +35,7 @@ export default function RegisterButton({
   // selon le variant reçu en prop, on sait si l'utilisateur est inscrit ou pas
   // To Do : Changer d'icone selon le variant ?
   // Si variant === validation : "Annuler/Gérer l'inscription" au lieu de "Réserver" et changer le comportement du bouton ? => handleCancelRegister
-  const hasRegistered =
-    variant === "pending" || variant === "validation" ? true : false;
+  const hasRegistered = variant === "pending" || variant === "validation" ? true : false;
 
   const rideId = rideIdProp ? rideIdProp : rideContext?.id;
   if (!rideId) {
@@ -124,9 +116,7 @@ export default function RegisterButton({
   {
     return size === "small" ? (
       <Button
-        isDisabled={
-          (variant !== "primary" && variant !== "secondary") || loading
-        }
+        isDisabled={(variant !== "primary" && variant !== "secondary") || loading}
         iconRotate={variant === "primary" || variant === "secondary"}
         variant={variant}
         icon={icon}
@@ -135,13 +125,11 @@ export default function RegisterButton({
         onClick={isLoggedIn && !hasRegistered ? handleRegister : undefined}
         isLink={isLoggedIn ? false : true}
         to="signin"
-        className="!rounded-full shadow-lg -ml-2 sm:-ml-6 my-2 z-10"
+        className="z-10 my-2 -ml-2 !rounded-full shadow-lg sm:-ml-6"
       />
     ) : (
       <Button
-        isDisabled={
-          (variant !== "primary" && variant !== "secondary") || loading
-        }
+        isDisabled={(variant !== "primary" && variant !== "secondary") || loading}
         variant={variant}
         icon={icon}
         iconSize={isMd ? 32 : isSm ? 32 : 24}
@@ -149,7 +137,7 @@ export default function RegisterButton({
         onClick={isLoggedIn && !hasRegistered ? handleRegister : undefined}
         isLink={isLoggedIn ? false : true}
         to="/auth/signin"
-        className="w-full"
+        className="w-fit"
       />
     );
   }

@@ -5,16 +5,12 @@ import { useOutsideClick } from "../hooks/useOutsideClick";
 type SearchBarRideProps = {
   departureCity: string;
   setDepartureCity: React.Dispatch<React.SetStateAction<string>>;
-  setDepartureCoords: React.Dispatch<
-    React.SetStateAction<{ lat: number; long: number }>
-  >;
+  setDepartureCoords: React.Dispatch<React.SetStateAction<{ lat: number; long: number }>>;
   departureRadius: number;
   setDepartureRadius: React.Dispatch<React.SetStateAction<number>>;
   arrivalCity: string;
   setArrivalCity: React.Dispatch<React.SetStateAction<string>>;
-  setArrivalCoords: React.Dispatch<
-    React.SetStateAction<{ lat: number; long: number }>
-  >;
+  setArrivalCoords: React.Dispatch<React.SetStateAction<{ lat: number; long: number }>>;
   arrivalRadius: number;
   setArrivalRadius: React.Dispatch<React.SetStateAction<number>>;
   departureAt: string;
@@ -35,9 +31,7 @@ type SearchBarRideProps = {
       arrival: boolean;
     }>
   >;
-  setLastModifiedField?: React.Dispatch<
-    React.SetStateAction<"departure" | "arrival" | null>
-  >;
+  setLastModifiedField?: React.Dispatch<React.SetStateAction<"departure" | "arrival" | null>>;
   handleSelect?: (field: "departure" | "arrival", value: string) => void;
 };
 
@@ -189,23 +183,19 @@ const SearchBarRide = ({
     } else if (e.key === "ArrowDown") {
       e.preventDefault();
       if (li === "departure") {
-        const nextIndex =
-          departureSuggestionsRef.current.indexOf(e.currentTarget) + 1;
+        const nextIndex = departureSuggestionsRef.current.indexOf(e.currentTarget) + 1;
         departureSuggestionsRef.current[nextIndex]?.focus();
       } else {
-        const nextIndex =
-          arrivalSuggestionsRef.current.indexOf(e.currentTarget) + 1;
+        const nextIndex = arrivalSuggestionsRef.current.indexOf(e.currentTarget) + 1;
         arrivalSuggestionsRef.current[nextIndex]?.focus();
       }
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       if (li === "departure") {
-        const prevIndex =
-          departureSuggestionsRef.current.indexOf(e.currentTarget) - 1;
+        const prevIndex = departureSuggestionsRef.current.indexOf(e.currentTarget) - 1;
         departureSuggestionsRef.current[prevIndex]?.focus();
       } else {
-        const prevIndex =
-          arrivalSuggestionsRef.current.indexOf(e.currentTarget) - 1;
+        const prevIndex = arrivalSuggestionsRef.current.indexOf(e.currentTarget) - 1;
         arrivalSuggestionsRef.current[prevIndex]?.focus();
       }
     } else if (e.key === "Tab") {
@@ -243,13 +233,13 @@ const SearchBarRide = ({
             e.preventDefault();
             handleSubmit(e);
           }}
-          className="flex flex-row w-full gap-4"
+          className="flex w-full flex-row gap-4"
         >
           {/* Ville de départ */}
           <div>
             <label
               htmlFor="departure-city"
-              className="block mb-1 text-sm font-medium text-textLight"
+              className="text-textLight mb-1 block text-sm font-medium"
             >
               Départ
             </label>
@@ -259,9 +249,9 @@ const SearchBarRide = ({
               required
               className={`${
                 error.firstName?.length
-                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                  ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
                   : "border-gray-300 bg-gray-50"
-              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-1.5`}
+              } textDark block w-full rounded-lg border p-1.5 text-sm shadow-sm focus:outline-none`}
               placeholder="Paris"
               value={departureCity}
               ref={departureRef}
@@ -275,12 +265,13 @@ const SearchBarRide = ({
               aria-autocomplete="list"
               aria-expanded={showSuggestions.departure}
               aria-controls="departure-city-suggestions-list"
+              role="combobox"
             />
             {showSuggestions.departure && suggestions.departure.length > 0 && (
               <ul
                 role="listbox"
                 id="departure-city-suggestions-list"
-                className="absolute w-full bg-white border mt-1 max-h-60 overflow-y-auto rounded-md shadow-lg z-20"
+                className="absolute z-20 mt-1 max-h-60 w-full overflow-y-auto rounded-md border bg-white shadow-lg"
                 ref={departureUlRef}
               >
                 {suggestions.departure.map((suggestion, index) => (
@@ -289,11 +280,9 @@ const SearchBarRide = ({
                     key={index}
                     tabIndex={0}
                     ref={(el) => (departureSuggestionsRef.current[index] = el!)}
-                    onKeyDown={(e) =>
-                      handleLiKeyDown(e, suggestion, "departure")
-                    }
+                    onKeyDown={(e) => handleLiKeyDown(e, suggestion, "departure")}
                     onClick={() => handleSelect("departure", suggestion)}
-                    className="p-2 cursor-pointer hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
+                    className="cursor-pointer p-2 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
                   >
                     {suggestion}
                   </li>
@@ -303,10 +292,7 @@ const SearchBarRide = ({
           </div>
           {/* Rayon de recherche pour la ville de départ */}
           <div className="flex flex-col">
-            <label
-              htmlFor="departure-radius"
-              className="block mb-1 text-sm font-medium text-white"
-            >
+            <label htmlFor="departure-radius" className="mb-1 block text-sm font-medium text-white">
               Rayon
             </label>
             <input
@@ -317,24 +303,19 @@ const SearchBarRide = ({
               style={{ width: "52px" }}
               className={`${
                 error.departureRadius?.length
-                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                  ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
                   : "border-gray-300 bg-gray-50"
-              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-1.5`}
+              } textDark block w-full rounded-lg border p-1.5 text-sm shadow-sm focus:outline-none`}
               value={departureRadius}
               ref={departureRadiusRef}
               onChange={(e) => setDepartureRadius(Number(e.target.value))}
-              onFocus={() =>
-                setShowSuggestions(() => ({ departure: false, arrival: false }))
-              }
+              onFocus={() => setShowSuggestions(() => ({ departure: false, arrival: false }))}
               aria-valuetext={`${departureRadius} kilomètres`}
             />
           </div>
           {/* Ville d'arrivée */}
           <div>
-            <label
-              htmlFor="arrival-city"
-              className="block mb-1 text-sm font-medium text-white "
-            >
+            <label htmlFor="arrival-city" className="mb-1 block text-sm font-medium text-white">
               Arrivée
             </label>
             <input
@@ -343,9 +324,9 @@ const SearchBarRide = ({
               required
               className={`${
                 error.arrivalCity?.length
-                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                  ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
                   : "border-gray-300 bg-gray-50"
-              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-1.5`}
+              } textDark block w-full rounded-lg border p-1.5 text-sm shadow-sm focus:outline-none`}
               placeholder="Lyon"
               value={arrivalCity}
               ref={arrivalRef}
@@ -365,7 +346,7 @@ const SearchBarRide = ({
               <ul
                 role="listbox"
                 id="arrival-city-suggestions-list"
-                className="absolute w-full bg-white border mt-1 max-h-60 overflow-y-auto rounded-md shadow-lg z-20"
+                className="absolute z-20 mt-1 max-h-60 w-full overflow-y-auto rounded-md border bg-white shadow-lg"
                 ref={arrivalUlRef}
               >
                 {suggestions.arrival.map((suggestion, index) => (
@@ -376,7 +357,7 @@ const SearchBarRide = ({
                     ref={(el) => (arrivalSuggestionsRef.current[index] = el!)}
                     onKeyDown={(e) => handleLiKeyDown(e, suggestion, "arrival")}
                     onClick={() => handleSelect("arrival", suggestion)}
-                    className="p-2 cursor-pointer hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
+                    className="cursor-pointer p-2 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
                   >
                     {suggestion}
                   </li>
@@ -386,10 +367,7 @@ const SearchBarRide = ({
           </div>
           {/* Rayon de recherche pour la ville d'arrivée */}
           <div className="flex flex-col">
-            <label
-              htmlFor="arrival-radius"
-              className="block mb-1 text-sm font-medium text-white"
-            >
+            <label htmlFor="arrival-radius" className="mb-1 block text-sm font-medium text-white">
               Rayon
             </label>
             <input
@@ -400,24 +378,19 @@ const SearchBarRide = ({
               style={{ width: "52px" }}
               className={`${
                 error.arrivalRadius?.length
-                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                  ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
                   : "border-gray-300 bg-gray-50"
-              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-1.5`}
+              } textDark block w-full rounded-lg border p-1.5 text-sm shadow-sm focus:outline-none`}
               value={arrivalRadius}
               ref={arrivalRadiusRef}
               onChange={(e) => setArrivalRadius(Number(e.target.value))}
-              onFocus={() =>
-                setShowSuggestions((prev) => ({ ...prev, arrival: false }))
-              }
+              onFocus={() => setShowSuggestions((prev) => ({ ...prev, arrival: false }))}
               aria-valuetext={`${arrivalRadius} kilomètres`}
             />
           </div>
           {/* Date de départ */}
           <div>
-            <label
-              htmlFor="departure-at"
-              className="block mb-1 text-sm font-medium text-white"
-            >
+            <label htmlFor="departure-at" className="mb-1 block text-sm font-medium text-white">
               Date
             </label>
             <input
@@ -427,9 +400,9 @@ const SearchBarRide = ({
               min={new Date().toISOString().split("T")[0]}
               className={`${
                 error.departureAt?.length
-                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                  ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
                   : "border-gray-300 bg-gray-50"
-              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-1.5 ${
+              } textDark block w-full rounded-lg border p-1.5 text-sm shadow-sm focus:outline-none ${
                 !departureAt ? "text-gray-400" : "text-black"
               }`}
               value={departureAt}

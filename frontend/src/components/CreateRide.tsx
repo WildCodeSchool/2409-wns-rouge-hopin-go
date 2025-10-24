@@ -4,14 +4,12 @@ import { mutationCreateRide } from "../api/CreateRide";
 import { useNavigate } from "react-router-dom";
 import Button from "./Button";
 import { formatErrors } from "../utils/formatErrors";
-import {
-  validateAddressUtils,
-  validateDepartureAt,
-} from "../utils/createRideValidator";
+import { validateAddressUtils, validateDepartureAt } from "../utils/createRideValidator";
 import { queryWhoAmI } from "../api/WhoAmI";
 import { toast } from "react-toastify";
 import { queryDriverRides } from "../api/DriverRides";
 import { useOutsideClick } from "../hooks/useOutsideClick";
+import { LoaderCircle } from "lucide-react";
 
 const CreateRide = () => {
   // TO DO => if user is not connected, the form should not be accessible
@@ -31,20 +29,16 @@ const CreateRide = () => {
     departure: [],
     arrival: [],
   });
-  const [showDepartureSuggestions, setShowDepartureSuggestions] =
-    useState<boolean>(false);
-  const [showArrivalSuggestions, setShowArrivalSuggestions] =
-    useState<boolean>(false);
+  const [showDepartureSuggestions, setShowDepartureSuggestions] = useState<boolean>(false);
+  const [showArrivalSuggestions, setShowArrivalSuggestions] = useState<boolean>(false);
   const [selected, setSelected] = useState({ departure: "", arrival: "" });
-  const [lastModifiedCity, setLastModifiedCity] = useState<
-    "departure" | "arrival" | null
-  >(null);
-
-  const [doCreateRide] = useMutation(mutationCreateRide, {
-    refetchQueries: [queryDriverRides],
-  });
+  const [lastModifiedCity, setLastModifiedCity] = useState<"departure" | "arrival" | null>(null);
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const driver = whoAmIData?.whoami;
+
+  const [doCreateRide, { loading: isCreatingRideLoading }] = useMutation(mutationCreateRide, {
+    refetchQueries: [queryDriverRides, queryWhoAmI],
+  });
 
   const departureTimeRef = useRef<HTMLInputElement>(null);
   const departureRef = useRef<HTMLInputElement>(null);
@@ -61,11 +55,7 @@ const CreateRide = () => {
     () => setShowDepartureSuggestions(false),
     showDepartureSuggestions
   );
-  useOutsideClick(
-    arrivalUlRef,
-    () => setShowArrivalSuggestions(false),
-    showArrivalSuggestions
-  );
+  useOutsideClick(arrivalUlRef, () => setShowArrivalSuggestions(false), showArrivalSuggestions);
 
   type Suggestion = {
     properties: {
@@ -88,14 +78,9 @@ const CreateRide = () => {
           console.log("FetchAddress => ", data);
           setSuggestions({
             ...suggestions,
-            departure: data.features.map(
-              (suggestion: Suggestion) => suggestion.properties.label
-            ),
+            departure: data.features.map((suggestion: Suggestion) => suggestion.properties.label),
           });
-          console.log(
-            "data.features[0].properties.city => ",
-            data.features[0].properties.city
-          );
+          console.log("data.features[0].properties.city => ", data.features[0].properties.city);
 
           setDepartureCity(data.features[0].properties.city);
           setDepartureCoords({
@@ -114,9 +99,7 @@ const CreateRide = () => {
           console.log("FetchAddress => ", data);
           setSuggestions({
             ...suggestions,
-            arrival: data.features.map(
-              (suggestion: Suggestion) => suggestion.properties.label
-            ),
+            arrival: data.features.map((suggestion: Suggestion) => suggestion.properties.label),
           });
           setArrivalCity(data.features[0].properties.city);
           setArrivalCoords({
@@ -155,17 +138,12 @@ const CreateRide = () => {
       console.log("selected departure :", selected.departure);
     }
 
-    const cityErrors: string[] = validateAddressUtils(
-      value,
-      key,
-      selected[key]
-    ); // tableau d'erreurs
+    const cityErrors: string[] = validateAddressUtils(value, key, selected[key]); // tableau d'erreurs
 
     // Mise à jour des erreurs dans le state
     setError((prev) => ({
       ...prev,
-      [key === "departure" ? "departure_address" : "arrival_address"]:
-        cityErrors,
+      [key === "departure" ? "departure_address" : "arrival_address"]: cityErrors,
     }));
   };
 
@@ -179,10 +157,7 @@ const CreateRide = () => {
       departure_at,
     }));
 
-    return (
-      Object.values(error).every((errArray) => errArray.length === 0) &&
-      departureCity
-    );
+    return Object.values(error).every((errArray) => errArray.length === 0) && departureCity;
   };
 
   async function doSubmit() {
@@ -226,9 +201,7 @@ const CreateRide = () => {
       console.error(e);
       toast.error("Une erreur est survenue lors de l'inscription.");
       setError({
-        form: [
-          "Une erreur est survenue lors de la création du trajet. Réessayez.",
-        ],
+        form: ["Une erreur est survenue lors de la création du trajet. Réessayez."],
       });
     }
     navigate("/"); // ToDo : rediriger vers la page 'Mes trajets' une fois la création du trajet réussie
@@ -313,23 +286,19 @@ const CreateRide = () => {
     } else if (e.key === "ArrowDown") {
       e.preventDefault();
       if (li === "departure") {
-        const nextIndex =
-          departureSuggestionsRef.current.indexOf(e.currentTarget) + 1;
+        const nextIndex = departureSuggestionsRef.current.indexOf(e.currentTarget) + 1;
         departureSuggestionsRef.current[nextIndex]?.focus();
       } else {
-        const nextIndex =
-          arrivalSuggestionsRef.current.indexOf(e.currentTarget) + 1;
+        const nextIndex = arrivalSuggestionsRef.current.indexOf(e.currentTarget) + 1;
         arrivalSuggestionsRef.current[nextIndex]?.focus();
       }
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
       if (li === "departure") {
-        const prevIndex =
-          departureSuggestionsRef.current.indexOf(e.currentTarget) - 1;
+        const prevIndex = departureSuggestionsRef.current.indexOf(e.currentTarget) - 1;
         departureSuggestionsRef.current[prevIndex]?.focus();
       } else {
-        const prevIndex =
-          arrivalSuggestionsRef.current.indexOf(e.currentTarget) - 1;
+        const prevIndex = arrivalSuggestionsRef.current.indexOf(e.currentTarget) - 1;
         arrivalSuggestionsRef.current[prevIndex]?.focus();
       }
     } else if (e.key === "Tab") {
@@ -362,19 +331,16 @@ const CreateRide = () => {
 
   return (
     <form
-      className="flex flex-col items-center h-full w-full  max-w-xl mx-auto  justify-center"
+      className="flex flex-col items-center h-full w-full lg:p-20 mx-auto max-w-sm lg:max-w-2xl justify-center"
       onSubmit={(e) => {
         e.preventDefault();
         doSubmit();
       }}
     >
-      <div className="flex w-full flex-col justify-center gap-8 mb-4">
+      <div className="mb-4 flex w-full flex-col justify-center gap-8">
         {/* DepartureTime */}
-        <div className="flex flex-col w-full">
-          <label
-            htmlFor="departureAt"
-            className="block mb-2 text-sm font-medium text-textLight"
-          >
+        <div className="flex w-full flex-col">
+          <label htmlFor="departureAt" className="text-textLight mb-2 block text-sm font-medium">
             Date et horaire de départ
           </label>
           <input
@@ -382,31 +348,29 @@ const CreateRide = () => {
             id="departureAt"
             className={`${
               error.departure_at?.length
-                ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
                 : "border-gray-300 bg-gray-50"
-            } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+            } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
             placeholder="Date et horaire de départ"
             value={departureAt}
             ref={departureTimeRef}
             onChange={(e) => setDepartureAt(e.target.value)}
             autoComplete="none"
             required
-            aria-describedby={
-              error.departure_at ? "departure-at-error" : undefined
-            }
+            aria-describedby={error.departure_at ? "departure-at-error" : undefined}
           />
-          {error.departure_at && (
-            <p id="departure-at-error" className="text-red-500 text-sm">
+          {error.departure_at && error.departure_at.length > 0 && (
+            <p id="departure-at-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
               {formatErrors(error.departure_at)}
             </p>
           )}
         </div>
-        <div className="flex flex-col w-full justify-between  gap-8 mb-4">
+        <div className="mb-4 flex w-full flex-col justify-between gap-8">
           {/* DepartureCity */}
-          <div className="flex-col w-full">
+          <div className="w-full flex-col">
             <label
               htmlFor="departureAddress"
-              className="block mb-2 text-sm font-medium text-textLight"
+              className="text-textLight mb-2 block text-sm font-medium"
             >
               Adresse de départ
             </label>
@@ -415,9 +379,9 @@ const CreateRide = () => {
               id="departureAddress"
               className={`${
                 error.departure_city?.length
-                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                  ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
                   : "border-gray-300 bg-gray-50"
-              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+              } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
               placeholder="ex. Marseille"
               value={departureAddress}
               ref={departureRef}
@@ -436,15 +400,13 @@ const CreateRide = () => {
               aria-autocomplete="list"
               aria-expanded={showDepartureSuggestions}
               aria-controls="departure-city-suggestions-list"
-              aria-describedby={
-                error.departure_address ? "departure-address-error" : undefined
-              }
+              aria-describedby={error.departure_address ? "departure-address-error" : undefined}
             />
             {suggestions.departure.length > 0 && showDepartureSuggestions && (
               <ul
                 id="departure-city-suggestions-list"
                 role="listbox"
-                className="absolute bg-white border mt-1 max-h-60 w-fit overflow-auto shadow-lg no-scrollbar"
+                className="no-scrollbar absolute mt-1 max-h-60 w-fit overflow-auto border bg-white shadow-lg"
                 ref={departureUlRef}
               >
                 {suggestions.departure.map((address, index) => (
@@ -456,35 +418,35 @@ const CreateRide = () => {
                     ref={(el) => (departureSuggestionsRef.current[index] = el!)}
                     onClick={() => handleSelect(address)}
                     onKeyDown={(e) => handleLiKeyDown(e, address, "departure")}
-                    className="p-2 cursor-pointer hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
+                    className="cursor-pointer p-2 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
                   >
                     {address}
                   </li>
                 ))}
               </ul>
             )}
-            {error.departure_address && (
-              <p id="departure-address-error" className="text-red-500 text-sm">
+            {error.departure_address && error.departure_address.length > 0 && (
+              <p id="departure-address-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
                 {formatErrors(error.departure_address)}
               </p>
             )}
           </div>
           {/* ArrivalCity */}
-          <div className="flex-col w-full">
+          <div className="w-full flex-col">
             <label
               htmlFor="arrivalAddress"
-              className="block mb-2 text-sm font-medium text-textLight"
+              className="text-textLight mb-2 block text-sm font-medium"
             >
-              Adresse d'arrivée
+              Adresse d&apos;arrivée
             </label>
             <input
               type="text"
               id="arrivalAddress"
               className={`${
                 error.arrival_city?.length
-                  ? "border-error border-2 bg-red-50 focus:ring-0 placeholder:text-primary[50%]"
+                  ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
                   : "border-gray-300 bg-gray-50"
-              } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+              } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
               placeholder="ex. Lyon"
               value={arrivalAddress}
               ref={arrivalRef}
@@ -503,15 +465,13 @@ const CreateRide = () => {
               aria-autocomplete="list"
               aria-expanded={showArrivalSuggestions}
               aria-controls="arrival-city-suggestions-list"
-              aria-describedby={
-                error.arrival_address ? "arrival-address-error" : undefined
-              }
+              aria-describedby={error.arrival_address ? "arrival-address-error" : undefined}
             />
             {suggestions.arrival.length > 0 && showArrivalSuggestions && (
               <ul
                 id="arrival-city-suggestions-list"
                 role="listbox"
-                className="absolute bg-white border mt-1 max-h-60 overflow-auto no-scrollbar"
+                className="no-scrollbar absolute mt-1 max-h-60 overflow-auto border bg-white"
                 ref={arrivalUlRef}
               >
                 {suggestions.arrival.map((address, index) => (
@@ -523,15 +483,15 @@ const CreateRide = () => {
                     ref={(el) => (arrivalSuggestionsRef.current[index] = el!)}
                     onKeyDown={(e) => handleLiKeyDown(e, address, "arrival")}
                     onClick={() => handleSelect(address)}
-                    className="p-2 cursor-pointer hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
+                    className="cursor-pointer p-2 hover:bg-gray-200 focus:bg-gray-200 focus:outline-none"
                   >
                     {address}
                   </li>
                 ))}
               </ul>
             )}
-            {error.arrival_address && (
-              <p id="arrival-address-error" className="text-red-500 text-sm">
+            {error.arrival_address && error.arrival_address.length > 0 && (
+              <p id="arrival-address-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
                 {formatErrors(error.arrival_address)}
               </p>
             )}
@@ -539,19 +499,15 @@ const CreateRide = () => {
         </div>
       </div>
       {/* MaxPassenger */}
-      <div className=" w-full">
+      <div className="w-full">
         <label
           htmlFor="maxPassenger"
-          className="flex mb-2 text-sm font-medium text-textLight"
+          className="text-textLight mb-2 flex text-sm font-medium"
           id="maxPassenger"
         >
           Nombre de passager maximum
         </label>
-        <div
-          role="radiogroup"
-          className="flex justify-between"
-          aria-labelledby="maxPassenger"
-        >
+        <div role="radiogroup" className="flex justify-between" aria-labelledby="maxPassenger">
           <Button
             onClick={() => setMaxPassenger(1)}
             onFocus={() => setShowArrivalSuggestions(false)}
@@ -589,15 +545,19 @@ const CreateRide = () => {
         </div>
       </div>
 
-      <div className="flex w-full justify-end mt-6">
+      <div className="mt-6 flex w-full justify-end">
         <Button
           onClick={doSubmit}
-          variant="validation"
+          variant={isCreatingRideLoading ? "pending" : "secondary"}
           type="button"
-          label="Créer mon trajet"
+          label={isCreatingRideLoading ? "Création..." : "Créer mon trajet"}
           isHoverBgColor
+          icon={isCreatingRideLoading ? LoaderCircle : undefined}
+          iconRotateAnimation
+          className={isCreatingRideLoading ? "disabled:cursor-not-allowed" : ""}
           isDisabled={
-            showDepartureSuggestions || showArrivalSuggestions ? true : false
+            (showDepartureSuggestions || showArrivalSuggestions ? true : false) ||
+            isCreatingRideLoading
           }
         />
       </div>

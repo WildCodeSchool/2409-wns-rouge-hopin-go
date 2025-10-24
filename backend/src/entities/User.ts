@@ -1,12 +1,5 @@
 import { IsEmail, Matches, MaxLength, MinLength } from "class-validator";
-import {
-  Field,
-  ID,
-  InputType,
-  MiddlewareFn,
-  ObjectType,
-  UseMiddleware,
-} from "type-graphql";
+import { Field, ID, InputType, MiddlewareFn, ObjectType, UseMiddleware } from "type-graphql";
 import {
   BaseEntity,
   Check,
@@ -20,11 +13,11 @@ import { ContextType } from "../auth";
 import { PassengerRide } from "./PassengerRide";
 
 export const IsUser: MiddlewareFn<ContextType> = async (
-  { context, root },
-  next
+  { context, root }: { context: ContextType; root: unknown },
+  next: () => Promise<unknown>
 ) => {
   if (context.user) {
-    if (context.user.role === "admin" || context.user.id === root.id) {
+    if (context.user.role === "admin" || context.user.id === (root as User).id) {
       //si je suis admin ou si je suis le user il faut que le user connecté soit le même que le user requêté
       return await next(); // dans ce cas on poursuit le traitement
     } else {
@@ -57,6 +50,9 @@ export class User extends BaseEntity {
   @UseMiddleware(IsUser)
   email!: string;
 
+  @Column({ type: "boolean", default: "false" })
+  isVerified = false;
+
   @Column({
     type: "enum",
     enum: ["user", "admin"],
@@ -85,6 +81,12 @@ export class User extends BaseEntity {
 
   @OneToMany(() => PassengerRide, (pr) => pr.user)
   passenger_rides!: PassengerRide[];
+
+  @Column({ name: "hashed_reset_token", type: "varchar", nullable: true })
+  hashedResetToken?: string | null;
+
+  @Column({ name: "reset_token_expires_at", type: "timestamptz", nullable: true })
+  resetTokenExpiresAt?: Date | null;
 
   // may be needed if user can create other users
   // @ManyToOne(() => User)
@@ -126,10 +128,46 @@ export class UserCreateInput {
 
 @InputType()
 export class UserUpdateInput {
+  @Field({ nullable: true })
   @IsEmail({}, { message: "Invalid email" })
+  email?: string;
+
+  @Field({ nullable: true })
+  currentPassword?: string;
+
+  @Field({ nullable: true })
+  @MinLength(8, { message: "Password must be at least 8 characters long" })
+  @MaxLength(32, { message: "Password cannot exceed 32 characters" })
+  @Matches(/[a-z]/, {
+    message: "Password must contain at least one lowercase letter",
+  })
+  @Matches(/[A-Z]/, {
+    message: "Password must contain at least one uppercase letter",
+  })
+  @Matches(/\d/, { message: "Password must contain at least one number" })
+  @Matches(/[@$!%*?&]/, {
+    message: "Password must contain at least one special character (@$!%*?&)",
+  })
+  password?: string;
+}
+
+@InputType()
+export class UserResetPasswordInput {
   @Field()
-  email!: string;
+  @MinLength(8, { message: "Password must be at least 8 characters long" })
+  @MaxLength(32, { message: "Password cannot exceed 32 characters" })
+  @Matches(/[a-z]/, {
+    message: "Password must contain at least one lowercase letter",
+  })
+  @Matches(/[A-Z]/, {
+    message: "Password must contain at least one uppercase letter",
+  })
+  @Matches(/\d/, { message: "Password must contain at least one number" })
+  @Matches(/[@$!%*?&]/, {
+    message: "Password must contain at least one special character (@$!%*?&)",
+  })
+  password!: string;
 
   @Field()
-  password!: string;
+  resetToken!: string;
 }

@@ -4,7 +4,7 @@ import {
   validateDepartureAt as validateDepartureAtUtils,
   validateArrivalCity as validateArrivalCityUtils,
 } from "../utils/searchRideValidators";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import SearchFormRide from "./SearchFormRide";
 import SearchBarRide from "./SearchBarRide";
 
@@ -15,6 +15,7 @@ type SearchRideProps = {
 
 const SearchRide = ({ variant, proposeRef }: SearchRideProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   // Attention, contrairement à createRide, ici c'est City et pas Address qui impacte les suggestions
   const [departureCity, setDepartureCity] = useState("");
   const [departureCoords, setDepartureCoords] = useState({ long: 0, lat: 0 });
@@ -32,20 +33,41 @@ const SearchRide = ({ variant, proposeRef }: SearchRideProps) => {
     departure: false,
     arrival: false,
   });
-  const [lastModifiedField, setLastModifiedField] = useState<
-    "departure" | "arrival" | null
-  >(null);
+  const [lastModifiedField, setLastModifiedField] = useState<"departure" | "arrival" | null>(null);
+
+  useEffect(() => {
+    if (location.pathname === "/ride-results") {
+      const params = new URLSearchParams(location.search);
+
+      const depCity = params.get("departure_city");
+      const arrCity = params.get("arrival_city");
+      const depLat = params.get("departure_lat");
+      const depLong = params.get("departure_lng");
+      const arrLat = params.get("arrival_lat");
+      const arrLong = params.get("arrival_lng");
+      const depRadius = params.get("departure_radius");
+      const arrRadius = params.get("arrival_radius");
+      const depAt = params.get("departure_at");
+
+      if (depCity) setDepartureCity(depCity);
+      if (arrCity) setArrivalCity(arrCity);
+      if (depLat && depLong)
+        setDepartureCoords({ lat: parseFloat(depLat), long: parseFloat(depLong) });
+      if (arrLat && arrLong)
+        setArrivalCoords({ lat: parseFloat(arrLat), long: parseFloat(arrLong) });
+      if (depRadius) setDepartureRadius(parseInt(depRadius));
+      if (arrRadius) setArrivalRadius(parseInt(arrRadius));
+      if (depAt) setDepartureAt(depAt);
+    }
+  }, [location]);
 
   useEffect(() => {
     const fetchSuggestions = async () => {
-      const query =
-        lastModifiedField === "departure" ? departureCity : arrivalCity;
+      const query = lastModifiedField === "departure" ? departureCity : arrivalCity;
       if (!query) return;
       if (lastModifiedField === "departure") {
         try {
-          const res = await fetch(
-            `https://api-adresse.data.gouv.fr/search/?q=${query}&limit=5`
-          );
+          const res = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${query}&limit=5`);
           const data = await res.json();
 
           type Feature = { properties: { label: string } };
@@ -66,9 +88,7 @@ const SearchRide = ({ variant, proposeRef }: SearchRideProps) => {
         }
       } else if (lastModifiedField === "arrival") {
         try {
-          const res = await fetch(
-            `https://api-adresse.data.gouv.fr/search/?q=${query}&limit=5`
-          );
+          const res = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${query}&limit=5`);
           const data = await res.json();
 
           type Feature = { properties: { label: string } };

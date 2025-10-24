@@ -52,27 +52,22 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
   const availableSeats = data.available_seats ?? 0;
   // ---------------------End Map---------------------
 
-  const [travelDuration, setTravelDuration] = useState<string>(
-    formatTravelDuration(durationMin)
-  );
-  const [travelDistance, setTravelDistance] = useState<string>(
-    `${distanceKm} km`
-  );
+  const [travelDuration, setTravelDuration] = useState<string>(formatTravelDuration(durationMin));
+  const [travelDistance, setTravelDistance] = useState<string>(`${distanceKm} km`);
 
-  const driverName =
-    data.driver?.firstName ?? `Conducteur #${data.driver?.id ?? "?"}`;
+  const driverName = data.driver?.firstName ?? `Conducteur #${data.driver?.id ?? "?"}`;
 
   return (
-    <div className="relative z-0 flex justify-center w-full">
-      <div className="absolute top-[88px] hidden md:flex w-full max-w-[648px] ">
-        <div className="bg-primary px-6 pt-2 pb-6 rounded-t-3xl shadow-md w-[85%]">
+    <div className="relative z-0 flex w-full justify-center">
+      <div className="absolute top-[88px] hidden w-full max-w-[648px] md:flex">
+        <div className="bg-primary w-[85%] rounded-t-3xl px-6 pb-6 pt-2 shadow-md">
           <SearchRide variant="searchBarRide" />
         </div>
-        <div className="w-[15%] flex items-center justify-center mb-4 ">
+        <div className="mb-4 flex w-[15%] items-center justify-center">
           <div className="flex w-full justify-center">
             <Button
               variant="primary"
-              className="!rounded-full shadow-lg -ml-2 sm:-ml-6 my-2"
+              className="my-2 -ml-2 !rounded-full shadow-lg sm:-ml-6"
               type="submit"
               icon={Search}
               iconSize={isXl ? 30 : isLg ? 28 : isMd ? 26 : 24}
@@ -82,34 +77,15 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
         </div>
       </div>
       <div
-        className={`hidden relative z-10 md:block p-8 mt-40 mb-40 mr-8 rounded-3xl space-y-5 shadow-custom  md:w-full h-fit border-4 border-primary ${textColor} bg-gray-100`}
+        className={`shadow-custom border-primary relative z-10 mb-40 mr-8 mt-40 hidden h-fit space-y-5 rounded-3xl border-4 p-8 md:block md:w-full ${textColor} bg-gray-100`}
       >
-        <div className="pointer-events-none absolute -left-full lg:translate-x-[3px] xl:translate-x-[1px] bg-gray-100 top-1/2 -translate-y-1/2 w-full flex justify-center">
-          <svg
-            id="overlay"
-            className="md:scale-y-[1.04] lg:scale-y-[1.01] lg:scale-x-[0.99] xl:scale-y-[1.005] xl:scale-x-[0.999] xl:skew-x-[0.04deg]"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 648.14 389.63"
-          >
-            <path
-              style={{
-                fill: "#f3f4f6",
-                stroke: "#8e387c",
-                strokeWidth: `${isXl ? 4 : isLg ? 4.6 : isMd ? 6 : 1}px`,
-              }}
-              className="overlay"
-              d="M645.72,389.63c0-20.75-13.43-37.57-30-37.57H28c-14.36,0-26-14.58-26-32.56V70.26c0-17.98,11.64-32.56,26-32.56h588.14c16.6,0,30.05-16.89,30-37.69"
-            />
-          </svg>
-        </div>
+        
         <h2 className={`text-2xl font-bold ${textColor}`}>{driverName}</h2>
-        <h2 className={`text-xl font-bold mb-2 ${textColor}`}>
-          Détails du trajet
-        </h2>
-        <div className="flex w-full justify-start  gap-10">
+        <h2 className={`mb-2 text-xl font-bold ${textColor}`}>Détails du trajet</h2>
+        <div className="flex w-full justify-start gap-10">
           <div>
             <p className="text-sm md:text-base">{dateStr}</p>
-            <p className="text-xl md:text-4xl font-semibold">
+            <p className="text-xl font-semibold md:text-4xl">
               {pricePerPassenger}
               <span className="text-sm md:text-2xl"> €</span>
             </p>
@@ -124,42 +100,30 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
               </p>
             </div>
           </div>
-          <div className="flex justify-start h-40">
-            <div className={`flex flex-col w-28 justify-between ${textColor}`}>
-              <p className="text-base md:text-2xl font-semibold">
-                {departureTime}
-              </p>
+          <div className="flex h-40 justify-start">
+            <div className={`flex w-28 flex-col justify-between ${textColor}`}>
+              <p className="text-base font-semibold md:text-2xl">{departureTime}</p>
               <p className="text-sm">{travelDuration}</p>
-              <p className="text-base md:text-2xl font-semibold">
-                {arrivalTime}
-              </p>
+              <p className="text-base font-semibold md:text-2xl">{arrivalTime}</p>
             </div>
 
-            <div
-              className={`relative flex flex-col ml-4 justify-between ${textColor}`}
-            >
+            <div className={`relative ml-4 flex flex-col justify-between ${textColor}`}>
               <div
-                className={`dot absolute h-3 w-3 rounded-full ${bgFill} top-2 left-0 -translate-x-7`}
+                className={`dot absolute h-3 w-3 rounded-full ${bgFill} left-0 top-2 -translate-x-7`}
               />
               <div
-                className={`trait absolute h-5/6 w-[3px] rounded-sm ${bgFill} top-2 left-0 -translate-x-[23.5px]`}
+                className={`trait absolute h-5/6 w-[3px] rounded-sm ${bgFill} left-0 top-2 -translate-x-[23.5px]`}
               />
               <div
                 className={`dot absolute h-3 w-3 rounded-full ${bgFill} bottom-2 left-0 -translate-x-7`}
               />
             </div>
-            <div className="flex flex-col ml-2 justify-between h-full text-left md:w-24 lg:w-48">
-              <p
-                className="text-lg md:text-xl sm:font-bold truncate"
-                title={departureCity}
-              >
+            <div className="ml-2 flex h-full flex-col justify-between text-left md:w-24 lg:w-48">
+              <p className="truncate text-lg sm:font-bold md:text-xl" title={departureCity}>
                 {departureCity}
               </p>
               <p className="text-sm">{travelDistance}</p>
-              <p
-                className="text-lg md:text-xl sm:font-bold truncate"
-                title={arrivalCity}
-              >
+              <p className="truncate text-lg sm:font-bold md:text-xl" title={arrivalCity}>
                 {arrivalCity}
               </p>
             </div>

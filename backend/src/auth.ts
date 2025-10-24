@@ -3,12 +3,16 @@ import { verify } from "jsonwebtoken";
 import { AuthChecker } from "type-graphql";
 import { User } from "./entities/User";
 
-export type ContextType = { req: any; res: any; user: User | null | undefined };
+import { IncomingMessage, ServerResponse } from "http";
+
+export type ContextType = {
+  req: IncomingMessage;
+  res: ServerResponse;
+  user: User | null | undefined;
+};
 export type AuthContextType = ContextType & { user: User };
 
-export async function getUserFromContext(
-  context: ContextType
-): Promise<User | null> {
+export async function getUserFromContext(context: ContextType): Promise<User | null> {
   const cookies = new Cookies(context.req, context.res);
   const token = cookies.get("token");
 
@@ -17,10 +21,7 @@ export async function getUserFromContext(
   }
 
   try {
-    const payload = verify(
-      token,
-      process.env.JWT_SECRET_KEY || ""
-    ) as unknown as {
+    const payload = verify(token, process.env.JWT_SECRET_KEY || "") as unknown as {
       id: number;
     };
 

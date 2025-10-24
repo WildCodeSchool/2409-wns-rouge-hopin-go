@@ -36,8 +36,7 @@ export const validateFirstName = (value: string): string[] => {
   const errors: string[] = [];
   if (!value) errors.push("Le prénom est requis");
   if (value.length < 2) errors.push("doit comporter au moins 2 caractères");
-  if (value.length > 50)
-    errors.push("Le prénom ne peut pas dépasser 50 caractères");
+  if (value.length > 50) errors.push("Le prénom ne peut pas dépasser 50 caractères");
   return errors;
 };
 
@@ -45,15 +44,11 @@ export const validateLastName = (value: string): string[] => {
   const errors: string[] = [];
   if (!value) errors.push("Le nom est requis");
   if (value.length < 2) errors.push("doit comporter au moins 2 caractères");
-  if (value.length > 100)
-    errors.push("Le nom ne peut pas dépasser 100 caractères");
+  if (value.length > 100) errors.push("Le nom ne peut pas dépasser 100 caractères");
   return errors;
 };
 
-export const validateConfirmPassword = (
-  password: string,
-  confirmPassword: string
-): string[] => {
+export const validateConfirmPassword = (password: string, confirmPassword: string): string[] => {
   const errors: string[] = [];
   if (confirmPassword !== password) {
     errors.push("Les mots de passe ne correspondent pas");

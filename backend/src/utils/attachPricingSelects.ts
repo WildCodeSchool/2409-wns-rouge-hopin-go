@@ -45,30 +45,38 @@ export function attachPricingSelects(
 }
 
 // Hydrate en mappant par ride_id (et pas par index)
-export function hydratePricingFromRaw(rides: Ride[], raw: any[]) {
-  const byId = new Map<
-    number,
-    { dist?: number; total?: number; per?: number }
-  >();
+type RawPricing = {
+  ride_id?: number;
+  id?: number;
+  dist_km_calc?: number;
+  total_route_price?: number;
+  price_per_passenger?: number;
+};
+
+export function hydratePricingFromRaw(rides: Ride[], raw: RawPricing[]) {
+  const byId = new Map<number, { dist?: number; total?: number; per?: number }>();
   for (const r of raw) {
     const id = Number(r.ride_id ?? r.id);
     if (!byId.has(id)) {
       byId.set(id, {
         dist: r.dist_km_calc != null ? Number(r.dist_km_calc) : undefined,
-        total:
-          r.total_route_price != null ? Number(r.total_route_price) : undefined,
-        per:
-          r.price_per_passenger != null
-            ? Number(r.price_per_passenger)
-            : undefined,
+        total: r.total_route_price != null ? Number(r.total_route_price) : undefined,
+        per: r.price_per_passenger != null ? Number(r.price_per_passenger) : undefined,
       });
     }
   }
+  interface RideWithPricing extends Ride {
+    distance_km?: number;
+    total_route_price?: number;
+    price_per_passenger?: number;
+  }
+
   for (const ride of rides) {
     const v = byId.get(ride.id);
     if (!v) continue;
-    (ride as any).distance_km = ride.distance_km ?? v.dist;
-    (ride as any).total_route_price = v.total;
-    (ride as any).price_per_passenger = v.per;
+    const rideWithPricing = ride as RideWithPricing;
+    rideWithPricing.distance_km = rideWithPricing.distance_km ?? v.dist;
+    rideWithPricing.total_route_price = v.total;
+    rideWithPricing.price_per_passenger = v.per;
   }
 }

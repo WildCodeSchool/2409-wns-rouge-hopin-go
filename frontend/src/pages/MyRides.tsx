@@ -19,12 +19,8 @@ const MyRides = () => {
     },
   ];
   return (
-    <div className=" flex flex-col justify-center items-center h-[calc(100dvh-60px)] sm:h-[calc(100dvh-180px)] sm:mt-10 sm:px-8 w-full top-0 sm:top-1/2 sm:-translate-y-1/2 left-1/2 -translate-x-1/2 fixed">
-      <SwitchTab
-        classContainer="bg-secondary text-primary h-full"
-        tabs={tabs}
-        tabParams={tab}
-      />
+    <div className="fixed left-1/2 top-0 flex h-[calc(100dvh-60px)] w-full -translate-x-1/2 flex-col items-center justify-center md:top-1/2 md:mt-10 md:h-[calc(100dvh-180px)] md:-translate-y-1/2 md:px-8">
+      <SwitchTab classContainer="bg-secondary text-primary h-full" tabs={tabs} tabParams={tab} />
     </div>
   );
 };
