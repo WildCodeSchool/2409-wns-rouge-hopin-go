@@ -39,12 +39,14 @@ const NavBar = () => {
       <div ref={toggleMenuRef}>
         {/* Toggle Menu */}
         <div
-          className={`h-18 bg-primary fixed bottom-[58px] right-0 z-40 flex w-fit transform rounded-tl-lg p-2 transition-transform duration-300 ease-in-out md:bottom-0 md:hidden ${isOpen ? "translate-y-0" : "translate-y-full"
-            }`}
+          className={`h-18 bg-primary fixed bottom-[58px] right-0 z-40 flex w-fit transform rounded-tl-lg p-2 transition-transform duration-300 ease-in-out md:bottom-0 md:hidden ${
+            isOpen ? "translate-y-0" : "translate-y-full"
+          }`}
         >
           <div
-            className={`flex w-full flex-col items-start gap-4 p-4 transition-opacity duration-300 ease-in-out ${isOpen ? "opacity-100" : "opacity-0"
-              }`}
+            className={`flex w-full flex-col items-start gap-4 p-4 transition-opacity duration-300 ease-in-out ${
+              isOpen ? "opacity-100" : "opacity-0"
+            }`}
           >
             {!me ? (
               <>
@@ -81,7 +83,7 @@ const NavBar = () => {
               </>
             ) : null}
             {me ? (
-              <div className="w-full flex flex-col gap-4">
+              <div className="flex w-full flex-col gap-4">
                 <Button
                   isLink
                   to="/my-account"
@@ -172,7 +174,7 @@ const NavBar = () => {
           </div>
           <div className="relative m-2 -ml-4 flex flex-col items-center justify-center rounded-l-full rounded-br-full bg-gray-100 p-4">
             <button onClick={() => setIsOpen(!isOpen)}>
-              <img src={maleUser} alt="profile" width={80} loading="lazy" />
+              <img src={maleUser} alt="profile" width={80} height={80} loading="lazy" />
             </button>
           </div>
         </nav>
@@ -218,7 +220,7 @@ const NavBar = () => {
                   isLink
                   to="/my-account"
                   label="Mon compte"
-                  className="font-semibold w-full"
+                  className="w-full font-semibold"
                   variant="secondary"
                   isHoverBgColor
                 />
