@@ -89,8 +89,9 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
     if (isLink) {
       return (
         <NavLink
-        target={target}
+          target={target}
           to={to}
+          onClick={onClick}
           className={({ isActive, isPending }) =>
             `${finalButtonClass} ${isPending ? "opacity-50" : isActive ? "underline" : ""}`.trim()
           }

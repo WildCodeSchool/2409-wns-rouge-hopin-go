@@ -66,6 +66,7 @@ const NavBar = () => {
                   variant="secondary"
                 />
                 <Button
+                  onClick={closeNavBar}
                   isLink
                   to="/terms-of-service"
                   label="Mentions légales et CGU"
@@ -73,6 +74,7 @@ const NavBar = () => {
                   variant="secondary"
                 />
                 <Button
+                  onClick={closeNavBar}
                   isLink
                   to="/confidentiality-policy"
                   label="Politique de confidentialité"
@@ -84,6 +86,7 @@ const NavBar = () => {
             {me ? (
               <>
                 <Button
+                  onClick={closeNavBar}
                   isLink
                   to="/my-account"
                   label="Mon compte"
@@ -91,6 +94,7 @@ const NavBar = () => {
                   variant="secondary"
                 />
                 <Button
+                  onClick={closeNavBar}
                   isLink
                   to="/terms-of-service"
                   label="Mentions légales et CGU"
@@ -98,6 +102,7 @@ const NavBar = () => {
                   variant="secondary"
                 />
                 <Button
+                  onClick={closeNavBar}
                   isLink
                   to="/confidentiality-policy"
                   label="Politique de confidentialité"
