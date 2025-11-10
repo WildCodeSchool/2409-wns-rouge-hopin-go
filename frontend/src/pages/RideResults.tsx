@@ -172,9 +172,9 @@ const RideResults = () => {
           sliderDirection="vertical"
           scaleEffect
           centerSlides={isMd ? true : false}
-          swiperClassName="h-full w-full"
+          swiperClassName="h-full w-full !pb-28 md:!pb-0"
           spaceBetween={isMd ? 50 : 0}
-          slidePerView={3}
+          slidePerView={isMd ? 3 : 3}
         />
         <div className="pointer-events-none absolute right-0 top-1/2 z-0 hidden w-full -translate-y-1/2 translate-x-[4.3px] justify-center bg-gray-100 xl:flex">
           <svg

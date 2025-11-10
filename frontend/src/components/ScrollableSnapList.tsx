@@ -72,7 +72,7 @@ const ScrollableSnapList = ({
       rewind={true}
       keyboard={{ enabled: true }}
       modules={[Keyboard, Mousewheel, Scrollbar, Navigation, Pagination]}
-      className={`mySwiper w-full ${swiperClassName}`}
+      className={`mySwiper h-full w-full ${swiperClassName}`}
       scrollbar={{ hide: true, draggable: true }}
       slidesPerView={slidePerView}
       navigation={navigationArrows}
@@ -83,7 +83,7 @@ const ScrollableSnapList = ({
           key={index}
           className={`transition-transform duration-300 ease-in-out ${
             scaleEffect && index === selectedIndex ? "z-10 scale-105" : "z-0 scale-100"
-          } flex h-auto min-h-[200px] w-full items-center justify-center`}
+          } flex min-h-[200px] w-full items-center justify-center`}
         >
           <RideProvider ride={data}>
             <CardTemplate

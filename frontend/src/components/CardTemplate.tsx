@@ -156,7 +156,9 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             statusLabel
           )}
         </p>
-        <DetailsButtonWithModal variant={variant} isModal={isModal} />
+        {!(variant === "cancel" || variant === "secondary") && (
+          <DetailsButtonWithModal variant={variant} isModal={isModal} />
+        )}
         <p
           className={`absolute ${
             me?.id === driver ? "right-0" : "right-16"
