@@ -43,7 +43,7 @@ const NavBar = () => {
           }`}
         >
           <div
-            className={`flex w-full flex-col items-start gap-4 p-4 transition-opacity duration-300 ease-in-out ${
+            className={`flex w-full flex-col gap-4 p-4 transition-opacity duration-300 ease-in-out ${
               isOpen ? "opacity-100" : "opacity-0"
             }`}
           >
@@ -82,7 +82,7 @@ const NavBar = () => {
               </>
             ) : null}
             {me ? (
-              <div className="flex w-full flex-col gap-4">
+              <>
                 <Button
                   isLink
                   to="/my-account"
@@ -110,7 +110,7 @@ const NavBar = () => {
                   variant="secondary"
                   onClick={handleSignout}
                 />
-              </div>
+              </>
             ) : null}
           </div>
         </div>
