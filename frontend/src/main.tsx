@@ -17,6 +17,8 @@ import MyAccount from "./pages/MyAccount.tsx";
 import VerifyEmail from "./pages/VerifyEmail.tsx";
 import TermsOfService from "./pages/TermsOfService.tsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
+import ForgotPassword from "./pages/ForgotPassword.tsx";
+import ResetPassword from "./pages/ResetPassword.tsx";
 
 const client = new ApolloClient({
   uri: "/api",
@@ -98,6 +100,22 @@ const router = createBrowserRouter([
         element: (
           <AuthComponent authStates={[AuthStates.unauthenticated, AuthStates.user]}>
             <PrivacyPolicy />
+          </AuthComponent>
+        ),
+      },
+      {
+        path: `/auth/forgot-password`,
+        element: (
+          <AuthComponent authStates={[AuthStates.unauthenticated]}>
+            <ForgotPassword />
+          </AuthComponent>
+        ),
+      },
+      {
+        path: `/auth/reset-password`,
+        element: (
+          <AuthComponent authStates={[AuthStates.unauthenticated]}>
+            <ResetPassword />
           </AuthComponent>
         ),
       },

@@ -92,13 +92,11 @@ const Signin = () => {
         <input
           type="email"
           id="email"
-          className={`${
-            error.email?.length
+          className={`${error.email?.length
               ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
               : "border-gray-300 bg-gray-50"
-          } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none ${
-            error.email && error.email.length > 0 && "border-full"
-          }`}
+            } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none ${error.email && error.email.length > 0 && "border-full"
+            }`}
           placeholder="nom@mail.com"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
@@ -128,13 +126,11 @@ const Signin = () => {
             type={revealPassword ? "text" : "password"}
             id="password"
             required
-            className={`${
-              error.password?.length
+            className={`${error.password?.length
                 ? "border-error placeholder:text-primary[50%] border-2 bg-red-50 focus:ring-0"
                 : "border-gray-300 bg-gray-50"
-            } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none ${
-              error.password && error.password.length > 0 && "border-full"
-            }`}
+              } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none ${error.password && error.password.length > 0 && "border-full"
+              }`}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             aria-describedby={error.password ? "password-error" : undefined}
@@ -160,6 +156,9 @@ const Signin = () => {
           {formatErrors(error.general)}
         </p>
       )}
+      <a href="/auth/forgot-password" className="text-sm hover:underline" style={{ color: "rgb(0, 236, 255)" }}>
+        Mot de passe oublié ?
+      </a>
       <div className="mt-5 flex w-full justify-end">
         <Button
           type="submit"
