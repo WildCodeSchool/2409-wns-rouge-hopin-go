@@ -127,7 +127,7 @@ const PassengerRidesList = () => {
                 <Button
                   onClick={() => setUpcomingOffset((p) => p + limit)}
                   className="absolute bottom-16 left-1/2 z-50 -translate-x-1/2"
-                  label={`Voir plus (${totalUpcoming - upcomingList.length} restants)`}
+                  label={`Voir plus (${totalUpcoming - upcomingList.length} restant${totalUpcoming - upcomingList.length > 1 ? "s" : ""})`}
                 />
               ) : upcomingList.length > limit ? (
                 <Button
@@ -168,7 +168,7 @@ const PassengerRidesList = () => {
                 <Button
                   onClick={() => setArchivedOffset((p) => p + limit)}
                   className="absolute bottom-16 left-1/2 z-50 -translate-x-1/2"
-                  label={`Voir plus (${totalArchived - archivedList.length} restants)`}
+                  label={`Voir plus (${totalArchived - archivedList.length} restant${totalArchived - archivedList.length > 1 ? "s" : ""})`}
                 />
               ) : archivedList.length > limit ? (
                 <Button

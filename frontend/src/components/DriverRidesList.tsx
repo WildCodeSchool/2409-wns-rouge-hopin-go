@@ -102,7 +102,7 @@ const DriverRidesList = () => {
                 <Button
                   onClick={() => setUpcomingOffset((prev) => prev + limit)}
                   className="absolute bottom-16 left-1/2 z-50 -translate-x-1/2"
-                  label={`Voir plus (${totalUpcoming - upcomingList.length} restants)`}
+                  label={`Voir plus (${totalUpcoming - upcomingList.length} restant${totalUpcoming - upcomingList.length > 1 ? "s" : ""})`}
                 />
               ) : upcomingList.length > 3 ? (
                 <Button
@@ -140,7 +140,7 @@ const DriverRidesList = () => {
                 <Button
                   onClick={() => setArchivedOffset((prev) => prev + limit)}
                   className="absolute bottom-16 left-1/2 z-50 -translate-x-1/2"
-                  label={`Voir plus (${totalArchived - archivedList.length} restants)`}
+                  label={`Voir plus (${totalArchived - archivedList.length} restant${totalArchived - archivedList.length > 1 ? "s" : ""})`}
                 />
               ) : archivedList.length > limit ? (
                 <Button
