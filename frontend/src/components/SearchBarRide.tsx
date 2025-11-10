@@ -148,7 +148,6 @@ const SearchBarRide = ({
       if (input === "departure") {
         departureSuggestionsRef.current[0]?.focus();
       } else {
-        console.log(arrivalSuggestionsRef.current[0]);
         arrivalSuggestionsRef.current[0]?.focus();
       }
     } else if (e.key === "Tab") {

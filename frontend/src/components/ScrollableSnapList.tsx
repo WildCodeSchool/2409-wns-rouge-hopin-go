@@ -12,7 +12,7 @@ import "swiper/css/pagination";
 import { Keyboard, Mousewheel, Navigation, Pagination, Scrollbar } from "swiper/modules";
 import RideProvider from "../context/Rides/rides.provider";
 
-type SearchRide = SearchRidesQuery["searchRide"][number];
+type SearchRide = SearchRidesQuery["searchRides"][number];
 type PassengerRide = PassengerRidesQuery["passengerRides"]["rides"][number];
 type DriverRide = DriverRidesQuery["driverRides"]["rides"][number];
 

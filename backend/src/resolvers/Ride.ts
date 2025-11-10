@@ -25,7 +25,7 @@ import { findSimilarRouteFromDB } from "../utils/findSimilarRouteFromDB";
 @Resolver(() => Ride)
 export class RidesResolver {
   @Query(() => [Ride])
-  async searchRide(@Arg("data", () => SearchRideInput) data: SearchRideInput): Promise<Ride[]> {
+  async searchRides(@Arg("data", () => SearchRideInput) data: SearchRideInput): Promise<Ride[]> {
     try {
       const startDay = startOfDay(data.departure_at);
       const endDay = endOfDay(data.departure_at);
@@ -203,7 +203,6 @@ export class RidesResolver {
       if (cached) {
         ({ distance_km, duration_min, route_polyline5 } = cached);
         source = "DB";
-        console.log("🚀 ~ RidesResolver ~ createRide ~ source:", source);
       } else {
         // 2) Otherwise Mapbox
         const r = await fetchRouteFromMapbox(

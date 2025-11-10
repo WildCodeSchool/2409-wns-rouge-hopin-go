@@ -70,17 +70,22 @@ const CreateRide = () => {
   useEffect(() => {
     const fetchCityAddress = async () => {
       if (lastModifiedCity === "departure") {
+        if (!departureAddress || departureAddress.length < 3) return;
         try {
           const response = await fetch(
             `https://api-adresse.data.gouv.fr/search/?q=${departureAddress}`
           );
           const data = await response.json();
-          console.log("FetchAddress => ", data);
+
+          if (!data.features || data.features.length === 0) {
+            console.warn("Aucune adresse trouvée pour la recherche :", lastModifiedCity);
+            return;
+          }
+
           setSuggestions({
             ...suggestions,
             departure: data.features.map((suggestion: Suggestion) => suggestion.properties.label),
           });
-          console.log("data.features[0].properties.city => ", data.features[0].properties.city);
 
           setDepartureCity(data.features[0].properties.city);
           setDepartureCoords({
@@ -91,12 +96,18 @@ const CreateRide = () => {
           console.error("Erreur lors de la récupération des adresses :", error);
         }
       } else if (lastModifiedCity === "arrival") {
+        if (!arrivalAddress || arrivalAddress.length < 3) return;
         try {
           const response = await fetch(
             `https://api-adresse.data.gouv.fr/search/?q=${arrivalAddress}`
           );
           const data = await response.json();
-          console.log("FetchAddress => ", data);
+
+          if (!data.features || data.features.length === 0) {
+            console.warn("Aucune adresse trouvée pour la recherche :", lastModifiedCity);
+            return;
+          }
+
           setSuggestions({
             ...suggestions,
             arrival: data.features.map((suggestion: Suggestion) => suggestion.properties.label),
@@ -133,11 +144,6 @@ const CreateRide = () => {
   }, [departureAddress, arrivalAddress, selected, departureAt]);
 
   const validateAddress = (value: string, key: "departure" | "arrival") => {
-    if (key === "departure") {
-      console.log("value saisie + departureAddress:", value, departureAddress);
-      console.log("selected departure :", selected.departure);
-    }
-
     const cityErrors: string[] = validateAddressUtils(value, key, selected[key]); // tableau d'erreurs
 
     // Mise à jour des erreurs dans le state
@@ -151,7 +157,6 @@ const CreateRide = () => {
     validateAddress(departureAddress, "departure");
     validateAddress(arrivalAddress, "arrival");
     const departure_at = validateDepartureAt(departureAt);
-    console.log("departureAtErrors", departure_at);
     setError((prev) => ({
       ...prev,
       departure_at,
@@ -164,17 +169,6 @@ const CreateRide = () => {
     if (!validateCreateForm()) {
       return;
     }
-    console.log(
-      "doSubmit => ",
-      departureCity,
-      arrivalCity,
-      departureAt,
-      maxPassenger,
-      departureCoords.lat,
-      arrivalCoords.lat,
-      departureCoords.long,
-      arrivalCoords.long
-    );
     try {
       if (driver)
         await doCreateRide({
@@ -199,10 +193,20 @@ const CreateRide = () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (e: any) {
       console.error(e);
-      toast.error("Une erreur est survenue lors de l'inscription.");
-      setError({
-        form: ["Une erreur est survenue lors de la création du trajet. Réessayez."],
-      });
+      const message = e?.message || e?.graphQLErrors?.[0]?.message || "";
+
+      if (message.includes("Access denied")) {
+        toast.error("Vous devez être connecté pour effectuer cette action.");
+        setError({
+          form: ["Votre session a expiré ou vous n'êtes pas connecté."],
+        });
+        navigate("/auth/signin");
+      } else {
+        toast.error("Une erreur est survenue lors de la création du trajet.");
+        setError({
+          form: ["Une erreur est survenue lors de la création du trajet. Réessayez."],
+        });
+      }
     }
     navigate("/"); // ToDo : rediriger vers la page 'Mes trajets' une fois la création du trajet réussie
   }
@@ -331,7 +335,7 @@ const CreateRide = () => {
 
   return (
     <form
-      className="flex flex-col items-center h-full w-full lg:p-20 mx-auto max-w-sm lg:max-w-2xl justify-center"
+      className="mx-auto flex h-full w-full max-w-sm flex-col items-center justify-center lg:max-w-2xl lg:p-20"
       onSubmit={(e) => {
         e.preventDefault();
         doSubmit();
@@ -360,7 +364,10 @@ const CreateRide = () => {
             aria-describedby={error.departure_at ? "departure-at-error" : undefined}
           />
           {error.departure_at && error.departure_at.length > 0 && (
-            <p id="departure-at-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
+            <p
+              id="departure-at-error"
+              className="text-full mt-2 w-fit self-start rounded-lg bg-gray-50 px-2 py-1 text-sm"
+            >
               {formatErrors(error.departure_at)}
             </p>
           )}
@@ -426,7 +433,10 @@ const CreateRide = () => {
               </ul>
             )}
             {error.departure_address && error.departure_address.length > 0 && (
-              <p id="departure-address-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
+              <p
+                id="departure-address-error"
+                className="text-full mt-2 w-fit self-start rounded-lg bg-gray-50 px-2 py-1 text-sm"
+              >
                 {formatErrors(error.departure_address)}
               </p>
             )}
@@ -491,7 +501,10 @@ const CreateRide = () => {
               </ul>
             )}
             {error.arrival_address && error.arrival_address.length > 0 && (
-              <p id="arrival-address-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
+              <p
+                id="arrival-address-error"
+                className="text-full mt-2 w-fit self-start rounded-lg bg-gray-50 px-2 py-1 text-sm"
+              >
                 {formatErrors(error.arrival_address)}
               </p>
             )}

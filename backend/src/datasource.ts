@@ -10,7 +10,7 @@ export const datasource = new DataSource({
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
   entities: ["./src/entities/*.ts"],
-  // Automatic synchronization only in dev
+  // Automatic synchronization only in dev and test
   synchronize: syncMode,
   migrations: ["./migrations/*.ts"],
   // runs migrations automatically in prod and staging

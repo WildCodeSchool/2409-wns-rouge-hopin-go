@@ -3,7 +3,6 @@ export const validateAddressUtils = (
   key: "departure" | "arrival",
   selected: string
 ) => {
-  console.log("validateAddress ===>", address, " && ", selected);
   const errors: string[] = [];
   if (!address && address.length === 0) {
     errors.push(
@@ -16,7 +15,6 @@ export const validateAddressUtils = (
         : "L'adresse d'arrivée n'est pas valide"
     );
   }
-  console.log("Errors", errors);
   return errors;
 };
 

@@ -13,8 +13,8 @@ const App = () => {
   return (
     <>
       <div>
-        <header className="z-50 md:flex md:fixed">
-          <div className=" items-center gap-4  hidden md:flex">
+        <header className="z-50 md:fixed md:flex">
+          <div className="hidden items-center gap-4 md:flex">
             <Link to="/">
               <img src={Logo} alt="Logo" className="m-2 h-16 w-16" />
             </Link>

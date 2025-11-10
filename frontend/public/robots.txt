@@ -8,4 +8,4 @@ Disallow: /admin/
 # Disallow: /*.pdf$
 # Allow: /images/
 
-Sitemap: http://localhost:8080
+Sitemap: https://092024-rouge-5.wns.wilders.dev/
