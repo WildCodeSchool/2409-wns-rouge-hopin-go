@@ -29,7 +29,6 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   additionalClassName = "",
 }) => {
   const ride = useRide();
-  console.log("ride in CardTemplate:", ride);
   const { isMd, isXl, is2xl, windowWidth } = useBreakpoints();
   const { textColor, bgFill, statusLabel, icon: CardIcon } = variantConfigMap[variant];
 
@@ -44,7 +43,6 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
   const driver = ride.driver?.id ?? "?";
   const pricePerPassenger = ride.price_per_passenger;
   const totalPriceRide = ride.total_route_price;
-  console.log("🚀 ~ CardTemplate ~ ride:", ride);
 
   const travelDuration = ride.duration_min ?? 0;
 
@@ -158,7 +156,9 @@ const CardTemplate: React.FC<CardTemplateProps> = ({
             statusLabel
           )}
         </p>
-        <DetailsButtonWithModal variant={variant} isModal={isModal} />
+        {!(variant === "cancel" || variant === "secondary") && (
+          <DetailsButtonWithModal variant={variant} isModal={isModal} />
+        )}
         <p
           className={`absolute ${
             me?.id === driver ? "right-0" : "right-16"

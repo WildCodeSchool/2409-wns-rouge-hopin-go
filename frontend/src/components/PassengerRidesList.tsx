@@ -5,6 +5,7 @@ import useBreakpoints from "../utils/useWindowSize";
 import { useQuery } from "@apollo/client";
 import { queryPassengerRides } from "../api/PassengerRides";
 import { PassengerRidesQuery, PassengerRideStatus } from "../gql/graphql";
+import Button from "./Button";
 
 type PassengerRide = PassengerRidesQuery["passengerRides"]["rides"][number];
 
@@ -14,6 +15,7 @@ const PassengerRidesList = () => {
   const [upcomingList, setUpcomingList] = useState<PassengerRide[]>([]);
   const [archivedOffset, setArchivedOffset] = useState(0);
   const [archivedList, setArchivedList] = useState<PassengerRide[]>([]);
+  const [comingListView, setComingListView] = useState<boolean>(true);
   const limit = 3;
 
   const { isSm, isMd, is2xl } = useBreakpoints();
@@ -21,12 +23,9 @@ const PassengerRidesList = () => {
   const getVariant = (dataset: PassengerRide): VariantType => {
     if (dataset.is_cancelled) return "cancel";
     if (dataset.nb_passenger === dataset.max_passenger) return "full";
-    if (dataset.current_user_passenger_status === PassengerRideStatus.Waiting)
-      return "pending";
-    if (dataset.current_user_passenger_status === PassengerRideStatus.Approved)
-      return "validation";
-    if (dataset.current_user_passenger_status === PassengerRideStatus.Refused)
-      return "refused";
+    if (dataset.current_user_passenger_status === PassengerRideStatus.Waiting) return "pending";
+    if (dataset.current_user_passenger_status === PassengerRideStatus.Approved) return "validation";
+    if (dataset.current_user_passenger_status === PassengerRideStatus.Refused) return "refused";
     return "primary";
   };
 
@@ -44,13 +43,9 @@ const PassengerRidesList = () => {
     if (!upcomingData?.passengerRides?.rides) return;
     const filtered =
       upcomingData.passengerRides.rides.filter(
-        (ride) =>
-          ride.current_user_passenger_status !==
-          PassengerRideStatus.CancelledByPassenger
+        (ride) => ride.current_user_passenger_status !== PassengerRideStatus.CancelledByPassenger
       ) ?? [];
-    setUpcomingList((prev) =>
-      upcomingOffset === 0 ? filtered : [...prev, ...filtered]
-    );
+    setUpcomingList((prev) => (upcomingOffset === 0 ? filtered : [...prev, ...filtered]));
   }, [upcomingData, upcomingOffset]);
 
   const totalUpcoming = upcomingData?.passengerRides?.totalCount ?? 0;
@@ -69,123 +64,226 @@ const PassengerRidesList = () => {
     if (!archivedData?.passengerRides?.rides) return;
     const filtered =
       archivedData.passengerRides.rides.filter(
-        (r) =>
-          r.current_user_passenger_status !==
-          PassengerRideStatus.CancelledByPassenger
+        (r) => r.current_user_passenger_status !== PassengerRideStatus.CancelledByPassenger
       ) ?? [];
-    setArchivedList((prev) =>
-      archivedOffset === 0 ? filtered : [...prev, ...filtered]
-    );
+    setArchivedList((prev) => (archivedOffset === 0 ? filtered : [...prev, ...filtered]));
   }, [archivedData, archivedOffset]);
 
   const totalArchived = archivedData?.passengerRides?.totalCount ?? 0;
+  const hasMoreUpcoming = totalUpcoming > upcomingList.length;
+  const hasMoreArchived = totalArchived > archivedList.length;
 
   useEffect(() => {
     const handleRefetch = async () => {
       await Promise.all([refetchUpcoming(), refetchArchived()]);
     };
-   
+
     handleRefetch();
   }, []);
 
   return (
-    <div className="flex h-full w-full flex-col overflow-auto bg-gray-100 sm:pb-16">
-      {/* --- Upcoming Rides --- */}
-      <div className="my-2 flex h-full flex-col gap-4 sm:gap-0">
-        <span className="ml-4">Trajets à venir</span>
-        {loadingUpcoming ? (
-          <div className="mt-10 w-full text-center text-gray-500">
-            Chargement...
-          </div>
-        ) : upcomingList.length > 0 ? (
-          <>
-            <ScrollableSnapList
-              dataset={upcomingList}
-              getVariant={getVariant}
-              onSelect={setSelectedIndex}
-              sliderDirection={isMd ? "horizontal" : "vertical"}
-              slidePerView={is2xl ? 3 : isSm ? 2 : 3}
-              swiperClassName={!isMd ? "h-full w-full" : ""}
-              navigationArrows={isMd}
-              showPagination={isMd}
-              spaceBetween={isMd ? 0 : 50}
-            />
+    <div className="z-10 flex h-full w-full flex-col bg-white sm:pb-16">
+      {/* --- Mobile: onglets comme la page conducteur --- */}
+      {!isMd && (
+        <div className="flex w-full justify-center border-t-2 border-gray-300 shadow-md">
+          <button
+            onClick={() => setComingListView(true)}
+            className={`h-11 w-full ${
+              comingListView
+                ? "text-primary bg-white text-lg font-bold underline"
+                : "text-primary bg-gray-100"
+            }`}
+          >
+            Trajets à venir
+          </button>
+          <button
+            onClick={() => setComingListView(false)}
+            className={`h-11 w-full ${
+              !comingListView
+                ? "text-primary bg-white text-lg font-bold underline"
+                : "text-primary bg-gray-100"
+            }`}
+          >
+            Trajets archivés
+          </button>
+        </div>
+      )}
 
-            {totalUpcoming > upcomingList.length ? (
-              <div className="mr-4 mt-2 flex justify-end">
-                <button
-                  onClick={() => setUpcomingOffset((prev) => prev + limit)}
-                  className="text-primary underline"
-                >
-                  Voir plus
-                </button>
-              </div>
-            ) : upcomingList.length > limit ? (
-              <div className="mr-4 mt-2 flex justify-end">
-                <button
+      {/* --- Mobile: liste "à venir" --- */}
+      {!isMd && comingListView && (
+        <div className="relative h-[calc(100dvh-58px)] w-full">
+          {loadingUpcoming ? (
+            <div className="mt-10 w-full text-center text-gray-500">Chargement...</div>
+          ) : upcomingList.length > 0 ? (
+            <>
+              <ScrollableSnapList
+                dataset={upcomingList}
+                getVariant={getVariant}
+                onSelect={setSelectedIndex}
+                sliderDirection="vertical"
+                slidePerView={2}
+                swiperClassName="!pb-40"
+                navigationArrows={false}
+                showPagination={false}
+                spaceBetween={10}
+              />
+              {hasMoreUpcoming ? (
+                <Button
+                  onClick={() => setUpcomingOffset((p) => p + limit)}
+                  className="absolute bottom-16 left-1/2 z-50 -translate-x-1/2"
+                  label={`Voir plus (${totalUpcoming - upcomingList.length} restant${totalUpcoming - upcomingList.length > 1 ? "s" : ""})`}
+                />
+              ) : upcomingList.length > limit ? (
+                <Button
                   onClick={() => {
                     setUpcomingList([]);
                     setUpcomingOffset(0);
                   }}
-                  className="text-primary underline"
-                >
-                  Voir moins
-                </button>
-              </div>
-            ) : null}
-          </>
-        ) : (
-          <div className="mt-10 w-full text-center">Aucun trajet à venir.</div>
-        )}
-      </div>
+                  className="absolute bottom-16 left-1/2 z-50 -translate-x-1/2"
+                  label={`Voir moins (${upcomingList.length} affichés)`}
+                />
+              ) : null}
+            </>
+          ) : (
+            <div className="mt-10 w-full text-center">Aucun trajet à venir.</div>
+          )}
+        </div>
+      )}
 
-      {/* --- Archived Rides --- */}
-      <div className="my-20 flex h-full flex-col gap-4 sm:my-0 sm:gap-0">
-        <span className="ml-4">Trajets archivés</span>
-        {loadingArchived ? (
-          <div className="mt-10 w-full text-center text-gray-500">
-            Chargement...
-          </div>
-        ) : archivedList.length > 0 ? (
-          <>
-            <ScrollableSnapList
-              dataset={archivedList}
-              getVariant={getVariant}
-              onSelect={setSelectedIndex}
-              sliderDirection={isMd ? "horizontal" : "vertical"}
-              slidePerView={is2xl ? 3 : isMd ? 2 : isSm ? 1 : 3}
-              swiperClassName={!isMd ? "h-full w-full" : ""}
-              navigationArrows
-              showPagination
-            />
-
-            {totalArchived > archivedList.length ? (
-              <div className="mr-4 mt-2 flex justify-end">
-                <button
-                  onClick={() => setArchivedOffset((prev) => prev + limit)}
-                  className="text-primary underline"
-                >
-                  Voir plus
-                </button>
-              </div>
-            ) : archivedList.length > limit ? (
-              <div className="mr-4 mt-2 flex justify-end">
-                <button
+      {/* --- Mobile: liste "archivés" --- */}
+      {!isMd && !comingListView && (
+        <div className="relative h-[calc(100dvh-58px)] w-full">
+          {loadingArchived ? (
+            <div className="mt-10 w-full text-center text-gray-500">Chargement...</div>
+          ) : archivedList.length > 0 ? (
+            <>
+              <ScrollableSnapList
+                dataset={archivedList}
+                getVariant={getVariant}
+                onSelect={setSelectedIndex}
+                sliderDirection="vertical"
+                slidePerView={2}
+                swiperClassName="!pb-40"
+                navigationArrows={false}
+                showPagination={false}
+                spaceBetween={10}
+              />
+              {hasMoreArchived ? (
+                <Button
+                  onClick={() => setArchivedOffset((p) => p + limit)}
+                  className="absolute bottom-16 left-1/2 z-50 -translate-x-1/2"
+                  label={`Voir plus (${totalArchived - archivedList.length} restant${totalArchived - archivedList.length > 1 ? "s" : ""})`}
+                />
+              ) : archivedList.length > limit ? (
+                <Button
                   onClick={() => {
                     setArchivedList([]);
                     setArchivedOffset(0);
                   }}
-                  className="text-primary underline"
-                >
-                  Voir moins
-                </button>
-              </div>
-            ) : null}
-          </>
-        ) : (
-          <div className="mt-10 w-full text-center">Aucun trajet archivé.</div>
-        )}
-      </div>
+                  className="absolute bottom-16 left-1/2 z-50 -translate-x-1/2"
+                  label={`Voir moins (${archivedList.length} affichés)`}
+                />
+              ) : null}
+            </>
+          ) : (
+            <div className="mt-10 w-full text-center">Aucun trajet archivé.</div>
+          )}
+        </div>
+      )}
+
+      {/* --- Desktop: deux sections empilées comme la page conducteur --- */}
+      {isMd && (
+        <>
+          <div className="my-2 flex h-full flex-col gap-4 sm:gap-0">
+            <span className="ml-4">Trajets à venir</span>
+            {loadingUpcoming ? (
+              <div className="mt-10 w-full text-center text-gray-500">Chargement...</div>
+            ) : upcomingList.length > 0 ? (
+              <>
+                <ScrollableSnapList
+                  dataset={upcomingList}
+                  getVariant={getVariant}
+                  onSelect={setSelectedIndex}
+                  sliderDirection="horizontal"
+                  slidePerView={is2xl ? 3 : isSm ? 2 : 3}
+                  swiperClassName=""
+                  navigationArrows
+                  showPagination
+                  spaceBetween={0}
+                />
+                {hasMoreUpcoming ? (
+                  <div className="mr-4 mt-2 flex justify-end">
+                    <button
+                      onClick={() => setUpcomingOffset((p) => p + limit)}
+                      className="text-primary underline"
+                    >
+                      Voir plus
+                    </button>
+                  </div>
+                ) : upcomingList.length > limit ? (
+                  <div className="mr-4 mt-2 flex justify-end">
+                    <button
+                      onClick={() => {
+                        setUpcomingList([]);
+                        setUpcomingOffset(0);
+                      }}
+                      className="text-primary underline"
+                    >
+                      Voir moins
+                    </button>
+                  </div>
+                ) : null}
+              </>
+            ) : (
+              <div className="mt-10 w-full text-center">Aucun trajet à venir.</div>
+            )}
+          </div>
+
+          <div className="my-20 flex h-full flex-col gap-4 sm:my-0 sm:gap-0">
+            <span className="ml-4">Trajets archivés</span>
+            {loadingArchived ? (
+              <div className="mt-10 w-full text-center text-gray-500">Chargement...</div>
+            ) : archivedList.length > 0 ? (
+              <>
+                <ScrollableSnapList
+                  dataset={archivedList}
+                  getVariant={getVariant}
+                  onSelect={setSelectedIndex}
+                  sliderDirection="horizontal"
+                  slidePerView={is2xl ? 3 : isSm ? 2 : 3}
+                  swiperClassName=""
+                  navigationArrows
+                  showPagination
+                />
+                {hasMoreArchived ? (
+                  <div className="mr-4 mt-2 flex justify-end">
+                    <button
+                      onClick={() => setArchivedOffset((p) => p + limit)}
+                      className="text-primary underline"
+                    >
+                      Voir plus
+                    </button>
+                  </div>
+                ) : archivedList.length > limit ? (
+                  <div className="mr-4 mt-2 flex justify-end">
+                    <button
+                      onClick={() => {
+                        setArchivedList([]);
+                        setArchivedOffset(0);
+                      }}
+                      className="text-primary underline"
+                    >
+                      Voir moins
+                    </button>
+                  </div>
+                ) : null}
+              </>
+            ) : (
+              <div className="mt-10 w-full text-center">Aucun trajet archivé.</div>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 };

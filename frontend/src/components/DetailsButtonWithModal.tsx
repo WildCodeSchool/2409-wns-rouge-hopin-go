@@ -68,7 +68,7 @@ const PassengersButtonWithModal = ({
   if (isModal) return null;
   return (
     <div>
-      <div className="absolute right-1/2 md:right-[40%] lg:right-[38%]    flex gap-2 items-center z-10 p-2 text-sm lg:text-base text-textLight font-semibold">
+      <div className="text-textLight absolute right-[55%] z-10 flex items-center gap-2 p-2 text-sm font-semibold md:right-[40%] lg:right-[38%] lg:text-base">
         <div className="relative">
           {isMyRidesDriverPage &&
             waitingPassengers &&

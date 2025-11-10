@@ -9,7 +9,6 @@ export const handleValidationErrors = (error: any, setFieldErrors: any) => {
   });
 
   setFieldErrors(errors); // Met à jour le state
-  console.log("Processed Validation Errors:", errors); // Debug
 
   return errors; // Retourne les erreurs pour un usage immédiat
 };

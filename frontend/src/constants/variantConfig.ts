@@ -20,7 +20,7 @@ export const variantConfigMap: Record<VariantType, VariantConfig> = {
   secondary: {
     textColor: "text-textDark",
     bgFill: "fill-textDark bg-textDark",
-    statusLabel: "",
+    statusLabel: "Archivé",
     icon: TicketPlus,
     hoverBg: "hover:bg-secondaryHover",
   },

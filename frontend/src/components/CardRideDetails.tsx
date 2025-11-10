@@ -16,7 +16,7 @@ import DynamicMapModal from "./DynamicMapModal";
 import Modal from "./Modal";
 import MapStatic from "./MapStatic";
 
-type SearchRide = SearchRidesQuery["searchRide"][number];
+type SearchRide = SearchRidesQuery["searchRides"][number];
 
 type CardRideDetailsProps = {
   variant: VariantType;
@@ -79,7 +79,6 @@ const CardRideDetails: React.FC<CardRideDetailsProps> = ({ variant, data }) => {
       <div
         className={`shadow-custom border-primary relative z-10 mb-40 mr-8 mt-40 hidden h-fit space-y-5 rounded-3xl border-4 p-8 md:block md:w-full ${textColor} bg-gray-100`}
       >
-        
         <h2 className={`text-2xl font-bold ${textColor}`}>{driverName}</h2>
         <h2 className={`mb-2 text-xl font-bold ${textColor}`}>Détails du trajet</h2>
         <div className="flex w-full justify-start gap-10">
