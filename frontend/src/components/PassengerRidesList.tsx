@@ -82,22 +82,26 @@ const PassengerRidesList = () => {
   }, []);
 
   return (
-    <div className="z-10 flex h-full w-full flex-col bg-gray-100 sm:pb-16">
+    <div className="z-10 flex h-full w-full flex-col bg-white sm:pb-16">
       {/* --- Mobile: onglets comme la page conducteur --- */}
       {!isMd && (
-        <div className="flex w-full justify-center">
+        <div className="flex w-full justify-center border-t-2 border-gray-300 shadow-md">
           <button
             onClick={() => setComingListView(true)}
-            className={`w-full px-4 py-2 font-medium ${
-              comingListView ? "bg-primary text-white" : "text-primary bg-white"
+            className={`h-11 w-full ${
+              comingListView
+                ? "text-primary bg-white text-lg font-bold underline"
+                : "text-primary bg-gray-100"
             }`}
           >
             Trajets à venir
           </button>
           <button
             onClick={() => setComingListView(false)}
-            className={`w-full px-4 py-2 font-medium ${
-              !comingListView ? "bg-primary text-white" : "text-primary bg-white"
+            className={`h-11 w-full ${
+              !comingListView
+                ? "text-primary bg-white text-lg font-bold underline"
+                : "text-primary bg-gray-100"
             }`}
           >
             Trajets archivés
