@@ -67,7 +67,7 @@ const DriverRidesList = () => {
           <button
             onClick={() => setComingListView(true)}
             className={`w-full px-4 py-2 font-medium ${
-              comingListView ? "bg-primary text-white" : "text-primary bg-white"
+              comingListView ? "bg-primary text-white underline" : "text-primary bg-white"
             }`}
           >
             Trajets à venir
@@ -75,7 +75,7 @@ const DriverRidesList = () => {
           <button
             onClick={() => setComingListView(false)}
             className={`w-full px-4 py-2 font-medium ${
-              !comingListView ? "bg-primary text-white" : "text-primary bg-white"
+              !comingListView ? "bg-primary text-white underline" : "text-primary bg-white"
             }`}
           >
             Trajets archivés
