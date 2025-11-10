@@ -5,14 +5,14 @@ import { useQuery } from "@apollo/client";
 import ScrollableSnapList from "../components/ScrollableSnapList";
 import CardRideDetails from "../components/CardRideDetails";
 import { VariantType } from "../types/variantTypes";
-import { querySearchRide } from "../api/SearchRide";
+import { querySearchRides } from "../api/SearchRides";
 import { PassengerRideStatus, SearchRidesQuery } from "../gql/graphql";
 import Button from "../components/Button";
 import { LoaderCircle } from "lucide-react";
 import useBreakpoints from "../utils/useWindowSize";
 import SearchRide from "../components/SearchRide";
 
-type SearchRide = SearchRidesQuery["searchRide"][number];
+type SearchRide = SearchRidesQuery["searchRides"][number];
 
 const RideResults = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -42,7 +42,7 @@ const RideResults = () => {
     loading,
     error,
     fetchMore,
-  } = useQuery(querySearchRide, {
+  } = useQuery(querySearchRides, {
     variables: {
       data: {
         departure_city,
@@ -61,7 +61,7 @@ const RideResults = () => {
     fetchPolicy: "network-only",
     skip: !departure_city || !arrival_city || !departure_at,
     onCompleted: (d) => {
-      const firstPage = d?.searchRide?.length ?? 0;
+      const firstPage = d?.searchRides?.length ?? 0;
       setHasMore(firstPage === LIMIT);
     },
   });
@@ -73,7 +73,7 @@ const RideResults = () => {
     );
   }
 
-  const rides = dataSearched?.searchRide ?? [];
+  const rides = dataSearched?.searchRides ?? [];
 
   const getVariant = (ride: SearchRide): VariantType => {
     if (ride.is_cancelled) return "cancel";
@@ -113,9 +113,9 @@ const RideResults = () => {
           },
         },
         updateQuery: (prev, { fetchMoreResult }) => {
-          const next = fetchMoreResult?.searchRide ?? [];
+          const next = fetchMoreResult?.searchRides ?? [];
           setHasMore(next.length === LIMIT);
-          return { searchRide: [...(prev?.searchRide ?? []), ...next] };
+          return { searchRides: [...(prev?.searchRides ?? []), ...next] };
         },
       });
       setOffset(nextOffset);
@@ -130,7 +130,7 @@ const RideResults = () => {
       <div className="fixed left-1/2 top-1/2 flex h-full w-full -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center md:h-3/4 md:w-3/4">
         <div className="border-textDark z-50 h-full w-full max-w-xl overflow-hidden shadow-xl sm:rounded-xl sm:border">
           <div className="bg-primary relative h-full w-full overflow-auto px-4">
-            <div className="bg-secondaryHover absolute bottom-[80%] left-1/2 w-[384px] -translate-x-1/2 rounded-lg p-2 text-center">
+            <div className="bg-secondaryHover sm-w-[200px] absolute bottom-[85%] left-1/2 w-[384px] -translate-x-1/2 rounded-lg p-2 text-center">
               <p className="text-center">Aucun trajet trouvé !</p>
               <p>Essayez d'élargir vos critères de recherche.</p>
             </div>

@@ -2,9 +2,9 @@ import { TypedDocumentNode } from "@apollo/client";
 import { SearchRidesQuery, SearchRidesQueryVariables } from "../gql/graphql";
 import { gql } from "../gql";
 
-export const querySearchRide = gql(`
+export const querySearchRides = gql(`
   query SearchRides($data: SearchRideInput!) {
-    searchRide(data: $data) {
+    searchRides(data: $data) {
       id
       created_at
       departure_city

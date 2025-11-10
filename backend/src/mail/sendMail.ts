@@ -49,7 +49,9 @@ export async function sendEmail({
       .request(data);
 
     if (result) {
-      console.log("✅ Mail envoyé");
+      if (process.env.NODE_ENV !== "production") {
+        console.log("✅ Mail envoyé");
+      }
     }
     return true;
   } catch (err: unknown) {

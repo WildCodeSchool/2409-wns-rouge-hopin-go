@@ -112,7 +112,6 @@ const SearchFormRide = ({
       if (input === "departure") {
         departureSuggestionsRef.current[0]?.focus();
       } else {
-        console.log(arrivalSuggestionsRef.current[0]);
         arrivalSuggestionsRef.current[0]?.focus();
       }
     } else if (e.key === "Tab") {
@@ -195,14 +194,12 @@ const SearchFormRide = ({
     <form
       noValidate
       onSubmit={handleSubmit}
+      aria-label="Formulaire de recherche de trajets"
       className="mx-auto flex h-full max-w-sm flex-col items-center justify-center"
     >
       {/* Date de départ */}
       <div className="mb-5 w-full">
-        <label
-          htmlFor="departure-at"
-          className="block mb-2 text-sm font-medium text-white"
-        >
+        <label htmlFor="departure-at" className="mb-2 block text-sm font-medium text-white">
           Date de départ
         </label>
         <input
@@ -212,20 +209,19 @@ const SearchFormRide = ({
             error.departureAt?.length
               ? "border-error border-2 bg-red-50"
               : "border-gray-300 bg-gray-50"
-          } shadow-sm border textDark text-sm rounded-lg focus:outline-none block w-full p-2.5`}
+          } textDark block w-full rounded-lg border p-2.5 text-sm shadow-sm focus:outline-none`}
           value={departureAt}
           ref={departureTimeRef}
           onChange={(e) => setDepartureAt(e.target.value)}
-          onFocus={() =>
-            setShowSuggestions((prev) => ({ ...prev, arrival: false }))
-          }
+          onFocus={() => setShowSuggestions((prev) => ({ ...prev, arrival: false }))}
           required
-          aria-describedby={
-            error.departureAt ? "departure-at-error" : undefined
-          }
+          aria-describedby={error.departureAt ? "departure-at-error" : undefined}
         />
         {error.departureAt && error.departureAt.length > 0 && (
-          <p id="departure-at-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
+          <p
+            id="departure-at-error"
+            className="text-full mt-2 w-fit self-start rounded-lg bg-gray-50 px-2 py-1 text-sm"
+          >
             {formatErrors(error.departureAt)}
           </p>
         )}
@@ -286,7 +282,10 @@ const SearchFormRide = ({
           </ul>
         )}
         {error.departureCity && error.departureCity.length > 0 && (
-          <p id="departure-city-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
+          <p
+            id="departure-city-error"
+            className="text-full mt-2 w-fit self-start rounded-lg bg-gray-50 px-2 py-1 text-sm"
+          >
             {formatErrors(error.departureCity)}
           </p>
         )}
@@ -301,12 +300,15 @@ const SearchFormRide = ({
           type="range"
           id="departure-radius"
           name="departure-radius"
-          min="1"
-          max="100"
+          min={1}
+          max={100}
           value={departureRadius}
           ref={departureRadiusRef}
           onChange={(e) => setDepartureRadius(Number(e.target.value))}
           onFocus={() => setShowSuggestions((prev) => ({ ...prev, departure: false }))}
+          aria-valuemin={1}
+          aria-valuemax={100}
+          aria-valuenow={departureRadius}
           aria-valuetext={`${departureRadius} kilomètres`}
         />
         <label className="grid-span-1 flex justify-end" htmlFor="departure-radius">
@@ -369,7 +371,10 @@ const SearchFormRide = ({
           </ul>
         )}
         {error.arrivalCity && error.arrivalCity.length > 0 && (
-          <p id="arrival-city-error" className="text-full self-start text-sm bg-gray-50 px-2 py-1 rounded-lg w-fit mt-2">
+          <p
+            id="arrival-city-error"
+            className="text-full mt-2 w-fit self-start rounded-lg bg-gray-50 px-2 py-1 text-sm"
+          >
             {formatErrors(error.arrivalCity)}
           </p>
         )}
@@ -383,12 +388,15 @@ const SearchFormRide = ({
           type="range"
           id="arrival-radius"
           name="arrival-radius"
-          min="1"
-          max="100"
+          min={1}
+          max={100}
           value={arrivalRadius}
           ref={arrivalRadiusRef}
           onChange={(e) => setArrivalRadius(Number(e.target.value))}
           onFocus={() => setShowSuggestions((prev) => ({ ...prev, arrival: false }))}
+          aria-valuemin={1}
+          aria-valuemax={100}
+          aria-valuenow={departureRadius}
           aria-valuetext={`${arrivalRadius} kilomètres`}
         />
         <label className="grid-span-1 flex justify-end" htmlFor="arrival-radius">
