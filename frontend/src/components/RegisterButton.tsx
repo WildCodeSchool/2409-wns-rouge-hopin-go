@@ -6,7 +6,7 @@ import { queryWhoAmI } from "../api/WhoAmI";
 import { mutationCreatePassengerRide } from "../api/CreatePassengerRide";
 import { VariantType } from "../types/variantTypes";
 import { toast } from "react-toastify";
-import { querySearchRide } from "../api/SearchRide";
+import { querySearchRides } from "../api/SearchRides";
 import useRideOptional from "../context/Rides/useRideOptional";
 
 export default function RegisterButton({
@@ -28,7 +28,6 @@ export default function RegisterButton({
 
   const { data: whoAmIData } = useQuery(queryWhoAmI);
   const me = whoAmIData?.whoami;
-  console.log("me", me);
   const isLoggedIn = me ? true : false;
   const { isSm, isMd } = useWindowSize();
 
@@ -57,7 +56,6 @@ export default function RegisterButton({
           id: rideId,
         },
       });
-      console.log("data ride", data);
       const nbPassenger = data?.ride?.nb_passenger;
       const maxPassenger = data?.ride?.max_passenger;
 
@@ -80,7 +78,7 @@ export default function RegisterButton({
         // TO DO : ajouter un bouton "Voir mes trajets" dans le toast
         toast.success("Demande de réservation envoyée avec succès !");
         await client.refetchQueries({
-          include: [querySearchRide],
+          include: [querySearchRides],
         });
       } else {
         toast.error("Ce trajet est complet.");

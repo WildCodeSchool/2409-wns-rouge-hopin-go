@@ -5,14 +5,14 @@ import { useQuery } from "@apollo/client";
 import ScrollableSnapList from "../components/ScrollableSnapList";
 import CardRideDetails from "../components/CardRideDetails";
 import { VariantType } from "../types/variantTypes";
-import { querySearchRide } from "../api/SearchRide";
+import { querySearchRides } from "../api/SearchRides";
 import { PassengerRideStatus, SearchRidesQuery } from "../gql/graphql";
 import Button from "../components/Button";
 import { LoaderCircle } from "lucide-react";
 import useBreakpoints from "../utils/useWindowSize";
 import SearchRide from "../components/SearchRide";
 
-type SearchRide = SearchRidesQuery["searchRide"][number];
+type SearchRide = SearchRidesQuery["searchRides"][number];
 
 const RideResults = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -42,7 +42,7 @@ const RideResults = () => {
     loading,
     error,
     fetchMore,
-  } = useQuery(querySearchRide, {
+  } = useQuery(querySearchRides, {
     variables: {
       data: {
         departure_city,
@@ -61,7 +61,7 @@ const RideResults = () => {
     fetchPolicy: "network-only",
     skip: !departure_city || !arrival_city || !departure_at,
     onCompleted: (d) => {
-      const firstPage = d?.searchRide?.length ?? 0;
+      const firstPage = d?.searchRides?.length ?? 0;
       setHasMore(firstPage === LIMIT);
     },
   });
@@ -73,7 +73,7 @@ const RideResults = () => {
     );
   }
 
-  const rides = dataSearched?.searchRide ?? [];
+  const rides = dataSearched?.searchRides ?? [];
 
   const getVariant = (ride: SearchRide): VariantType => {
     if (ride.is_cancelled) return "cancel";
@@ -113,9 +113,9 @@ const RideResults = () => {
           },
         },
         updateQuery: (prev, { fetchMoreResult }) => {
-          const next = fetchMoreResult?.searchRide ?? [];
+          const next = fetchMoreResult?.searchRides ?? [];
           setHasMore(next.length === LIMIT);
-          return { searchRide: [...(prev?.searchRide ?? []), ...next] };
+          return { searchRides: [...(prev?.searchRides ?? []), ...next] };
         },
       });
       setOffset(nextOffset);
@@ -128,9 +128,9 @@ const RideResults = () => {
   if (!loading && (rides.length === 0 || !rides[selectedIndex])) {
     return (
       <div className="fixed left-1/2 top-1/2 flex h-full w-full -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center md:h-3/4 md:w-3/4">
-        <div className="sm:border border-textDark sm:rounded-xl shadow-xl max-w-xl  h-full w-full overflow-hidden z-50">
-          <div className="bg-primary px-4 h-full w-full overflow-auto relative">
-            <div className="bg-secondaryHover absolute text-center bottom-[80%] left-1/2 -translate-x-1/2 rounded-lg p-2 w-[384px]">
+        <div className="border-textDark z-50 h-full w-full max-w-xl overflow-hidden shadow-xl sm:rounded-xl sm:border">
+          <div className="bg-primary relative h-full w-full overflow-auto px-4">
+            <div className="bg-secondaryHover sm-w-[200px] absolute bottom-[85%] left-1/2 w-[384px] -translate-x-1/2 rounded-lg p-2 text-center">
               <p className="text-center">Aucun trajet trouvé !</p>
               <p>Essayez d'élargir vos critères de recherche.</p>
             </div>
@@ -150,10 +150,10 @@ const RideResults = () => {
   }
 
   return (
-    <div className="relative flex items-center h-screen justify-center max-w-7xl m-auto bg-gray-100">
-      <div className="relative flex h-full w-full z-20 md:w-1/2 overflow-visible">
+    <div className="relative m-auto flex h-screen max-w-7xl items-center justify-center bg-gray-100">
+      <div className="relative z-20 flex h-full w-full overflow-visible md:w-1/2">
         {hasMore && (
-          <div className="absolute z-30 bottom-20 left-1/2 -translate-x-1/2">
+          <div className="absolute bottom-20 left-1/2 z-30 -translate-x-1/2">
             <Button
               disabled={!hasMore || loadingMore}
               icon={loadingMore ? LoaderCircle : undefined}
@@ -176,7 +176,7 @@ const RideResults = () => {
           spaceBetween={isMd ? 50 : 0}
           slidePerView={3}
         />
-        <div className="pointer-events-none absolute top-1/2 right-0 hidden xl:flex w-full z-0 -translate-y-1/2 justify-center translate-x-[4.3px] bg-gray-100 ">
+        <div className="pointer-events-none absolute right-0 top-1/2 z-0 hidden w-full -translate-y-1/2 translate-x-[4.3px] justify-center bg-gray-100 xl:flex">
           <svg
             id="overlay"
             className="scale-y-[1.01]"
@@ -195,7 +195,7 @@ const RideResults = () => {
           </svg>
         </div>
       </div>
-      <div className="flex h-full md:w-1/2 z-0">
+      <div className="z-0 flex h-full md:w-1/2">
         <CardRideDetails variant={getVariant(rides[selectedIndex])} data={rides[selectedIndex]} />
       </div>
     </div>

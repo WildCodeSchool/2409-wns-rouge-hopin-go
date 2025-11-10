@@ -9,17 +9,13 @@ import { toast } from "react-toastify";
 import { mutationPassengerWithdrawFromRide } from "../api/PassengerWithdrawFromRide";
 import { queryPassengerRides } from "../api/PassengerRides";
 
-const WithdrawPassengerButton = ({
-  onCloseParentModal,
-}: {
-  onCloseParentModal: () => void;
-}) => {
+const WithdrawPassengerButton = ({ onCloseParentModal }: { onCloseParentModal: () => void }) => {
   const client = useApolloClient();
   const ride = useRide();
   const { isOpen, isVisible, toggleModal, closeModal } = useModal();
   const modalId = "modal-withdraw-passenger-ride";
 
-   const [passengerWithdrawFromRide, { loading, error }] = useMutation(
+  const [passengerWithdrawFromRide, { loading, error }] = useMutation(
     mutationPassengerWithdrawFromRide,
     {
       onCompleted: async () => {
@@ -47,35 +43,35 @@ const WithdrawPassengerButton = ({
   if (error) return <span>Erreur lors de l&apos;annulation</span>;
 
   return (
-    <>
-      <div className="text-end">
-        <Button
-          onClick={() => toggleModal(modalId)}
-          disabled={loading}
-          variant="refused"
-          type="button"
-          className="danger rounded px-4 py-2 text-white"
-          label="Annuler le trajet ?"
-          icon={Trash2}
-          iconSize={20}
-        />
-      </div>
+    ride.current_user_passenger_status !== null && (
+      <>
+        <div className="text-end">
+          <Button
+            onClick={() => toggleModal(modalId)}
+            disabled={loading}
+            variant="refused"
+            type="button"
+            className="danger rounded px-4 py-2 text-white"
+            label="Se désinscrire ?"
+            icon={Trash2}
+            iconSize={20}
+          />
+        </div>
 
-      <Modal
-        id={modalId}
-        isOpen={isOpen(modalId)}
-        isVisible={isVisible(modalId)}
-        onClose={() => closeModal(modalId)}
-      >
-        <ConfirmModal
-          message={
-            "Etes-vous sûr de vouloir annuler ce trajet ?\nCette action est irréversible."
-          }
-          onConfirm={handleCancel}
-          toggleModal={() => closeModal(modalId)}
-        />
-      </Modal>
-    </>
+        <Modal
+          id={modalId}
+          isOpen={isOpen(modalId)}
+          isVisible={isVisible(modalId)}
+          onClose={() => closeModal(modalId)}
+        >
+          <ConfirmModal
+            message={"Etes-vous sûr de vouloir vous désinscrire ?\nCette action est irréversible."}
+            onConfirm={handleCancel}
+            toggleModal={() => closeModal(modalId)}
+          />
+        </Modal>
+      </>
+    )
   );
 };
 

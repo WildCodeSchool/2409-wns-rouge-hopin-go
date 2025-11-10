@@ -64,11 +64,16 @@ const SearchRide = ({ variant, proposeRef }: SearchRideProps) => {
   useEffect(() => {
     const fetchSuggestions = async () => {
       const query = lastModifiedField === "departure" ? departureCity : arrivalCity;
-      if (!query) return;
+      if (!query || query.length < 3) return;
       if (lastModifiedField === "departure") {
         try {
           const res = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${query}&limit=5`);
           const data = await res.json();
+
+          if (!data.features || data.features.length === 0) {
+            console.warn("Aucune suggestion trouvée pour :", query);
+            return;
+          }
 
           type Feature = { properties: { label: string } };
           const labels = data.features.map((f: Feature) => f.properties.label);
@@ -82,7 +87,6 @@ const SearchRide = ({ variant, proposeRef }: SearchRideProps) => {
             long: data.features[0].geometry.coordinates[0],
             lat: data.features[0].geometry.coordinates[1],
           });
-          console.log("Suggestions mises à jour ! : ", data.features);
         } catch (err) {
           console.error("Erreur de récupération des suggestions : ", err);
         }
@@ -90,6 +94,11 @@ const SearchRide = ({ variant, proposeRef }: SearchRideProps) => {
         try {
           const res = await fetch(`https://api-adresse.data.gouv.fr/search/?q=${query}&limit=5`);
           const data = await res.json();
+
+          if (!data.features || data.features.length === 0) {
+            console.warn("Aucune suggestion trouvée pour :", query);
+            return;
+          }
 
           type Feature = { properties: { label: string } };
           const labels = data.features.map((f: Feature) => f.properties.label);
@@ -103,7 +112,6 @@ const SearchRide = ({ variant, proposeRef }: SearchRideProps) => {
             long: data.features[0].geometry.coordinates[0],
             lat: data.features[0].geometry.coordinates[1],
           });
-          console.log("Suggestions mises à jour ! : ", data.features);
         } catch (err) {
           console.error("Erreur de récupération des suggestions : ", err);
         }
