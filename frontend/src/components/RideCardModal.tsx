@@ -28,7 +28,7 @@ const RideCardModal = ({
   const now = new Date();
   const isFuture = isAfter(departureDate, now);
   return (
-    <div className="relative flex h-screen w-screen flex-col items-center justify-center bg-gray-200 p-4 md:h-auto md:w-[750px] md:rounded-2xl">
+    <div className="relative flex h-screen w-screen flex-col items-center justify-between bg-gray-200 p-4 md:h-auto md:w-[750px] md:rounded-2xl">
       <Button
         icon={X}
         iconColor="!text-black"

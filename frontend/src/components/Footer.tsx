@@ -1,10 +1,10 @@
-import Button from "./Button"
+import Button from "./Button";
 
 const Footer = () => {
   return (
-    <div className='hidden fixed bottom-0 md:flex justify-evenly items-center px-4 gap-4 w-full bg-primary text-secondary'>
+    <div className="bg-primary text-secondary fixed bottom-0 z-50 hidden w-full items-center justify-evenly gap-4 px-4 md:flex">
       <p className="text-xs">© 2025 Hopin'Go - Tous droits réservés</p>
-      <div className='flex gap-4'>
+      <div className="flex gap-4">
         <Button
           isLink
           to="/terms-of-service"
@@ -23,7 +23,7 @@ const Footer = () => {
         />
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Footer
+export default Footer;
