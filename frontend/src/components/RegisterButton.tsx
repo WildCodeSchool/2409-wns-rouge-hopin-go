@@ -122,7 +122,7 @@ export default function RegisterButton({
         isHoverBgColor={variant === "primary" || variant === "secondary"}
         onClick={isLoggedIn && !hasRegistered ? handleRegister : undefined}
         isLink={isLoggedIn ? false : true}
-        to="signin"
+        to="/auth/signin"
         className="z-10 my-2 -ml-2 !rounded-full shadow-lg sm:-ml-6"
       />
     ) : (
