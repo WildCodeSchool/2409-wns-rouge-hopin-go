@@ -319,7 +319,6 @@ export class RidesResolver {
     });
   }
 
-  @Authorized("user")
   @FieldResolver(() => String, { nullable: true })
   async current_user_passenger_status(
     @Root() ride: Ride,
